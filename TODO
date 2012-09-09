@@ -1,0 +1,8 @@
+. Fix php_st_error_handling deprecation
+. Fix parameter parsing (see PECL email)
+. Add non-busy wait consumption
+
+== DONE ==
+. Add ZEND_ARG_INFO for Reflection class support
+. Remove strcpy and replace with safe alternative.
+   * Check for INI_STR buffer overflows.

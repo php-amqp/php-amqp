@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+http://pear.php.net/dtd/tasks-1.0.xsd
+http://pear.php.net/dtd/package-2.0
+http://pear.php.net/dtd/package-2.0.xsd">
+ <name>amqp</name>
+ <channel>pecl.php.net</channel>
+ <summary>Communicate with any AMQP compliant server</summary>
+ <description>This extension can communicate with any AMQP spec 0-9-1 compatible server, such as RabbitMQ, OpenAMQP and Qpid, giving you the ability to create and delete exchanges and queues, as well as publish to any exchange and consume from any queue.
+ </description>
+ <lead>
+  <name>Pieter de Zwart</name>
+  <user>pdezwart</user>
+  <email>pdezwart@php.net</email>
+  <active>yes</active>
+ </lead>
+ <date>2012-08-25</date>
+ <time>18:20:00</time>
+ <version>     
+  <release>1.0.6</release>
+  <api>1.0.0</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.php.net/license">PHP License</license>
+ <notes>
+1.0.6 Release:     
+    * 62354: Segmentation fault when printing or dumping an object that contains an AMQP object
+    * Adding in missing tests
+    * Fixing release number in PHP information
+    * Adding .gitignore info for Git users
+    * Cleaning up debug handling
+     
+1.0.5 Release:
+    * 62696: Incorrect exchange type
+    * Handles server connections being closed during consume and publish correctly
+    * 62628: Exception thrown in consume will lock PHP
+    * 61533: Segmentation fault when instantiating channel, queue or exchange with wrong object, then using it
+    
+1.0.4 Release:
+    * 62549: Fixing broken persistent connection
+    * 62412: Fixing segfault due to destruction order
+    * 62411: Fixing declaration overload bug
+    * 62410: Fixing declaration overload for 5.4
+    * 61337: Adding License file
+    * 61749: Fixing handling for binary content in envelope
+    * 62087: Adding appropriate version information
+    * 62354: Enabling debugging dumping of objects
+    * 61351: Updating min PHP version requirements to 5.2.0
+     
+1.0.3 Release:
+    * Fixing compilation issue with PHP 5.4
+
+1.0.2 Release:
+Fixed bug:
+    * Memory leak when using AMQPQueue::get from a queue with no messages
+
+1.0.1 Release:
+Fixed bug:
+    * 61247: Allow queue creation with empty queue name, and return auto generated name
+    * 61127: Segmentation fault when cleaning up an AMQPChannel without calling AMQPConnection::connect first
+
+1.0.0 Release:
+Changed/finalized API signature:
+    * Exposing AMQPChannel
+    * Exposing AMQPEnvelope
+    * Exposing more queue and exchange arguments and flags
+    * Exposing basic.qos
+Added persistent connections
+Cleaned up codebase
+Fixed memory leaks and segmentation faults
+     
+0.3.1 Release:
+Fixed bug:
+    * 24323: Cannot get the name for auto-named reply-to queues
+     
+0.3.0 Release:
+Fixed memory leaks in many functions (courtesy Jonathan Tansavatdi and Andy Wick)
+Fixed consume method to return proper values
+Cleaned up variable usage
+Fixed bugs:
+    * 22638: Unexpected exit code 1 with AMQPQueue::consume()
+    * 22698: AMQPQueue::consume
+
+0.2.2 Release:
+Made extension compatible with PHP lt 5.3 (courtesy John Skopis)
+Fixed wrong typing of message properties (courtesy John Skopis)
+
+0.2.1 Release:
+Fixed refcount decrementing bug causing segfaults.
+
+0.2.0 Release:
+Works with AMQP 0-8 and 0-9-1 (used by RabbitMQ 2.*)
+Modified AMQPConnection object:
+    * Requires call to 'connect' method to connect (no longer connects on instantiation)
+    * Added support for disconnect and reconnect
+    * Added helper setters for port, host, vhost, login and password
+Improved consume method to block for MIN messages, and try to get MAX messages if available
+Fixed zval descoping bugs
+Fixed bugs:
+    * 17809: Couldn't compile pecl extension under PHP 5.3
+    * 17831: Segmentation fault when the exchange doesn't exists
+    * 19707: AMQPQueue::get() doesn't return the message
+    * 19840: Connection Exception
+ </notes>
+ <contents>
+  <dir name="/">
+   <file name="amqp.c" role="src" />
+   <file name="amqp_connection.c" role="src" />
+   <file name="amqp_channel.c" role="src" />
+   <file name="amqp_exchange.c" role="src" />
+   <file name="amqp_queue.c" role="src" />
+   <file name="amqp_envelope.c" role="src" />
+   <file name="config.m4" role="src" />
+   <file name="CREDITS" role="doc" />
+   <file name="LICENSE" role="doc" />
+   <file name="php_amqp.h" role="src" />
+   <file name="amqp_connection.h" role="src" />
+   <file name="amqp_channel.h" role="src" />
+   <file name="amqp_exchange.h" role="src" />
+   <file name="amqp_queue.h" role="src" />
+   <file name="amqp_envelope.h" role="src" />
+   <file name="tests/amqpchannel_construct_basic.phpt" role="test" />
+   <file name="tests/amqpchannel_multi_channel_connection.phpt" role="test" />
+   <file name="tests/amqpchannel_var_dump.phpt" role="test" />
+   <file name="tests/amqpconnection_construct_basic.phpt" role="test" />
+   <file name="tests/amqpconnection_persistent.phpt" role="test" />
+   <file name="tests/amqpconnection_setPort_int.phpt" role="test" />
+   <file name="tests/amqpconnection_setPort_out_of_range.phpt" role="test" />
+   <file name="tests/amqpconnection_setPort_string.phpt" role="test" />
+   <file name="tests/amqpconnection_toomanychannels.phpt" role="test" />
+   <file name="tests/amqpconnection_var_dump.phpt" role="test" />
+   <file name="tests/amqpenvelope_get_accessors.phpt" role="test" />
+   <file name="tests/amqpenvelope_var_dump.phpt" role="test" />
+   <file name="tests/amqpexchange_channel_refcount.phpt" role="test" />
+   <file name="tests/amqpexchange_construct_basic.phpt" role="test" />
+   <file name="tests/amqpexchange_declare_basic.phpt" role="test" />
+   <file name="tests/amqpexchange_publish_basic.phpt" role="test" />
+   <file name="tests/amqpexchange_publish_empty_routing_key.phpt" role="test" />
+   <file name="tests/amqpexchange_set_flag.phpt" role="test" />
+   <file name="tests/amqpexchange_var_dump.phpt" role="test" />
+   <file name="tests/amqpqueue_bind_basic.phpt" role="test" />
+   <file name="tests/amqpqueue_construct_basic.phpt" role="test" />
+   <file name="tests/amqpqueue_consume_basic.phpt" role="test" />
+   <file name="tests/amqpqueue_declare_basic.phpt" role="test" />
+   <file name="tests/amqpqueue_empty_name.phpt" role="test" />
+   <file name="tests/amqpqueue_get_basic.phpt" role="test" />
+   <file name="tests/amqpqueue_get_empty_body.phpt" role="test" />
+   <file name="tests/amqpqueue_get_headers.phpt" role="test" />
+   <file name="tests/amqpqueue_purge_basic.phpt" role="test" />
+   <file name="tests/amqpqueue_var_dump.phpt" role="test" />
+   <file name="tests/bug_17831.phpt" role="test" />
+   <file name="tests/bug_19707.phpt" role="test" />
+   <file name="tests/bug_19840.phpt" role="test" />
+   <file name="tests/bug_61533.phpt" role="test" />
+   <file name="tests/bug_62354.phpt" role="test" />
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.2.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0b1</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <providesextension>amqp</providesextension>
+ <extsrcrelease />
+</package>
