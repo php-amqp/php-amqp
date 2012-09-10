@@ -455,7 +455,7 @@ PHP_METHOD(amqp_exchange_class, declare)
 
 	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	channel = AMQP_GET_CHANNEL(exchange);
+	AMQP_ASSIGN_CHANNEL(channel, exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not declare exchange.");
 	
 	connection = AMQP_GET_CONNECTION(channel);
