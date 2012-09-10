@@ -230,10 +230,23 @@ extern zend_class_entry *amqp_exception_class_entry,
 	efree(object); \
 
 #define AMQP_GET_CHANNEL(object) \
- 	(amqp_channel_object *) zend_object_store_get_object((object)->channel TSRMLS_CC); \
+	(amqp_channel_object *) zend_object_store_get_object((object)->channel TSRMLS_CC);
+
+#define AMQP_ASSIGN_CHANNEL(channel, object) \
+	if (!(object)->channel) { \
+		return; \
+	} \
+	channel = AMQP_GET_CHANNEL(object)
 
 #define AMQP_GET_CONNECTION(object) \
- 	(amqp_connection_object *) zend_object_store_get_object((object)->connection TSRMLS_CC); \
+	(amqp_connection_object *) zend_object_store_get_object((object)->connection TSRMLS_CC);
+
+#define AMQP_ASSIGN_CONNECTION(connection, object) \
+	if (!(object)->connection) { \
+		return; \
+	} \
+	connection = AMQP_GET_CONNECTION(object)
+
 
 #define AMQP_VERIFY_CHANNEL(channel, error) \
 	if ((channel)->is_connected != '\1') { \
