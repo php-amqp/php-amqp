@@ -133,7 +133,7 @@ zend_object_value amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 }
 
 /* {{{ proto AMQPExchange::__construct(AMQPChannel channel);
-declare Exchange   */
+create Exchange   */
 PHP_METHOD(amqp_exchange_class, __construct)
 {
 	zval *id;
