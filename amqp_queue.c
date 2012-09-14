@@ -652,10 +652,10 @@ PHP_METHOD(amqp_queue_class, setArgument)
 /* }}} */
 
 
-/* {{{ proto int AMQPQueue::declare();
+/* {{{ proto int AMQPQueue::declareQueue();
 declare queue
 */
-PHP_METHOD(amqp_queue_class, declare)
+PHP_METHOD(amqp_queue_class, declareQueue)
 {
 	zval *id;
 	amqp_queue_object *queue;

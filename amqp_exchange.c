@@ -436,10 +436,10 @@ PHP_METHOD(amqp_exchange_class, setArgument)
 /* }}} */
 
 
-/* {{{ proto AMQPExchange::declare();
+/* {{{ proto AMQPExchange::declareExchange();
 declare Exchange
 */
-PHP_METHOD(amqp_exchange_class, declare)
+PHP_METHOD(amqp_exchange_class, declareExchange)
 {
 	zval *id;
 
