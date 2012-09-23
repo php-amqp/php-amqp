@@ -1,4 +1,7 @@
 <?php
+/**
+ * stub class representing AMQPEnvelope from pecl-amqp
+ */
 class AMQPEnvelope
 {
     /**
@@ -29,7 +32,7 @@ class AMQPEnvelope
     }
 
     /**
-     * Get the message contenttype
+     * Get the message content type
      *
      * @return string The content type of the message.
      */
@@ -106,7 +109,7 @@ class AMQPEnvelope
     /**
      * Get the priority of the message.
      *
-     * @todo cerify return type. docs wrong?
+     * @todo verify return type. docs wrong?
      *
      * @return string The message priority.
      */
@@ -115,7 +118,7 @@ class AMQPEnvelope
     }
 
     /**
-     * Get the reply-to adress of the message.
+     * Get the reply-to address of the message.
      *
      * @return string The contents of the reply to field.
      */

@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * stub class representing AMQPConnection from pecl-amqp
+ */
 class AMQPConnection
 {
     /**
@@ -36,7 +38,7 @@ class AMQPConnection
      *
      * @return bool true if connection was successfully closed, false otherwise.
      */
-    public function diconnect()
+    public function disconnect()
     {
     }
 

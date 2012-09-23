@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * stub class representing AMQPExchange from pecl-amqp
+ */
 class AMQPExchange
 {
 
@@ -72,7 +74,7 @@ class AMQPExchange
      * @throws AMQPChannelException    if the channel is not open.
      * @throws AMQPConnectionException if the connection to the broker was lost.
      *
-     * @return @bool TRUE on success or FALSE on failure.
+     * @return bool true on success or false on failure.
      */
     public function delete ($flags = AMQP_NOPARAM)
     {
