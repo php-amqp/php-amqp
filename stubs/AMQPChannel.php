@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * stub class representing AMQPChannel from pecl-amqp
+ */
 class AMQPChannel
 {
     /**
@@ -20,7 +22,7 @@ class AMQPChannel
      *
      * @param  AMQPConnection $amqp_connection An instance of AMQPConnection
      *                                         with an active connection to a
-     *                                         roker.
+     *                                         broker.
      *
      * @throws AMQPConnectionException         if the connection to the broker
      *                                         was lost.
@@ -118,7 +120,7 @@ class AMQPChannel
      *
      * @return bool                    TRUE on success or FALSE on failure.
      */
-    public function setPrefetchSize ()
+    public function setPrefetchSize ($size)
     {
     }
 

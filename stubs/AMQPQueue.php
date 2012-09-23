@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * stub class representing AMQPQueue from pecl-amqp
+ */
 class AMQPQueue
 {
     /**
@@ -203,7 +205,7 @@ class AMQPQueue
      * undefined.
      *
      * @param string $delivery_tag
-     * @param string $flags
+     * @param int $flags AMQP_REQUEUE to requeue the message
      *
      * @throws AMQPChannelException    if the channel is not open.
      * @throws AMQPConnectionException if the connection to the broker was lost.
