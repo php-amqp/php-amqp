@@ -11,6 +11,7 @@ class AMQPEnvelope
      */
     public function getAppId()
     {
+        return '';
     }
 
     /**
@@ -20,6 +21,7 @@ class AMQPEnvelope
      */
     public function getBody()
     {
+        return '';
     }
 
     /**
@@ -29,24 +31,27 @@ class AMQPEnvelope
      */
     public function getContentEncoding()
     {
+        return '';
     }
 
     /**
-     * Get the message content type
+     * Get the message content type.
      *
      * @return string The content type of the message.
      */
     public function getContentType()
     {
+        return '';
     }
 
     /**
-     * Get the message correlation id
+     * Get the message correlation id.
      *
      * @return string The correlation id of the message.
      */
     public function getCorrelationId()
     {
+        return '';
     }
 
     /**
@@ -56,6 +61,7 @@ class AMQPEnvelope
      */
     public function getDeliveryTag()
     {
+        return '';
     }
 
     /**
@@ -65,6 +71,7 @@ class AMQPEnvelope
      */
     public function getExchange()
     {
+        return '';
     }
 
     /**
@@ -74,18 +81,20 @@ class AMQPEnvelope
      */
     public function getExpiration()
     {
+        return '';
     }
 
     /**
-     * Get a specific message header
+     * Get a specific message header.
      *
-     * @param  string $header_key the name of the header to get the value from
+     * @param string $header_key Name of the header to get the value from.
      *
-     * @return string|bool        The contents of the specified header or FALSE 
-     *                            if not set.
+     * @return string|boolean The contents of the specified header or FALSE
+     *                        if not set.
      */
     public function getHeader($header_key)
     {
+        return '';
     }
 
     /**
@@ -95,6 +104,7 @@ class AMQPEnvelope
      */
     public function getHeaders()
     {
+        return array();
     }
 
     /**
@@ -104,6 +114,7 @@ class AMQPEnvelope
      */
     public function getMessageId()
     {
+        return '';
     }
 
     /**
@@ -115,6 +126,7 @@ class AMQPEnvelope
      */
     public function getPriority()
     {
+        return '';
     }
 
     /**
@@ -124,6 +136,7 @@ class AMQPEnvelope
      */
     public function getReplyTo()
     {
+        return '';
     }
 
     /**
@@ -133,6 +146,7 @@ class AMQPEnvelope
      */
     public function getRoutingKey()
     {
+        return '';
     }
 
     /**
@@ -142,38 +156,42 @@ class AMQPEnvelope
      */
     public function getTimeStamp()
     {
+        return '';
     }
 
     /**
-     * Get the message type
+     * Get the message type.
      *
      * @return string The message type.
      */
     public function getType()
     {
+        return '';
     }
 
     /**
-     * Get the message user id
+     * Get the message user id.
      *
      * @return string The message user id.
      */
     public function getUserId()
     {
+        return '';
     }
 
     /**
-     * Whether this is a redelivery of the message
+     * Whether this is a redelivery of the message.
      *
-     * Whether this is a redelivery of a message. If this message has been 
-     * delivered and AMQPEnvelope::nack() was called, the message will be put 
-     * back on the queue to be redelivered, at which point the message will 
+     * Whether this is a redelivery of a message. If this message has been
+     * delivered and AMQPEnvelope::nack() was called, the message will be put
+     * back on the queue to be redelivered, at which point the message will
      * always return TRUE when this method is called.
      *
      * @return bool TRUE if this is a redelivery, FALSE otherwise.
      */
     public function isRedelivery()
     {
+        return true;
     }
 }
 
