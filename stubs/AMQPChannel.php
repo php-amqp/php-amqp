@@ -5,46 +5,45 @@
 class AMQPChannel
 {
     /**
-     * Commit a pending transaction
+     * Commit a pending transaction.
      *
-     * @throws AMQPChannelException    if no transaction was started prior to
+     * @throws AMQPChannelException    If no transaction was started prior to
      *                                 calling this method.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool                    TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function commitTransaction ()
     {
+        return true;
     }
 
     /**
-     * Create an instance of an AMQPChannel object
+     * Create an instance of an AMQPChannel object.
      *
-     * @param  AMQPConnection $amqp_connection An instance of AMQPConnection
-     *                                         with an active connection to a
-     *                                         broker.
+     * @param AMQPConnection $amqp_connection An instance of AMQPConnection
+     *                                        with an active connection to a
+     *                                        broker.
      *
-     * @throws AMQPConnectionException         if the connection to the broker
-     *                                         was lost.
-     *
-     * @return AMQPChannel                     An instance of AMQPChannel.
+     * @throws AMQPConnectionException        If the connection to the broker
+     *                                        was lost.
      */
     public function __construct (AMQPConnection $amqp_connection)
     {
     }
 
     /**
-     * Check the channel connection
+     * Check the channel connection.
      *
      * @return bool Indicates whether the channel is connected.
      */
     public function isConnected ()
     {
+        return true;
     }
 
-
     /**
-     * Set the Quality Of Service settings for the given channel
+     * Set the Quality Of Service settings for the given channel.
      *
      * Specify the amount of data to prefetch in terms of window size (octets)
      * or number of messages from a queue during a AMQPQueue::consume() or
@@ -58,54 +57,56 @@ class AMQPChannel
      * flag set, the client will not do any prefetching of data, regardless of
      * the QOS settings.
      *
-     * @param int $size                The window size, in octets, to prefetch.
-     * @param int $count               The number of messages to prefetch.
+     * @param integer $size  The window size, in octets, to prefetch.
+     * @param integer $count The number of messages to prefetch.
      *
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool                    TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function qos ($size, $count)
     {
+        return true;
     }
 
     /**
-     * Rollback a transaction
+     * Rollback a transaction.
      *
      * Rollback an existing transaction. AMQPChannel::startTransaction() must
      * be called prior to this.
      *
-     * @throws AMQPChannelException    if no transaction was started prior to
+     * @throws AMQPChannelException    If no transaction was started prior to
      *                                 calling this method.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool                    TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function rollbackTransaction ()
     {
+        return true;
     }
 
-
     /**
-     * Set the number of messages to prefetch from the broker
+     * Set the number of messages to prefetch from the broker.
      *
      * Set the number of messages to prefetch from the broker during a call to
      * AMQPQueue::consume() or AMQPQueue::get(). Any call to this method will
      * automatically set the prefetch window size to 0, meaning that the
      * prefetch window size setting will be ignored.
      *
-     * @param  int $count              The number of messages to prefetch.
+     * @param integer $count The number of messages to prefetch.
      *
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool                    TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or FALSE on failure.
      */
     public function setPrefetchCount ($count)
     {
+        return true;
     }
 
     /**
-     * Set the window size to prefetch from the broker
+     * Set the window size to prefetch from the broker.
      *
      * Set the prefetch window size, in octets, during a call to
      * AMQPQueue::consume() or AMQPQueue::get(). Any call to this method will
@@ -114,28 +115,30 @@ class AMQPChannel
      * AMQPQueue::consume() or AMQPQueue::get() is done with the AMQP_AUTOACK
      * flag set, this setting will be ignored.
      *
-     * @param  int $size               The window size, in octets, to prefetch.
+     * @param integer $size The window size, in octets, to prefetch.
      *
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool                    TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function setPrefetchSize ($size)
     {
+        return true;
     }
 
     /**
-     * Start a transaction
+     * Start a transaction.
      *
      * This method must be called on the given channel prior to calling
      * AMQPChannel::commitTransaction() or AMQPChannel::rollbackTransaction().
      *
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool                    TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function startTransaction ()
     {
+        return true;
     }
 }
 

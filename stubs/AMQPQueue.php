@@ -5,93 +5,93 @@
 class AMQPQueue
 {
     /**
-     * Acknowledge the receipt of a message
+     * Acknowledge the receipt of a message.
      *
      * This method allows the acknowledgement of a message that is retrieved
      * without the AMQP_AUTOACK flag through AMQPQueue::get() or
      * AMQPQueue::consume()
      *
-     * @param string $delivery_tag The message delivery tag of which to
-     *                             acknowledge receipt.
-     * @param int    $flags        The only valid flag that can be passed is
-     *                             AMQP_MULTIPLE.
+     * @param string  $delivery_tag The message delivery tag of which to
+     *                              acknowledge receipt.
+     * @param integer $flags        The only valid flag that can be passed is
+     *                              AMQP_MULTIPLE.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @returns bool
+     * @return boolean
      */
     public function ack($delivery_tag, $flags = AMQP_NOPARAM)
     {
+        return true;
     }
 
     /**
      * Bind the given queue to a routing key on an exchange.
      *
-     * @param  string $exchange_name   name of the exchange to bind to
-     * @param  string $routing_key     pattern or routing key to bind with
+     * @param string $exchange_name Name of the exchange to bind to.
+     * @param string $routing_key   Pattern or routing key to bind with.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool
+     * @return boolean
      */
     public function bind ($exchange_name, $routing_key)
     {
+        return true;
     }
 
     /**
      * Cancel a queue that is already bound to an exchange and routing key.
      *
-     * @param  string $consumer_tag    The queue name to cancel, if the queue
-     *                                 object is not already representative of
-     *                                 a queue.
+     * @param string $consumer_tag The queue name to cancel, if the queue
+     *                             object is not already representative of
+     *                             a queue.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return bool;
      */
     public function cancel ($consumer_tag = '')
     {
+        return true;
     }
 
-
     /**
-     * Create an instance of an AMQPQueue object
+     * Create an instance of an AMQPQueue object.
      *
-     * @param  AMQPChannel             $amqp_channel
+     * @param AMQPChannel $amqp_channel The amqp channel to use.
      *
-     * @throws AMQPQueueException      when amqp_channel is not connected to a 
+     * @throws AMQPQueueException      When amqp_channel is not connected to a
      *                                 broker.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
-     *
-     * @return AMQPQueue
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      */
     public function __construct (AMQPChannel $amqp_channel)
     {
     }
 
     /**
-     * Consume messages from a queue
+     * Consume messages from a queue.
      *
      * Blocking function that will retrieve the next message from the queue as
      * it becomes available and will pass it off to the callback.
      *
-     * @param  callable $callback      A callback function to which the
-     *                                 consumed message will be passed. The
-     *                                 function must accept at a minimum
-     *                                 one parameter, an AMQPEnvelope object,
-     *                                 and an optional second parameter
-     *                                 the AMQPQueue from which the message was
-     *                                 consumed. The AMQPQueue::consume() will
-     *                                 not return the processing thread back to
-     *                                 the PHP script until the callback
-     *                                 function returns FALSE.
-     * @param int       $flags         A bitmask of any of the flags: AMQP_NOACK
+     * @param callable $callback A callback function to which the
+     *                           consumed message will be passed. The
+     *                           function must accept at a minimum
+     *                           one parameter, an AMQPEnvelope object,
+     *                           and an optional second parameter
+     *                           the AMQPQueue from which the message was
+     *                           consumed. The AMQPQueue::consume() will
+     *                           not return the processing thread back to
+     *                           the PHP script until the callback
+     *                           function returns FALSE.
+     * @param integer  $flags    A bitmask of any of the flags: AMQP_NOACK.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return void
      */
@@ -102,26 +102,29 @@ class AMQPQueue
     /**
      * Declare a new queue on the broker.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return int                     the message count.
+     * @return integer the message count.
      */
     public function declareQueue ()
     {
+        return 0;
     }
 
     /**
-     * Delete a queue from the broker, including its entire contents of unread
-     * or unacknowledged messages.
+     * Delete a queue from the broker.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.     *
+     * This includes its entire contents of unread or unacknowledged messages.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return bool true on success or false on failure.
      */
     public function delete ()
     {
+        return true;
     }
 
     /**
@@ -135,41 +138,44 @@ class AMQPQueue
      * automatically be marked as acknowledged by the broker as soon as the
      * frames are sent to the client.
      *
-     * @param  int $flags              A bitmask of supported flags for the
-     *                                 method call. Currently, the only the
-     *                                 supported flag is AMQP_AUTOACK. If this
-     *                                 value is not provided, it will use the
-     *                                 value of ini-setting amqp.auto_ack
+     * @param integer $flags A bitmask of supported flags for the
+     *                       method call. Currently, the only the
+     *                       supported flag is AMQP_AUTOACK. If this
+     *                       value is not provided, it will use the
+     *                       value of ini-setting amqp.auto_ack.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return AMQPExchange|bool
+     * @return AMQPEnvelope|boolean
      */
     public function get ($flags = AMQP_NOPARAM)
     {
+        return new AMQPEnvelope();
     }
 
     /**
      * Get the argument associated with the given key.
      *
-     * @param  string $key     The key to look up.
+     * @param string $key The key to look up.
      *
-     * @return string|int|bool The string or integer value associated with the
-     *                         given key, or FALSE if the key is not set.
+     * @return string|integer|boolean The string or integer value associated
+     *                                with the given key, or false if the key
+     *                                is not set.
      */
     public function getArgument($key)
     {
+        return '';
     }
 
     /**
-     * Get all arguments as an array of key/value pairs that are currently set
-     * on the given queue.
+     * Get all set arguments as an array of key/value pairs.
      *
-     * @returns array An array containing all of the set key/value pairs.
+     * @return array An array containing all of the set key/value pairs.
      */
     public function getArguments ()
     {
+        return array();
     }
 
     /**
@@ -180,15 +186,17 @@ class AMQPQueue
      */
     public function getFlags ()
     {
+        return 0;
     }
 
     /**
-     * Get the configured name
+     * Get the configured name.
      *
      * @return string The configured name as a string.
      */
     public function getName ()
     {
+        return '';
     }
 
     /**
@@ -204,90 +212,101 @@ class AMQPQueue
      * behavior of calling this method while connected to any other broker is
      * undefined.
      *
-     * @param string $delivery_tag
-     * @param int $flags AMQP_REQUEUE to requeue the message
+     * @param string  $delivery_tag Delivery tag of last message to reject.
+     * @param integer $flags        AMQP_REQUEUE to requeue the message(s).
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool
+     * @return boolean
      */
     public function nack ($delivery_tag, $flags = AMQP_NOPARAM)
     {
+        return true;
     }
 
-
     /**
-     * Purge the contents of a queue
+     * Purge the contents of a queue.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * return @bool
+     * @return boolean
      */
     public function purge ()
     {
+        return true;
     }
 
     /**
-     * Set a queue argument
+     * Set a queue argument.
      *
-     * @param string $key The key to set.
+     * @param string $key   The key to set.
      * @param mixed  $value The value to set.
-     * @return bool
+     *
+     * @return boolean
      */
     public function setArgument ($key, $value)
     {
+        return true;
     }
 
     /**
-     * Set all arguments on the given queue. All other argument settings will 
-     * be wiped.
+     * Set all arguments on the given queue.
+     *
+     * All other argument settings will be wiped.
      *
      * @param array $arguments An array of key/value pairs of arguments.
-     * @return bool
+     *
+     * @return boolean
      */
-    public function setArguments ($arguments)
+    public function setArguments (array $arguments)
     {
+        return true;
     }
 
     /**
      * Set the flags on the queue.
      *
-     * @param int $flags A bitmask of flags:
-     *                   AMQP_DURABLE, AMQP_PASSIVE,
-     *                   AMQP_EXCLUSIVE, AMQP_AUTODELETE.
-     * @return bool
+     * @param integer $flags A bitmask of flags:
+     *                       AMQP_DURABLE, AMQP_PASSIVE,
+     *                       AMQP_EXCLUSIVE, AMQP_AUTODELETE.
+     *
+     * @return boolean
      */
     public function setFlags ($flags)
     {
+        return true;
     }
 
     /**
-     * Set the queue name
+     * Set the queue name.
      *
      * @param string $queue_name The name of the queue.
-     * @return bool
+     *
+     * @return boolean
      */
     public function setName ($queue_name)
     {
+        return true;
     }
 
     /**
      * Remove a routing key binding on an exchange from the given queue.
      *
-     * @param string $exchange_name    The name of the exchange on which the
-     *                                 queue is bound.
-     * @param string $routing_key      The binding routing key used by the
-     *                                 queue.
+     * @param string $exchange_name The name of the exchange on which the
+     *                              queue is bound.
+     * @param string $routing_key   The binding routing key used by the
+     *                              queue.
      *
-     * @throws AMQPChannelException    if the channel is not open.
-     * @throws AMQPConnectionException if the connection to the broker was lost.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool
+     * @return boolean
      */
     public function unbind ($exchange_name, $routing_key)
     {
+        return true;
     }
 }
 
