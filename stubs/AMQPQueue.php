@@ -21,7 +21,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function ack($delivery_tag, $flags = AMQP_NOPARAM)
+    public function ack(/** @noinspection PhpUnusedParameterInspection */ $delivery_tag, $flags = AMQP_NOPARAM)
     {
         return true;
     }
@@ -37,7 +37,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function bind ($exchange_name, $routing_key)
+    public function bind (/** @noinspection PhpUnusedParameterInspection */ $exchange_name, $routing_key)
     {
         return true;
     }
@@ -54,7 +54,7 @@ class AMQPQueue
      *
      * @return bool;
      */
-    public function cancel ($consumer_tag = '')
+    public function cancel (/** @noinspection PhpUnusedParameterInspection */ $consumer_tag = '')
     {
         return true;
     }
@@ -149,7 +149,7 @@ class AMQPQueue
      *
      * @return AMQPEnvelope|boolean
      */
-    public function get ($flags = AMQP_NOPARAM)
+    public function get (/** @noinspection PhpUnusedParameterInspection */$flags = AMQP_NOPARAM)
     {
         return new AMQPEnvelope();
     }
@@ -163,7 +163,7 @@ class AMQPQueue
      *                                with the given key, or false if the key
      *                                is not set.
      */
-    public function getArgument($key)
+    public function getArgument(/** @noinspection PhpUnusedParameterInspection */$key)
     {
         return '';
     }
@@ -220,7 +220,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function nack ($delivery_tag, $flags = AMQP_NOPARAM)
+    public function nack (/** @noinspection PhpUnusedParameterInspection */$delivery_tag, $flags = AMQP_NOPARAM)
     {
         return true;
     }
@@ -246,7 +246,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setArgument ($key, $value)
+    public function setArgument (/** @noinspection PhpUnusedParameterInspection */$key, $value)
     {
         return true;
     }
@@ -260,7 +260,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setArguments (array $arguments)
+    public function setArguments (/** @noinspection PhpUnusedParameterInspection */array $arguments)
     {
         return true;
     }
@@ -274,7 +274,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setFlags ($flags)
+    public function setFlags (/** @noinspection PhpUnusedParameterInspection */$flags)
     {
         return true;
     }
@@ -286,7 +286,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setName ($queue_name)
+    public function setName (/** @noinspection PhpUnusedParameterInspection */$queue_name)
     {
         return true;
     }
@@ -304,7 +304,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function unbind ($exchange_name, $routing_key)
+    public function unbind (/** @noinspection PhpUnusedParameterInspection */$exchange_name, $routing_key)
     {
         return true;
     }

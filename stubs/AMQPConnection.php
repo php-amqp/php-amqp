@@ -123,7 +123,7 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setHost($host)
+    public function setHost(/** @noinspection PhpUnusedParameterInspection */$host)
     {
         return true;
     }
@@ -138,7 +138,7 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setLogin($login)
+    public function setLogin(/** @noinspection PhpUnusedParameterInspection */$login)
     {
         return true;
     }
@@ -153,7 +153,7 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPassword($password)
+    public function setPassword(/** @noinspection PhpUnusedParameterInspection */$password)
     {
         return true;
     }
@@ -168,7 +168,7 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPort($port)
+    public function setPort(/** @noinspection PhpUnusedParameterInspection */$port)
     {
         return true;
     }
@@ -183,7 +183,7 @@ class AMQPConnection
      *
      * @return boolean true on success or false on failure.
      */
-    public function setVhost($vhost)
+    public function setVhost(/** @noinspection PhpUnusedParameterInspection */$vhost)
     {
         return true;
     }
