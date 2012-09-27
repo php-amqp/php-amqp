@@ -64,7 +64,7 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function qos ($size, $count)
+    public function qos (/** @noinspection PhpUnusedParameterInspection */$size, $count)
     {
         return true;
     }
@@ -100,7 +100,7 @@ class AMQPChannel
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPrefetchCount ($count)
+    public function setPrefetchCount (/** @noinspection PhpUnusedParameterInspection */$count)
     {
         return true;
     }
@@ -121,7 +121,7 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setPrefetchSize ($size)
+    public function setPrefetchSize (/** @noinspection PhpUnusedParameterInspection */$size)
     {
         return true;
     }

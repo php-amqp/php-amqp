@@ -4,7 +4,6 @@
  */
 class AMQPExchange
 {
-
     /**
      * Bind to another exchange.
      *
@@ -20,11 +19,13 @@ class AMQPExchange
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
      * @return boolean true on success or false on failure.
      */
-    public function bind($destination_exchange_name, $source_exchange_name, $routing_key)
-    {
+    public function bind(
+        /** @noinspection PhpUnusedParameterInspection */$destination_exchange_name,
+        $source_exchange_name,
+        $routing_key
+    ) {
         return true;
     }
 
@@ -73,7 +74,7 @@ class AMQPExchange
      *
      * @return boolean true on success or false on failure.
      */
-    public function delete ($flags = AMQP_NOPARAM)
+    public function delete (/** @noinspection PhpUnusedParameterInspection */$flags = AMQP_NOPARAM)
     {
         return true;
     }
@@ -87,7 +88,7 @@ class AMQPExchange
      *                                with the given key, or FALSE if the key
      *                                is not set.
      */
-    public function getArgument ($key)
+    public function getArgument (/** @noinspection PhpUnusedParameterInspection */$key)
     {
         return '';
     }
@@ -153,8 +154,12 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function publish ($message, $routing_key, $flags = AMQP_NOPARAM, array $attributes = array())
-    {
+    public function publish (
+        /** @noinspection PhpUnusedParameterInspection */$message,
+        $routing_key,
+        $flags = AMQP_NOPARAM,
+        array $attributes = array()
+    ) {
         return true;
     }
 
@@ -166,7 +171,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setArgument($key, $value)
+    public function setArgument(/** @noinspection PhpUnusedParameterInspection */$key, $value)
     {
         return true;
     }
@@ -178,7 +183,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setArguments(array $arguments)
+    public function setArguments(/** @noinspection PhpUnusedParameterInspection */array $arguments)
     {
         return true;
     }
@@ -192,7 +197,7 @@ class AMQPExchange
      *
      * @return boolean True on success or false on failure.
      */
-    public function setFlags($flags)
+    public function setFlags(/** @noinspection PhpUnusedParameterInspection */$flags)
     {
         return true;
     }
@@ -204,7 +209,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setName($exchange_name)
+    public function setName(/** @noinspection PhpUnusedParameterInspection */$exchange_name)
     {
         return true;
     }
@@ -219,7 +224,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setType($exchange_type)
+    public function setType(/** @noinspection PhpUnusedParameterInspection */$exchange_type)
     {
         return true;
     }

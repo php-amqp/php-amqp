@@ -92,7 +92,7 @@ class AMQPEnvelope
      * @return string|boolean The contents of the specified header or FALSE
      *                        if not set.
      */
-    public function getHeader($header_key)
+    public function getHeader(/** @noinspection PhpUnusedParameterInspection */$header_key)
     {
         return '';
     }
