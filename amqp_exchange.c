@@ -755,7 +755,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 				props.headers.entries[props.headers.num_entries].value.kind = AMQP_FIELD_KIND_F32;
 				props.headers.entries[props.headers.num_entries].value.value.f32 = (double)Z_DVAL_P(*zdata);
 				props.headers.num_entries++;
-			} else if (Z_TYPE_P(*zdata) == IS_ARRAY) {
+			} else if (Z_TYPE_PP(zdata) == IS_ARRAY) {
 				zval **arr_data;
 				amqp_array_t array;
 				HashTable *arr_hash;
@@ -763,7 +763,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 
 				arr_hash = HASH_OF(*zdata);
 
-				array.entries = emalloc(sizeof(struct amqp_field_value_t_) * zend_hash_num_elements(Z_ARRVAL_P(*zdata)));
+				array.entries = emalloc(sizeof(struct amqp_field_value_t_) * zend_hash_num_elements(Z_ARRVAL_PP(zdata)));
 				array.num_entries = 0;
 				for(
 					zend_hash_internal_pointer_reset_ex(arr_hash, &arr_pos);
