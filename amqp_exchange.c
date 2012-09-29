@@ -775,6 +775,8 @@ PHP_METHOD(amqp_exchange_class, publish)
 						array.entries[array.num_entries].value.bytes.bytes = Z_STRVAL_PP(arr_data);
 						array.entries[array.num_entries].value.bytes.len = Z_STRLEN_PP(arr_data);
 						array.num_entries ++;
+					} else {
+						php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string array member type %d for field '%s'", Z_TYPE_PP(arr_data), string_key);
 					}
 				}
 
