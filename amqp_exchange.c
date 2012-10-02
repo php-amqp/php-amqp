@@ -758,17 +758,13 @@ PHP_METHOD(amqp_exchange_class, publish)
 			} else if (Z_TYPE_PP(zdata) == IS_ARRAY) {
 				zval **arr_data;
 				amqp_array_t array;
-				HashTable *arr_hash;
 				HashPosition arr_pos;
-
-				arr_hash = HASH_OF(*zdata);
-
 				array.entries = emalloc(sizeof(struct amqp_field_value_t_) * zend_hash_num_elements(Z_ARRVAL_PP(zdata)));
 				array.num_entries = 0;
 				for(
-					zend_hash_internal_pointer_reset_ex(arr_hash, &arr_pos);
-					zend_hash_get_current_data_ex(arr_hash, (void**) &arr_data, &arr_pos) == SUCCESS;
-					zend_hash_move_forward_ex(arr_hash, &arr_pos)
+					zend_hash_internal_pointer_reset_ex(Z_ARRVAL_PP(zdata), &arr_pos);
+					zend_hash_get_current_data_ex(Z_ARRVAL_PP(zdata), (void**) &arr_data, &arr_pos) == SUCCESS;
+					zend_hash_move_forward_ex(Z_ARRVAL_PP(zdata), &arr_pos)
 				) {
 					if (Z_TYPE_PP(arr_data) == IS_STRING) {
 						array.entries[array.num_entries].kind = AMQP_FIELD_KIND_UTF8;
