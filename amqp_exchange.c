@@ -133,7 +133,7 @@ zend_object_value amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 }
 
 /* {{{ proto AMQPExchange::__construct(AMQPChannel channel);
-declare Exchange   */
+create Exchange   */
 PHP_METHOD(amqp_exchange_class, __construct)
 {
 	zval *id;
@@ -436,10 +436,10 @@ PHP_METHOD(amqp_exchange_class, setArgument)
 /* }}} */
 
 
-/* {{{ proto AMQPExchange::declare();
+/* {{{ proto AMQPExchange::declareExchange();
 declare Exchange
 */
-PHP_METHOD(amqp_exchange_class, declare)
+PHP_METHOD(amqp_exchange_class, declareExchange)
 {
 	zval *id;
 
@@ -754,6 +754,30 @@ PHP_METHOD(amqp_exchange_class, publish)
 				convert_to_double(*zdata);
 				props.headers.entries[props.headers.num_entries].value.kind = AMQP_FIELD_KIND_F32;
 				props.headers.entries[props.headers.num_entries].value.value.f32 = (double)Z_DVAL_P(*zdata);
+				props.headers.num_entries++;
+			} else if (Z_TYPE_PP(zdata) == IS_ARRAY) {
+				zval **arr_data;
+				amqp_array_t array;
+				HashPosition arr_pos;
+				array.entries = emalloc(sizeof(struct amqp_field_value_t_) * zend_hash_num_elements(Z_ARRVAL_PP(zdata)));
+				array.num_entries = 0;
+				for(
+					zend_hash_internal_pointer_reset_ex(Z_ARRVAL_PP(zdata), &arr_pos);
+					zend_hash_get_current_data_ex(Z_ARRVAL_PP(zdata), (void**) &arr_data, &arr_pos) == SUCCESS;
+					zend_hash_move_forward_ex(Z_ARRVAL_PP(zdata), &arr_pos)
+				) {
+					if (Z_TYPE_PP(arr_data) == IS_STRING) {
+						array.entries[array.num_entries].kind = AMQP_FIELD_KIND_UTF8;
+						array.entries[array.num_entries].value.bytes.bytes = Z_STRVAL_PP(arr_data);
+						array.entries[array.num_entries].value.bytes.len = Z_STRLEN_PP(arr_data);
+						array.num_entries ++;
+					} else {
+						php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string array member type %d for field '%s'", Z_TYPE_PP(arr_data), string_key);
+					}
+				}
+
+				props.headers.entries[props.headers.num_entries].value.kind = AMQP_FIELD_KIND_ARRAY;
+				props.headers.entries[props.headers.num_entries].value.value.array = array;
 				props.headers.num_entries++;
 			}
 
