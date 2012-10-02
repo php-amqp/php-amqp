@@ -341,7 +341,7 @@ int read_message_from_channel(amqp_connection_state_t connection, zval *envelope
 					case AMQP_FIELD_KIND_ARRAY:
 						array_init(value);
 						int i;
-						for (i=0; i < entry->value.value.array.num_entries; ++i) {
+						for (i = 0; i < entry->value.value.array.num_entries; ++i) {
 							if (entry->value.value.array.entries[i].kind == AMQP_FIELD_KIND_UTF8) {
 								add_next_index_stringl(
 									value,
