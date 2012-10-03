@@ -796,9 +796,19 @@ PHP_METHOD(amqp_exchange_class, publish)
 	/* Start ignoring SIGPIPE */
 	old_handler = signal(SIGPIPE, SIG_IGN);
 
+	int channel_id = get_next_available_channel(connection, channel);
+
+	/* Check that we got a valid channel */
+	if (channel->channel_id < 0) {
+		zend_throw_exception(amqp_exchange_exception_class_entry, "Could not create channel for publishing. Connection has no open channel slots remaining.", 0 TSRMLS_CC);
+		RETURN_FALSE;
+	}
+
+	amqp_channel_open(connection->connection_resource->connection_state, channel_id);
+
 	int r = amqp_basic_publish(
 		connection->connection_resource->connection_state,
-		channel->channel_id,
+		channel_id,
 		(amqp_bytes_t) {exchange->name_len, exchange->name},
 		(amqp_bytes_t) {key_len, key_name },
 		(AMQP_MANDATORY & flags) ? 1 : 0, /* mandatory */
@@ -810,9 +820,18 @@ PHP_METHOD(amqp_exchange_class, publish)
 	if (props.headers.entries) {
 		efree(props.headers.entries);
 	}
-	
+
 	/* End ignoring of SIGPIPEs */
 	signal(SIGPIPE, old_handler);
+
+	res = amqp_channel_close(connection->connection_resource->connection_state, channel_id, AMQP_REPLY_SUCCESS);
+
+	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
+		char err[256], **pstr = (char **) &err;
+		amqp_error(res, pstr);
+		zend_throw_exception(amqp_connection_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		RETURN_FALSE;
+	}
 
 	/* handle any errors that occured outside of signals */
 	if (r < 0) {
@@ -820,7 +839,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		char ** pstr = (char **) &str;
         spprintf(pstr, 0, "Socket error: %s", amqp_error_string(-r));
         zend_throw_exception(amqp_exchange_exception_class_entry, *pstr, 0 TSRMLS_CC);
-		return;
+		RETURN_FALSE;
 	}
 	
 	RETURN_TRUE;
