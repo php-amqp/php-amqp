@@ -32,12 +32,21 @@
 #include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
-#include <stdint.h>
-#include <signal.h>
+#ifdef PHP_WIN32
+# include "win32/php_stdint.h"
+# include "win32/signal.h"
+#else
+# include <signal.h>
+# include <stdint.h>
+#endif
 #include <amqp.h>
 #include <amqp_framing.h>
 
-#include <unistd.h>
+#ifdef PHP_WIN32
+# include "win32/unistd.h"
+#else
+# include <unistd.h>
+#endif
 
 #include "php_amqp.h"
 
@@ -46,13 +55,18 @@ zend_object_handlers amqp_connection_object_handlers;
 HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
 	zval *value;
 	HashTable *debug_info;
+	amqp_connection_object *connection;
 	
 	/* Let zend clean up for us: */
 	*is_temp = 0;
 	
 	/* Get the envelope object from which to read */
-	amqp_connection_object *connection = (amqp_connection_object *)zend_object_store_get_object(object TSRMLS_CC);
-		
+#ifdef PHP_WIN32
+	connection = zend_object_store_get_object(object TSRMLS_CC);
+#else
+	connection = (amqp_connection_object *)zend_object_store_get_object(object TSRMLS_CC);
+#endif
+
 	/* Keep the first number matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
 	ZEND_INIT_SYMTABLE_EX(debug_info, 5 + 1, 0);
@@ -92,7 +106,10 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 {
 	char str[256];
 	char ** pstr = (char **) &str;
+#ifndef PHP_WIN32
 	void * old_handler;
+#endif
+	amqp_rpc_reply_t x;
 
 
 	/* Clean up old memory allocations which are now invalid (new connection) */
@@ -135,13 +152,17 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 
 	/* Verify that we actually got a connectio back */
 	if (connection->connection_resource->fd < 1) {
+#ifndef PHP_WIN32
 		/* Start ignoring SIGPIPE */
 		old_handler = signal(SIGPIPE, SIG_IGN);
+#endif
 
 		amqp_destroy_connection(connection->connection_resource->connection_state);
 
+#ifndef PHP_WIN32
 		/* End ignoring of SIGPIPEs */
 		signal(SIGPIPE, old_handler);
+#endif
 
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not connect to host.", 0 TSRMLS_CC);
 		return 0;
@@ -149,7 +170,7 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 
 	amqp_set_sockfd(connection->connection_resource->connection_state, connection->connection_resource->fd);
 
-	amqp_rpc_reply_t x = amqp_login(
+	x = amqp_login(
 		connection->connection_resource->connection_state,
 		connection->vhost,
 		CHANNEL_MAX,
@@ -178,7 +199,9 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
  */
 void php_amqp_disconnect(amqp_connection_object *connection)
 {
+#ifndef PHP_WIN32
 	void * old_handler;
+#endif
 	int slot;
 	
 	/* Pull the connection resource out for easy access */
@@ -189,6 +212,7 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 		return;
 	}
 	
+#ifndef PHP_WIN32
 	/*
 	If we are trying to close the connection and the connection already closed, it will throw
 	SIGPIPE, which is fine, so ignore all SIGPIPES
@@ -196,6 +220,7 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 
 	/* Start ignoring SIGPIPE */
 	old_handler = signal(SIGPIPE, SIG_IGN);
+#endif
 	
 	if (connection->is_connected == '\1') {
 		/* Close all open channels */
@@ -224,8 +249,10 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 	connection->is_connected = '\0';
 
 
+#ifndef PHP_WIN32
 	/* End ignoring of SIGPIPEs */
 	signal(SIGPIPE, old_handler);
+#endif
 	
 	return;
 }
@@ -525,6 +552,7 @@ PHP_METHOD(amqp_connection_class, pconnect)
 	char *key;
 	int key_len;
 	zend_rsrc_list_entry *le, new_le;
+	int result;
 
 	/* Try to pull amqp object out of method params */
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_connection_class_entry) == FAILURE) {
@@ -552,7 +580,7 @@ PHP_METHOD(amqp_connection_class, pconnect)
 	}
 
 	/* No resource found: Instantiate the underlying connection */
-	int result = php_amqp_connect(connection, 1 TSRMLS_CC);
+	result = php_amqp_connect(connection, 1 TSRMLS_CC);
 	
 	/* Check the connection result. We dont want to do anything else if we werent successful */
 	if (!result) {
