@@ -268,8 +268,10 @@ extern zend_class_entry *amqp_exception_class_entry,
 	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
 #else
 	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) \
-		zval *tmp; \
-		zend_hash_copy((obj).properties, &(ce)->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *));
+		do { \
+			zval *tmp; \
+			zend_hash_copy((obj).properties, &(ce)->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *)); \
+		} while (0);
 #endif
 
 
