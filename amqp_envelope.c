@@ -32,12 +32,21 @@
 #include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
-#include <stdint.h>
-#include <signal.h>
+#ifdef PHP_WIN32
+# include "win32/php_stdint.h"
+# include "win32/signal.h"
+#else
+# include <signal.h>
+# include <stdint.h>
+#endif
 #include <amqp.h>
 #include <amqp_framing.h>
 
-#include <unistd.h>
+#ifdef PHP_WIN32
+# include "win32/unistd.h"
+#else
+# include <unistd.h>
+#endif
 
 #include "php_amqp.h"
 
