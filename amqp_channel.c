@@ -34,10 +34,11 @@
 
 #ifdef PHP_WIN32
 # include "win32/php_stdint.h"
+# include "win32/signal.h"
 #else
 # include <stdint.h>
+# include <signal.h>
 #endif
-#include <signal.h>
 #include <amqp.h>
 #include <amqp_framing.h>
 
