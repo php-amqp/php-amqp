@@ -563,8 +563,12 @@ PHP_METHOD(amqp_connection_class, pconnect)
 	
 	if (zend_hash_find(&EG(persistent_list), key, key_len + 1, (void **)&le) == SUCCESS) {
 		/* An entry for this connection resource already exists */
+#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 4
+		zend_list_insert(le, le_amqp_connection_resource TSRMLS_CC);
+#else
 		zend_list_insert(le, le_amqp_connection_resource);
-		
+#endif
+
 		/* Stash the connection resource in the connection */
 		connection->connection_resource = le->ptr;
 		
