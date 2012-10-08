@@ -728,11 +728,7 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 		*arguments
 	);
 	
-#ifdef PHP_WIN32
-	res = amqp_get_rpc_reply(connection->connection_resource->connection_state); 
-#else
-	res = (amqp_rpc_reply_t)amqp_get_rpc_reply(connection->connection_resource->connection_state); 
-#endif
+	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state); 
 	
 	AMQP_EFREE_ARGUMENTS(arguments);
 	
@@ -811,23 +807,13 @@ PHP_METHOD(amqp_queue_class, bind)
 	s.arguments.num_entries = 0;
 	s.arguments.entries	 	= NULL;
 
-#ifdef PHP_WIN32
-	res = amqp_simple_rpc(
+	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
 		AMQP_QUEUE_BIND_METHOD,
 		&bind_ok,
 		&s
 	);
-#else
-	res = (amqp_rpc_reply_t) amqp_simple_rpc(
-		connection->connection_resource->connection_state,
-		channel->channel_id,
-		AMQP_QUEUE_BIND_METHOD,
-		&bind_ok,
-		&s
-	);
-#endif
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -1235,11 +1221,7 @@ PHP_METHOD(amqp_queue_class, purge)
 		&s
 	);
 
-#ifdef PHP_WIN32
-	res = result;
-#else
-	res = (amqp_rpc_reply_t) result;
-#endif
+	res = AMQP_RPC_REPLY_T_CAST result;
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -1308,11 +1290,7 @@ PHP_METHOD(amqp_queue_class, cancel)
 		&s
 	);
 
-#ifdef PHP_WIN32
-	res = result;
-#else
-	res = (amqp_rpc_reply_t)result;
-#endif
+	res = AMQP_RPC_REPLY_T_CAST result;
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -1374,21 +1352,12 @@ PHP_METHOD(amqp_queue_class, unbind)
 	s.arguments.num_entries = 0;
 	s.arguments.entries		= NULL;
 
-#ifdef PHP_WIN32
-	res = amqp_simple_rpc(
+	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
 		AMQP_QUEUE_UNBIND_METHOD,
 		&method_ok,
 		&s);
-#else
-	res = (amqp_rpc_reply_t) amqp_simple_rpc(
-		connection->connection_resource->connection_state,
-		channel->channel_id,
-		AMQP_QUEUE_UNBIND_METHOD,
-		&method_ok,
-		&s);
-#endif
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -1454,11 +1423,7 @@ PHP_METHOD(amqp_queue_class, delete)
 		&s
 	);
 
-#ifdef PHP_WIN32
-	res = result;
-#else
-	res = (amqp_rpc_reply_t) result;
-#endif
+	res = AMQP_RPC_REPLY_T_CAST result;
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];

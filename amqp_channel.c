@@ -175,11 +175,8 @@ PHP_METHOD(amqp_channel_class, __construct)
 	/* Open up the channel for use */
 	amqp_channel_open(connection->connection_resource->connection_state, channel->channel_id);
 
-#ifdef PHP_WIN32
-	res = amqp_get_rpc_reply(connection->connection_resource->connection_state);
-#else
-	res = (amqp_rpc_reply_t)amqp_get_rpc_reply(connection->connection_resource->connection_state);
-#endif
+	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state);
+
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char ** pstr = (char **) &str;
@@ -372,23 +369,13 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not start the transaction.");
 	
-#ifdef PHP_WIN32
-	res = amqp_simple_rpc(
+	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
 		AMQP_TX_SELECT_METHOD,
 		&select_ok,
 		&s
 	);
-#else
-	res = (amqp_rpc_reply_t) amqp_simple_rpc(
-		connection->connection_resource->connection_state,
-		channel->channel_id,
-		AMQP_TX_SELECT_METHOD,
-		&select_ok,
-		&s
-	);
-#endif
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -428,23 +415,13 @@ PHP_METHOD(amqp_channel_class, commitTransaction)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not start the transaction.");
 	
-#ifdef PHP_WIN32
-	res = amqp_simple_rpc(
+	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
 		AMQP_TX_COMMIT_METHOD,
 		&commit_ok,
 		&s
 	);
-#else
-	res = (amqp_rpc_reply_t) amqp_simple_rpc(
-		connection->connection_resource->connection_state,
-		channel->channel_id,
-		AMQP_TX_COMMIT_METHOD,
-		&commit_ok,
-		&s
-	);
-#endif
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -483,23 +460,13 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not start the transaction.");
 	
-#ifdef PHP_WIN32
-	res = amqp_simple_rpc(
+	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
 		AMQP_TX_ROLLBACK_METHOD,
 		&rollback_ok,
 		&s
 	);
-#else
-	res = (amqp_rpc_reply_t) amqp_simple_rpc(
-		connection->connection_resource->connection_state,
-		channel->channel_id,
-		AMQP_TX_ROLLBACK_METHOD,
-		&rollback_ok,
-		&s
-	);
-#endif
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];

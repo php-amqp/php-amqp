@@ -363,6 +363,14 @@ typedef struct _amqp_envelope_object {
 	zval *headers;
 } amqp_envelope_object;
 
+
+#ifdef PHP_WIN32
+# define AMQP_RPC_REPLY_T_CAST 
+#else
+# define AMQP_RPC_REPLY_T_CAST (amqp_rpc_reply_t)
+#endif
+
+
 #ifdef ZTS
 #define AMQP_G(v) TSRMG(amqp_globals_id, zend_amqp_globals *, v)
 #else

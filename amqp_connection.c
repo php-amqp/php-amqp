@@ -61,11 +61,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	*is_temp = 0;
 	
 	/* Get the envelope object from which to read */
-#ifdef PHP_WIN32
-	connection = zend_object_store_get_object(object TSRMLS_CC);
-#else
 	connection = (amqp_connection_object *)zend_object_store_get_object(object TSRMLS_CC);
-#endif
 
 	/* Keep the first number matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);

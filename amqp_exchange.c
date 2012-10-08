@@ -494,11 +494,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 		*arguments
 	);
 
-#ifdef PHP_WIN32
-	res = amqp_get_rpc_reply(connection->connection_resource->connection_state); 
-#else
-	res = (amqp_rpc_reply_t)amqp_get_rpc_reply(connection->connection_resource->connection_state); 
-#endif
+	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state); 
 
 	AMQP_EFREE_ARGUMENTS(arguments);
 	
@@ -606,7 +602,6 @@ PHP_METHOD(amqp_exchange_class, publish)
 	void * old_handler;
 #endif
 
-	amqp_rpc_reply_t res;
 	amqp_basic_properties_t props;
 
 	int r;
