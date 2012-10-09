@@ -822,8 +822,10 @@ PHP_METHOD(amqp_queue_class, bind)
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
 }
@@ -1229,8 +1231,10 @@ PHP_METHOD(amqp_queue_class, purge)
 		amqp_error(res, pstr);
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
 }
@@ -1298,8 +1302,10 @@ PHP_METHOD(amqp_queue_class, cancel)
 		amqp_error(res, pstr);
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
 }
@@ -1366,8 +1372,10 @@ PHP_METHOD(amqp_queue_class, unbind)
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
 }
@@ -1431,8 +1439,10 @@ PHP_METHOD(amqp_queue_class, delete)
 		amqp_error(res, pstr);
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
 }

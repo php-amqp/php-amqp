@@ -570,8 +570,10 @@ PHP_METHOD(amqp_exchange_class, delete)
 		char ** pstr = (char **) &str;
 		amqp_error(res, pstr);
 		zend_throw_exception(amqp_exchange_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
 }
@@ -915,8 +917,10 @@ PHP_METHOD(amqp_exchange_class, bind)
 		char ** pstr = (char **) &str;
 		amqp_error(res, pstr);
 		zend_throw_exception(amqp_exchange_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
 }
