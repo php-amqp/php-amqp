@@ -182,8 +182,10 @@ PHP_METHOD(amqp_channel_class, __construct)
 		char ** pstr = (char **) &str;
 		amqp_error(res, pstr);
 		zend_throw_exception(amqp_channel_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	channel->is_connected = '\1';
 
@@ -384,8 +386,10 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_channel_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		
 	RETURN_TRUE;
 }
@@ -430,8 +434,10 @@ PHP_METHOD(amqp_channel_class, commitTransaction)
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_channel_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		
 	RETURN_TRUE;
 }
@@ -475,9 +481,11 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_channel_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
-		
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
+
 	RETURN_TRUE;
 }
 /* }}} */
