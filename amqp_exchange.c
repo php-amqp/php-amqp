@@ -32,12 +32,21 @@
 #include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
-#include <stdint.h>
-#include <signal.h>
+#ifdef PHP_WIN32
+# include "win32/php_stdint.h"
+# include "win32/signal.h"
+#else
+# include <signal.h>
+# include <stdint.h>
+#endif
 #include <amqp.h>
 #include <amqp_framing.h>
 
-#include <unistd.h>
+#ifdef PHP_WIN32
+# include "win32/unistd.h"
+#else
+# include <unistd.h>
+#endif
 
 #include "php_amqp.h"
 
@@ -446,6 +455,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
+	amqp_table_t *arguments;
 	
 	amqp_rpc_reply_t res;
 
@@ -473,7 +483,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 		return;
 	}
 
-	amqp_table_t *arguments = convert_zval_to_arguments(exchange->arguments);
+	arguments = convert_zval_to_arguments(exchange->arguments);
 	amqp_exchange_declare(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
@@ -484,7 +494,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 		*arguments
 	);
 
-	res = (amqp_rpc_reply_t)amqp_get_rpc_reply(connection->connection_resource->connection_state); 
+	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state); 
 
 	AMQP_EFREE_ARGUMENTS(arguments);
 	
@@ -519,6 +529,7 @@ PHP_METHOD(amqp_exchange_class, delete)
 
 	amqp_rpc_reply_t res;
 	amqp_exchange_delete_t s;
+	amqp_method_number_t method_ok = AMQP_EXCHANGE_DELETE_OK_METHOD;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|sl", &id, amqp_exchange_class_entry, &name, &name_len, &flags) == FAILURE) {
 		return;
@@ -547,7 +558,6 @@ PHP_METHOD(amqp_exchange_class, delete)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not declare exchange.");
 	
-	amqp_method_number_t method_ok = AMQP_EXCHANGE_DELETE_OK_METHOD;
 	res = amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
@@ -587,10 +597,16 @@ PHP_METHOD(amqp_exchange_class, publish)
 
 	long flags = AMQP_NOPARAM;
 
+#ifndef PHP_WIN32
 	/* Storage for previous signal handler during SIGPIPE override */
 	void * old_handler;
+#endif
 
-	amqp_rpc_reply_t res;
+	amqp_basic_properties_t props;
+
+	int r;
+	amqp_bytes_t abt0, abt1, abt2;
+	
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sla", &id, amqp_exchange_class_entry, &msg, &msg_len, &key_name, &key_len, &flags, &iniArr) == FAILURE) {
 		return;
@@ -603,7 +619,6 @@ PHP_METHOD(amqp_exchange_class, publish)
 		return;
 	}
 
-	amqp_basic_properties_t props;
 	props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG;
 
 	zdata = NULL;
@@ -793,26 +808,37 @@ PHP_METHOD(amqp_exchange_class, publish)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not publish to exchange exchange.");
 
+#ifndef PHP_WIN32
 	/* Start ignoring SIGPIPE */
 	old_handler = signal(SIGPIPE, SIG_IGN);
+#endif
 
-	int r = amqp_basic_publish(
+	abt0.len = exchange->name_len;
+	abt0.bytes = exchange->name;
+	abt1.len = key_len;
+	abt1.bytes = key_name;
+	abt2.len = msg_len;
+	abt2.bytes = msg;
+
+	r = amqp_basic_publish(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
-		(amqp_bytes_t) {exchange->name_len, exchange->name},
-		(amqp_bytes_t) {key_len, key_name },
+		abt0,
+		abt1,
 		(AMQP_MANDATORY & flags) ? 1 : 0, /* mandatory */
 		(AMQP_IMMEDIATE & flags) ? 1 : 0, /* immediate */
 		&props,
-		(amqp_bytes_t) {msg_len, msg }
+		abt2
 	);
 
 	if (props.headers.entries) {
 		efree(props.headers.entries);
 	}
 	
+#ifndef PHP_WIN32
 	/* End ignoring of SIGPIPEs */
 	signal(SIGPIPE, old_handler);
+#endif
 
 	/* handle any errors that occured outside of signals */
 	if (r < 0) {
@@ -845,6 +871,8 @@ PHP_METHOD(amqp_exchange_class, bind)
 	int flags;
 
 	amqp_rpc_reply_t res;
+	amqp_exchange_bind_t s;
+	amqp_method_number_t method_ok = AMQP_EXCHANGE_BIND_OK_METHOD;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss|l", &id, amqp_exchange_class_entry, &src_name, &src_name_len, &keyname, &keyname_len, &flags) == FAILURE) {
 		return;
@@ -863,7 +891,6 @@ PHP_METHOD(amqp_exchange_class, bind)
 		return;
 	}
 
-	amqp_exchange_bind_t s;
 	s.ticket				= 0;
 	s.destination.len		= exchange->name_len;
 	s.destination.bytes		= exchange->name;
@@ -875,7 +902,6 @@ PHP_METHOD(amqp_exchange_class, bind)
 	s.arguments.num_entries = 0;
 	s.arguments.entries		= NULL;
 
-	amqp_method_number_t method_ok = AMQP_EXCHANGE_BIND_OK_METHOD;
 	res = amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,

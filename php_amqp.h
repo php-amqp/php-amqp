@@ -268,8 +268,10 @@ extern zend_class_entry *amqp_exception_class_entry,
 	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
 #else
 	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) \
-		zval *tmp; \
-		zend_hash_copy((obj).properties, &(ce)->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *));
+		do { \
+			zval *tmp; \
+			zend_hash_copy((obj).properties, &(ce)->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *)); \
+		} while (0);
 #endif
 
 
@@ -360,6 +362,14 @@ typedef struct _amqp_envelope_object {
 	char correlation_id[255];
 	zval *headers;
 } amqp_envelope_object;
+
+
+#ifdef PHP_WIN32
+# define AMQP_RPC_REPLY_T_CAST 
+#else
+# define AMQP_RPC_REPLY_T_CAST (amqp_rpc_reply_t)
+#endif
+
 
 #ifdef ZTS
 #define AMQP_G(v) TSRMG(amqp_globals_id, zend_amqp_globals *, v)

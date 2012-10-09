@@ -32,8 +32,13 @@
 #include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
-#include <stdint.h>
-#include <signal.h>
+#ifdef PHP_WIN32
+# include "win32/php_stdint.h"
+# include "win32/signal.h"
+#else
+# include <stdint.h>
+# include <signal.h>
+#endif
 #include <amqp.h>
 #include <amqp_framing.h>
 
@@ -44,7 +49,11 @@
 #include "amqp_exchange.h"
 #include "amqp_envelope.h"
 
-#include <unistd.h>
+#ifdef PHP_WIN32
+# include "win32/unistd.h"
+#else
+# include <unistd.h>
+#endif
 
 /* True global resources - no need for thread safety here */
 zend_class_entry *amqp_connection_class_entry;
@@ -593,11 +602,12 @@ amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
 	HashTable *argumentHash;
 	HashPosition pos;
 	zval **data;
+	amqp_table_t *arguments;
 	
 	argumentHash = Z_ARRVAL_P(zvalArguments);
 	
 	/* In setArguments, we are overwriting all the existing values */
-	amqp_table_t *arguments = (amqp_table_t *)emalloc(sizeof(amqp_table_t));
+	arguments = (amqp_table_t *)emalloc(sizeof(amqp_table_t));
 
 	/* Allocate all the memory necessary for storing the arguments */
 	arguments->entries = (amqp_table_entry_t *)ecalloc(zend_hash_num_elements(argumentHash), sizeof(amqp_table_entry_t));
@@ -606,16 +616,22 @@ amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
 	for (zend_hash_internal_pointer_reset_ex(argumentHash, &pos);
 		zend_hash_get_current_data_ex(argumentHash, (void**) &data, &pos) == SUCCESS;
 		zend_hash_move_forward_ex(argumentHash, &pos)) {
+
+		zval value;
+		char *key;
+		uint key_len;
+		ulong index;
+		char *strKey;
+		char *strValue;
+		amqp_table_entry_t *table;
+		amqp_field_value_t *field;
+
 	
 		/* Make a copy of the value: */
-		zval value;
 		value = **data;
 		zval_copy_ctor(&value);
 	
 		/* Now pull the key */
-		char *key;
-		uint key_len;
-		ulong index;
 	
 		if (zend_hash_get_current_key_ex(argumentHash, &key, &key_len, &index, 0, &pos) != HASH_KEY_IS_STRING) {
 			/* Skip things that are not strings */
@@ -623,9 +639,9 @@ amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
 		}
 	
 		/* Build the value */
-		amqp_table_entry_t *table = &arguments->entries[arguments->num_entries++];
-		amqp_field_value_t *field = &table->value;
-		char *strKey = estrndup(key, key_len);
+		table = &arguments->entries[arguments->num_entries++];
+		field = &table->value;
+		strKey = estrndup(key, key_len);
 		table->key = amqp_cstring_bytes(strKey);
 	
 		switch (Z_TYPE_P(&value)) {
@@ -643,7 +659,7 @@ amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
 				break;
 			case IS_STRING:
 				field->kind = AMQP_FIELD_KIND_UTF8;
-				char *strValue = estrndup(Z_STRVAL_P(&value), Z_STRLEN_P(&value));
+				strValue = estrndup(Z_STRVAL_P(&value), Z_STRLEN_P(&value));
 				field->value.bytes = amqp_cstring_bytes(strValue);
 				break;
 			default:
@@ -671,11 +687,11 @@ PHP_INI_END()
 */
 PHP_MINIT_FUNCTION(amqp)
 {
+	zend_class_entry ce;
+
 	/* Set up the connection resource */
 	le_amqp_connection_resource = zend_register_list_destructors_ex(NULL, NULL, PHP_AMQP_CONNECTION_RES_NAME, module_number);
 	
-	zend_class_entry ce;
-
 	INIT_CLASS_ENTRY(ce, "AMQPConnection", amqp_connection_class_functions);
 	ce.create_object = amqp_connection_ctor;
 	amqp_connection_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
@@ -760,6 +776,7 @@ PHP_MINFO_FUNCTION(amqp)
 	php_info_print_table_header(2, "Revision",					"$Revision: 327551 $");
 	php_info_print_table_header(2, "Compiled",					__DATE__ " @ "  __TIME__);
 	php_info_print_table_header(2, "AMQP protocol version", 	"0-9-1");
+	php_info_print_table_header(2, "librabbitmq version", amqp_version());
 	DISPLAY_INI_ENTRIES();
 
 }
