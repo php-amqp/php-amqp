@@ -370,6 +370,12 @@ typedef struct _amqp_envelope_object {
 # define AMQP_RPC_REPLY_T_CAST (amqp_rpc_reply_t)
 #endif
 
+#ifdef PHP_WIN32
+# define AMQP_CLOSE_SOCKET(fd) closesocket(fd);
+#else
+# define AMQP_CLOSE_SOCKET(fd) close(fd);
+#endif
+
 
 #ifdef ZTS
 #define AMQP_G(v) TSRMG(amqp_globals_id, zend_amqp_globals *, v)
