@@ -238,7 +238,7 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 		amqp_destroy_connection(resource->connection_state);
 		
 		if (resource->fd) {
-			close(resource->fd);
+			AMQP_CLOSE_SOCKET(resource->fd)
 		}
 	}
 
