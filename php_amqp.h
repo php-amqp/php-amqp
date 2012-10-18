@@ -106,7 +106,7 @@ static zend_always_inline zend_bool zval_set_isref_to_p(zval* pz, zend_bool isre
 
 
 #include "amqp.h"
-#include "amqp_zend_object_store_patch.h"
+#include "amqp_object_store.h"
 
 extern zend_module_entry amqp_module_entry;
 #define phpext_amqp_ptr &amqp_module_entry
@@ -231,7 +231,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 	efree(object); \
 
 #define AMQP_GET_CHANNEL(object) \
-	(amqp_channel_object *) amqp_zend_object_store_get_valid_object((object)->channel TSRMLS_CC);
+	(amqp_channel_object *) amqp_object_store_get_valid_object((object)->channel TSRMLS_CC);
 
 #define AMQP_ASSIGN_CHANNEL(channel, object) \
 	if (!(object)->channel) { \
@@ -240,7 +240,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 	channel = AMQP_GET_CHANNEL(object)
 
 #define AMQP_GET_CONNECTION(object) \
-	(amqp_connection_object *) amqp_zend_object_store_get_valid_object((object)->connection TSRMLS_CC);
+	(amqp_connection_object *) amqp_object_store_get_valid_object((object)->connection TSRMLS_CC);
 
 #define AMQP_ASSIGN_CONNECTION(connection, object) \
 	if (!(object)->connection) { \

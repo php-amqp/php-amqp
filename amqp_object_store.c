@@ -4,9 +4,9 @@
 
 #include "php.h"
 
-#include "amqp_zend_object_store_patch.h"
+#include "amqp_object_store.h"
 
-void *amqp_zend_object_store_get_valid_object(const zval *zobject TSRMLS_DC)
+void *amqp_object_store_get_valid_object(const zval *zobject TSRMLS_DC)
 {
 	zend_object_handle handle;
 	zend_object_store_bucket bucket;
