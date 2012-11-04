@@ -57,6 +57,8 @@ PHP_METHOD(amqp_connection_class, setPort);
 PHP_METHOD(amqp_connection_class, getVhost);
 PHP_METHOD(amqp_connection_class, setVhost);
 
+PHP_METHOD(amqp_connection_class, getTimeout);
+PHP_METHOD(amqp_connection_class, setTimeout);
 
 /*
 *Local variables:

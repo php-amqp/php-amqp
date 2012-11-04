@@ -176,6 +176,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
+#define DEFAULT_TIMEOUT						"0"
 #define DEFAULT_VHOST						"/"
 #define DEFAULT_LOGIN						"guest"
 #define DEFAULT_PASSWORD					"guest"
@@ -287,6 +288,8 @@ extern zend_class_entry *amqp_exception_class_entry,
 		} while (0);
 #endif
 
+#define AMQP_ERROR_CATEGORY_MASK (1 << 29)
+#define AQMP_GET_REAL_OS_ERRNO(err) (err) & ~AMQP_ERROR_CATEGORY_MASK
 
 extern int le_amqp_connection_resource;
 // ZEND_DECLARE_MODULE_GLOBALS(amqp)
@@ -320,6 +323,7 @@ typedef struct _amqp_connection_object {
 	char *vhost;
 	int vhost_len;
 	int port;
+	double timeout;
 	amqp_connection_resource *connection_resource;
 } amqp_connection_object;
 
@@ -387,6 +391,12 @@ typedef struct _amqp_envelope_object {
 # define AMQP_CLOSE_SOCKET(fd) closesocket(fd);
 #else
 # define AMQP_CLOSE_SOCKET(fd) close(fd);
+#endif
+
+#ifdef PHP_WIN32
+# define AMQP_OS_SOCKET_TIMEOUT_ERRNO WSAETIMEDOUT
+#else
+# define AMQP_OS_SOCKET_TIMEOUT_ERRNO EAGAIN
 #endif
 
 
