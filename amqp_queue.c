@@ -177,7 +177,7 @@ int read_message_from_channel(amqp_connection_state_t connection, zval *envelope
 		
 		/* Check that the basic read from frame did not fail */
 		if (result < 0) {
-			zend_throw_exception(amqp_connection_exception_class_entry, amqp_error_string(-result), AQMP_GET_REAL_OS_ERRNO(-result) TSRMLS_CC);
+			zend_throw_exception(amqp_connection_exception_class_entry, amqp_error_string(-result), -result TSRMLS_CC);
 			return AMQP_READ_ERROR;
 		}
 		
@@ -234,7 +234,7 @@ int read_message_from_channel(amqp_connection_state_t connection, zval *envelope
 		/* Read in the next frame */
 		result = amqp_simple_wait_frame(connection, &frame);
 		if (result < 0) {
-			zend_throw_exception(amqp_connection_exception_class_entry, amqp_error_string(-result), AQMP_GET_REAL_OS_ERRNO(-result) TSRMLS_CC);
+			zend_throw_exception(amqp_connection_exception_class_entry, amqp_error_string(-result), -result TSRMLS_CC);
 			return AMQP_READ_ERROR;
 		}
 		
@@ -397,7 +397,7 @@ int read_message_from_channel(amqp_connection_state_t connection, zval *envelope
 			/* Read in the next frame */
 			result = amqp_simple_wait_frame(connection, &frame);
 			if (result < 0) {
-				zend_throw_exception(amqp_connection_exception_class_entry, amqp_error_string(-result), AQMP_GET_REAL_OS_ERRNO(-result) TSRMLS_CC);
+				zend_throw_exception(amqp_connection_exception_class_entry, amqp_error_string(-result), -result TSRMLS_CC);
 				return AMQP_READ_ERROR;
 			}
 			

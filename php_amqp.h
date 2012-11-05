@@ -288,9 +288,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 		} while (0);
 #endif
 
-#define AMQP_ERROR_CATEGORY_MASK (1 << 29)
-#define AQMP_GET_REAL_OS_ERRNO(err) (err) & ~AMQP_ERROR_CATEGORY_MASK
-
 extern int le_amqp_connection_resource;
 // ZEND_DECLARE_MODULE_GLOBALS(amqp)
 
@@ -381,6 +378,8 @@ typedef struct _amqp_envelope_object {
 } amqp_envelope_object;
 
 
+#define AMQP_ERROR_CATEGORY_MASK (1 << 29)
+
 #ifdef PHP_WIN32
 # define AMQP_RPC_REPLY_T_CAST 
 #else
@@ -394,9 +393,9 @@ typedef struct _amqp_envelope_object {
 #endif
 
 #ifdef PHP_WIN32
-# define AMQP_OS_SOCKET_TIMEOUT_ERRNO WSAETIMEDOUT
+# define AMQP_OS_SOCKET_TIMEOUT_ERRNO AMQP_ERROR_CATEGORY_MASK | WSAETIMEDOUT
 #else
-# define AMQP_OS_SOCKET_TIMEOUT_ERRNO EAGAIN
+# define AMQP_OS_SOCKET_TIMEOUT_ERRNO AMQP_ERROR_CATEGORY_MASK | EAGAIN
 #endif
 
 
