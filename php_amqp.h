@@ -106,6 +106,7 @@ static zend_always_inline zend_bool zval_set_isref_to_p(zval* pz, zend_bool isre
 
 
 #include "amqp.h"
+#include "amqp_object_store.h"
 
 extern zend_module_entry amqp_module_entry;
 #define phpext_amqp_ptr &amqp_module_entry
@@ -175,6 +176,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
+#define DEFAULT_TIMEOUT						"0"
 #define DEFAULT_VHOST						"/"
 #define DEFAULT_LOGIN						"guest"
 #define DEFAULT_PASSWORD					"guest"
@@ -230,7 +232,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 	efree(object); \
 
 #define AMQP_GET_CHANNEL(object) \
-	(amqp_channel_object *) zend_object_store_get_object((object)->channel TSRMLS_CC);
+	(amqp_channel_object *) amqp_object_store_get_valid_object((object)->channel TSRMLS_CC);
 
 #define AMQP_ASSIGN_CHANNEL(channel, object) \
 	if (!(object)->channel) { \
@@ -239,7 +241,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 	channel = AMQP_GET_CHANNEL(object)
 
 #define AMQP_GET_CONNECTION(object) \
-	(amqp_connection_object *) zend_object_store_get_object((object)->connection TSRMLS_CC);
+	(amqp_connection_object *) amqp_object_store_get_valid_object((object)->connection TSRMLS_CC);
 
 #define AMQP_ASSIGN_CONNECTION(connection, object) \
 	if (!(object)->connection) { \
@@ -248,30 +250,43 @@ extern zend_class_entry *amqp_exception_class_entry,
 	connection = AMQP_GET_CONNECTION(object)
 
 
-#define AMQP_VERIFY_CHANNEL(channel, error) \
-	if ((channel)->is_connected != '\1') { \
-		char verify_channel_tmp[255]; \
-		snprintf(verify_channel_tmp, 255, "%s. No channel available.", error); \
-		zend_throw_exception(amqp_channel_exception_class_entry, verify_channel_tmp, 0 TSRMLS_CC); \
+#define AMQP_VERIFY_CHANNEL_ERROR(error, reason) \
+		char verify_channel_error_tmp[255]; \
+		snprintf(verify_channel_error_tmp, 255, "%s %s", error, reason); \
+		zend_throw_exception(amqp_channel_exception_class_entry, verify_channel_error_tmp, 0 TSRMLS_CC); \
 		return; \
+
+#define AMQP_VERIFY_CHANNEL(channel, error) \
+	if (!channel) { \
+		AMQP_VERIFY_CHANNEL_ERROR(error, "Stale reference to the channel object.") \
+	} \
+	if ((channel)->is_connected != '\1') { \
+		AMQP_VERIFY_CHANNEL_ERROR(error, "No channel available.") \
 	} \
 
-#define AMQP_VERIFY_CONNECTION(connection, error) \
-	if ((connection)->is_connected != '\1') { \
-		char verify_connection_tmp[255]; \
-		snprintf(verify_connection_tmp, 255, "%s. No conection available.", error); \
-		zend_throw_exception(amqp_connection_exception_class_entry, verify_connection_tmp, 0 TSRMLS_CC); \
+#define AMQP_VERIFY_CONNECTION_ERROR(error, reason) \
+		char verify_connection_error_tmp[255]; \
+		snprintf(verify_connection_error_tmp, 255, "%s %s", error, reason); \
+		zend_throw_exception(amqp_connection_exception_class_entry, verify_connection_error_tmp, 0 TSRMLS_CC); \
 		return; \
+
+#define AMQP_VERIFY_CONNECTION(connection, error) \
+	if (!connection) { \
+		AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
+	} \
+	if ((connection)->is_connected != '\1') { \
+		AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
 	} \
 
 #if ZEND_MODULE_API_NO >= 20100000
 	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
 #else
 	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) \
-		zval *tmp; \
-		zend_hash_copy((obj).properties, &(ce)->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *));
+		do { \
+			zval *tmp; \
+			zend_hash_copy((obj).properties, &(ce)->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *)); \
+		} while (0);
 #endif
-
 
 extern int le_amqp_connection_resource;
 // ZEND_DECLARE_MODULE_GLOBALS(amqp)
@@ -305,6 +320,7 @@ typedef struct _amqp_connection_object {
 	char *vhost;
 	int vhost_len;
 	int port;
+	double timeout;
 	amqp_connection_resource *connection_resource;
 } amqp_connection_object;
 
@@ -360,6 +376,28 @@ typedef struct _amqp_envelope_object {
 	char correlation_id[255];
 	zval *headers;
 } amqp_envelope_object;
+
+
+#define AMQP_ERROR_CATEGORY_MASK (1 << 29)
+
+#ifdef PHP_WIN32
+# define AMQP_RPC_REPLY_T_CAST 
+#else
+# define AMQP_RPC_REPLY_T_CAST (amqp_rpc_reply_t)
+#endif
+
+#ifdef PHP_WIN32
+# define AMQP_CLOSE_SOCKET(fd) closesocket(fd);
+#else
+# define AMQP_CLOSE_SOCKET(fd) close(fd);
+#endif
+
+#ifdef PHP_WIN32
+# define AMQP_OS_SOCKET_TIMEOUT_ERRNO AMQP_ERROR_CATEGORY_MASK | WSAETIMEDOUT
+#else
+# define AMQP_OS_SOCKET_TIMEOUT_ERRNO AMQP_ERROR_CATEGORY_MASK | EAGAIN
+#endif
+
 
 #ifdef ZTS
 #define AMQP_G(v) TSRMG(amqp_globals_id, zend_amqp_globals *, v)

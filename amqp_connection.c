@@ -32,12 +32,21 @@
 #include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
-#include <stdint.h>
-#include <signal.h>
+#ifdef PHP_WIN32
+# include "win32/php_stdint.h"
+# include "win32/signal.h"
+#else
+# include <signal.h>
+# include <stdint.h>
+#endif
 #include <amqp.h>
 #include <amqp_framing.h>
 
-#include <unistd.h>
+#ifdef PHP_WIN32
+# include "win32/unistd.h"
+#else
+# include <unistd.h>
+#endif
 
 #include "php_amqp.h"
 
@@ -46,13 +55,14 @@ zend_object_handlers amqp_connection_object_handlers;
 HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
 	zval *value;
 	HashTable *debug_info;
+	amqp_connection_object *connection;
 	
 	/* Let zend clean up for us: */
 	*is_temp = 0;
 	
 	/* Get the envelope object from which to read */
-	amqp_connection_object *connection = (amqp_connection_object *)zend_object_store_get_object(object TSRMLS_CC);
-		
+	connection = (amqp_connection_object *)zend_object_store_get_object(object TSRMLS_CC);
+
 	/* Keep the first number matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
 	ZEND_INIT_SYMTABLE_EX(debug_info, 5 + 1, 0);
@@ -78,6 +88,10 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	ZVAL_LONG(value, connection->port);
 	zend_hash_add(debug_info, "port", sizeof("port"), &value, sizeof(zval *), NULL);
 
+	MAKE_STD_ZVAL(value);
+	ZVAL_DOUBLE(value, connection->timeout);
+	zend_hash_add(debug_info, "timeout", sizeof("timeout"), &value, sizeof(zval *), NULL);
+
 	/* Start adding values */
 	return debug_info;
 }
@@ -92,7 +106,10 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 {
 	char str[256];
 	char ** pstr = (char **) &str;
+#ifndef PHP_WIN32
 	void * old_handler;
+#endif
+	amqp_rpc_reply_t x;
 
 
 	/* Clean up old memory allocations which are now invalid (new connection) */
@@ -135,13 +152,17 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 
 	/* Verify that we actually got a connectio back */
 	if (connection->connection_resource->fd < 1) {
+#ifndef PHP_WIN32
 		/* Start ignoring SIGPIPE */
 		old_handler = signal(SIGPIPE, SIG_IGN);
+#endif
 
 		amqp_destroy_connection(connection->connection_resource->connection_state);
 
+#ifndef PHP_WIN32
 		/* End ignoring of SIGPIPEs */
 		signal(SIGPIPE, old_handler);
+#endif
 
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not connect to host.", 0 TSRMLS_CC);
 		return 0;
@@ -149,7 +170,9 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 
 	amqp_set_sockfd(connection->connection_resource->connection_state, connection->connection_resource->fd);
 
-	amqp_rpc_reply_t x = amqp_login(
+	php_amqp_set_timeout(connection TSRMLS_CC);
+
+	x = amqp_login(
 		connection->connection_resource->connection_state,
 		connection->vhost,
 		CHANNEL_MAX,
@@ -178,7 +201,9 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
  */
 void php_amqp_disconnect(amqp_connection_object *connection)
 {
+#ifndef PHP_WIN32
 	void * old_handler;
+#endif
 	int slot;
 	
 	/* Pull the connection resource out for easy access */
@@ -189,6 +214,7 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 		return;
 	}
 	
+#ifndef PHP_WIN32
 	/*
 	If we are trying to close the connection and the connection already closed, it will throw
 	SIGPIPE, which is fine, so ignore all SIGPIPES
@@ -196,6 +222,7 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 
 	/* Start ignoring SIGPIPE */
 	old_handler = signal(SIGPIPE, SIG_IGN);
+#endif
 	
 	if (connection->is_connected == '\1') {
 		/* Close all open channels */
@@ -217,17 +244,48 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 		amqp_destroy_connection(resource->connection_state);
 		
 		if (resource->fd) {
-			close(resource->fd);
+			AMQP_CLOSE_SOCKET(resource->fd)
 		}
 	}
 
 	connection->is_connected = '\0';
 
 
+#ifndef PHP_WIN32
 	/* End ignoring of SIGPIPEs */
 	signal(SIGPIPE, old_handler);
+#endif
 	
 	return;
+}
+
+int php_amqp_set_timeout(amqp_connection_object *connection TSRMLS_DC)
+{
+#ifdef PHP_WIN32
+	DWORD timeout;
+	/*
+	In Windows, setsockopt with SO_RCVTIMEO sets actual timeout
+	to a value that's 500ms greater than specified value.
+	Also, it's not possible to set timeout to any value below 500ms.
+	Zero timeout works like it should, however.
+	*/
+	if (connection->timeout == 0.) {
+		timeout = 0;
+	} else {
+		timeout = (int) (max(connection->timeout * 1.e+3 - .5e+3, 1.));
+	}
+#else
+	struct timeval timeout;
+	timeout.tv_sec = (int) floor(connection->timeout);
+	timeout.tv_usec = (int) ((connection->timeout - floor(connection->timeout)) * 1.e+6);
+#endif
+
+	if (0 != setsockopt(connection->connection_resource->fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout))) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: cannot setsockopt SO_RCVTIMEO", 0 TSRMLS_CC);
+		return 0;
+	}
+
+	return 1;
 }
 
 int get_next_available_channel(amqp_connection_object *connection, amqp_channel_object *channel)
@@ -372,7 +430,7 @@ zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
 
 
 /* {{{ proto AMQPConnection::__construct([array optional])
- * The array can contain 'host', 'port', 'login', 'password', 'vhost' indexes
+ * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'timeout' indexes
  */
 PHP_METHOD(amqp_connection_class, __construct)
 {
@@ -465,6 +523,17 @@ PHP_METHOD(amqp_connection_class, __construct)
 		convert_to_long(*zdata);
 		connection->port = (size_t)Z_LVAL_PP(zdata);
 	}
+
+	connection->timeout = INI_FLT("amqp.timeout");
+
+	if (iniArr && SUCCESS == zend_hash_find(HASH_OF (iniArr), "timeout", sizeof("timeout"), (void*)&zdata)) {
+		convert_to_double(*zdata);
+		if (Z_DVAL_PP(zdata) < 0) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		} else {
+			connection->timeout = Z_DVAL_PP(zdata);
+		}
+	}
 }
 /* }}} */
 
@@ -525,6 +594,7 @@ PHP_METHOD(amqp_connection_class, pconnect)
 	char *key;
 	int key_len;
 	zend_rsrc_list_entry *le, new_le;
+	int result;
 
 	/* Try to pull amqp object out of method params */
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_connection_class_entry) == FAILURE) {
@@ -539,8 +609,12 @@ PHP_METHOD(amqp_connection_class, pconnect)
 	
 	if (zend_hash_find(&EG(persistent_list), key, key_len + 1, (void **)&le) == SUCCESS) {
 		/* An entry for this connection resource already exists */
+#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 4
+		zend_list_insert(le, le_amqp_connection_resource TSRMLS_CC);
+#else
 		zend_list_insert(le, le_amqp_connection_resource);
-		
+#endif
+
 		/* Stash the connection resource in the connection */
 		connection->connection_resource = le->ptr;
 		
@@ -552,7 +626,7 @@ PHP_METHOD(amqp_connection_class, pconnect)
 	}
 
 	/* No resource found: Instantiate the underlying connection */
-	int result = php_amqp_connect(connection, 1 TSRMLS_CC);
+	result = php_amqp_connect(connection, 1 TSRMLS_CC);
 	
 	/* Check the connection result. We dont want to do anything else if we werent successful */
 	if (!result) {
@@ -935,6 +1009,60 @@ PHP_METHOD(amqp_connection_class, setVhost)
 }
 /* }}} */
 
+/* {{{ proto amqp::getTimeout()
+get the timeout */
+PHP_METHOD(amqp_connection_class, getTimeout)
+{
+	zval *id;
+	amqp_connection_object *connection;
+
+	/* Get the timeout from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_connection_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* Copy the timeout to the amqp object */
+	RETURN_DOUBLE(connection->timeout);
+}
+/* }}} */
+
+/* {{{ proto amqp::setTimeout(double timeout)
+set the timeout */
+PHP_METHOD(amqp_connection_class, setTimeout)
+{
+	zval *id;
+	amqp_connection_object *connection;
+	double timeout;
+
+	/* Get the timeout from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Od", &id, amqp_connection_class_entry, &timeout) == FAILURE) {
+		return;
+	}
+
+	/* Validate timeout */
+	if (timeout < 0) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* Copy the timeout to the amqp object */
+	connection->timeout = timeout;
+
+	if (connection->is_connected == '\1') {
+		if (php_amqp_set_timeout(connection TSRMLS_CC) == 0) {
+			RETURN_FALSE;
+		}
+	}
+
+	RETURN_TRUE;
+}
+/* }}} */
 
 /*
 *Local variables:

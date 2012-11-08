@@ -19,6 +19,7 @@ Amqptest Object
             [host] => localhost
             [vhost] => /
             [port] => 5672
+            [timeout] => 0
         )
 
 )

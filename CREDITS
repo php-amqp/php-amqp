@@ -1,4 +1,5 @@
-;; AMQP
+AMQP bindings for PHP
+all who contributed to php-amqp project
 Alexandre Kalendarev <akalend@mail.ru> (original author)
 Pieter de Zwart <pdezwart@php.net> (lead)
 Andrey Hristov (contributor)
