@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/lstrojny/php-amqp.png)](http://travis-ci.org/lstrojny/php-amqp)
+[![Build Status](https://secure.travis-ci.org/pdezwart/php-amqp.png)](http://travis-ci.org/pdezwart/php-amqp)
 
 # PHP AMQP bindings
 
