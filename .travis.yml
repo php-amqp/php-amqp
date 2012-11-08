@@ -9,7 +9,7 @@ services:
   - rabbitmq
 
 env:
-  - NO_INTERACTION=1 LIBRABBITMQ_VERSION=master
+  - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=master
 
 before_script:
   - sh -c "git clone git://github.com/alanxz/rabbitmq-c.git"
