@@ -933,7 +933,7 @@ PHP_METHOD(amqp_queue_class, consume)
 	amqp_table_t *arguments;
 
 	char *consumer_tag;
-	int consumer_tag_len;
+	int consumer_tag_len = 0;
 	amqp_bytes_t consumer_tag_bytes;
 	long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
 
