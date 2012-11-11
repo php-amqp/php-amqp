@@ -25,34 +25,36 @@ $ex->publish('message', 'routing.key');
 
 $msg = $q->get();
 
-echo "message received from get:";
-print_r($msg);
+echo "message received from get:\n";
+$funcs = array(
+  'getAppId', 'getBody', 'getContentEncoding', 'getContentType',
+  'getCorrelationId', 'getDeliveryTag', 'getExchangeName', 'getExpiration',
+  'getHeaders', 'getMessageId', 'getPriority', 'getReplyTo', 'getRoutingKey',
+  'getTimeStamp', 'getType', 'getUserId', 'isRedelivery'
+);
+foreach ($funcs as $func) {
+  printf("%s => %s\n", $func, json_encode($msg->$func()));
+};
 
 $q->delete();
 $ex->delete();
 ?>
 --EXPECTF--
-message received from get:AMQPEnvelope Object
-(
-    [body] => message
-    [content_type] => text/plain
-    [routing_key] => routing.key
-    [delivery_tag] => 1
-    [delivery_mode] => 0
-    [exchange_name] => exchange_testing_19707
-    [is_redelivery] => 0
-    [content_encoding] => 
-    [type] => 
-    [timestamp] => 0
-    [priority] => 0
-    [expiration] => 
-    [user_id] => 
-    [app_id] => 
-    [message_id] => 
-    [reply_to] => 
-    [correlation_id] => 
-    [headers] => Array
-        (
-        )
-
-)
+message received from get:
+getAppId => ""
+getBody => "message"
+getContentEncoding => ""
+getContentType => "text\/plain"
+getCorrelationId => ""
+getDeliveryTag => 1
+getExchangeName => "exchange_testing_19707"
+getExpiration => ""
+getHeaders => []
+getMessageId => ""
+getPriority => 0
+getReplyTo => ""
+getRoutingKey => "routing.key"
+getTimeStamp => 0
+getType => ""
+getUserId => ""
+isRedelivery => false
