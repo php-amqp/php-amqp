@@ -7,19 +7,17 @@ Constructing AMQPQueue with AMQPConnection segfaults
 class Amqptest {};
 $o = new Amqptest();
 $o->conn = new AMQPConnection();
-print_r($o);
+$funcs = array(
+  'getHost', 'getLogin', 'getPassword', 'getPort', 'getVHost', 'isConnected'
+);
+foreach ($funcs as $func) {
+  printf("%s => %s\n", $func, json_encode($o->conn->$func()));
+};
 ?>
 --EXPECTF--
-Amqptest Object
-(
-    [conn] => AMQPConnection Object
-        (
-            [login] => guest
-            [password] => guest
-            [host] => localhost
-            [vhost] => /
-            [port] => 5672
-            [timeout] => 0
-        )
-
-)
+getHost => "localhost"
+getLogin => "guest"
+getPassword => "guest"
+getPort => 5672
+getVHost => "\/"
+isConnected => false
