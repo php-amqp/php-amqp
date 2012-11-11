@@ -21,7 +21,7 @@ before_script:
 script:
   - sh -c "make test | tee result.txt"
   - sh test-report.sh
-  - sh -c "grep -q FAILED result.txt && false || true"
+  - sh -c "grep -q FAILED result.txt; test $? -eq 0 && false || true"
 
 notifications:
   email:
