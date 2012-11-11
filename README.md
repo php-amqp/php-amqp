@@ -2,5 +2,4 @@
 
 # PHP AMQP bindings
 
-
 Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/rabbitmq-c)
