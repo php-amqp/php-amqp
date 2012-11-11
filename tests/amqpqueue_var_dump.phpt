@@ -1,7 +1,10 @@
 --TEST--
 AMQPQueue var_dump
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
+  print "skip";
+}
 --FILE--
 <?php
 $cnn = new AMQPConnection();
