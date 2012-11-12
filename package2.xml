@@ -17,7 +17,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <date>2012-08-25</date>
  <time>18:20:00</time>
  <version>     
-  <release>1.0.6</release>
+  <release>1.0.9</release>
   <api>1.0.0</api>
  </version>
  <stability>
@@ -26,6 +26,16 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+1.0.9 Release:
+    * Fix pecl relase
+
+1.0.8 Release:
+    * Skip var_dump test on PHP 5.2
+    * Initialize consumer tag string length to zero
+    * Support connection time outs
+    * Adding consumer_tag parameter to AMQPQueue::cancel
+    * Clean up error code handling
+
 1.0.6 Release:     
     * 62354: Segmentation fault when printing or dumping an object that contains an AMQP object
     * Adding in missing tests
