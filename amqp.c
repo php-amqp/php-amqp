@@ -786,7 +786,7 @@ PHP_MSHUTDOWN_FUNCTION(amqp)
 PHP_MINFO_FUNCTION(amqp)
 {
 	php_info_print_table_start();
-	php_info_print_table_header(2, "Version",					"1.0.6");
+	php_info_print_table_header(2, "Version",					"1.0.9");
 	php_info_print_table_header(2, "Revision",					"$Revision: 327551 $");
 	php_info_print_table_header(2, "Compiled",					__DATE__ " @ "  __TIME__);
 	php_info_print_table_header(2, "AMQP protocol version", 	"0-9-1");
