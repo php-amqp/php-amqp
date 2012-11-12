@@ -113,6 +113,7 @@ Fixed bugs:
    <file name="amqp_exchange.c" role="src" />
    <file name="amqp_queue.c" role="src" />
    <file name="amqp_envelope.c" role="src" />
+   <file name="amqp_object_store.c" role="src" />
    <file name="config.m4" role="src" />
    <file name="CREDITS" role="doc" />
    <file name="LICENSE" role="doc" />
@@ -122,6 +123,7 @@ Fixed bugs:
    <file name="amqp_exchange.h" role="src" />
    <file name="amqp_queue.h" role="src" />
    <file name="amqp_envelope.h" role="src" />
+   <file name="amqp_object_store.h" role="src" />
    <file name="tests/amqpchannel_construct_basic.phpt" role="test" />
    <file name="tests/amqpchannel_multi_channel_connection.phpt" role="test" />
    <file name="tests/amqpchannel_var_dump.phpt" role="test" />
