@@ -163,6 +163,12 @@ Fixed bugs:
    <file name="tests/amqpqueue_get_headers.phpt" role="test" />
    <file name="tests/amqpqueue_purge_basic.phpt" role="test" />
    <file name="tests/amqpqueue_var_dump.phpt" role="test" />
+   <file name="tests/amqpconnection_setTimeout_float.phpt" role="test" />
+   <file name="tests/amqpconnection_setTimeout_int.phpt" role="test" />
+   <file name="tests/amqpconnection_setTimeout_out_of_range.phpt" role="test" />
+   <file name="tests/amqpconnection_setTimeout_string.phpt" role="test" />
+   <file name="tests/amqpqueue_cancel.phpt" role="test" />
+   <file name="tests/amqpqueue_consume_timeout.phpt" role="test" />
    <file name="tests/bug_17831.phpt" role="test" />
    <file name="tests/bug_19707.phpt" role="test" />
    <file name="tests/bug_19840.phpt" role="test" />
