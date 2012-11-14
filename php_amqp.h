@@ -381,7 +381,7 @@ typedef struct _amqp_envelope_object {
 #define AMQP_ERROR_CATEGORY_MASK (1 << 29)
 
 #ifdef PHP_WIN32
-# define AMQP_RPC_REPLY_T_CAST 
+# define AMQP_RPC_REPLY_T_CAST
 #else
 # define AMQP_RPC_REPLY_T_CAST (amqp_rpc_reply_t)
 #endif

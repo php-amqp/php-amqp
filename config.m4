@@ -23,21 +23,21 @@ if test "$PHP_AMQP" != "no"; then
 
 	dnl # --with-amqp -> check with-path
 
-	SEARCH_FOR="amqp_framing.h"  
+	SEARCH_FOR="amqp_framing.h"
 
 	AC_MSG_CHECKING([for amqp files in default path])
 	if test "$PHP_LIBRABBITMQ_DIR" != "no" && test "$PHP_LIBRABBITMQ_DIR" != "yes"; then
 		for i in $PHP_LIBRABBITMQ_DIR; do
-			if test -r $i/include/$SEARCH_FOR; 
+			if test -r $i/include/$SEARCH_FOR;
 				then
 				AMQP_DIR=$i
 				AC_MSG_RESULT(found in $i)
 				break
 			fi
-		done	
+		done
 	else
 		for i in $PHP_AMQP /usr/local /usr ; do
-			if test -r $i/include/$SEARCH_FOR; 
+			if test -r $i/include/$SEARCH_FOR;
 				then
 				AMQP_DIR=$i
 				AC_MSG_RESULT(found in $i)

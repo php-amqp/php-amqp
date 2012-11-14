@@ -56,26 +56,26 @@ zend_object_handlers amqp_channel_object_handlers;
 HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
 	zval *value;
 	HashTable *debug_info;
-	
+
 	/* Get the envelope object from which to read */
 	amqp_channel_object *channel = (amqp_channel_object *)zend_object_store_get_object(object TSRMLS_CC);
-	
+
 	/* Let zend clean up for us: */
 	*is_temp = 0;
-	
+
 	/* Keep the first number matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
 	ZEND_INIT_SYMTABLE_EX(debug_info, 3 + 1, 0);
-	
+
 	/* Start adding values */
 	MAKE_STD_ZVAL(value);
 	ZVAL_LONG(value, channel->channel_id);
 	zend_hash_add(debug_info, "channel_id", sizeof("channel_id"), &value, sizeof(zval *), NULL);
-	
+
 	MAKE_STD_ZVAL(value);
 	ZVAL_LONG(value, channel->prefetch_count);
 	zend_hash_add(debug_info, "prefetch_count", sizeof("prefetch_count"), &value, sizeof(zval *), NULL);
-	
+
 	MAKE_STD_ZVAL(value);
 	ZVAL_LONG(value, channel->prefetch_size);
 	zend_hash_add(debug_info, "prefetch_size", sizeof("prefetch_size"), &value, sizeof(zval *), NULL);
@@ -95,12 +95,12 @@ void amqp_channel_dtor(void *object TSRMLS_DC)
 	if (connection) {
 		remove_channel_from_connection(connection, channel);
 	}
-	
+
 	/* Destroy the connection storage */
 	if (channel->connection) {
 		zval_ptr_dtor(&channel->connection);
 	}
-	
+
 	zend_object_std_dtor(&channel->zo TSRMLS_CC);
 
 	efree(object);
@@ -122,7 +122,7 @@ zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 		(zend_objects_free_object_storage_t)amqp_channel_dtor,
 		NULL TSRMLS_CC
 	);
-	
+
 #if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 	memcpy((void *)&amqp_channel_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_channel_object_handlers.get_debug_info = amqp_channel_object_get_debug_info;
@@ -141,10 +141,10 @@ PHP_METHOD(amqp_channel_class, __construct)
 {
 	zval *id;
 	zval *connObj = NULL;
-	
+
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
-	
+
 	amqp_rpc_reply_t res;
 
 	/* Parse out the method parameters */
@@ -154,7 +154,7 @@ PHP_METHOD(amqp_channel_class, __construct)
 	}
 
 	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
-	channel->connection = connObj; 
+	channel->connection = connObj;
 
 	Z_ADDREF_P(connObj);
 
@@ -167,7 +167,7 @@ PHP_METHOD(amqp_channel_class, __construct)
 
 	/* Figure out what the next available channel is on this connection */
 	channel->channel_id = get_next_available_channel(connection, channel);
-	
+
 	/* Check that we got a valid channel */
 	if (channel->channel_id < 0) {
 		zend_throw_exception(amqp_channel_exception_class_entry, "Could not create channel. Connection has no open channel slots remaining.", 0 TSRMLS_CC);
@@ -245,14 +245,14 @@ PHP_METHOD(amqp_channel_class, setPrefetchCount)
 
 	/* Get the channel object out of the store */
 	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
-	
+
 	/* Set the prefetch count - the implication is to disable the size */
 	channel->prefetch_count = prefetch_count;
 	channel->prefetch_size = 0;
-		
+
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not set prefetch count.");
-	
+
 	/* If we are already connected, set the new prefetch count */
 	if (channel->is_connected) {
 		amqp_basic_qos(
@@ -263,7 +263,7 @@ PHP_METHOD(amqp_channel_class, setPrefetchCount)
 			0
 		);
 	}
-		
+
 	RETURN_TRUE;
 }
 /* }}} */
@@ -285,14 +285,14 @@ PHP_METHOD(amqp_channel_class, setPrefetchSize)
 
 	/* Get the channel object out of the store */
 	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
-	
+
 	/* Set the prefetch size - the implication is to disable the count */
 	channel->prefetch_count = 0;
 	channel->prefetch_size = prefetch_size;
-	
+
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not set prefetch size.");
-	
+
 	/* If we are already connected, set the new prefetch count */
 	if (channel->is_connected) {
 		amqp_basic_qos(
@@ -303,7 +303,7 @@ PHP_METHOD(amqp_channel_class, setPrefetchSize)
 			0
 		);
 	}
-		
+
 	RETURN_TRUE;
 }
 /* }}} */
@@ -326,14 +326,14 @@ PHP_METHOD(amqp_channel_class, qos)
 
 	/* Get the channel object out of the store */
 	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
-	
+
 	/* Set the prefetch size - the implication is to disable the count */
 	channel->prefetch_size = prefetch_size;
 	channel->prefetch_count = prefetch_count;
-	
+
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not set qos parameters.");
-	
+
 	/* If we are already connected, set the new prefetch count */
 	if (channel->is_connected) {
 		amqp_basic_qos(
@@ -344,7 +344,7 @@ PHP_METHOD(amqp_channel_class, qos)
 			0							/* Global flag - whether this change should affect every channel */
 		);
 	}
-		
+
 	RETURN_TRUE;
 }
 /* }}} */
@@ -369,10 +369,10 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 
 	/* Get the channel object out of the store */
 	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
-	
+
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not start the transaction.");
-	
+
 	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
@@ -392,7 +392,7 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 		return;
 	}
 	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
-		
+
 	RETURN_TRUE;
 }
 /* }}} */
@@ -417,10 +417,10 @@ PHP_METHOD(amqp_channel_class, commitTransaction)
 
 	/* Get the channel object out of the store */
 	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
-	
+
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not start the transaction.");
-	
+
 	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
@@ -440,7 +440,7 @@ PHP_METHOD(amqp_channel_class, commitTransaction)
 		return;
 	}
 	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
-		
+
 	RETURN_TRUE;
 }
 /* }}} */
@@ -464,10 +464,10 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 
 	/* Get the channel object out of the store */
 	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
-	
+
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not start the transaction.");
-	
+
 	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
