@@ -1,7 +1,7 @@
 --TEST--
 AMQPEnvelope var_dump
 --SKIPIF--
-<?php 
+<?php
 if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
   print "skip";
 }
