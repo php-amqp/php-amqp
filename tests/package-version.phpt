@@ -13,7 +13,7 @@ $ext->info();
 $info = ob_get_contents();
 ob_end_clean();
 $matches = array();
-preg_match('/Version\s*=>\s*([0-9.]+)/m', $info, $matches);
+preg_match('/Version\s*=>\s*([0-9.a-z-]+)/m', $info, $matches);
 $srcVersion = $matches[1];
 
 if (0 === strcmp($packageVersion, $srcVersion)) {
