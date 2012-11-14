@@ -16,7 +16,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </lead>
  <date>2012-11-12</date>
  <time>13:00:00</time>
- <version>     
+ <version>
   <release>1.0.9</release>
   <api>1.0.0</api>
  </version>
@@ -36,19 +36,19 @@ http://pear.php.net/dtd/package-2.0.xsd">
     * Adding consumer_tag parameter to AMQPQueue::cancel
     * Clean up error code handling
 
-1.0.6 Release:     
+1.0.6 Release:
     * 62354: Segmentation fault when printing or dumping an object that contains an AMQP object
     * Adding in missing tests
     * Fixing release number in PHP information
     * Adding .gitignore info for Git users
     * Cleaning up debug handling
-     
+
 1.0.5 Release:
     * 62696: Incorrect exchange type
     * Handles server connections being closed during consume and publish correctly
     * 62628: Exception thrown in consume will lock PHP
     * 61533: Segmentation fault when instantiating channel, queue or exchange with wrong object, then using it
-    
+
 1.0.4 Release:
     * 62549: Fixing broken persistent connection
     * 62412: Fixing segfault due to destruction order
@@ -59,7 +59,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
     * 62087: Adding appropriate version information
     * 62354: Enabling debugging dumping of objects
     * 61351: Updating min PHP version requirements to 5.2.0
-     
+
 1.0.3 Release:
     * Fixing compilation issue with PHP 5.4
 
@@ -81,11 +81,11 @@ Changed/finalized API signature:
 Added persistent connections
 Cleaned up codebase
 Fixed memory leaks and segmentation faults
-     
+
 0.3.1 Release:
 Fixed bug:
     * 24323: Cannot get the name for auto-named reply-to queues
-     
+
 0.3.0 Release:
 Fixed memory leaks in many functions (courtesy Jonathan Tansavatdi and Andy Wick)
 Fixed consume method to return proper values
