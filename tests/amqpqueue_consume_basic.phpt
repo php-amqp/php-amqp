@@ -32,11 +32,11 @@ $count = 0;
 
 function consumeThings($message, $queue) {
 	global $count;
-	
+
 	echo $message->getBody() . "-" . $message->getRoutingKey() . "\n";
-	
+
 	$count++;
-	
+
 	if ($count >= 2) {
 		global $ex;
 		global $q;

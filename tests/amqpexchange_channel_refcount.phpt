@@ -7,13 +7,13 @@ AMQPExchange channel refcount
 function buildExchange() {
 	$cnn = new AMQPConnection();
 	$cnn->connect();
-	
+
 	$ch = new AMQPChannel($cnn);
-	
+
 	$ex = new AMQPExchange($ch);
-	
+
 	$ex->setName("refcount-testing");
-	
+
 	return $ex;
 }
 

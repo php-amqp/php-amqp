@@ -96,35 +96,35 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_reconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0) 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1) 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, login)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getPassword, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0) 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getPassword, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setPassword, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, password)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getHost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0) 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getHost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setHost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, host)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getPort, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0) 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getPort, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setPort, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, port)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getVhost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0) 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getVhost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setVhost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
@@ -432,7 +432,7 @@ zend_function_entry amqp_queue_class_functions[] = {
 
 	PHP_ME(amqp_queue_class, getName,			arginfo_amqp_queue_class_getName,			ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_queue_class, setName,			arginfo_amqp_queue_class_setName,			ZEND_ACC_PUBLIC)
-	
+
 	PHP_ME(amqp_queue_class, getFlags,			arginfo_amqp_queue_class_getFlags,			ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_queue_class, setFlags,			arginfo_amqp_queue_class_setFlags,			ZEND_ACC_PUBLIC)
 
@@ -547,14 +547,14 @@ void amqp_error(amqp_rpc_reply_t x, char ** pstr)
 		case AMQP_RESPONSE_NORMAL:
 			return;
 
-		case AMQP_RESPONSE_NONE:	
+		case AMQP_RESPONSE_NONE:
 			spprintf(pstr, 0, "Missing RPC reply type.");
 			break;
 
 		case AMQP_RESPONSE_LIBRARY_EXCEPTION:
 			spprintf(pstr, 0, "Library error: %s", amqp_error_string(x.library_error));
 			break;
-			
+
 		case AMQP_RESPONSE_SERVER_EXCEPTION:
 			switch (x.reply.id) {
 				case AMQP_CONNECTION_CLOSE_METHOD: {
@@ -614,9 +614,9 @@ amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
 	HashPosition pos;
 	zval **data;
 	amqp_table_t *arguments;
-	
+
 	argumentHash = Z_ARRVAL_P(zvalArguments);
-	
+
 	/* In setArguments, we are overwriting all the existing values */
 	arguments = (amqp_table_t *)emalloc(sizeof(amqp_table_t));
 
@@ -637,24 +637,24 @@ amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
 		amqp_table_entry_t *table;
 		amqp_field_value_t *field;
 
-	
+
 		/* Make a copy of the value: */
 		value = **data;
 		zval_copy_ctor(&value);
-	
+
 		/* Now pull the key */
-	
+
 		if (zend_hash_get_current_key_ex(argumentHash, &key, &key_len, &index, 0, &pos) != HASH_KEY_IS_STRING) {
 			/* Skip things that are not strings */
 			continue;
 		}
-	
+
 		/* Build the value */
 		table = &arguments->entries[arguments->num_entries++];
 		field = &table->value;
 		strKey = estrndup(key, key_len);
 		table->key = amqp_cstring_bytes(strKey);
-	
+
 		switch (Z_TYPE_P(&value)) {
 			case IS_BOOL:
 				field->kind = AMQP_FIELD_KIND_BOOLEAN;
@@ -676,7 +676,7 @@ amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
 			default:
 				continue;
 		}
-			
+
 		/* Clean up the zval */
 		zval_dtor(&value);
 	}
@@ -703,7 +703,7 @@ PHP_MINIT_FUNCTION(amqp)
 
 	/* Set up the connection resource */
 	le_amqp_connection_resource = zend_register_list_destructors_ex(NULL, NULL, PHP_AMQP_CONNECTION_RES_NAME, module_number);
-	
+
 	INIT_CLASS_ENTRY(ce, "AMQPConnection", amqp_connection_class_functions);
 	ce.create_object = amqp_connection_ctor;
 	amqp_connection_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
@@ -723,7 +723,7 @@ PHP_MINIT_FUNCTION(amqp)
 	INIT_CLASS_ENTRY(ce, "AMQPEnvelope", amqp_envelope_class_functions);
 	ce.create_object = amqp_envelope_ctor;
 	amqp_envelope_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
-	
+
 	/* Class Exceptions */
 	INIT_CLASS_ENTRY(ce, "AMQPException", NULL);
 	amqp_exception_class_entry = zend_register_internal_class_ex(&ce, (zend_class_entry*)zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
