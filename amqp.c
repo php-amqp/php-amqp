@@ -529,7 +529,7 @@ zend_module_entry amqp_module_entry = {
 	NULL,
 	PHP_MINFO(amqp),
 #if ZEND_MODULE_API_NO >= 20010901
-	"0.1",
+	PHP_AMQP_VERSION,
 #endif
 	STANDARD_MODULE_PROPERTIES
 };
@@ -786,7 +786,7 @@ PHP_MSHUTDOWN_FUNCTION(amqp)
 PHP_MINFO_FUNCTION(amqp)
 {
 	php_info_print_table_start();
-	php_info_print_table_header(2, "Version",					"1.0.9");
+	php_info_print_table_header(2, "Version",					PHP_AMQP_VERSION);
 	php_info_print_table_header(2, "Revision",					"$Revision: 327551 $");
 	php_info_print_table_header(2, "Compiled",					__DATE__ " @ "  __TIME__);
 	php_info_print_table_header(2, "AMQP protocol version", 	"0-9-1");
