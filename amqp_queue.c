@@ -757,7 +757,7 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 /* }}} */
 
 
-/* {{{ proto int AMQPQueue::bind(string exchangeName, string routingKey);
+/* {{{ proto int AMQPQueue::bind(string exchangeName, [string routingKey]);
 bind queue to exchange by routing key
 */
 PHP_METHOD(amqp_queue_class, bind)
@@ -768,15 +768,15 @@ PHP_METHOD(amqp_queue_class, bind)
 	amqp_connection_object *connection;
 	char *exchange_name;
 	int exchange_name_len;
-	char *keyname;
-	int keyname_len;
+	char *keyname = NULL;
+	int keyname_len = 0;
 
 	amqp_rpc_reply_t res;
 	amqp_queue_bind_t s;
 	amqp_method_number_t bind_ok = AMQP_QUEUE_BIND_OK_METHOD;
 
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss", &id, amqp_queue_class_entry, &exchange_name, &exchange_name_len, &keyname, &keyname_len) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|s", &id, amqp_queue_class_entry, &exchange_name, &exchange_name_len, &keyname, &keyname_len) == FAILURE) {
 		return;
 	}
 
@@ -793,11 +793,6 @@ PHP_METHOD(amqp_queue_class, bind)
 
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not bind queue.");
-
-	if (!keyname_len) {
-		zend_throw_exception(amqp_exchange_exception_class_entry, "Could not bind exchange. No routing key given.", 0 TSRMLS_CC);
-		return;
-	}
 
 	s.ticket 				= 0;
 	s.queue.len				= queue->name_len;
@@ -1321,7 +1316,7 @@ PHP_METHOD(amqp_queue_class, cancel)
 /* }}} */
 
 
-/* {{{ proto int AMQPQueue::unbind(string exchangeName, string routingKey);
+/* {{{ proto int AMQPQueue::unbind(string exchangeName, [string routingKey]);
 unbind queue from exchange
 */
 PHP_METHOD(amqp_queue_class, unbind)
@@ -1333,14 +1328,14 @@ PHP_METHOD(amqp_queue_class, unbind)
 
 	char *exchange_name;
 	int exchange_name_len;
-	char *keyname;
-	int keyname_len;
+	char *keyname = NULL;
+	int keyname_len = 0;
 
 	amqp_rpc_reply_t res;
 	amqp_queue_unbind_t s;
 	amqp_method_number_t method_ok = AMQP_QUEUE_UNBIND_OK_METHOD;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss", &id, amqp_queue_class_entry, &exchange_name, &exchange_name_len, &keyname, &keyname_len) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|s", &id, amqp_queue_class_entry, &exchange_name, &exchange_name_len, &keyname, &keyname_len) == FAILURE) {
 		return;
 	}
 
