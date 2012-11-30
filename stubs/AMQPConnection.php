@@ -187,5 +187,23 @@ class AMQPConnection
     {
         return true;
     }
+
+    /**
+     * @param int $timeout
+     *
+     * @return bool
+     */
+    public function setTimeout(/** @noinspection PhpUnusedParameterInspection */ $timeout)
+    {
+        return true;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimeout()
+    {
+        return 0;
+    }
 }
 
