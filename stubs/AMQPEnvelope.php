@@ -69,7 +69,7 @@ class AMQPEnvelope
      *
      * @return string The exchange name on which the message was published.
      */
-    public function getExchange()
+    public function getExchangeName()
     {
         return '';
     }
