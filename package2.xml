@@ -175,6 +175,8 @@ Fixed bugs:
    <file name="tests/bug_61533.phpt" role="test" />
    <file name="tests/bug_62354.phpt" role="test" />
    <file name="tests/package-version.phpt" role="test" />
+   <file name="tests/amqpqueue_bind_basic_empty_routing_key.phpt" role="test" />
+   <file name="tests/amqpqueue_unbind_basic_empty_routing_key.phpt" role="test" />
   </dir> <!-- / -->
  </contents>
  <dependencies>
