@@ -131,7 +131,7 @@ extern zend_module_entry amqp_module_entry;
 #define AMQP_NOLOCAL		64
 #define AMQP_AUTOACK		128
 #define AMQP_IFEMPTY		256
-#define AMQP_IFUNUSED		528
+#define AMQP_IFUNUSED		512
 #define AMQP_MANDATORY		1024
 #define AMQP_IMMEDIATE		2048
 #define AMQP_MULTIPLE		4096
