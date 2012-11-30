@@ -20,4 +20,5 @@ define('AMQP_EX_TYPE_DIRECT', 'direct');
 define('AMQP_EX_TYPE_FANOUT', 'fanout');
 define('AMQP_EX_TYPE_TOPIC', 'topic');
 define('AMQP_EX_TYPE_HEADERS', 'headers');
+define('AMQP_OS_SOCKET_TIMEOUT_ERRNO', 536870947);
 
