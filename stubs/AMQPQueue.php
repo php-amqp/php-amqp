@@ -78,24 +78,26 @@ class AMQPQueue
      * Blocking function that will retrieve the next message from the queue as
      * it becomes available and will pass it off to the callback.
      *
-     * @param callable $callback A callback function to which the
-     *                           consumed message will be passed. The
-     *                           function must accept at a minimum
-     *                           one parameter, an AMQPEnvelope object,
-     *                           and an optional second parameter
-     *                           the AMQPQueue from which the message was
-     *                           consumed. The AMQPQueue::consume() will
-     *                           not return the processing thread back to
-     *                           the PHP script until the callback
-     *                           function returns FALSE.
-     * @param integer  $flags    A bitmask of any of the flags: AMQP_NOACK.
+     * @param callable $callback    A callback function to which the
+     *                              consumed message will be passed. The
+     *                              function must accept at a minimum
+     *                              one parameter, an AMQPEnvelope object,
+     *                              and an optional second parameter
+     *                              the AMQPQueue from which the message was
+     *                              consumed. The AMQPQueue::consume() will
+     *                              not return the processing thread back to
+     *                              the PHP script until the callback
+     *                              function returns FALSE.
+     * @param integer  $flags       A bitmask of any of the flags: AMQP_NOACK.
+     * @param string   $consumerTag A string describing this consumer. Used
+     *                              for canceling subscriptions with cancel().
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return void
      */
-    public function consume (callable $callback, $flags = AMQP_NOPARAM)
+    public function consume (callable $callback, $flags = AMQP_NOPARAM, $consumerTag = null)
     {
     }
 
