@@ -34,7 +34,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function bind ($exchange_name, $routing_key);
+    public function bind ($exchange_name, $routing_key = null);
 
     /**
      * Cancel a queue that is already bound to an exchange and routing key.
@@ -102,13 +102,17 @@ class AMQPQueue
      * Delete a queue from the broker.
      *
      * This includes its entire contents of unread or unacknowledged messages.
+     * @param integer $flags        Optionally AMQP_IFUNUSED can be specified
+     *                              to indicate the queue should not be
+     *                              deleted until no clients are connected to
+     *                              it.
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return bool true on success or false on failure.
      */
-    public function delete ();
+    public function delete ($flags = AMQP_NOPARAM);
 
     /**
      * Retrieve the next message from the queue.
@@ -254,6 +258,6 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function unbind ($exchange_name, $routing_key);
+    public function unbind ($exchange_name, $routing_key = null);
 }
 

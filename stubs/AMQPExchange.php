@@ -9,23 +9,17 @@ class AMQPExchange
      *
      * Bind an exchange to another exchange using the specified routing key.
      *
-     * @param string $destination_exchange_name The name of the destination
-     *                                          exchange in the binding.
-     * @param string $source_exchange_name      The name of the source
-     *                                          exchange in the binding.
-     * @param string $routing_key               The routing key to use as a
-     *                                          binding.
+     * @param string  $exchange_name Name of the exchange to bind.
+     * @param string  $routing_key   The routing key to use for binding.
+     * @param integer $flags         Flags to use for binding, defaults to
+     *                               AMQP_NOPARAM.
      *
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @return boolean true on success or false on failure.
      */
-    public function bind(
-        $destination_exchange_name,
-        $source_exchange_name,
-        $routing_key
-    );
+    public function bind($exchange_name, $routing_key, $flags = AMQP_NOPARAM);
 
     /**
      * Create an instance of AMQPExchange.
@@ -57,9 +51,11 @@ class AMQPExchange
     /**
      * Delete the exchange from the broker.
      *
-     * @param integer $flags Optionally AMQP_IFUNUSED can be specified to indicate
-     *                       the exchange should not be deleted until no clients
-     *                       are connected to it.
+     * @param string  $exchangeName Optional name of exchange to delete.
+     * @param integer $flags        Optionally AMQP_IFUNUSED can be specified
+     *                              to indicate the exchange should not be
+     *                              deleted until no clients are connected to
+     *                              it.
      *
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
@@ -67,7 +63,7 @@ class AMQPExchange
      *
      * @return boolean true on success or false on failure.
      */
-    public function delete ($flags = AMQP_NOPARAM);
+    public function delete ($exchangeName = null, $flags = AMQP_NOPARAM);
 
     /**
      * Get the argument associated with the given key.
@@ -115,7 +111,8 @@ class AMQPExchange
      * Publish a message to the exchange represented by the AMQPExchange object.
      *
      * @param string  $message     The message to publish.
-     * @param string  $routing_key The routing key to which to publish.
+     * @param string  $routing_key The optional routing key to which to
+     *                             publish to.
      * @param integer $flags       One or more of AMQP_MANDATORY and
      *                             AMQP_IMMEDIATE.
      * @param array   $attributes  One of content_type, content_encoding,
@@ -131,7 +128,7 @@ class AMQPExchange
      */
     public function publish (
         $message,
-        $routing_key,
+        $routing_key = null,
         $flags = AMQP_NOPARAM,
         array $attributes = array()
     );
