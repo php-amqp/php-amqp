@@ -185,7 +185,9 @@ class AMQPQueue
      * undefined.
      *
      * @param string  $delivery_tag Delivery tag of last message to reject.
-     * @param integer $flags        AMQP_REQUEUE to requeue the message(s).
+     * @param integer $flags        AMQP_REQUEUE to requeue the message(s),
+     *                              AMQP_MULTIPLE to nack all previous
+     *                              unacked messages as well.
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
@@ -193,6 +195,25 @@ class AMQPQueue
      * @return boolean
      */
     public function nack ($delivery_tag, $flags = AMQP_NOPARAM);
+
+    /**
+     * Mark one message as explicitly not acknowledged.
+     *
+     * Mark the message identified by delivery_tag as explicitly not
+     * acknowledged. This method can only be called on messages that have not
+     * yet been acknowledged, meaning that messages retrieved with by
+     * AMQPQueue::consume() and AMQPQueue::get() and using the AMQP_AUTOACK
+     * flag are not eligible.
+     *
+     * @param string  $delivery_tag Delivery tag of the message to reject.
+     * @param integer $flags        AMQP_REQUEUE to requeue the message(s).
+     *
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @return boolean
+     */
+    public function reject ($delivery_tag, $flags = AMQP_NOPARAM);
 
     /**
      * Purge the contents of a queue.
