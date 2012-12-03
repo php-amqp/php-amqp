@@ -97,6 +97,34 @@ class AMQPConnection
     }
 
     /**
+     * Establish a persistent connection with the AMQP broker.
+     *
+     * This method will initiate a connection with the AMQP broker
+     * or reuse an existing one if present.
+     *
+     * @return boolean TRUE on success or FALSE on failure.
+     */
+    public function pconnect()
+    {
+    }
+
+    /**
+     * Closes a persistent connection with the AMQP broker.
+     *
+     * This method will close an open persistent connection with the AMQP
+     * broker.
+     *
+     * @return boolean true if connection was found and closed,
+     *                 false if no persistent connection with this host,
+     *                 port, vhost and login could be found,
+     */
+    public function pdisconnect()
+    {
+    }
+
+
+
+    /**
      * Close any open connections and initiate a new one with the AMQP broker.
      *
      * @return boolean TRUE on success or FALSE on failure.
