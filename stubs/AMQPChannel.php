@@ -15,7 +15,6 @@ class AMQPChannel
      */
     public function commitTransaction ()
     {
-        return true;
     }
 
     /**
@@ -39,7 +38,6 @@ class AMQPChannel
      */
     public function isConnected ()
     {
-        return true;
     }
 
     /**
@@ -64,9 +62,8 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function qos (/** @noinspection PhpUnusedParameterInspection */$size, $count)
+    public function qos ($size, $count)
     {
-        return true;
     }
 
     /**
@@ -83,7 +80,6 @@ class AMQPChannel
      */
     public function rollbackTransaction ()
     {
-        return true;
     }
 
     /**
@@ -100,9 +96,8 @@ class AMQPChannel
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPrefetchCount (/** @noinspection PhpUnusedParameterInspection */$count)
+    public function setPrefetchCount ($count)
     {
-        return true;
     }
 
     /**
@@ -121,9 +116,8 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setPrefetchSize (/** @noinspection PhpUnusedParameterInspection */$size)
+    public function setPrefetchSize ($size)
     {
-        return true;
     }
 
     /**
@@ -138,7 +132,6 @@ class AMQPChannel
      */
     public function startTransaction ()
     {
-        return true;
     }
 }
 

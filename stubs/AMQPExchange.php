@@ -9,24 +9,18 @@ class AMQPExchange
      *
      * Bind an exchange to another exchange using the specified routing key.
      *
-     * @param string $destination_exchange_name The name of the destination
-     *                                          exchange in the binding.
-     * @param string $source_exchange_name      The name of the source
-     *                                          exchange in the binding.
-     * @param string $routing_key               The routing key to use as a
-     *                                          binding.
+     * @param string  $exchange_name Name of the exchange to bind.
+     * @param string  $routing_key   The routing key to use for binding.
+     * @param integer $flags         Flags to use for binding, defaults to
+     *                               AMQP_NOPARAM.
      *
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @return boolean true on success or false on failure.
      */
-    public function bind(
-        /** @noinspection PhpUnusedParameterInspection */$destination_exchange_name,
-        $source_exchange_name,
-        $routing_key
-    ) {
-        return true;
+    public function bind($exchange_name, $routing_key, $flags = AMQP_NOPARAM)
+    {
     }
 
     /**
@@ -58,15 +52,16 @@ class AMQPExchange
      */
     public function declareExchange()
     {
-        return true;
     }
 
     /**
      * Delete the exchange from the broker.
      *
-     * @param integer $flags Optionally AMQP_IFUNUSED can be specified to indicate
-     *                       the exchange should not be deleted until no clients
-     *                       are connected to it.
+     * @param string  $exchangeName Optional name of exchange to delete.
+     * @param integer $flags        Optionally AMQP_IFUNUSED can be specified
+     *                              to indicate the exchange should not be
+     *                              deleted until no clients are connected to
+     *                              it.
      *
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
@@ -74,9 +69,8 @@ class AMQPExchange
      *
      * @return boolean true on success or false on failure.
      */
-    public function delete (/** @noinspection PhpUnusedParameterInspection */$flags = AMQP_NOPARAM)
+    public function delete ($exchangeName = null, $flags = AMQP_NOPARAM)
     {
-        return true;
     }
 
     /**
@@ -88,9 +82,8 @@ class AMQPExchange
      *                                with the given key, or FALSE if the key
      *                                is not set.
      */
-    public function getArgument (/** @noinspection PhpUnusedParameterInspection */$key)
+    public function getArgument ($key)
     {
-        return '';
     }
 
     /**
@@ -100,7 +93,6 @@ class AMQPExchange
      */
     public function getArguments()
     {
-        return array();
     }
 
     /**
@@ -111,7 +103,6 @@ class AMQPExchange
      */
     public function getFlags()
     {
-        return 0;
     }
 
     /**
@@ -121,7 +112,6 @@ class AMQPExchange
      */
     public function getName()
     {
-        return '';
     }
 
     /**
@@ -131,7 +121,6 @@ class AMQPExchange
      */
     public function getType()
     {
-        return '';
     }
 
     /**
@@ -140,7 +129,8 @@ class AMQPExchange
      * Publish a message to the exchange represented by the AMQPExchange object.
      *
      * @param string  $message     The message to publish.
-     * @param string  $routing_key The routing key to which to publish.
+     * @param string  $routing_key The optional routing key to which to
+     *                             publish to.
      * @param integer $flags       One or more of AMQP_MANDATORY and
      *                             AMQP_IMMEDIATE.
      * @param array   $attributes  One of content_type, content_encoding,
@@ -155,12 +145,11 @@ class AMQPExchange
      * @return boolean TRUE on success or FALSE on failure.
      */
     public function publish (
-        /** @noinspection PhpUnusedParameterInspection */$message,
-        $routing_key,
+        $message,
+        $routing_key = null,
         $flags = AMQP_NOPARAM,
         array $attributes = array()
     ) {
-        return true;
     }
 
     /**
@@ -171,9 +160,8 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setArgument(/** @noinspection PhpUnusedParameterInspection */$key, $value)
+    public function setArgument($key, $value)
     {
-        return true;
     }
 
     /**
@@ -183,9 +171,8 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setArguments(/** @noinspection PhpUnusedParameterInspection */array $arguments)
+    public function setArguments(array $arguments)
     {
-        return true;
     }
 
     /**
@@ -197,9 +184,8 @@ class AMQPExchange
      *
      * @return boolean True on success or false on failure.
      */
-    public function setFlags(/** @noinspection PhpUnusedParameterInspection */$flags)
+    public function setFlags($flags)
     {
-        return true;
     }
 
     /**
@@ -209,9 +195,8 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setName(/** @noinspection PhpUnusedParameterInspection */$exchange_name)
+    public function setName($exchange_name)
     {
-        return true;
     }
 
     /**
@@ -224,9 +209,8 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setType(/** @noinspection PhpUnusedParameterInspection */$exchange_type)
+    public function setType($exchange_type)
     {
-        return true;
     }
 }
 

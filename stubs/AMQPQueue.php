@@ -21,9 +21,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function ack(/** @noinspection PhpUnusedParameterInspection */ $delivery_tag, $flags = AMQP_NOPARAM)
+    public function ack($delivery_tag, $flags = AMQP_NOPARAM)
     {
-        return true;
     }
 
     /**
@@ -37,9 +36,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function bind (/** @noinspection PhpUnusedParameterInspection */ $exchange_name, $routing_key)
+    public function bind ($exchange_name, $routing_key = null)
     {
-        return true;
     }
 
     /**
@@ -54,9 +52,8 @@ class AMQPQueue
      *
      * @return bool;
      */
-    public function cancel (/** @noinspection PhpUnusedParameterInspection */ $consumer_tag = '')
+    public function cancel ($consumer_tag = '')
     {
-        return true;
     }
 
     /**
@@ -97,8 +94,11 @@ class AMQPQueue
      *
      * @return void
      */
-    public function consume (callable $callback, $flags = AMQP_NOPARAM, $consumerTag = null)
-    {
+    public function consume (
+        callable $callback,
+        $flags = AMQP_NOPARAM,
+        $consumerTag = null
+    ) {
     }
 
     /**
@@ -111,22 +111,24 @@ class AMQPQueue
      */
     public function declareQueue ()
     {
-        return 0;
     }
 
     /**
      * Delete a queue from the broker.
      *
      * This includes its entire contents of unread or unacknowledged messages.
+     * @param integer $flags        Optionally AMQP_IFUNUSED can be specified
+     *                              to indicate the queue should not be
+     *                              deleted until no clients are connected to
+     *                              it.
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return bool true on success or false on failure.
      */
-    public function delete ()
+    public function delete ($flags = AMQP_NOPARAM)
     {
-        return true;
     }
 
     /**
@@ -151,9 +153,8 @@ class AMQPQueue
      *
      * @return AMQPEnvelope|boolean
      */
-    public function get (/** @noinspection PhpUnusedParameterInspection */$flags = AMQP_NOPARAM)
+    public function get ($flags = AMQP_NOPARAM)
     {
-        return new AMQPEnvelope();
     }
 
     /**
@@ -165,9 +166,8 @@ class AMQPQueue
      *                                with the given key, or false if the key
      *                                is not set.
      */
-    public function getArgument(/** @noinspection PhpUnusedParameterInspection */$key)
+    public function getArgument($key)
     {
-        return '';
     }
 
     /**
@@ -177,7 +177,6 @@ class AMQPQueue
      */
     public function getArguments ()
     {
-        return array();
     }
 
     /**
@@ -188,7 +187,6 @@ class AMQPQueue
      */
     public function getFlags ()
     {
-        return 0;
     }
 
     /**
@@ -198,7 +196,6 @@ class AMQPQueue
      */
     public function getName ()
     {
-        return '';
     }
 
     /**
@@ -215,6 +212,29 @@ class AMQPQueue
      * undefined.
      *
      * @param string  $delivery_tag Delivery tag of last message to reject.
+     * @param integer $flags        AMQP_REQUEUE to requeue the message(s),
+     *                              AMQP_MULTIPLE to nack all previous
+     *                              unacked messages as well.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @return boolean
+     */
+    public function nack ($delivery_tag, $flags = AMQP_NOPARAM)
+    {
+    }
+
+    /**
+     * Mark one message as explicitly not acknowledged.
+     *
+     * Mark the message identified by delivery_tag as explicitly not
+     * acknowledged. This method can only be called on messages that have not
+     * yet been acknowledged, meaning that messages retrieved with by
+     * AMQPQueue::consume() and AMQPQueue::get() and using the AMQP_AUTOACK
+     * flag are not eligible.
+     *
+     * @param string  $delivery_tag Delivery tag of the message to reject.
      * @param integer $flags        AMQP_REQUEUE to requeue the message(s).
      *
      * @throws AMQPChannelException    If the channel is not open.
@@ -222,9 +242,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function nack (/** @noinspection PhpUnusedParameterInspection */$delivery_tag, $flags = AMQP_NOPARAM)
+    public function reject ($delivery_tag, $flags = AMQP_NOPARAM)
     {
-        return true;
     }
 
     /**
@@ -237,7 +256,6 @@ class AMQPQueue
      */
     public function purge ()
     {
-        return true;
     }
 
     /**
@@ -248,9 +266,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setArgument (/** @noinspection PhpUnusedParameterInspection */$key, $value)
+    public function setArgument ($key, $value)
     {
-        return true;
     }
 
     /**
@@ -262,9 +279,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setArguments (/** @noinspection PhpUnusedParameterInspection */array $arguments)
+    public function setArguments (array $arguments)
     {
-        return true;
     }
 
     /**
@@ -276,9 +292,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setFlags (/** @noinspection PhpUnusedParameterInspection */$flags)
+    public function setFlags ($flags)
     {
-        return true;
     }
 
     /**
@@ -288,9 +303,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setName (/** @noinspection PhpUnusedParameterInspection */$queue_name)
+    public function setName ($queue_name)
     {
-        return true;
     }
 
     /**
@@ -306,9 +320,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function unbind (/** @noinspection PhpUnusedParameterInspection */$exchange_name, $routing_key)
+    public function unbind ($exchange_name, $routing_key = null)
     {
-        return true;
     }
 }
 
