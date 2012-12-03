@@ -11,7 +11,9 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function connect();
+    public function connect()
+    {
+    }
 
     /**
      * Create an instance of AMQPConnection.
@@ -23,7 +25,9 @@ class AMQPConnection
      * @param array $credentials Optional array of credential information for
      *                           connecting to the AMQP broker.
      */
-    public function __construct(array $credentials = array());
+    public function __construct(array $credentials = array())
+    {
+    }
 
     /**
      * Closes the connection with the AMQP broker.
@@ -32,7 +36,9 @@ class AMQPConnection
      *
      * @return boolean true if connection was successfully closed, false otherwise.
      */
-    public function disconnect();
+    public function disconnect()
+    {
+    }
 
     /**
      * Get the configured host.
@@ -41,7 +47,6 @@ class AMQPConnection
      */
     public function getHost()
     {
-        return '';
     }
 
     /**
@@ -49,28 +54,36 @@ class AMQPConnection
      *
      * @return string The configured login as a string.
      */
-    public function getLogin();
+    public function getLogin()
+    {
+    }
 
     /**
      * Get the configured password.
      *
      * @return string The configured password as a string.
      */
-    public function getPassword();
+    public function getPassword()
+    {
+    }
 
     /**
      * Get the configured port.
      *
      * @return int The configured port as an integer.
      */
-    public function getPort();
+    public function getPort()
+    {
+    }
 
     /**
      * Get the configured vhost.
      *
      * @return string The configured virtual host as a string.
      */
-    public function getVhost();
+    public function getVhost()
+    {
+    }
 
     /**
      * Check whether the connection to the AMQP broker is still valid.
@@ -79,14 +92,18 @@ class AMQPConnection
      *
      * @return boolean True if connected, false otherwise.
      */
-    public function isConnected();
+    public function isConnected()
+    {
+    }
 
     /**
      * Close any open connections and initiate a new one with the AMQP broker.
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function reconnect();
+    public function reconnect()
+    {
+    }
 
     /**
      * Set the hostname used to connect to the AMQP broker.
@@ -97,7 +114,9 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setHost($host);
+    public function setHost($host)
+    {
+    }
 
     /**
      * Set the login string used to connect to the AMQP broker.
@@ -109,7 +128,9 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setLogin($login);
+    public function setLogin($login)
+    {
+    }
 
     /**
      * Set the password string used to connect to the AMQP broker.
@@ -121,7 +142,9 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPassword($password);
+    public function setPassword($password)
+    {
+    }
 
     /**
      * Set the port used to connect to the AMQP broker.
@@ -133,7 +156,9 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPort($port);
+    public function setPort($port)
+    {
+    }
 
     /**
      * Sets the virtual host to which to connect on the AMQP broker.
@@ -145,18 +170,24 @@ class AMQPConnection
      *
      * @return boolean true on success or false on failure.
      */
-    public function setVhost($vhost);
+    public function setVhost($vhost)
+    {
+    }
 
     /**
      * @param int $timeout
      *
      * @return bool
      */
-    public function setTimeout($timeout);
+    public function setTimeout($timeout)
+    {
+    }
 
     /**
      * @return int
      */
-    public function getTimeout();
+    public function getTimeout()
+    {
+    }
 }
 

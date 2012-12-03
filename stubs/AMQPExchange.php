@@ -19,7 +19,9 @@ class AMQPExchange
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @return boolean true on success or false on failure.
      */
-    public function bind($exchange_name, $routing_key, $flags = AMQP_NOPARAM);
+    public function bind($exchange_name, $routing_key, $flags = AMQP_NOPARAM)
+    {
+    }
 
     /**
      * Create an instance of AMQPExchange.
@@ -35,7 +37,9 @@ class AMQPExchange
      * @throws AMQPConnectionException If the connection to the broker was
      *                                 lost.
      */
-    public function __construct(AMQPChannel $amqp_channel);
+    public function __construct(AMQPChannel $amqp_channel)
+    {
+    }
 
     /**
      * Declare a new exchange on the broker.
@@ -46,7 +50,9 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function declareExchange();
+    public function declareExchange()
+    {
+    }
 
     /**
      * Delete the exchange from the broker.
@@ -63,7 +69,9 @@ class AMQPExchange
      *
      * @return boolean true on success or false on failure.
      */
-    public function delete ($exchangeName = null, $flags = AMQP_NOPARAM);
+    public function delete ($exchangeName = null, $flags = AMQP_NOPARAM)
+    {
+    }
 
     /**
      * Get the argument associated with the given key.
@@ -74,14 +82,18 @@ class AMQPExchange
      *                                with the given key, or FALSE if the key
      *                                is not set.
      */
-    public function getArgument ($key);
+    public function getArgument ($key)
+    {
+    }
 
     /**
      * Get all arguments set on the given exchange.
      *
      * @return array An array containing all of the set key/value pairs.
      */
-    public function getArguments();
+    public function getArguments()
+    {
+    }
 
     /**
      * Get all the flags currently set on the given exchange.
@@ -89,21 +101,27 @@ class AMQPExchange
      * @return int An integer bitmask of all the flags currently set on this
      *             exchange object.
      */
-    public function getFlags();
+    public function getFlags()
+    {
+    }
 
     /**
      * Get the configured name.
      *
      * @return string The configured name as a string.
      */
-    public function getName();
+    public function getName()
+    {
+    }
 
     /**
      * Get the configured type.
      *
      * @return string The configured type as a string.
      */
-    public function getType();
+    public function getType()
+    {
+    }
 
     /**
      * Publish a message to an exchange.
@@ -131,7 +149,8 @@ class AMQPExchange
         $routing_key = null,
         $flags = AMQP_NOPARAM,
         array $attributes = array()
-    );
+    ) {
+    }
 
     /**
      * Set the value for the given key.
@@ -141,7 +160,9 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setArgument($key, $value);
+    public function setArgument($key, $value)
+    {
+    }
 
     /**
      * Set all arguments on the exchange.
@@ -150,7 +171,9 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setArguments(array $arguments);
+    public function setArguments(array $arguments)
+    {
+    }
 
     /**
      * Set the flags on an exchange.
@@ -161,7 +184,9 @@ class AMQPExchange
      *
      * @return boolean True on success or false on failure.
      */
-    public function setFlags($flags);
+    public function setFlags($flags)
+    {
+    }
 
     /**
      * Set the name of the exchange.
@@ -170,7 +195,9 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setName($exchange_name);
+    public function setName($exchange_name)
+    {
+    }
 
     /**
      * Set the type of the exchange.
@@ -182,6 +209,8 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setType($exchange_type);
+    public function setType($exchange_type)
+    {
+    }
 }
 

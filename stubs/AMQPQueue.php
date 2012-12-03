@@ -21,7 +21,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function ack($delivery_tag, $flags = AMQP_NOPARAM);
+    public function ack($delivery_tag, $flags = AMQP_NOPARAM)
+    {
+    }
 
     /**
      * Bind the given queue to a routing key on an exchange.
@@ -34,7 +36,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function bind ($exchange_name, $routing_key = null);
+    public function bind ($exchange_name, $routing_key = null)
+    {
+    }
 
     /**
      * Cancel a queue that is already bound to an exchange and routing key.
@@ -48,7 +52,9 @@ class AMQPQueue
      *
      * @return bool;
      */
-    public function cancel ($consumer_tag = '');
+    public function cancel ($consumer_tag = '')
+    {
+    }
 
     /**
      * Create an instance of an AMQPQueue object.
@@ -59,7 +65,9 @@ class AMQPQueue
      *                                 broker.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      */
-    public function __construct (AMQPChannel $amqp_channel);
+    public function __construct (AMQPChannel $amqp_channel)
+    {
+    }
 
     /**
      * Consume messages from a queue.
@@ -86,7 +94,12 @@ class AMQPQueue
      *
      * @return void
      */
-    public function consume (callable $callback, $flags = AMQP_NOPARAM, $consumerTag = null);
+    public function consume (
+        callable $callback,
+        $flags = AMQP_NOPARAM,
+        $consumerTag = null
+    ) {
+    }
 
     /**
      * Declare a new queue on the broker.
@@ -96,7 +109,9 @@ class AMQPQueue
      *
      * @return integer the message count.
      */
-    public function declareQueue ();
+    public function declareQueue ()
+    {
+    }
 
     /**
      * Delete a queue from the broker.
@@ -112,7 +127,9 @@ class AMQPQueue
      *
      * @return bool true on success or false on failure.
      */
-    public function delete ($flags = AMQP_NOPARAM);
+    public function delete ($flags = AMQP_NOPARAM)
+    {
+    }
 
     /**
      * Retrieve the next message from the queue.
@@ -136,7 +153,9 @@ class AMQPQueue
      *
      * @return AMQPEnvelope|boolean
      */
-    public function get ($flags = AMQP_NOPARAM);
+    public function get ($flags = AMQP_NOPARAM)
+    {
+    }
 
     /**
      * Get the argument associated with the given key.
@@ -147,14 +166,18 @@ class AMQPQueue
      *                                with the given key, or false if the key
      *                                is not set.
      */
-    public function getArgument($key);
+    public function getArgument($key)
+    {
+    }
 
     /**
      * Get all set arguments as an array of key/value pairs.
      *
      * @return array An array containing all of the set key/value pairs.
      */
-    public function getArguments ();
+    public function getArguments ()
+    {
+    }
 
     /**
      * Get all the flags currently set on the given queue.
@@ -162,14 +185,18 @@ class AMQPQueue
      * @return int An integer bitmask of all the flags currently set on this
      *             exchange object.
      */
-    public function getFlags ();
+    public function getFlags ()
+    {
+    }
 
     /**
      * Get the configured name.
      *
      * @return string The configured name as a string.
      */
-    public function getName ();
+    public function getName ()
+    {
+    }
 
     /**
      * Mark a message as explicitly not acknowledged.
@@ -194,7 +221,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function nack ($delivery_tag, $flags = AMQP_NOPARAM);
+    public function nack ($delivery_tag, $flags = AMQP_NOPARAM)
+    {
+    }
 
     /**
      * Mark one message as explicitly not acknowledged.
@@ -213,7 +242,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function reject ($delivery_tag, $flags = AMQP_NOPARAM);
+    public function reject ($delivery_tag, $flags = AMQP_NOPARAM)
+    {
+    }
 
     /**
      * Purge the contents of a queue.
@@ -223,7 +254,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function purge ();
+    public function purge ()
+    {
+    }
 
     /**
      * Set a queue argument.
@@ -233,7 +266,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setArgument ($key, $value);
+    public function setArgument ($key, $value)
+    {
+    }
 
     /**
      * Set all arguments on the given queue.
@@ -244,7 +279,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setArguments (array $arguments);
+    public function setArguments (array $arguments)
+    {
+    }
 
     /**
      * Set the flags on the queue.
@@ -255,7 +292,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setFlags ($flags);
+    public function setFlags ($flags)
+    {
+    }
 
     /**
      * Set the queue name.
@@ -264,7 +303,9 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setName ($queue_name);
+    public function setName ($queue_name)
+    {
+    }
 
     /**
      * Remove a routing key binding on an exchange from the given queue.
@@ -279,6 +320,8 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function unbind ($exchange_name, $routing_key = null);
+    public function unbind ($exchange_name, $routing_key = null)
+    {
+    }
 }
 
