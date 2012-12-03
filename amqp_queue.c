@@ -1100,10 +1100,10 @@ PHP_METHOD(amqp_queue_class, nack)
 	}
 
 	channel = AMQP_GET_CHANNEL(queue);
-	AMQP_VERIFY_CHANNEL(channel, "Could not ack message.");
+	AMQP_VERIFY_CHANNEL(channel, "Could not nack message.");
 
 	connection = AMQP_GET_CONNECTION(channel);
-	AMQP_VERIFY_CONNECTION(connection, "Could not ack message.");
+	AMQP_VERIFY_CONNECTION(connection, "Could not nack message.");
 
 	s.delivery_tag = deliveryTag;
 	s.multiple = (AMQP_MULTIPLE & flags) ? 1 : 0;
