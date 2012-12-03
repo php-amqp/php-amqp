@@ -13,7 +13,6 @@ class AMQPConnection
      */
     public function connect()
     {
-        return true;
     }
 
     /**
@@ -39,7 +38,6 @@ class AMQPConnection
      */
     public function disconnect()
     {
-        return true;
     }
 
     /**
@@ -49,7 +47,6 @@ class AMQPConnection
      */
     public function getHost()
     {
-        return '';
     }
 
     /**
@@ -59,7 +56,6 @@ class AMQPConnection
      */
     public function getLogin()
     {
-        return '';
     }
 
     /**
@@ -69,7 +65,6 @@ class AMQPConnection
      */
     public function getPassword()
     {
-        return '';
     }
 
     /**
@@ -79,7 +74,6 @@ class AMQPConnection
      */
     public function getPort()
     {
-        return 0;
     }
 
     /**
@@ -89,7 +83,6 @@ class AMQPConnection
      */
     public function getVhost()
     {
-        return '';
     }
 
     /**
@@ -101,8 +94,35 @@ class AMQPConnection
      */
     public function isConnected()
     {
-        return true;
     }
+
+    /**
+     * Establish a persistent connection with the AMQP broker.
+     *
+     * This method will initiate a connection with the AMQP broker
+     * or reuse an existing one if present.
+     *
+     * @return boolean TRUE on success or FALSE on failure.
+     */
+    public function pconnect()
+    {
+    }
+
+    /**
+     * Closes a persistent connection with the AMQP broker.
+     *
+     * This method will close an open persistent connection with the AMQP
+     * broker.
+     *
+     * @return boolean true if connection was found and closed,
+     *                 false if no persistent connection with this host,
+     *                 port, vhost and login could be found,
+     */
+    public function pdisconnect()
+    {
+    }
+
+
 
     /**
      * Close any open connections and initiate a new one with the AMQP broker.
@@ -111,7 +131,6 @@ class AMQPConnection
      */
     public function reconnect()
     {
-        return true;
     }
 
     /**
@@ -123,9 +142,8 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setHost(/** @noinspection PhpUnusedParameterInspection */$host)
+    public function setHost($host)
     {
-        return true;
     }
 
     /**
@@ -138,9 +156,8 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setLogin(/** @noinspection PhpUnusedParameterInspection */$login)
+    public function setLogin($login)
     {
-        return true;
     }
 
     /**
@@ -153,9 +170,8 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPassword(/** @noinspection PhpUnusedParameterInspection */$password)
+    public function setPassword($password)
     {
-        return true;
     }
 
     /**
@@ -168,9 +184,8 @@ class AMQPConnection
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPort(/** @noinspection PhpUnusedParameterInspection */$port)
+    public function setPort($port)
     {
-        return true;
     }
 
     /**
@@ -183,9 +198,8 @@ class AMQPConnection
      *
      * @return boolean true on success or false on failure.
      */
-    public function setVhost(/** @noinspection PhpUnusedParameterInspection */$vhost)
+    public function setVhost($vhost)
     {
-        return true;
     }
 
     /**
@@ -193,9 +207,8 @@ class AMQPConnection
      *
      * @return bool
      */
-    public function setTimeout(/** @noinspection PhpUnusedParameterInspection */ $timeout)
+    public function setTimeout($timeout)
     {
-        return true;
     }
 
     /**
@@ -203,7 +216,6 @@ class AMQPConnection
      */
     public function getTimeout()
     {
-        return 0;
     }
 }
 

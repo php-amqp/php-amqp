@@ -11,7 +11,6 @@ class AMQPEnvelope
      */
     public function getAppId()
     {
-        return '';
     }
 
     /**
@@ -21,7 +20,6 @@ class AMQPEnvelope
      */
     public function getBody()
     {
-        return '';
     }
 
     /**
@@ -31,7 +29,6 @@ class AMQPEnvelope
      */
     public function getContentEncoding()
     {
-        return '';
     }
 
     /**
@@ -41,7 +38,6 @@ class AMQPEnvelope
      */
     public function getContentType()
     {
-        return '';
     }
 
     /**
@@ -51,7 +47,6 @@ class AMQPEnvelope
      */
     public function getCorrelationId()
     {
-        return '';
     }
 
     /**
@@ -61,7 +56,6 @@ class AMQPEnvelope
      */
     public function getDeliveryTag()
     {
-        return '';
     }
 
     /**
@@ -71,7 +65,6 @@ class AMQPEnvelope
      */
     public function getExchangeName()
     {
-        return '';
     }
 
     /**
@@ -81,7 +74,6 @@ class AMQPEnvelope
      */
     public function getExpiration()
     {
-        return '';
     }
 
     /**
@@ -92,9 +84,8 @@ class AMQPEnvelope
      * @return string|boolean The contents of the specified header or FALSE
      *                        if not set.
      */
-    public function getHeader(/** @noinspection PhpUnusedParameterInspection */$header_key)
+    public function getHeader($header_key)
     {
-        return '';
     }
 
     /**
@@ -104,7 +95,6 @@ class AMQPEnvelope
      */
     public function getHeaders()
     {
-        return array();
     }
 
     /**
@@ -114,7 +104,6 @@ class AMQPEnvelope
      */
     public function getMessageId()
     {
-        return '';
     }
 
     /**
@@ -126,7 +115,6 @@ class AMQPEnvelope
      */
     public function getPriority()
     {
-        return '';
     }
 
     /**
@@ -136,7 +124,6 @@ class AMQPEnvelope
      */
     public function getReplyTo()
     {
-        return '';
     }
 
     /**
@@ -146,7 +133,6 @@ class AMQPEnvelope
      */
     public function getRoutingKey()
     {
-        return '';
     }
 
     /**
@@ -156,7 +142,6 @@ class AMQPEnvelope
      */
     public function getTimeStamp()
     {
-        return '';
     }
 
     /**
@@ -166,7 +151,6 @@ class AMQPEnvelope
      */
     public function getType()
     {
-        return '';
     }
 
     /**
@@ -176,7 +160,6 @@ class AMQPEnvelope
      */
     public function getUserId()
     {
-        return '';
     }
 
     /**
@@ -191,7 +174,6 @@ class AMQPEnvelope
      */
     public function isRedelivery()
     {
-        return true;
     }
 }
 
