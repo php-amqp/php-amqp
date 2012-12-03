@@ -22,12 +22,10 @@ class AMQPExchange
      * @return boolean true on success or false on failure.
      */
     public function bind(
-        /** @noinspection PhpUnusedParameterInspection */$destination_exchange_name,
+        $destination_exchange_name,
         $source_exchange_name,
         $routing_key
-    ) {
-        return true;
-    }
+    );
 
     /**
      * Create an instance of AMQPExchange.
@@ -43,9 +41,7 @@ class AMQPExchange
      * @throws AMQPConnectionException If the connection to the broker was
      *                                 lost.
      */
-    public function __construct(AMQPChannel $amqp_channel)
-    {
-    }
+    public function __construct(AMQPChannel $amqp_channel);
 
     /**
      * Declare a new exchange on the broker.
@@ -56,10 +52,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function declareExchange()
-    {
-        return true;
-    }
+    public function declareExchange();
 
     /**
      * Delete the exchange from the broker.
@@ -74,10 +67,7 @@ class AMQPExchange
      *
      * @return boolean true on success or false on failure.
      */
-    public function delete (/** @noinspection PhpUnusedParameterInspection */$flags = AMQP_NOPARAM)
-    {
-        return true;
-    }
+    public function delete ($flags = AMQP_NOPARAM);
 
     /**
      * Get the argument associated with the given key.
@@ -88,20 +78,14 @@ class AMQPExchange
      *                                with the given key, or FALSE if the key
      *                                is not set.
      */
-    public function getArgument (/** @noinspection PhpUnusedParameterInspection */$key)
-    {
-        return '';
-    }
+    public function getArgument ($key);
 
     /**
      * Get all arguments set on the given exchange.
      *
      * @return array An array containing all of the set key/value pairs.
      */
-    public function getArguments()
-    {
-        return array();
-    }
+    public function getArguments();
 
     /**
      * Get all the flags currently set on the given exchange.
@@ -109,30 +93,21 @@ class AMQPExchange
      * @return int An integer bitmask of all the flags currently set on this
      *             exchange object.
      */
-    public function getFlags()
-    {
-        return 0;
-    }
+    public function getFlags();
 
     /**
      * Get the configured name.
      *
      * @return string The configured name as a string.
      */
-    public function getName()
-    {
-        return '';
-    }
+    public function getName();
 
     /**
      * Get the configured type.
      *
      * @return string The configured type as a string.
      */
-    public function getType()
-    {
-        return '';
-    }
+    public function getType();
 
     /**
      * Publish a message to an exchange.
@@ -155,13 +130,11 @@ class AMQPExchange
      * @return boolean TRUE on success or FALSE on failure.
      */
     public function publish (
-        /** @noinspection PhpUnusedParameterInspection */$message,
+        $message,
         $routing_key,
         $flags = AMQP_NOPARAM,
         array $attributes = array()
-    ) {
-        return true;
-    }
+    );
 
     /**
      * Set the value for the given key.
@@ -171,10 +144,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setArgument(/** @noinspection PhpUnusedParameterInspection */$key, $value)
-    {
-        return true;
-    }
+    public function setArgument($key, $value);
 
     /**
      * Set all arguments on the exchange.
@@ -183,10 +153,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setArguments(/** @noinspection PhpUnusedParameterInspection */array $arguments)
-    {
-        return true;
-    }
+    public function setArguments(array $arguments);
 
     /**
      * Set the flags on an exchange.
@@ -197,10 +164,7 @@ class AMQPExchange
      *
      * @return boolean True on success or false on failure.
      */
-    public function setFlags(/** @noinspection PhpUnusedParameterInspection */$flags)
-    {
-        return true;
-    }
+    public function setFlags($flags);
 
     /**
      * Set the name of the exchange.
@@ -209,10 +173,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setName(/** @noinspection PhpUnusedParameterInspection */$exchange_name)
-    {
-        return true;
-    }
+    public function setName($exchange_name);
 
     /**
      * Set the type of the exchange.
@@ -224,9 +185,6 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setType(/** @noinspection PhpUnusedParameterInspection */$exchange_type)
-    {
-        return true;
-    }
+    public function setType($exchange_type);
 }
 

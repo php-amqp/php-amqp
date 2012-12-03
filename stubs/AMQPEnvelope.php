@@ -9,80 +9,56 @@ class AMQPEnvelope
      *
      * @return string The application id of the message.
      */
-    public function getAppId()
-    {
-        return '';
-    }
+    public function getAppId();
 
     /**
      * Get the body of the message.
      *
      * @return string The contents of the message body.
      */
-    public function getBody()
-    {
-        return '';
-    }
+    public function getBody();
 
     /**
      * Get the content encoding of the message.
      *
      * @return string The content encoding of the message.
      */
-    public function getContentEncoding()
-    {
-        return '';
-    }
+    public function getContentEncoding();
 
     /**
      * Get the message content type.
      *
      * @return string The content type of the message.
      */
-    public function getContentType()
-    {
-        return '';
-    }
+    public function getContentType():
 
     /**
      * Get the message correlation id.
      *
      * @return string The correlation id of the message.
      */
-    public function getCorrelationId()
-    {
-        return '';
-    }
+    public function getCorrelationId();
 
     /**
      * Get the delivery tag of the message.
      *
      * @return string The delivery tag of the message.
      */
-    public function getDeliveryTag()
-    {
-        return '';
-    }
+    public function getDeliveryTag();
 
     /**
      * Get the exchange name on which the message was published.
      *
      * @return string The exchange name on which the message was published.
      */
-    public function getExchangeName()
-    {
-        return '';
-    }
+    public function getExchangeName();
 
     /**
      * Get the expiration of the message.
      *
      * @return string The message expiration.
      */
-    public function getExpiration()
-    {
-        return '';
-    }
+    public function getExpiration();
 
     /**
      * Get a specific message header.
@@ -92,30 +68,21 @@ class AMQPEnvelope
      * @return string|boolean The contents of the specified header or FALSE
      *                        if not set.
      */
-    public function getHeader(/** @noinspection PhpUnusedParameterInspection */$header_key)
-    {
-        return '';
-    }
+    public function getHeader($header_key);
 
     /**
      * Get the headers of the message.
      *
      * @return array An array of key value pairs associated with the message.
      */
-    public function getHeaders()
-    {
-        return array();
-    }
+    public function getHeaders();
 
     /**
      * Get the message id of the message.
      *
      * @return string The message id
      */
-    public function getMessageId()
-    {
-        return '';
-    }
+    public function getMessageId();
 
     /**
      * Get the priority of the message.
@@ -124,60 +91,42 @@ class AMQPEnvelope
      *
      * @return string The message priority.
      */
-    public function getPriority()
-    {
-        return '';
-    }
+    public function getPriority();
 
     /**
      * Get the reply-to address of the message.
      *
      * @return string The contents of the reply to field.
      */
-    public function getReplyTo()
-    {
-        return '';
-    }
+    public function getReplyTo();
 
     /**
      * Get the routing key of the message.
      *
      * @return string The message routing key.
      */
-    public function getRoutingKey()
-    {
-        return '';
-    }
+    public function getRoutingKey();
 
     /**
      * Get the timestamp of the message.
      *
      * @return string The message timestamp.
      */
-    public function getTimeStamp()
-    {
-        return '';
-    }
+    public function getTimeStamp();
 
     /**
      * Get the message type.
      *
      * @return string The message type.
      */
-    public function getType()
-    {
-        return '';
-    }
+    public function getType();
 
     /**
      * Get the message user id.
      *
      * @return string The message user id.
      */
-    public function getUserId()
-    {
-        return '';
-    }
+    public function getUserId();
 
     /**
      * Whether this is a redelivery of the message.
@@ -189,9 +138,6 @@ class AMQPEnvelope
      *
      * @return bool TRUE if this is a redelivery, FALSE otherwise.
      */
-    public function isRedelivery()
-    {
-        return true;
-    }
+    public function isRedelivery();
 }
 

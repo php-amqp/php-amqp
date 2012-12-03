@@ -13,10 +13,7 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function commitTransaction ()
-    {
-        return true;
-    }
+    public function commitTransaction ();
 
     /**
      * Create an instance of an AMQPChannel object.
@@ -28,19 +25,14 @@ class AMQPChannel
      * @throws AMQPConnectionException        If the connection to the broker
      *                                        was lost.
      */
-    public function __construct (AMQPConnection $amqp_connection)
-    {
-    }
+    public function __construct (AMQPConnection $amqp_connection);
 
     /**
      * Check the channel connection.
      *
      * @return bool Indicates whether the channel is connected.
      */
-    public function isConnected ()
-    {
-        return true;
-    }
+    public function isConnected ();
 
     /**
      * Set the Quality Of Service settings for the given channel.
@@ -64,10 +56,7 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function qos (/** @noinspection PhpUnusedParameterInspection */$size, $count)
-    {
-        return true;
-    }
+    public function qos ($size, $count);
 
     /**
      * Rollback a transaction.
@@ -81,10 +70,7 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function rollbackTransaction ()
-    {
-        return true;
-    }
+    public function rollbackTransaction ();
 
     /**
      * Set the number of messages to prefetch from the broker.
@@ -100,10 +86,7 @@ class AMQPChannel
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setPrefetchCount (/** @noinspection PhpUnusedParameterInspection */$count)
-    {
-        return true;
-    }
+    public function setPrefetchCount ($count);
 
     /**
      * Set the window size to prefetch from the broker.
@@ -121,10 +104,7 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setPrefetchSize (/** @noinspection PhpUnusedParameterInspection */$size)
-    {
-        return true;
-    }
+    public function setPrefetchSize ($size);
 
     /**
      * Start a transaction.
@@ -136,9 +116,6 @@ class AMQPChannel
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function startTransaction ()
-    {
-        return true;
-    }
+    public function startTransaction ();
 }
 
