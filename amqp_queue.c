@@ -742,6 +742,7 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 		amqp_error(res, pstr);
 		channel->is_connected = '\0';
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
 
@@ -752,6 +753,7 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 	AMQP_SET_NAME(queue, name);
 	efree(name);
 
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 	RETURN_LONG(message_count);
 }
 /* }}} */
