@@ -85,7 +85,7 @@ class AMQPQueue
      *                              not return the processing thread back to
      *                              the PHP script until the callback
      *                              function returns FALSE.
-     * @param integer  $flags       A bitmask of any of the flags: AMQP_NOACK.
+     * @param integer  $flags       A bitmask of any of the flags: AMQP_AUTOACK.
      * @param string   $consumerTag A string describing this consumer. Used
      *                              for canceling subscriptions with cancel().
      *
