@@ -5,8 +5,8 @@ AMQPConnection setTimeout int
 --FILE--
 <?php
 $cnn = new AMQPConnection();
-$cnn->setTimeout(3);
-var_dump($cnn->getTimeout());
+@$cnn->setTimeout(3);
+var_dump(@$cnn->getTimeout());
 ?>
 --EXPECT--
 float(3)

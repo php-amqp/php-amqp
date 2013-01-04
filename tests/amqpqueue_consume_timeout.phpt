@@ -1,5 +1,5 @@
 --TEST--
-AMQPConnection constructor
+AMQPQueue::consume with timeout
 --SKIPIF--
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
@@ -8,7 +8,7 @@ function nop() {
 }
 
 $timeout = .68;
-$conn = new AMQPConnection(array('timeout' => $timeout));
+$conn = new AMQPConnection(array('read_timeout' => $timeout));
 $conn->connect();
 $chan = new AMQPChannel($conn);
 $queue = new AMQPQueue($chan);
@@ -25,6 +25,7 @@ try {
 }
 $end = microtime(true);
 echo abs($end - $start - $timeout) < 0.005 ? 'true' : 'false';
+$queue->delete();
 ?>
 --EXPECT--
 AMQPConnectionException

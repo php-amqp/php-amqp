@@ -18,6 +18,7 @@ before_script:
   - sh -c "cd rabbitmq-c && git submodule init && git submodule update"
   - sh -c "cd rabbitmq-c && autoreconf -i && ./configure && make && sudo make install"
   - sh -c "phpize && ./configure && make"
+#  - sudo rabbitmqctl set_vm_memory_high_watermark 0.01
 
 script:
   - sh -c "make test | tee result.txt"
@@ -25,5 +26,6 @@ script:
 
 notifications:
   email:
-    - lstrojny@php.net
-    - bkw@codingforce.com
+    - pinepain@gmail.com
+#    - lstrojny@php.net
+#    - bkw@codingforce.com

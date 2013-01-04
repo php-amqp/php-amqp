@@ -1,0 +1,65 @@
+--TEST--
+AMQPExchange
+--SKIPIF--
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (getenv("SKIP_SLOW_TESTS")) print "skip slow test"   ;
+?>
+--FILE--
+<?php
+
+var_dump(getenv("SKIP_SLOW_TESTS"));
+
+
+$timeout = .68;
+$conn = new AMQPConnection(array('write_timeout' => $timeout));
+$conn->connect();
+
+$chan = new AMQPChannel($conn);
+
+$ex = new AMQPExchange($chan);
+$ex->setName("exchange-pub-timeout-" . time());
+$ex->setType(AMQP_EX_TYPE_FANOUT);
+$ex->declare();
+
+$queue = new AMQPQueue($chan);
+$queue->setName('queue-for-'.$ex->getName());
+$queue->setFlags(AMQP_EXCLUSIVE);
+$queue->declare();
+$queue->bind($ex->getName(), 'ignored-for-fanout');
+
+$message = str_repeat('d41d8cd98f00b204e9800998ecf8427e', 32); // 32768 - 1mb, 32 - 1Kb
+$start = $end = 0;
+
+// try to exceed resources limit
+try {
+    while(true) {
+        $start = microtime(true);
+        $ex->publish($message, 'ignored-for-fanout', AMQP_NOPARAM, array('expiration' => 5000));
+    }
+} catch (Exception $e) {}
+
+try {
+	while(true) {
+		$start = microtime(true);
+        // at this point publishing should be banned immediately
+		$ex->publish($message, 'ignored-for-fanout', AMQP_NOPARAM, array('expiration' => 5000));
+	}
+} catch (Exception $e) {
+	$end = microtime(true);
+	echo get_class($e);
+	echo PHP_EOL;
+    echo $e->getMessage();
+    echo PHP_EOL;
+}
+$delay = abs($end - $start - $timeout);
+echo $delay < 0.005 ? 'true' : 'false';
+sleep(60); // at this point messages should already be dead by ttl
+$queue->delete();
+$ex->delete();
+?>
+--EXPECTF--
+AMQPExchangeException
+Socket error: Resource temporarily unavailable
+%s
+true
