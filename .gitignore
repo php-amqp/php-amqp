@@ -36,4 +36,6 @@ tests/*.exp
 tests/*.log
 tests/*.out
 tests/*.php
+tests/*.sh
+php_test_results_*
 tmp-php.ini
