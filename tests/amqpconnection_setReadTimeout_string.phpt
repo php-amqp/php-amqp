@@ -1,5 +1,5 @@
 --TEST--
-AMQPConnection setReadTimeout float
+AMQPConnection setReadTimeout string
 --SKIPIF--
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--

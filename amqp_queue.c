@@ -130,7 +130,7 @@ zend_object_value amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 	zend_object_std_init(&queue->zo, ce TSRMLS_CC);
 	AMQP_OBJECT_PROPERTIES_INIT(queue->zo, ce);
 
-	// Initialize the arguments array:
+	/* Initialize the arguments array: */
 	MAKE_STD_ZVAL(queue->arguments);
 	array_init(queue->arguments);
 

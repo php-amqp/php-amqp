@@ -1,5 +1,5 @@
 --TEST--
-AMQPConnection setTimeout float
+AMQPConnection setWriteTimeout float
 --SKIPIF--
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--

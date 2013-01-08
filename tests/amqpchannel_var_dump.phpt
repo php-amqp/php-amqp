@@ -5,6 +5,7 @@ AMQPChannel var_dump
 if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
   print "skip";
 }
+?>
 --FILE--
 <?php
 $cnn = new AMQPConnection();

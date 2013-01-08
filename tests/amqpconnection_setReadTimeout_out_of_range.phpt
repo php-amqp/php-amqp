@@ -1,5 +1,5 @@
 --TEST--
-AMQPConnection setReadTimeout float
+AMQPConnection setReadTimeout out of range
 --SKIPIF--
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
@@ -12,6 +12,7 @@ try {
 	echo PHP_EOL;
     echo $e->getMessage();
 }
+?>
 --EXPECT--
 AMQPConnectionException
 Parameter 'read_timeout' must be greater than or equal to zero.
