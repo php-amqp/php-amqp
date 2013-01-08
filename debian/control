@@ -1,0 +1,19 @@
+Source: php-amqp
+Section: web
+Priority: optional
+Maintainer: Bernhard K. Weisshuhn <bkw@codingforce.com>
+Build-Depends: debhelper (>= 8), po-debconf, xsltproc , php5-dev  
+Standards-Version: 3.8.1
+
+Package: php5-amqp
+Architecture: any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}
+Description: amqp module for PHP 5
+ Communicate with any AMQP compliant server
+ .
+ This extension can communicate with any AMQP spec 0-9-1 compatible
+ server, such as RabbitMQ, OpenAMQP and Qpid, giving you the ability
+ to create and delete exchanges and queues, as well as publish to
+ any exchange and consume from any queue.
+
+

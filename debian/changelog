@@ -1,0 +1,6 @@
+php-amqp (1.0.9-1) unstable; urgency=low
+
+  * First release of debian package
+
+ -- Bernhard K. Weisshuhn <bkw@codingforce.com>  Thu, 9 Jan 2012 14:45:16 +0000
+
