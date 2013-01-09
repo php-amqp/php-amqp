@@ -13,6 +13,7 @@ amqp_connection.lo
 amqp_envelope.lo
 amqp_exchange.lo
 amqp_queue.lo
+amqp_object_store.lo
 autom4te.cache/*
 build/*
 config.guess
