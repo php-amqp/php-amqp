@@ -26,94 +26,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-1.0.9 Release:
-    * Fix pecl relase
-
-1.0.8 Release:
-    * Skip var_dump test on PHP 5.2
-    * Initialize consumer tag string length to zero
-    * Support connection time outs
-    * Adding consumer_tag parameter to AMQPQueue::cancel
-    * Clean up error code handling
-
-1.0.6 Release:
-    * 62354: Segmentation fault when printing or dumping an object that contains an AMQP object
-    * Adding in missing tests
-    * Fixing release number in PHP information
-    * Adding .gitignore info for Git users
-    * Cleaning up debug handling
-
-1.0.5 Release:
-    * 62696: Incorrect exchange type
-    * Handles server connections being closed during consume and publish correctly
-    * 62628: Exception thrown in consume will lock PHP
-    * 61533: Segmentation fault when instantiating channel, queue or exchange with wrong object, then using it
-
-1.0.4 Release:
-    * 62549: Fixing broken persistent connection
-    * 62412: Fixing segfault due to destruction order
-    * 62411: Fixing declaration overload bug
-    * 62410: Fixing declaration overload for 5.4
-    * 61337: Adding License file
-    * 61749: Fixing handling for binary content in envelope
-    * 62087: Adding appropriate version information
-    * 62354: Enabling debugging dumping of objects
-    * 61351: Updating min PHP version requirements to 5.2.0
-
-1.0.3 Release:
-    * Fixing compilation issue with PHP 5.4
-
-1.0.2 Release:
-Fixed bug:
-    * Memory leak when using AMQPQueue::get from a queue with no messages
-
-1.0.1 Release:
-Fixed bug:
-    * 61247: Allow queue creation with empty queue name, and return auto generated name
-    * 61127: Segmentation fault when cleaning up an AMQPChannel without calling AMQPConnection::connect first
-
-1.0.0 Release:
-Changed/finalized API signature:
-    * Exposing AMQPChannel
-    * Exposing AMQPEnvelope
-    * Exposing more queue and exchange arguments and flags
-    * Exposing basic.qos
-Added persistent connections
-Cleaned up codebase
-Fixed memory leaks and segmentation faults
-
-0.3.1 Release:
-Fixed bug:
-    * 24323: Cannot get the name for auto-named reply-to queues
-
-0.3.0 Release:
-Fixed memory leaks in many functions (courtesy Jonathan Tansavatdi and Andy Wick)
-Fixed consume method to return proper values
-Cleaned up variable usage
-Fixed bugs:
-    * 22638: Unexpected exit code 1 with AMQPQueue::consume()
-    * 22698: AMQPQueue::consume
-
-0.2.2 Release:
-Made extension compatible with PHP lt 5.3 (courtesy John Skopis)
-Fixed wrong typing of message properties (courtesy John Skopis)
-
-0.2.1 Release:
-Fixed refcount decrementing bug causing segfaults.
-
-0.2.0 Release:
-Works with AMQP 0-8 and 0-9-1 (used by RabbitMQ 2.*)
-Modified AMQPConnection object:
-    * Requires call to 'connect' method to connect (no longer connects on instantiation)
-    * Added support for disconnect and reconnect
-    * Added helper setters for port, host, vhost, login and password
-Improved consume method to block for MIN messages, and try to get MAX messages if available
-Fixed zval descoping bugs
-Fixed bugs:
-    * 17809: Couldn't compile pecl extension under PHP 5.3
-    * 17831: Segmentation fault when the exchange doesn't exists
-    * 19707: AMQPQueue::get() doesn't return the message
-    * 19840: Connection Exception
+     Development has moved to github: https://github.com/pdezwart/php-amqp .
+     Please open issues here: https://github.com/pdezwart/php-amqp/issues .
  </notes>
  <contents>
   <dir name="/">
@@ -191,4 +105,327 @@ Fixed bugs:
  </dependencies>
  <providesextension>amqp</providesextension>
  <extsrcrelease />
+ <changelog>
+
+  <release>
+   <version>
+    <release>1.0.9</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-11-13</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Fix pecl relase
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.8</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-11-12</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    * Skip var_dump test on PHP 5.2
+    * Initialize consumer tag string length to zero
+    * Support connection time outs
+    * Adding consumer_tag parameter to AMQPQueue::cancel
+    * Clean up error code handling
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.6</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-09-10</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    * 62354: Segmentation fault when printing or dumping an object that contains an AMQP object
+    * Adding in missing tests
+    * Fixing release number in PHP information
+    * Adding .gitignore info for Git users
+    * Cleaning up debug handling
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.5</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-08-26</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    * 62696: Incorrect exchange type
+    * Handles server connections being closed during consume and publish correctly
+    * 62628: Exception thrown in consume will lock PHP
+    * 61533: Segmentation fault when instantiating channel, queue or exchange with wrong object, then using it
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.4</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-07-18</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    * 62549: Fixing broken persistent connection
+    * 62412: Fixing segfault due to destruction order
+    * 62411: Fixing declaration overload bug
+    * 62410: Fixing declaration overload for 5.4
+    * 61337: Adding License file
+    * 61749: Fixing handling for binary content in envelope
+    * 62087: Adding appropriate version information
+    * 62354: Enabling debugging dumping of objects
+    * 61351: Updating min PHP version requirements to 5.2.0
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.3</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-05-19</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+     Fixing compilation issue with PHP 5.4
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.2</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-03-02</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.2</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-03-09</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+     Fixed bug:
+     Fix Memory leak when using AMQPQueue::get from a queue with no messages
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.1</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-03-02</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Fixed bug:
+      * 61247: Allow queue creation with empty queue name, and return auto generated name
+      * 61127: Segmentation fault when cleaning up an AMQPChannel without calling AMQPConnection::connect first
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>1.0.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2012-02-15</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Changed/finalized API signature:
+      * Exposing AMQPChannel
+      * Exposing AMQPEnvelope
+      * Exposing more queue and exchange arguments and flags
+      * Exposing basic.qos
+    Added persistent connections
+    Cleaned up codebase
+    Fixed memory leaks and segmentation faults
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>0.3.1</release>
+    <api>0.3.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2011-09-08</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Fixed bug:
+      * 24323: Cannot get the name for auto-named reply-to queues
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>0.3.0</release>
+    <api>0.3.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2011-09-08</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Fixed memory leaks in many functions (courtesy Jonathan Tansavatdi and Andy Wick)
+    Fixed consume method to return proper values
+    Cleaned up variable usage
+    Fixed bugs:
+      * 22638: Unexpected exit code 1 with AMQPQueue::consume()
+      * 22698: AMQPQueue::consume
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>0.2.2</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2011-01-02</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Made extension compatible with PHP lt 5.3 (courtesy John Skopis)
+    Fixed wrong typing of message properties (courtesy John Skopis)
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>0.2.1</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-12-10</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Fixed refcount decrementing bug causing segfaults.
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>0.2.0</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-12-10</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Works with AMQP 0-8 and 0-9-1 (used by RabbitMQ 2.*)
+    Modified AMQPConnection object:
+      * Requires call to 'connect' method to connect (no longer connects on instantiation)
+      * Added support for disconnect and reconnect
+      * Added helper setters for port, host, vhost, login and password
+
+    Improved consume method to block for MIN messages, and try to get MAX messages if available
+    Fixed zval descoping bugs
+    Fixed bugs:
+      * 17809: Couldn't compile pecl extension under PHP 5.3
+      * 17831: Segmentation fault when the exchange doesn't exists
+      * 19707: AMQPQueue::get() doesn't return the message
+      * 19840: Connection Exception
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>0.1.1</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-08-19</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Updating extension to work with new rabbitmq-c library
+   </notes>
+  </release>
+
+  <release>
+   <version>
+    <release>0.1.0</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-06-19</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+    Initial release
+   </notes>
+  </release>
+
+ </changelog>
 </package>
