@@ -60,6 +60,12 @@ PHP_METHOD(amqp_connection_class, setVhost);
 PHP_METHOD(amqp_connection_class, getTimeout);
 PHP_METHOD(amqp_connection_class, setTimeout);
 
+PHP_METHOD(amqp_connection_class, getReadTimeout);
+PHP_METHOD(amqp_connection_class, setReadTimeout);
+
+PHP_METHOD(amqp_connection_class, getWriteTimeout);
+PHP_METHOD(amqp_connection_class, setWriteTimeout);
+
 /*
 *Local variables:
 *tab-width: 4

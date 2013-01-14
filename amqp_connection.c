@@ -50,6 +50,10 @@
 
 #include "php_amqp.h"
 
+#ifndef E_DEPRECATED
+#define E_DEPRECATED E_WARNING
+#endif
+
 #if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 zend_object_handlers amqp_connection_object_handlers;
 HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
@@ -65,7 +69,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 
 	/* Keep the first number matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
-	ZEND_INIT_SYMTABLE_EX(debug_info, 5 + 1, 0);
+	ZEND_INIT_SYMTABLE_EX(debug_info, 6 + 1, 0);
 
 	/* Start adding values */
 	MAKE_STD_ZVAL(value);
@@ -89,8 +93,12 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	zend_hash_add(debug_info, "port", sizeof("port"), &value, sizeof(zval *), NULL);
 
 	MAKE_STD_ZVAL(value);
-	ZVAL_DOUBLE(value, connection->timeout);
-	zend_hash_add(debug_info, "timeout", sizeof("timeout"), &value, sizeof(zval *), NULL);
+	ZVAL_DOUBLE(value, connection->read_timeout);
+	zend_hash_add(debug_info, "read_timeout", sizeof("read_timeout"), &value, sizeof(zval *), NULL);
+
+	MAKE_STD_ZVAL(value);
+	ZVAL_DOUBLE(value, connection->write_timeout);
+	zend_hash_add(debug_info, "write_timeout", sizeof("write_timeout"), &value, sizeof(zval *), NULL);
 
 	/* Start adding values */
 	return debug_info;
@@ -170,7 +178,8 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 
 	amqp_set_sockfd(connection->connection_resource->connection_state, connection->connection_resource->fd);
 
-	php_amqp_set_timeout(connection TSRMLS_CC);
+	php_amqp_set_read_timeout(connection TSRMLS_CC);
+	php_amqp_set_write_timeout(connection TSRMLS_CC);
 
 	x = amqp_login(
 		connection->connection_resource->connection_state,
@@ -259,29 +268,54 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 	return;
 }
 
-int php_amqp_set_timeout(amqp_connection_object *connection TSRMLS_DC)
+int php_amqp_set_read_timeout(amqp_connection_object *connection TSRMLS_DC)
 {
 #ifdef PHP_WIN32
-	DWORD timeout;
+	DWORD read_timeout;
 	/*
 	In Windows, setsockopt with SO_RCVTIMEO sets actual timeout
 	to a value that's 500ms greater than specified value.
 	Also, it's not possible to set timeout to any value below 500ms.
 	Zero timeout works like it should, however.
 	*/
-	if (connection->timeout == 0.) {
-		timeout = 0;
+	if (connection->read_timeout == 0.) {
+		read_timeout = 0;
 	} else {
-		timeout = (int) (max(connection->timeout * 1.e+3 - .5e+3, 1.));
+		read_timeout = (int) (max(connection->read_timeout * 1.e+3 - .5e+3, 1.));
 	}
 #else
-	struct timeval timeout;
-	timeout.tv_sec = (int) floor(connection->timeout);
-	timeout.tv_usec = (int) ((connection->timeout - floor(connection->timeout)) * 1.e+6);
+	struct timeval read_timeout;
+	read_timeout.tv_sec = (int) floor(connection->read_timeout);
+	read_timeout.tv_usec = (int) ((connection->read_timeout - floor(connection->read_timeout)) * 1.e+6);
 #endif
 
-	if (0 != setsockopt(connection->connection_resource->fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout))) {
+	if (0 != setsockopt(connection->connection_resource->fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&read_timeout, sizeof(read_timeout))) {
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: cannot setsockopt SO_RCVTIMEO", 0 TSRMLS_CC);
+		return 0;
+	}
+
+	return 1;
+}
+
+int php_amqp_set_write_timeout(amqp_connection_object *connection TSRMLS_DC)
+{
+#ifdef PHP_WIN32
+	DWORD write_timeout;
+
+	*/
+	if (connection->write_timeout == 0.) {
+		write_timeout = 0;
+	} else {
+		write_timeout = (int) (max(connection->write_timeout * 1.e+3 - .5e+3, 1.));
+	}
+#else
+	struct timeval write_timeout;
+	write_timeout.tv_sec = (int) floor(connection->write_timeout);
+	write_timeout.tv_usec = (int) ((connection->write_timeout - floor(connection->write_timeout)) * 1.e+6);
+#endif
+
+	if (0 != setsockopt(connection->connection_resource->fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&write_timeout, sizeof(write_timeout))) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: cannot setsockopt SO_SNDTIMEO", 0 TSRMLS_CC);
 		return 0;
 	}
 
@@ -430,18 +464,18 @@ zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
 
 
 /* {{{ proto AMQPConnection::__construct([array optional])
- * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'timeout' indexes
+ * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'read_timeout', 'write_timeout' and 'timeout' (deprecated) indexes
  */
 PHP_METHOD(amqp_connection_class, __construct)
 {
 	zval *id;
 	amqp_connection_object *connection;
 
-	zval* iniArr = NULL;
+	zval* ini_arr = NULL;
 	zval** zdata;
 
 	/* Parse out the method parameters */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|a", &id, amqp_connection_class_entry, &iniArr) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|a", &id, amqp_connection_class_entry, &ini_arr) == FAILURE) {
 		return;
 	}
 
@@ -450,7 +484,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 
 	/* Pull the login out of the $params array */
 	zdata = NULL;
-	if (iniArr && SUCCESS == zend_hash_find(HASH_OF (iniArr), "login", sizeof("login"), (void*)&zdata)) {
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "login", sizeof("login"), (void*)&zdata)) {
 		convert_to_string(*zdata);
 	}
 	/* Validate the given login */
@@ -468,7 +502,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 
 	/* Pull the password out of the $params array */
 	zdata = NULL;
-	if (iniArr && SUCCESS == zend_hash_find(HASH_OF(iniArr), "password", sizeof("password"), (void*)&zdata)) {
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF(ini_arr), "password", sizeof("password"), (void*)&zdata)) {
 		convert_to_string(*zdata);
 	}
 	/* Validate the given password */
@@ -485,7 +519,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 
 	/* Pull the host out of the $params array */
 	zdata = NULL;
-	if (iniArr && SUCCESS == zend_hash_find(HASH_OF(iniArr), "host", sizeof("host"), (void *)&zdata)) {
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF(ini_arr), "host", sizeof("host"), (void *)&zdata)) {
 		convert_to_string(*zdata);
 	}
 	/* Validate the given host */
@@ -502,7 +536,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 
 	/* Pull the vhost out of the $params array */
 	zdata = NULL;
-	if (iniArr && SUCCESS == zend_hash_find(HASH_OF (iniArr), "vhost", sizeof("vhost"), (void*)&zdata)) {
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "vhost", sizeof("vhost"), (void*)&zdata)) {
 		convert_to_string(*zdata);
 	}
 	/* Validate the given vhost */
@@ -519,19 +553,60 @@ PHP_METHOD(amqp_connection_class, __construct)
 
 	connection->port = INI_INT("amqp.port");
 
-	if (iniArr && SUCCESS == zend_hash_find(HASH_OF (iniArr), "port", sizeof("port"), (void*)&zdata)) {
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "port", sizeof("port"), (void*)&zdata)) {
 		convert_to_long(*zdata);
 		connection->port = (size_t)Z_LVAL_PP(zdata);
 	}
 
-	connection->timeout = INI_FLT("amqp.timeout");
+	connection->read_timeout = INI_FLT("amqp.read_timeout");
 
-	if (iniArr && SUCCESS == zend_hash_find(HASH_OF (iniArr), "timeout", sizeof("timeout"), (void*)&zdata)) {
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "read_timeout", sizeof("read_timeout"), (void*)&zdata)) {
+		convert_to_double(*zdata);
+		if (Z_DVAL_PP(zdata) < 0) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'read_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		} else {
+			connection->read_timeout = Z_DVAL_PP(zdata);
+		}
+
+		if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "timeout", sizeof("timeout"), (void*)&zdata)) {
+			/* 'read_timeout' takes precedence on 'timeout' but users have to know this */
+			php_error_docref(NULL TSRMLS_CC, E_NOTICE, "Parameter 'timeout' is deprecated, 'read_timeout' used instead");
+		}
+
+	} else if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "timeout", sizeof("timeout"), (void*)&zdata)) {
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "Parameter 'timeout' is deprecated; use 'read_timeout' instead");
+
 		convert_to_double(*zdata);
 		if (Z_DVAL_PP(zdata) < 0) {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
 		} else {
-			connection->timeout = Z_DVAL_PP(zdata);
+			connection->read_timeout = Z_DVAL_PP(zdata);
+		}
+	} else {
+
+	   if (DEFAULT_TIMEOUT != INI_STR("amqp.timeout")) {
+		   php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "INI setting 'amqp.timeout' is deprecated; use 'amqp.read_timeout' instead");
+
+		   if (DEFAULT_READ_TIMEOUT == INI_STR("amqp.read_timeout")) {
+				connection->read_timeout = INI_FLT("amqp.timeout");
+		   } else {
+				php_error_docref(NULL TSRMLS_CC, E_NOTICE, "INI setting 'amqp.read_timeout' will be used instead of 'amqp.timeout'");
+				connection->read_timeout = INI_FLT("amqp.read_timeout");
+		   }
+	   } else {
+			connection->read_timeout = INI_FLT("amqp.read_timeout");
+	   }
+	}
+
+	connection->write_timeout = INI_FLT("amqp.write_timeout");
+
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "write_timeout", sizeof("write_timeout"), (void*)&zdata)) {
+		convert_to_double(*zdata);
+		if (Z_DVAL_PP(zdata) < 0) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'write_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		} else {
+			connection->write_timeout = Z_DVAL_PP(zdata);
 		}
 	}
 }
@@ -1010,8 +1085,69 @@ PHP_METHOD(amqp_connection_class, setVhost)
 /* }}} */
 
 /* {{{ proto amqp::getTimeout()
+@deprecated
 get the timeout */
 PHP_METHOD(amqp_connection_class, getTimeout)
+{
+	zval *id;
+	amqp_connection_object *connection;
+
+	php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "AMQPConnection::getTimeout() method is deprecated; use AMQPConnection::getReadTimeout() instead");
+
+	/* Get the timeout from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_connection_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* Copy the timeout to the amqp object */
+	RETURN_DOUBLE(connection->read_timeout);
+}
+/* }}} */
+
+/* {{{ proto amqp::setTimeout(double timeout)
+@deprecated
+set the timeout */
+PHP_METHOD(amqp_connection_class, setTimeout)
+{
+	zval *id;
+	amqp_connection_object *connection;
+	double read_timeout;
+
+	php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "AMQPConnection::setTimeout($timeout) method is deprecated; use AMQPConnection::setReadTimeout($timeout) instead");
+
+	/* Get the timeout from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Od", &id, amqp_connection_class_entry, &read_timeout) == FAILURE) {
+		return;
+	}
+
+	/* Validate timeout */
+	if (read_timeout < 0) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* Copy the timeout to the amqp object */
+	connection->read_timeout = read_timeout;
+
+	if (connection->is_connected == '\1') {
+		if (php_amqp_set_read_timeout(connection TSRMLS_CC) == 0) {
+			RETURN_FALSE;
+		}
+	}
+
+	RETURN_TRUE;
+}
+/* }}} */
+
+/* {{{ proto amqp::getReadTimeout()
+get the read timeout */
+PHP_METHOD(amqp_connection_class, getReadTimeout)
 {
 	zval *id;
 	amqp_connection_object *connection;
@@ -1025,26 +1161,26 @@ PHP_METHOD(amqp_connection_class, getTimeout)
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* Copy the timeout to the amqp object */
-	RETURN_DOUBLE(connection->timeout);
+	RETURN_DOUBLE(connection->read_timeout);
 }
 /* }}} */
 
-/* {{{ proto amqp::setTimeout(double timeout)
-set the timeout */
-PHP_METHOD(amqp_connection_class, setTimeout)
+/* {{{ proto amqp::setReadTimeout(double timeout)
+set read timeout */
+PHP_METHOD(amqp_connection_class, setReadTimeout)
 {
 	zval *id;
 	amqp_connection_object *connection;
-	double timeout;
+	double read_timeout;
 
 	/* Get the timeout from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Od", &id, amqp_connection_class_entry, &timeout) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Od", &id, amqp_connection_class_entry, &read_timeout) == FAILURE) {
 		return;
 	}
 
 	/* Validate timeout */
-	if (timeout < 0) {
-		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+	if (read_timeout < 0) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'read_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
 		return;
 	}
 
@@ -1052,10 +1188,10 @@ PHP_METHOD(amqp_connection_class, setTimeout)
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* Copy the timeout to the amqp object */
-	connection->timeout = timeout;
+	connection->read_timeout = read_timeout;
 
 	if (connection->is_connected == '\1') {
-		if (php_amqp_set_timeout(connection TSRMLS_CC) == 0) {
+		if (php_amqp_set_read_timeout(connection TSRMLS_CC) == 0) {
 			RETURN_FALSE;
 		}
 	}
@@ -1063,6 +1199,62 @@ PHP_METHOD(amqp_connection_class, setTimeout)
 	RETURN_TRUE;
 }
 /* }}} */
+
+/* {{{ proto amqp::getWriteTimeout()
+get write timeout */
+PHP_METHOD(amqp_connection_class, getWriteTimeout)
+{
+	zval *id;
+	amqp_connection_object *connection;
+
+	/* Get the timeout from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_connection_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* Copy the timeout to the amqp object */
+	RETURN_DOUBLE(connection->write_timeout);
+}
+/* }}} */
+
+/* {{{ proto amqp::setWriteTimeout(double timeout)
+set write timeout */
+PHP_METHOD(amqp_connection_class, setWriteTimeout)
+{
+	zval *id;
+	amqp_connection_object *connection;
+	double write_timeout;
+
+	/* Get the timeout from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Od", &id, amqp_connection_class_entry, &write_timeout) == FAILURE) {
+		return;
+	}
+
+	/* Validate timeout */
+	if (write_timeout < 0) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'write_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* Copy the timeout to the amqp object */
+	connection->write_timeout = write_timeout;
+
+	if (connection->is_connected == '\1') {
+		if (php_amqp_set_write_timeout(connection TSRMLS_CC) == 0) {
+			RETURN_FALSE;
+		}
+	}
+
+	RETURN_TRUE;
+}
+/* }}} */
+
 
 /*
 *Local variables:

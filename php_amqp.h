@@ -176,7 +176,9 @@ extern zend_class_entry *amqp_exception_class_entry,
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
-#define DEFAULT_TIMEOUT						"0"
+#define DEFAULT_TIMEOUT						NULL
+#define DEFAULT_READ_TIMEOUT				"0"
+#define DEFAULT_WRITE_TIMEOUT				"0"
 #define DEFAULT_VHOST						"/"
 #define DEFAULT_LOGIN						"guest"
 #define DEFAULT_PASSWORD					"guest"
@@ -289,7 +291,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 #endif
 
 extern int le_amqp_connection_resource;
-// ZEND_DECLARE_MODULE_GLOBALS(amqp)
 
 typedef struct _amqp_channel_object {
 	zend_object zo;
@@ -320,7 +321,8 @@ typedef struct _amqp_connection_object {
 	char *vhost;
 	int vhost_len;
 	int port;
-	double timeout;
+	double read_timeout;
+	double write_timeout;
 	amqp_connection_resource *connection_resource;
 } amqp_connection_object;
 

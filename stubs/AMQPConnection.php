@@ -22,6 +22,16 @@ class AMQPConnection
      * broker. A connection will not be established until
      * AMQPConnection::connect() is called.
      *
+     *  $credentials = array(
+     *      'host'  => amqp.host The host to connect too. Note: Max 1024 characters.
+     *      'port'  => amqp.port Port on the host.
+     *      'vhost' => amqp.vhost The virtual host on the host. Note: Max 128 characters.
+     *      'login' => amqp.login The login name to use. Note: Max 128 characters.
+     *      'password' => amqp.password Password. Note: Max 128 characters.
+     *      'read_timeout'  => Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
+     *      'read_timeout'  => Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
+     * )
+     *
      * @param array $credentials Optional array of credential information for
      *                           connecting to the AMQP broker.
      */
@@ -203,6 +213,10 @@ class AMQPConnection
     }
 
     /**
+     * Sets the interval of time to wait for income activity from AMQP broker
+     *
+     * @deprecated use AMQPConnection::setReadTimout($timeout) instead
+     *
      * @param int $timeout
      *
      * @return bool
@@ -212,9 +226,57 @@ class AMQPConnection
     }
 
     /**
-     * @return int
+     * Get the configured interval of time to wait for income activity
+     * from AMQP broker
+     *
+     * @deprecated use AMQPConnection::getReadTimout() instead
+     *
+     * @return float
      */
     public function getTimeout()
+    {
+    }
+
+    /**
+     * Sets the interval of time to wait for income activity from AMQP broker
+     *
+     * @param int $timeout
+     *
+     * @return bool
+     */
+    public function setReadTimeout($timeout)
+    {
+    }
+
+    /**
+     * Get the configured interval of time to wait for income activity
+     * from AMQP broker
+     *
+     * @return float
+     */
+    public function getReadTimeout()
+    {
+    }
+
+
+    /**
+     * Sets the interval of time to wait for outcome activity to AMQP broker
+     *
+     * @param int $timeout
+     *
+     * @return bool
+     */
+    public function setWriteTimeout($timeout)
+    {
+    }
+
+    /**
+     * Get the configured interval of time to wait for outcome activity
+     * to AMQP broker
+     *
+     * @return float
+     */
+    public function getWriteTimeout()
     {
     }
 }
