@@ -1,5 +1,5 @@
 --TEST--
-AMQPConnection setTimeout float
+AMQPConnection setTimeout out of range
 --SKIPIF--
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
@@ -12,6 +12,8 @@ try {
 	echo PHP_EOL;
     echo $e->getMessage();
 }
---EXPECT--
+?>
+--EXPECTF--
+%s: AMQPConnection::setTimeout(): AMQPConnection::setTimeout($timeout) method is deprecated; use AMQPConnection::setReadTimeout($timeout) instead in %s on line 4
 AMQPConnectionException
 Parameter 'timeout' must be greater than or equal to zero.
