@@ -40,3 +40,8 @@ tests/*.php
 tests/*.sh
 php_test_results_*
 tmp-php.ini
+debian/Changelog
+debian/files
+debian/php5-amqp.substvars
+debian/php5-amqp
+debian/php5-amqp.debhelper.log
