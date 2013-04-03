@@ -988,6 +988,7 @@ PHP_METHOD(amqp_queue_class, consume)
 
 			/* Dump it into the params array */
 			add_index_zval(params, 0, message);
+			Z_ADDREF_P(message);
 
 			/* Add a pointer to the queue: */
 			add_index_zval(params, 1, id);
@@ -1009,6 +1010,7 @@ PHP_METHOD(amqp_queue_class, consume)
 			/* Clean up our mess */
 			zend_fcall_info_args_clear(&fci, 1);
 			zval_ptr_dtor(&params);
+			zval_ptr_dtor(&message);
 		} else {
 			zval_ptr_dtor(&message);
 		}
