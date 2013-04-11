@@ -315,16 +315,6 @@ PHP_METHOD(amqp_exchange_class, setType)
 
 	/* Pull the exchange off the object store */
 	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	if (strcmp(type, AMQP_EX_TYPE_DIRECT) != 0
-	&& strcmp(type, AMQP_EX_TYPE_HEADERS) != 0
-	&& strcmp(type, AMQP_EX_TYPE_TOPIC) != 0
-	&& strcmp(type, AMQP_EX_TYPE_FANOUT) != 0
-	) {
-		zend_throw_exception(amqp_exchange_exception_class_entry, "Could not set exchange type. Exchange type must be one of 'direct', 'topic', 'headers' or 'fanout'.", 0 TSRMLS_CC);
-		return;
-	}
-
 	AMQP_SET_TYPE(exchange, type)
 }
 /* }}} */

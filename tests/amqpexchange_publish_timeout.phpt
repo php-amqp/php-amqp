@@ -30,24 +30,24 @@ $start = $end = 0;
 
 // try to exceed resources limit
 try {
-    while(true) {
-        $start = microtime(true);
-        $ex->publish($message, 'ignored-for-fanout', AMQP_NOPARAM, array('expiration' => 5000));
-    }
+	while(true) {
+		$start = microtime(true);
+		$ex->publish($message, 'ignored-for-fanout', AMQP_NOPARAM, array('expiration' => 5000));
+	}
 } catch (Exception $e) {}
 
 try {
 	while(true) {
 		$start = microtime(true);
-        // at this point publishing should be banned immediately
+        	// at this point publishing should be banned immediately
 		$ex->publish($message, 'ignored-for-fanout', AMQP_NOPARAM, array('expiration' => 5000));
 	}
 } catch (Exception $e) {
 	$end = microtime(true);
 	echo get_class($e);
 	echo PHP_EOL;
-    echo $e->getMessage();
-    echo PHP_EOL;
+	echo $e->getMessage();
+	echo PHP_EOL;
 }
 //$delay = abs($end - $start - $timeout);
 //echo $delay < 0.005 ? 'true' : 'false';
