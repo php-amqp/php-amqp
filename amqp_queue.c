@@ -392,10 +392,10 @@ int read_message_from_channel(amqp_connection_state_t connection, zval *envelope
 		}
 
 		if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
-            MAKE_STD_ZVAL(envelope->headers);
-            array_init(envelope->headers);
-            envelope->headers = parse_amqp_table(&(p->headers));
-        }
+			MAKE_STD_ZVAL(envelope->headers);
+			array_init(envelope->headers);
+			envelope->headers = parse_amqp_table(&(p->headers));
+		}
 
 		/* Check if we are going to even get a body */
 		if (frame.payload.properties.body_size == 0) {
