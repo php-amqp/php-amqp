@@ -152,7 +152,7 @@ zend_object_value amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 	return new_value;
 }
 
-zval *parse_amqp_table(amqp_table_t *table TSRMLS_DC)
+zval *parse_amqp_table(amqp_table_t *table)
 {
 	int i;
 	zval *result;
