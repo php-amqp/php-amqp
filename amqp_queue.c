@@ -163,7 +163,6 @@ zval *parse_amqp_table(amqp_table_t *table)
 		zval *value;
 		amqp_table_entry_t *entry = &(table->entries[i]);
 		MAKE_STD_ZVAL(value);
-		ZVAL_NULL(value);
 		switch (entry->value.kind) {
 			case AMQP_FIELD_KIND_BOOLEAN:
 				ZVAL_BOOL(value, entry->value.value.boolean);
@@ -229,7 +228,8 @@ zval *parse_amqp_table(amqp_table_t *table)
 			case AMQP_FIELD_KIND_TIMESTAMP:
 			case AMQP_FIELD_KIND_VOID:
 			case AMQP_FIELD_KIND_DECIMAL:
-				break;
+			default:
+				ZVAL_NULL(value);
 		}
 		if (Z_TYPE_P(value) != IS_NULL) {
 			char *key = estrndup(entry->key.bytes, entry->key.len);
