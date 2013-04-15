@@ -226,6 +226,8 @@ zval *parse_amqp_table(amqp_table_t *table)
 				value = parse_amqp_table(&(entry->value.value.table));
 				break;
 			case AMQP_FIELD_KIND_TIMESTAMP:
+				ZVAL_DOUBLE(value, entry->value.value.u64);
+				break;
 			case AMQP_FIELD_KIND_VOID:
 			case AMQP_FIELD_KIND_DECIMAL:
 			default:
