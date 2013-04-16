@@ -152,11 +152,9 @@ zend_object_value amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 	return new_value;
 }
 
-zval *parse_amqp_table(amqp_table_t *table)
+void parse_amqp_table(amqp_table_t *table, zval *result)
 {
 	int i;
-	zval *result;
-	MAKE_STD_ZVAL(result);
 	array_init(result);
 
 	for (i = 0; i < table->num_entries; i++) {
@@ -216,14 +214,24 @@ zval *parse_amqp_table(amqp_table_t *table)
 								);
 								break;
 							case AMQP_FIELD_KIND_TABLE:
-								value = parse_amqp_table(&(entry->value.value.array.entries[j].value.table));
+								{
+									zval *subtable;
+									MAKE_STD_ZVAL(subtable);
+									array_init(subtable);
+									parse_amqp_table(
+										&(entry->value.value.array.entries[j].value.table),
+										subtable
+									);
+									add_next_index_zval(value, subtable);
+								}
 								break;
 						}
 					}
 				}
 				break;
 			case AMQP_FIELD_KIND_TABLE:
-				value = parse_amqp_table(&(entry->value.value.table));
+				array_init(value);
+				parse_amqp_table(&(entry->value.value.table), value);
 				break;
 			case AMQP_FIELD_KIND_TIMESTAMP:
 				ZVAL_DOUBLE(value, entry->value.value.u64);
@@ -241,7 +249,7 @@ zval *parse_amqp_table(amqp_table_t *table)
 			zval_dtor(value);
 		}
 	}
-	return result;
+	return;
 }
 
 /*
@@ -394,7 +402,8 @@ int read_message_from_channel(amqp_connection_state_t connection, zval *envelope
 		}
 
 		if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
-			envelope->headers = parse_amqp_table(&(p->headers));
+			zval_dtor(envelope->headers);
+			parse_amqp_table(&(p->headers), envelope->headers);
 		}
 
 		/* Check if we are going to even get a body */
