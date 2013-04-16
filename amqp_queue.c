@@ -63,7 +63,7 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	/* Let zend clean up for us: */
 	*is_temp = 1;
 
-	/* Keep the # 18 matching the number of entries in this table*/
+	/* Keep the # 7 matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
 	ZEND_INIT_SYMTABLE_EX(debug_info, 7 + 1, 0);
 
@@ -94,7 +94,6 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 
 	zend_hash_add(debug_info, "arguments", sizeof("arguments"), &queue->arguments, sizeof(&queue->arguments), NULL);
 
-	/* Start adding values */
 	return debug_info;
 }
 #endif
