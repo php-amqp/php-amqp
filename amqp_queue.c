@@ -394,8 +394,6 @@ int read_message_from_channel(amqp_connection_state_t connection, zval *envelope
 		}
 
 		if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
-			MAKE_STD_ZVAL(envelope->headers);
-			array_init(envelope->headers);
 			envelope->headers = parse_amqp_table(&(p->headers));
 		}
 
