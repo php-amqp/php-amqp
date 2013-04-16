@@ -189,6 +189,8 @@ Fixed bugs:
    <file name="tests/amqpqueue_purge_basic.phpt" role="test" />
    <file name="tests/amqpqueue_unbind_basic_empty_routing_key.phpt" role="test" />
    <file name="tests/amqpqueue_var_dump.phpt" role="test" />
+   <file name="tests/amqpqueue_nested_arrays.phpt" role="test" />
+   <file name="tests/amqpqueue_nested_headers.phpt" role="test" />
    <file name="tests/bug_17831.phpt" role="test" />
    <file name="tests/bug_19707.phpt" role="test" />
    <file name="tests/bug_19840.phpt" role="test" />
