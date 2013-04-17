@@ -494,6 +494,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 		char ** pstr = (char **) &str;
 		amqp_error(res, pstr);
 		zend_throw_exception(amqp_exchange_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		efree(*pstr);
 		return;
 	}
 
