@@ -141,6 +141,30 @@ zend_object_value amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 	return new_value;
 }
 
+void free_field_value(struct amqp_field_value_t_ value) {
+	switch (value.kind) {
+		case AMQP_FIELD_KIND_ARRAY:
+			{
+				int i;
+				for (i=0; i<value.value.array.num_entries; ++i) {
+					free_field_value(value.value.array.entries[i]);
+				}
+				efree(value.value.array.entries);
+			}
+			break;
+		case AMQP_FIELD_KIND_TABLE:
+			{
+				int i;
+				for (i=0; i<value.value.table.num_entries; ++i) {
+					free_field_value(value.value.table.entries[i].value);
+				}
+				efree(value.value.table.entries);
+			}
+			break;
+	}
+}
+
+
 /* {{{ proto AMQPExchange::__construct(AMQPChannel channel);
 create Exchange   */
 PHP_METHOD(amqp_exchange_class, __construct)
@@ -824,6 +848,10 @@ PHP_METHOD(amqp_exchange_class, publish)
 	);
 
 	if (props.headers.entries) {
+		int i;
+		for (i=0; i < props.headers.num_entries; ++i) {
+			free_field_value(props.headers.entries[i].value);
+		}
 		efree(props.headers.entries);
 	}
 
