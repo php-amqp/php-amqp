@@ -26,6 +26,23 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+1.0.10 Release:
+    * report correct version in module info (Lars Strojny)
+    * fix class interface definitions (Vladimir Kartaviy)
+    * add ability to bind a queue with an empty routing key (Vladimir Kartaviy)
+    * fix constant AMQP_IFUNUSED (Florin Patan, Bernhard Weisshuhn)
+    * added stubs for ide use (Vladimir Kartaviy, Bernhard Weisshuhn)
+    * Fixed memory leak in queue->declareQueue (Ilya a.k.a. coodix)
+    * support for php 5.5 (Lars Strojny)
+    * add support for read and write timeouts (Bogdan Padalko)
+    * fix memory leak in queue->consume (Dmitry Vinogradov)
+    * add support for custom exchange types (empi89)
+    * support for nested custom headers (Bernhard Weisshuhn)
+    * fix memory (Bernhard Weisshuhn)
+
+    For a complete list of changes see:
+    https://github.com/pdezwart/php-amqp/compare/v1.0.9...v1.0.10
+
 1.0.9 Release:
     * Fix pecl relase
 
