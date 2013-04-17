@@ -62,7 +62,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	amqp_connection_object *connection;
 
 	/* Let zend clean up for us: */
-	*is_temp = 0;
+	*is_temp = 1;
 
 	/* Get the envelope object from which to read */
 	connection = (amqp_connection_object *)zend_object_store_get_object(object TSRMLS_CC);

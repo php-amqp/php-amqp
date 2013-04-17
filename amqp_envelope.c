@@ -60,7 +60,7 @@ HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	amqp_envelope_object *envelope = (amqp_envelope_object *)zend_object_store_get_object(object TSRMLS_CC);
 
 	/* Let zend clean up for us: */
-	*is_temp = 0;
+	*is_temp = 1;
 
 	/* Keep the # 18 matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
