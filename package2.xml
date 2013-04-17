@@ -171,7 +171,6 @@ Fixed bugs:
    <file name="tests/amqpexchange_declare_basic.phpt" role="test" />
    <file name="tests/amqpexchange_publish_basic.phpt" role="test" />
    <file name="tests/amqpexchange_publish_empty_routing_key.phpt" role="test" />
-   <file name="tests/amqpexchange_publish_timeout.phpt" role="test" />
    <file name="tests/amqpexchange_set_flag.phpt" role="test" />
    <file name="tests/amqpexchange_var_dump.phpt" role="test" />
    <file name="tests/amqpqueue_bind_basic.phpt" role="test" />
