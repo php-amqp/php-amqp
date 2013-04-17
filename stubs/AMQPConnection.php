@@ -9,7 +9,8 @@ class AMQPConnection
      *
      * This method will initiate a connection with the AMQP broker.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @throws AMQP_ConnectionException
+     * @return boolean TRUE on success or throw an exception on failure.
      */
     public function connect()
     {
@@ -112,7 +113,8 @@ class AMQPConnection
      * This method will initiate a connection with the AMQP broker
      * or reuse an existing one if present.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @throws AMQP_ConnectionException
+     * @return boolean TRUE on success or throws an exception on failure.
      */
     public function pconnect()
     {
