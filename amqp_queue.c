@@ -217,7 +217,6 @@ void parse_amqp_table(amqp_table_t *table, zval *result)
 								{
 									zval *subtable;
 									MAKE_STD_ZVAL(subtable);
-									array_init(subtable);
 									parse_amqp_table(
 										&(entry->value.value.array.entries[j].value.table),
 										subtable
