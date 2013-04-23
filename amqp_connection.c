@@ -302,7 +302,6 @@ int php_amqp_set_write_timeout(amqp_connection_object *connection TSRMLS_DC)
 #ifdef PHP_WIN32
 	DWORD write_timeout;
 
-	*/
 	if (connection->write_timeout == 0.) {
 		write_timeout = 0;
 	} else {
