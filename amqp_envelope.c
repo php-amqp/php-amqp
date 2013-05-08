@@ -247,7 +247,7 @@ PHP_METHOD(amqp_envelope_class, getRoutingKey)
 }
 /* }}} */
 
-/* {{{ proto AMQPEnvelope::getDeliveryTag()
+/* {{{ proto AMQPEnvelope::getDeliveryMode()
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getDeliveryMode)
 {
