@@ -885,15 +885,6 @@ PHP_METHOD(amqp_queue_class, get)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not get messages from queue.");
 
-	/* Set the QOS for this channel to only pull off one message at a time */
-	amqp_basic_qos(
-		connection->connection_resource->connection_state,
-		channel->channel_id,
-		0,						/* prefetch window size */
-		1,						/* prefetch message count */
-		0						/* global flag */
-	);
-
 	/* Build basic.get request */
 	s.ticket = 0,
 	s.queue = amqp_cstring_bytes(queue->name);
@@ -910,15 +901,6 @@ PHP_METHOD(amqp_queue_class, get)
 	/* Read the message off of the channel */
 	MAKE_STD_ZVAL(message);
 	read = read_message_from_channel(connection->connection_resource->connection_state, message TSRMLS_CC);
-
-	/* Set the QOS back to what the user requested at the beginning */
-	amqp_basic_qos(
-		connection->connection_resource->connection_state,
-		channel->channel_id,
-		channel->prefetch_size,		/* prefetch window size */
-		channel->prefetch_count,	/* prefetch message count */
-		0							/* global flag */
-	);
 
 	if (read == AMQP_READ_SUCCESS) {
 		COPY_PZVAL_TO_ZVAL(*return_value, message);
