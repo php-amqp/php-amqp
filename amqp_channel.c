@@ -203,7 +203,7 @@ PHP_METHOD(amqp_channel_class, __construct)
 /* }}} */
 
 
-/* {{{ proto amqp::isConnected()
+/* {{{ proto bool amqp::isConnected()
 check amqp channel */
 PHP_METHOD(amqp_channel_class, isConnected)
 {
@@ -229,7 +229,7 @@ PHP_METHOD(amqp_channel_class, isConnected)
 /* }}} */
 
 
-/* {{{ proto amqp::setPrefetchCount(long count)
+/* {{{ proto bool amqp::setPrefetchCount(long count)
 set the number of prefetches */
 PHP_METHOD(amqp_channel_class, setPrefetchCount)
 {
@@ -268,8 +268,27 @@ PHP_METHOD(amqp_channel_class, setPrefetchCount)
 }
 /* }}} */
 
+/* {{{ proto long amqp::setPrefetchCount()
+get the number of prefetches */
+PHP_METHOD(amqp_channel_class, getPrefetchCount)
+{
+	zval *id;
+	amqp_channel_object *channel;
 
-/* {{{ proto amqp::setPrefetchSize(long size)
+	/* Get the vhost from the method params */
+	if (zend_parse_method_parameters_none(ZEND_NUM_ARGS() TSRMLS_CC)) {
+		return;
+	}
+
+	/* Get the channel object out of the store */
+	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	RETURN_LONG(channel->prefetch_count);
+}
+/* }}} */
+
+
+/* {{{ proto bool amqp::setPrefetchSize(long size)
 set the number of prefetches */
 PHP_METHOD(amqp_channel_class, setPrefetchSize)
 {
@@ -307,6 +326,26 @@ PHP_METHOD(amqp_channel_class, setPrefetchSize)
 	RETURN_TRUE;
 }
 /* }}} */
+
+/* {{{ proto long amqp::getPrefetchSize()
+get the number of prefetches */
+PHP_METHOD(amqp_channel_class, getPrefetchSize)
+{
+	zval *id;
+	amqp_channel_object *channel;
+
+	/* Get the vhost from the method params */
+	if (zend_parse_method_parameters_none(ZEND_NUM_ARGS() TSRMLS_CC)) {
+		return;
+	}
+
+	/* Get the channel object out of the store */
+	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	RETURN_LONG(channel->prefetch_size);
+}
+/* }}} */
+
 
 
 /* {{{ proto amqp::qos(long size, long count)

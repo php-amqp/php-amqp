@@ -101,6 +101,15 @@ class AMQPChannel
     }
 
     /**
+     * Get the number of messages to prefetch from the broker.
+     *
+     * @return integer
+     */
+    public function getPrefetchCount ()
+    {
+    }
+
+    /**
      * Set the window size to prefetch from the broker.
      *
      * Set the prefetch window size, in octets, during a call to
@@ -117,6 +126,15 @@ class AMQPChannel
      * @return bool TRUE on success or FALSE on failure.
      */
     public function setPrefetchSize ($size)
+    {
+    }
+
+    /**
+     * Get the window size to prefetch from the broker.
+     *
+     * @return integer
+     */
+    public function getPrefetchSize ()
     {
     }
 

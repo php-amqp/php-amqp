@@ -8,34 +8,25 @@ $connection = new AMQPConnection();
 $connection->connect();
 
 $channel = new AMQPChannel($connection);
-print_r($channel);
+var_dump($channel->getPrefetchSize());
+var_dump($channel->getPrefetchCount());
 
 $channel->setPrefetchCount(10);
-print_r($channel);
+var_dump($channel->getPrefetchSize());
+var_dump($channel->getPrefetchCount());
 
 $channel->setPrefetchCount(3);
-print_r($channel);
+var_dump($channel->getPrefetchSize());
+var_dump($channel->getPrefetchCount());
 
 
 ?>
 ==DONE==
---EXPECTF--
-AMQPChannel Object
-(
-    [channel_id] => 1
-    [prefetch_count] => 3
-    [prefetch_size] => 0
-)
-AMQPChannel Object
-(
-    [channel_id] => 1
-    [prefetch_count] => 10
-    [prefetch_size] => 0
-)
-AMQPChannel Object
-(
-    [channel_id] => 1
-    [prefetch_count] => 3
-    [prefetch_size] => 0
-)
+--EXPECT--
+int(1)
+int(3)
+int(0)
+int(10)
+int(3)
+int(0)
 ==DONE==
