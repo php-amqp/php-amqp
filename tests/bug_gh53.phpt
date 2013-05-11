@@ -15,7 +15,7 @@ $channel->setPrefetchCount(10);
 var_dump($channel->getPrefetchSize());
 var_dump($channel->getPrefetchCount());
 
-$channel->setPrefetchCount(3);
+$channel->setPrefetchSize(1024);
 var_dump($channel->getPrefetchSize());
 var_dump($channel->getPrefetchCount());
 
@@ -23,10 +23,10 @@ var_dump($channel->getPrefetchCount());
 ?>
 ==DONE==
 --EXPECT--
-int(1)
+int(0)
 int(3)
 int(0)
 int(10)
-int(3)
+int(1024)
 int(0)
 ==DONE==

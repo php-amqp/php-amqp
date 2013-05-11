@@ -272,16 +272,13 @@ PHP_METHOD(amqp_channel_class, setPrefetchCount)
 get the number of prefetches */
 PHP_METHOD(amqp_channel_class, getPrefetchCount)
 {
-	zval *id;
 	amqp_channel_object *channel;
 
-	/* Get the vhost from the method params */
-	if (zend_parse_method_parameters_none(ZEND_NUM_ARGS() TSRMLS_CC)) {
+	if (zend_parse_parameters_none()) {
 		return;
 	}
 
-	/* Get the channel object out of the store */
-	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
+	channel = (amqp_channel_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	RETURN_LONG(channel->prefetch_count);
 }
@@ -331,16 +328,14 @@ PHP_METHOD(amqp_channel_class, setPrefetchSize)
 get the number of prefetches */
 PHP_METHOD(amqp_channel_class, getPrefetchSize)
 {
-	zval *id;
 	amqp_channel_object *channel;
 
-	/* Get the vhost from the method params */
-	if (zend_parse_method_parameters_none(ZEND_NUM_ARGS() TSRMLS_CC)) {
+	if (zend_parse_parameters_none()) {
 		return;
 	}
 
 	/* Get the channel object out of the store */
-	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
+	channel = (amqp_channel_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	RETURN_LONG(channel->prefetch_size);
 }
