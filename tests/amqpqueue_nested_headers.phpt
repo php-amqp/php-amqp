@@ -47,6 +47,7 @@ $ex->publish(
 $msg = $q->get(AMQP_NOPARAM);
 $q->nack($msg->getDeliveryTag());
 
+sleep(1);
 // Now read from the error queue:
 $msg = $errorQ->get(AMQP_AUTOACK);
 
