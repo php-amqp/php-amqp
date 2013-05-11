@@ -274,7 +274,7 @@ PHP_METHOD(amqp_channel_class, getPrefetchCount)
 {
 	amqp_channel_object *channel;
 
-	if (zend_parse_parameters_none()) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "")) {
 		return;
 	}
 
@@ -330,7 +330,7 @@ PHP_METHOD(amqp_channel_class, getPrefetchSize)
 {
 	amqp_channel_object *channel;
 
-	if (zend_parse_parameters_none()) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "")) {
 		return;
 	}
 
