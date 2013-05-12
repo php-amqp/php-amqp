@@ -140,7 +140,7 @@ zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 PHP_METHOD(amqp_channel_class, __construct)
 {
 	zval *id;
-	zval *connObj = NULL;
+	zval *connection_object = NULL;
 
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
@@ -148,15 +148,15 @@ PHP_METHOD(amqp_channel_class, __construct)
 	amqp_rpc_reply_t res;
 
 	/* Parse out the method parameters */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "OO", &id, amqp_channel_class_entry, &connObj, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "OO", &id, amqp_channel_class_entry, &connection_object, amqp_connection_class_entry) == FAILURE) {
 		zend_throw_exception(amqp_channel_exception_class_entry, "Parameter must be an instance of AMQPConnection.", 0 TSRMLS_CC);
 		RETURN_NULL();
 	}
 
 	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
-	channel->connection = connObj;
+	channel->connection = connection_object;
 
-	Z_ADDREF_P(connObj);
+	Z_ADDREF_P(connection_object);
 
 	/* Set the prefetch count */
 	channel->prefetch_count = INI_INT("amqp.prefetch_count");
