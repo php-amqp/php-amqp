@@ -11,6 +11,7 @@ services:
 
 env:
   - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=master
+  - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=rabbitmq-c-v0.3.0
 
 before_script:
   - sh -c "git clone git://github.com/alanxz/rabbitmq-c.git"
