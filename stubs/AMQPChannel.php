@@ -41,6 +41,15 @@ class AMQPChannel
     }
 
     /**
+     * Return internal channel ID
+     *
+     * @return integer
+     */
+    public function getChannelId ()
+    {
+    }
+
+    /**
      * Set the Quality Of Service settings for the given channel.
      *
      * Specify the amount of data to prefetch in terms of window size (octets)
