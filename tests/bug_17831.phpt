@@ -12,7 +12,7 @@ $ch = new AMQPChannel($c);
 $ex = new AMQPExchange($ch);
 $ex->setName("exchange-" . time());
 $ex->setType(AMQP_EX_TYPE_FANOUT);
-$ex->declare();
+$ex->declareExchange();
 try {
     $ex->publish("data", "bar");
     echo "Success\n";

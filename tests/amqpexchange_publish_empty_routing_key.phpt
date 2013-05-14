@@ -12,7 +12,7 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName("exchange-" . time());
 $ex->setType(AMQP_EX_TYPE_FANOUT);
-$ex->declare();
+$ex->declareExchange();
 echo $ex->publish('message') ? 'true' : 'false';
 $ex->delete();
 ?>

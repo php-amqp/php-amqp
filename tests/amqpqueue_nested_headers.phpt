@@ -13,11 +13,11 @@ $ch = new AMQPChannel($cnn);
 $errorXchange = new AMQPExchange($ch);
 $errorXchange->setName('errorXchange' . time());
 $errorXchange->setType(AMQP_EX_TYPE_TOPIC);
-$errorXchange->declare();
+$errorXchange->declareExchange();
 
 $errorQ = new AMQPQueue($ch);
 $errorQ->setName('errorQueue' . time());
-$errorQ->declare();
+$errorQ->declareQueue();
 $errorQ->bind($errorXchange->getName(), '#');
 
 
@@ -25,11 +25,11 @@ $errorQ->bind($errorXchange->getName(), '#');
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange' . time());
 $ex->setType(AMQP_EX_TYPE_TOPIC);
-$ex->declare();
+$ex->declareExchange();
 $q = new AMQPQueue($ch);
 $q->setName('queue1' . time());
 $q->setArgument('x-dead-letter-exchange', $errorXchange->getName());
-$q->declare();
+$q->declareQueue();
 $q->bind($ex->getName(), '#');
 
 

@@ -12,12 +12,12 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName("exchange_testing_19707");
 $ex->setType(AMQP_EX_TYPE_FANOUT);
-$ex->declare();
+$ex->declareExchange();
 
 $q = new AMQPQueue($ch);
 $q->setName('queue' . time());
 $q->setFlags(AMQP_DURABLE);
-$q->declare();
+$q->declareQueue();
 
 $q->bind($ex->getName(), 'routing.key');
 
