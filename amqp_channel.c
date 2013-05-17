@@ -228,6 +228,24 @@ PHP_METHOD(amqp_channel_class, isConnected)
 }
 /* }}} */
 
+/* {{{ proto bool amqp::getChannelId()
+get amqp channel ID */
+PHP_METHOD(amqp_channel_class, getChannelId)
+{
+	zval *id;
+	amqp_channel_object *channel;
+
+	/* Try to pull amqp object out of method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_channel_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the channel object out of the store */
+	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	RETURN_LONG(channel->channel_id);
+}
+/* }}} */
 
 /* {{{ proto bool amqp::setPrefetchCount(long count)
 set the number of prefetches */
