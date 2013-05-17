@@ -14,11 +14,11 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange1');
 $ex->setType(AMQP_EX_TYPE_FANOUT);
-$ex->declare();
+$ex->declareExchange();
 // Create a new queue
 $q = new AMQPQueue($ch);
 $q->setName('queue_var_dump');
-$q->declare();
+$q->declareQueue();
 var_dump($q);
 ?>
 --EXPECT--

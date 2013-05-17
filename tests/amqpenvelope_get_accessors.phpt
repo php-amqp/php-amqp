@@ -11,11 +11,11 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange1');
 $ex->setType(AMQP_EX_TYPE_FANOUT);
-$ex->declare();
+$ex->declareExchange();
 // Create a new queue
 $q = new AMQPQueue($ch);
 $q->setName('queue1' . time());
-$q->declare();
+$q->declareQueue();
 // Bind it on the exchange to routing.key
 $q->bind($ex->getName(), 'routing.*');
 // Publish a message to the exchange with a routing key

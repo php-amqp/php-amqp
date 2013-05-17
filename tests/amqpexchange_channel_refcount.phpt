@@ -23,7 +23,7 @@ echo $ex->getName() . "\n";
 
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 
-$ex->declare();
+$ex->declareExchange();
 
 $ex->delete();
 

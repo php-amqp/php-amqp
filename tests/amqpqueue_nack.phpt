@@ -14,13 +14,13 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('testnack' . time());
 $ex->setType(AMQP_EX_TYPE_FANOUT);
-$ex->declare();
+$ex->declareExchange();
 $exchangeName = $ex->getName();
 
 // Create a new queue
 $q = new AMQPQueue($ch);
 $q->setName('testnack' . time());
-$q->declare();
+$q->declareQueue();
 $q->bind($exchangeName, '#');
 
 // Bind it on the exchange to routing.key

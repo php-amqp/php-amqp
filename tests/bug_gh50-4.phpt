@@ -17,7 +17,7 @@ for ($i = 0; $i < 3; $i++) {
     $queue = new AMQPQueue($channel);
     $queue->setName('test' . $i);
 
-    $queue->declare();
+    $queue->declareQueue();
     $queue->delete();
 }
 
@@ -32,7 +32,7 @@ for ($i = 0; $i < 3; $i++) {
     $queue = new AMQPQueue($channel);
     $queue->setName('test' . $i);
 
-    $queue->declare();
+    $queue->declareQueue();
     $queue->delete();
 }
 

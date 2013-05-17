@@ -13,7 +13,7 @@ $ex = new AMQPExchange($ch);
 $ex->setName("exchange-" . time());
 $ex->setType("invalid_exchange_type");
 try {
-	$ex->declare();
+	$ex->declareExchange();
 } catch (Exception $e) {
 	echo get_class($e);
 	echo PHP_EOL;
