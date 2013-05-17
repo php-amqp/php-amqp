@@ -29,6 +29,7 @@ zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_channel_class, __construct);
 PHP_METHOD(amqp_channel_class, isConnected);
+PHP_METHOD(amqp_channel_class, getChannelId);
 PHP_METHOD(amqp_channel_class, setPrefetchSize);
 PHP_METHOD(amqp_channel_class, getPrefetchSize);
 PHP_METHOD(amqp_channel_class, setPrefetchCount);
