@@ -11,11 +11,11 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange-' . time());
 $ex->setType(AMQP_EX_TYPE_DIRECT);
-$ex->declare();
+$ex->declareExchange();
 
 $queue = new AMQPQueue($ch);
 $queue->setName("queue-" . time());
-$queue->declare();
+$queue->declareQueue();
 var_dump($queue->bind($ex->getName(), 'routing.key'));
 
 $queue->delete();

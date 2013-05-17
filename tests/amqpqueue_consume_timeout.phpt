@@ -13,7 +13,7 @@ $conn->connect();
 $chan = new AMQPChannel($conn);
 $queue = new AMQPQueue($chan);
 $queue->setFlags(AMQP_EXCLUSIVE);
-$queue->declare();
+$queue->declareQueue();
 $start = microtime(true);
 try {
 	$queue->consume('nop');

@@ -12,10 +12,10 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange' . time());
 $ex->setType(AMQP_EX_TYPE_TOPIC);
-$ex->declare();
+$ex->declareExchange();
 $q = new AMQPQueue($ch);
 $q->setName('queue1' . time());
-$q->declare();
+$q->declareQueue();
 $q->bind($ex->getName(), '#');
 
 

@@ -12,11 +12,11 @@ $channel = new AMQPChannel($connection);
 $exchange = new AMQPExchange($channel);
 $exchange->setName('exchange' . time());
 $exchange->setType(AMQP_EX_TYPE_TOPIC);
-$exchange->declare();
+$exchange->declareExchange();
 
 $queue = new AMQPQueue($channel);
 $queue->setName('queue1' . time());
-$queue->declare();
+$queue->declareQueue();
 $queue->bind($exchange->getName(), '#');
 
 $exchange->publish('body1', 'routing.1');

@@ -11,10 +11,10 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange-' . time());
 $ex->setType(AMQP_EX_TYPE_DIRECT);
-$ex->declare();
+$ex->declareExchange();
 
 $queue = new AMQPQueue($ch);
-$queue->declare();
+$queue->declareQueue();
 var_dump(substr($queue->getName(), 0, strlen('amq.gen-')));
 
 $queue->delete();

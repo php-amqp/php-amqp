@@ -20,7 +20,7 @@ function create_exchange($channel) {
 	$exchange = new AMQPExchange($channel);
 	$exchange->setName('test_cancel_exchange');
 	$exchange->setType(AMQP_EX_TYPE_DIRECT);
-	$exchange->declare();
+	$exchange->declareExchange();
 	return $exchange;
 }
 
@@ -28,7 +28,7 @@ function create_queue($channel) {
 	$queue = new AMQPQueue($channel);
 	$queue->setName('test_cancel_queue');
 	$queue->setFlags(AMQP_NOPARAM);
-	$queue->declare();
+	$queue->declareQueue();
 	$queue->bind('test_cancel_exchange', 'test_cancel_routing_key');
 	return $queue;
 }
