@@ -126,9 +126,11 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 			int slot;
 			for (slot = 1; slot < DEFAULT_CHANNELS_PER_CONNECTION; slot++) {
 				if (connection->connection_resource->slots[slot] != 0) {
-					/* We found the channel, disconnect it: */
-					amqp_channel_close(connection->connection_resource->connection_state, slot, AMQP_REPLY_SUCCESS);
-
+					if ((long) connection->connection_resource->slots[slot] != -1) {
+						/* We found the channel, disconnect it: */
+						amqp_channel_close(connection->connection_resource->connection_state, slot, AMQP_REPLY_SUCCESS);
+					}
+					
 					/* Clean up our local storage */
 					connection->connection_resource->slots[slot] = 0;
 					connection->connection_resource->used_slots--;
@@ -237,8 +239,10 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 		/* Close all open channels */
 		for (slot = 1; slot < DEFAULT_CHANNELS_PER_CONNECTION; slot++) {
 			if (resource->slots[slot] != 0) {
-				/* We found the channel, disconnect it: */
-				amqp_channel_close(connection->connection_resource->connection_state, slot, AMQP_REPLY_SUCCESS);
+				if ((long) resource->slots[slot] != -1) {
+					/* We found the channel, disconnect it: */
+					amqp_channel_close(connection->connection_resource->connection_state, slot, AMQP_REPLY_SUCCESS);
+				}
 
 				/* Clean up our local storage */
 				resource->slots[slot] = 0;
@@ -366,9 +370,8 @@ void remove_channel_from_connection(amqp_connection_object *connection, amqp_cha
 			/* We found the channel, disconnect it: */
 			amqp_channel_close(connection->connection_resource->connection_state, channel->channel_id, AMQP_REPLY_SUCCESS);
 
-			/* Clean up our local storage */
-			resource->slots[slot] = 0;
-			resource->used_slots--;
+			/* Mark slot as used */
+			resource->slots[slot] = (amqp_channel_object *) -1;
 
 			return;
 		}
@@ -417,7 +420,10 @@ void amqp_connection_dtor(void *object TSRMLS_DC)
 				if (!connection->connection_resource->slots[slot]) {
 					continue;
 				}
-				amqp_channel_close(connection->connection_resource->connection_state, connection->connection_resource->slots[slot]->channel_id, AMQP_REPLY_SUCCESS);
+				/* Close channel if it has not been closed and marked as used */
+				if ((long) connection->connection_resource->slots[slot] != -1) {
+					amqp_channel_close(connection->connection_resource->connection_state, connection->connection_resource->slots[slot]->channel_id, AMQP_REPLY_SUCCESS);
+				}
 				/* Clean up our local storage */
 				connection->connection_resource->slots[slot] = 0;
 				connection->connection_resource->used_slots--;
