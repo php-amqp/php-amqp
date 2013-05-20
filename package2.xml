@@ -17,7 +17,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <date>2013-05-17</date>
  <time>13:00:00</time>
  <version>
-  <release>1.2.0</release>
+  <release>1.2.1-dev</release>
   <api>1.0.0</api>
  </version>
  <stability>
@@ -26,6 +26,12 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+1.2.1 Release:
+    * ADD YOUR CHANGE HERE
+
+    For a complete list of changes see:
+    https://github.com/pdezwart/php-amqp/compare/v1.2.0...v1.2.1
+
 1.2.0 Release:
     * New methods AMQPChannel::getPrefetchCount() and AMQPChannel::getPrefetchSize()
     * Deprecate AMQPQueue::declare() in favor of AMQPQueue::declareQueue()

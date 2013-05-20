@@ -407,7 +407,7 @@ typedef struct _amqp_envelope_object {
 #define AMQP_G(v) (amqp_globals.v)
 #endif
 
-#define PHP_AMQP_VERSION "1.2.0"
+#define PHP_AMQP_VERSION "1.2.1-dev"
 
 #endif	/* PHP_AMQP_H */
 
