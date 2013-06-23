@@ -30,7 +30,7 @@ class AMQPConnection
      *      'login' => amqp.login The login name to use. Note: Max 128 characters.
      *      'password' => amqp.password Password. Note: Max 128 characters.
      *      'read_timeout'  => Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
-     *      'read_timeout'  => Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
+     *      'write_timeout' => Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
      * )
      *
      * @param array $credentials Optional array of credential information for
