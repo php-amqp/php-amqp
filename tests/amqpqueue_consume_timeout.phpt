@@ -20,8 +20,6 @@ try {
 } catch (Exception $e) {
 	echo get_class($e);
 	echo PHP_EOL;
-	echo $e->getCode() == constant('AMQP_OS_SOCKET_TIMEOUT_ERRNO') ? 'true' : 'false';
-	echo PHP_EOL;
 }
 $end = microtime(true);
 echo abs($end - $start - $timeout) < 0.005 ? 'true' : 'false';
@@ -29,5 +27,4 @@ $queue->delete();
 ?>
 --EXPECT--
 AMQPConnectionException
-true
 true
