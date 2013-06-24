@@ -330,9 +330,9 @@ typedef struct _amqp_queue_object {
 	zend_object zo;
 	zval *channel;
 	char is_connected;
-	char name[255];
+	char name[256];
 	int name_len;
-	char consumer_tag[255];
+	char consumer_tag[256];
 	int consumer_tag_len;
 	int passive; /* @TODO: consider making these bit fields */
 	int durable;
@@ -346,9 +346,9 @@ typedef struct _amqp_exchange_object {
 	zend_object zo;
 	zval *channel;
 	char is_connected;
-	char name[255];
+	char name[256];
 	int name_len;
-	char type[255];
+	char type[256];
 	int type_len;
 	int passive; /* @TODO: consider making these bit fields */
 	int durable;
@@ -360,22 +360,22 @@ typedef struct _amqp_envelope_object {
 	zend_object zo;
 	char *body;
 	size_t body_len;
-	char routing_key[255];
+	char routing_key[256];
 	uint delivery_tag;
 	int delivery_mode;
-	char exchange_name[255];
+	char exchange_name[256];
 	int is_redelivery;
-	char content_type[255];
-	char content_encoding[255];
-	char type[255];
+	char content_type[256];
+	char content_encoding[256];
+	char type[256];
 	long timestamp;
 	int priority;
-	char expiration[255];
-	char user_id[255];
-	char app_id[255];
-	char message_id[255];
-	char reply_to[255];
-	char correlation_id[255];
+	char expiration[256];
+	char user_id[256];
+	char app_id[256];
+	char message_id[256];
+	char reply_to[256];
+	char correlation_id[256];
 	zval *headers;
 } amqp_envelope_object;
 
