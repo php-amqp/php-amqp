@@ -54,6 +54,8 @@
 #define E_DEPRECATED E_WARNING
 #endif
 
+int php_amqp_set_read_timeout(amqp_connection_object *connection TSRMLS_DC);
+
 #if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 zend_object_handlers amqp_connection_object_handlers;
 HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
