@@ -785,7 +785,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 			} else if (Z_TYPE_P(*zdata) == IS_DOUBLE) {
 				convert_to_double(*zdata);
 				props.headers.entries[props.headers.num_entries].value.kind = AMQP_FIELD_KIND_F32;
-				props.headers.entries[props.headers.num_entries].value.value.f32 = (double)Z_DVAL_P(*zdata);
+				props.headers.entries[props.headers.num_entries].value.value.f32 = (float)Z_DVAL_P(*zdata);
 				props.headers.num_entries++;
 			} else if (Z_TYPE_PP(zdata) == IS_ARRAY) {
 				zval **arr_data;
