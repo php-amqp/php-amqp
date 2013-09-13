@@ -157,6 +157,7 @@ Fixed bugs:
    <file name="amqp_envelope.c" role="src" />
    <file name="amqp_object_store.c" role="src" />
    <file name="config.m4" role="src" />
+   <file name="config.w32" role="src" />
    <file name="CREDITS" role="doc" />
    <file name="LICENSE" role="doc" />
    <file name="php_amqp.h" role="src" />
