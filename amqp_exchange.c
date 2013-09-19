@@ -83,6 +83,10 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	MAKE_STD_ZVAL(value);
 	ZVAL_LONG(value, exchange->durable);
 	zend_hash_add(debug_info, "durable", sizeof("durable"), &value, sizeof(zval *), NULL);
+	
+	MAKE_STD_ZVAL(value);
+	ZVAL_LONG(value, exchange->auto_delete);
+	zend_hash_add(debug_info, "auto_delete", sizeof("auto_delete"), &value, sizeof(zval *), NULL);
 
 	zend_hash_add(debug_info, "arguments", sizeof("arguments"), &exchange->arguments, sizeof(&exchange->arguments), NULL);
 
@@ -270,6 +274,7 @@ PHP_METHOD(amqp_exchange_class, getFlags)
 	/* Set the bitmask based on what is set in the exchange */
 	flagBitmask |= (exchange->passive ? AMQP_PASSIVE : 0);
 	flagBitmask |= (exchange->durable ? AMQP_DURABLE : 0);
+	flagBitmask |= (exchange->auto_delete ? AMQP_AUTODELETE : 0);
 
 	RETURN_LONG(flagBitmask);
 }
@@ -291,12 +296,10 @@ PHP_METHOD(amqp_exchange_class, setFlags)
 	/* Pull the exchange off the object store */
 	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-
-
 	/* Set the flags based on the bitmask we were given */
 	exchange->passive = IS_PASSIVE(flagBitmask);
 	exchange->durable = IS_DURABLE(flagBitmask);
-    exchange->auto_delete = IS_AUTODELETE(flagBitmask);
+	exchange->auto_delete = IS_AUTODELETE(flagBitmask);
 }
 /* }}} */
 
@@ -339,7 +342,8 @@ PHP_METHOD(amqp_exchange_class, setType)
 
 	/* Pull the exchange off the object store */
 	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
-	AMQP_SET_TYPE(exchange, type)
+	
+	AMQP_SET_TYPE(exchange, type);
 }
 /* }}} */
 
@@ -366,6 +370,7 @@ PHP_METHOD(amqp_exchange_class, getArgument)
 	}
 
 	*return_value = **tmp;
+	
 	zval_copy_ctor(return_value);
 	INIT_PZVAL(return_value);
 }
@@ -498,6 +503,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 	}
 
 	arguments = convert_zval_to_arguments(exchange->arguments);
+	
 	amqp_exchange_declare(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
