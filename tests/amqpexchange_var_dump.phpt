@@ -18,7 +18,7 @@ $ex->setArguments(array("x-ha-policy" => "all"));
 var_dump($ex);
 ?>
 --EXPECT--
-object(AMQPExchange)#3 (5) {
+object(AMQPExchange)#3 (6) {
   ["name"]=>
   string(9) "exchange1"
   ["type"]=>
@@ -26,6 +26,8 @@ object(AMQPExchange)#3 (5) {
   ["passive"]=>
   int(0)
   ["durable"]=>
+  int(0)
+  ["auto_delete"]=>
   int(0)
   ["arguments"]=>
   array(1) {
