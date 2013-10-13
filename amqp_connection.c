@@ -41,6 +41,7 @@
 #endif
 #include <amqp.h>
 #include <amqp_framing.h>
+#include <amqp_tcp_socket.h>
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -100,6 +101,10 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	ZVAL_DOUBLE(value, connection->write_timeout);
 	zend_hash_add(debug_info, "write_timeout", sizeof("write_timeout"), &value, sizeof(zval *), NULL);
 
+	MAKE_STD_ZVAL(value);
+	ZVAL_DOUBLE(value, connection->connect_timeout);
+	zend_hash_add(debug_info, "connect_timeout", sizeof("connect_timeout"), &value, sizeof(zval *), NULL);
+
 	/* Start adding values */
 	return debug_info;
 }
@@ -118,6 +123,7 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	void * old_handler;
 #endif
 	amqp_rpc_reply_t x;
+	struct timeval *tv;
 
 
 	/* Clean up old memory allocations which are now invalid (new connection) */
@@ -157,11 +163,19 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	/* Create the connection */
 	connection->connection_resource->connection_state = amqp_new_connection();
 
-	/* Get the connection socket out */
-	connection->connection_resource->fd = amqp_open_socket(connection->host, connection->port);
+	/* Create socket object */
+	connection->connection_resource->socket = amqp_tcp_socket_new(connection->connection_resource->connection_state);
 
-	/* Verify that we actually got a connectio back */
-	if (connection->connection_resource->fd < 1) {
+	if (connection->connect_timeout > 0) {
+		tv = malloc(sizeof(struct timeval));
+		tv->tv_sec = (long int) connection->connect_timeout;
+		tv->tv_usec = (long int) ((connection->connect_timeout - tv->tv_sec) * 1000000);
+	} else {
+		tv = NULL;
+	}
+
+	/* Try to connect and verify that no error occurred */
+	if (amqp_socket_open_noblock(connection->connection_resource->socket, connection->host, connection->port, tv)) {
 #ifndef PHP_WIN32
 		/* Start ignoring SIGPIPE */
 		old_handler = signal(SIGPIPE, SIG_IGN);
@@ -177,8 +191,6 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not connect to host.", 0 TSRMLS_CC);
 		return 0;
 	}
-
-	amqp_set_sockfd(connection->connection_resource->connection_state, connection->connection_resource->fd);
 
 	php_amqp_set_read_timeout(connection TSRMLS_CC);
 	php_amqp_set_write_timeout(connection TSRMLS_CC);
@@ -255,10 +267,6 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 	if (resource && resource->connection_state && connection->is_connected == '\1') {
 		amqp_connection_close(resource->connection_state, AMQP_REPLY_SUCCESS);
 		amqp_destroy_connection(resource->connection_state);
-
-		if (resource->fd) {
-			AMQP_CLOSE_SOCKET(resource->fd)
-		}
 	}
 
 	connection->is_connected = '\0';
@@ -293,7 +301,7 @@ int php_amqp_set_read_timeout(amqp_connection_object *connection TSRMLS_DC)
 	read_timeout.tv_usec = (int) ((connection->read_timeout - floor(connection->read_timeout)) * 1.e+6);
 #endif
 
-	if (0 != setsockopt(connection->connection_resource->fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&read_timeout, sizeof(read_timeout))) {
+	if (0 != setsockopt(amqp_get_sockfd(connection->connection_resource->connection_state), SOL_SOCKET, SO_RCVTIMEO, (char *)&read_timeout, sizeof(read_timeout))) {
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: cannot setsockopt SO_RCVTIMEO", 0 TSRMLS_CC);
 		return 0;
 	}
@@ -317,7 +325,7 @@ int php_amqp_set_write_timeout(amqp_connection_object *connection TSRMLS_DC)
 	write_timeout.tv_usec = (int) ((connection->write_timeout - floor(connection->write_timeout)) * 1.e+6);
 #endif
 
-	if (0 != setsockopt(connection->connection_resource->fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&write_timeout, sizeof(write_timeout))) {
+	if (0 != setsockopt(amqp_get_sockfd(connection->connection_resource->connection_state), SOL_SOCKET, SO_SNDTIMEO, (char *)&write_timeout, sizeof(write_timeout))) {
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: cannot setsockopt SO_SNDTIMEO", 0 TSRMLS_CC);
 		return 0;
 	}
@@ -469,7 +477,7 @@ zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
 
 
 /* {{{ proto AMQPConnection::__construct([array optional])
- * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'read_timeout', 'write_timeout' and 'timeout' (deprecated) indexes
+ * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'read_timeout', 'write_timeout', 'connect_timeout' and 'timeout' (deprecated) indexes
  */
 PHP_METHOD(amqp_connection_class, __construct)
 {
@@ -612,6 +620,17 @@ PHP_METHOD(amqp_connection_class, __construct)
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'write_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
 		} else {
 			connection->write_timeout = Z_DVAL_PP(zdata);
+		}
+	}
+
+	connection->connect_timeout = INI_FLT("amqp.connect_timeout");
+
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "connect_timeout", sizeof("connect_timeout"), (void*)&zdata)) {
+		convert_to_double(*zdata);
+		if (Z_DVAL_PP(zdata) < 0) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'connect_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		} else {
+			connection->connect_timeout = Z_DVAL_PP(zdata);
 		}
 	}
 }
