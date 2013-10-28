@@ -52,6 +52,8 @@ PHP_METHOD(amqp_queue_class, purge);
 PHP_METHOD(amqp_queue_class, cancel);
 PHP_METHOD(amqp_queue_class, unbind);
 PHP_METHOD(amqp_queue_class, delete);
+PHP_METHOD(amqp_queue_class, basicConsume);
+PHP_METHOD(amqp_queue_class, consumeOne);
 
 /*
 *Local variables:
