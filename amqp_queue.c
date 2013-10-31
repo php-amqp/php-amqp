@@ -104,6 +104,7 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	ZVAL_BOOL(value, queue->auto_delete);
 	zend_hash_add(debug_info, "auto_delete", sizeof("auto_delete"), &value, sizeof(zval *), NULL);
 
+	Z_ADDREF_P(queue->arguments);
 	zend_hash_add(debug_info, "arguments", sizeof("arguments"), &queue->arguments, sizeof(&queue->arguments), NULL);
 
 	return debug_info;
@@ -1588,99 +1589,6 @@ PHP_METHOD(amqp_queue_class, select)
 	RETURN_LONG(fd);
 }
 /* }}} */
-
-/* {{{ proto array AMQPQueue::consumeOne(callback);
-consume one message
-return  boolean
-*/
-PHP_METHOD(amqp_queue_class, consumeOne)
-{
-	zval *id;
-	amqp_queue_object *queue;
-	amqp_channel_object *channel;
-	amqp_connection_object *connection;
-
-	zend_fcall_info fci;
-	zend_fcall_info_cache fci_cache;
-	int function_call_succeeded = 1;
-	int read;
-	amqp_table_t *arguments;
-
-	char *consumer_tag;
-	int consumer_tag_len = 0;
-	amqp_bytes_t consumer_tag_bytes;
-	long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
-
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Of", &id, amqp_queue_class_entry, &fci, &fci_cache) == FAILURE) {
-		return;
-	}
-
-	/* Pull the queue out */
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	channel = AMQP_GET_CHANNEL(queue);
-	AMQP_VERIFY_CHANNEL(channel, "Could not get channel.");
-
-	connection = AMQP_GET_CONNECTION(channel);
-	AMQP_VERIFY_CONNECTION(connection, "Could not get connection.");
-
-	/* Initialize the message */
-	zval *message;
-	MAKE_STD_ZVAL(message);
-
-	/* Read the message */
-	read = read_message_from_channel(connection->connection_resource->connection_state, message TSRMLS_CC);
-
-	/* Make the callback */
-	if (read == AMQP_READ_SUCCESS) {
-		zval *params;
-		zval *retval_ptr = NULL;
-
-		/* Initialize the return value pointer */
-		fci.retval_ptr_ptr = &retval_ptr;
-
-		/* Build the parameter array */
-		MAKE_STD_ZVAL(params);
-		array_init(params);
-
-		/* Dump it into the params array */
-		add_index_zval(params, 0, message);
-		Z_ADDREF_P(message);
-
-		/* Add a pointer to the queue: */
-		add_index_zval(params, 1, id);
-		Z_ADDREF_P(id);
-
-		/* Convert everything to be callable */
-		zend_fcall_info_args(&fci, params TSRMLS_CC);
-
-		/* Call the function, and track the return value */
-		if (zend_call_function(&fci, &fci_cache TSRMLS_CC) == SUCCESS && fci.retval_ptr_ptr && *fci.retval_ptr_ptr) {
-			COPY_PZVAL_TO_ZVAL(*return_value, *fci.retval_ptr_ptr);
-		}
-
-		/* Check if user land function wants to bail */
-		if (EG(exception) || (Z_TYPE_P(return_value) == IS_BOOL && !Z_BVAL_P(return_value))) {
-			function_call_succeeded = 0;
-		}
-
-		/* Clean up our mess */
-		zend_fcall_info_args_clear(&fci, 1);
-		zval_ptr_dtor(&params);
-		zval_ptr_dtor(&message);
-	} else {
-		zval_ptr_dtor(&message);
-	}
-
-	if(read != AMQP_READ_ERROR && function_call_succeeded == 1) {
-	  RETURN_TRUE;
-	} else {
-	  RETURN_FALSE;
-	}
-}
-/* }}} */
-
-
 
 /*
 *Local variables:

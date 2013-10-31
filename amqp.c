@@ -49,7 +49,8 @@
 #include "amqp_queue.h"
 #include "amqp_exchange.h"
 #include "amqp_envelope.h"
-#include "amqp_selector.h"
+#include "amqp_consumer_dispatcher.h"
+#include "amqp_consumer.h"
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -63,7 +64,8 @@ zend_class_entry *amqp_channel_class_entry;
 zend_class_entry *amqp_queue_class_entry;
 zend_class_entry *amqp_exchange_class_entry;
 zend_class_entry *amqp_envelope_class_entry;
-zend_class_entry *amqp_selector_class_entry;
+zend_class_entry *amqp_consumer_dispatcher_class_entry;
+zend_class_entry *amqp_consumer_class_entry;
 
 zend_class_entry *amqp_exception_class_entry,
 				 *amqp_connection_exception_class_entry,
@@ -254,8 +256,8 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_queue_class_consume, ZEND_SEND_BY_VAL, ZEND_
 	ZEND_ARG_INFO(0, consumer_tag)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_queue_class_consumeOne, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_INFO(0, callback)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_queue_class_select, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+	ZEND_ARG_INFO(0, timeout)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_queue_class_ack, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
@@ -415,12 +417,40 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_getHeader, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-/* amqp_selector ARG_INFO definition */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_selector_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+/* amqp_consumer_dispatcher ARG_INFO definition */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_dispatcher_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+	ZEND_ARG_ARRAY_INFO(0, consumers, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_selector_class_select, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_ARRAY_INFO(0, consumers, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_dispatcher_class_select, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+	ZEND_ARG_INFO(0, timeout)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_dispatcher_class_hasConsumers, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_dispatcher_class_getConsumers, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_dispatcher_class_rotateConsumers, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_dispatcher_class_removeConsumer, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+	ZEND_ARG_INFO(0, consumer)
+ZEND_END_ARG_INFO()
+
+/* amqp_consumer ARG_INFO definition */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 2)
+	ZEND_ARG_INFO(0, amqp_queue)
+	ZEND_ARG_INFO(0, callback)
+	ZEND_ARG_INFO(0, flags)
+	ZEND_ARG_INFO(0, consumer_tag)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_class_getQueue, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_consumer_class_consumeOne, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 
@@ -503,7 +533,7 @@ zend_function_entry amqp_queue_class_functions[] = {
 	PHP_ME(amqp_queue_class, get,				arginfo_amqp_queue_class_get,				ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_queue_class, basicConsume,			arginfo_amqp_queue_class_basicConsume,			ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_queue_class, consume,			arginfo_amqp_queue_class_consume,			ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_queue_class, consumeOne,			arginfo_amqp_queue_class_consumeOne,			ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_queue_class, select,			arginfo_amqp_queue_class_select,			ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_queue_class, ack,				arginfo_amqp_queue_class_ack,				ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_queue_class, nack,				arginfo_amqp_queue_class_nack,				ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_queue_class, reject,			arginfo_amqp_queue_class_reject,			ZEND_ACC_PUBLIC)
@@ -568,9 +598,21 @@ zend_function_entry amqp_envelope_class_functions[] = {
 	{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
 };
 
-zend_function_entry amqp_selector_class_functions[] = {
-	PHP_ME(amqp_selector_class, __construct, 		arginfo_amqp_selector_class__construct,			ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_selector_class, select, 		arginfo_amqp_selector_class_select,			ZEND_ACC_PUBLIC)
+zend_function_entry amqp_consumer_dispatcher_class_functions[] = {
+	PHP_ME(amqp_consumer_dispatcher_class, __construct, 		arginfo_amqp_consumer_dispatcher_class__construct,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_consumer_dispatcher_class, select, 		arginfo_amqp_consumer_dispatcher_class_select,		ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_consumer_dispatcher_class, hasConsumers, 		arginfo_amqp_consumer_dispatcher_class_hasConsumers,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_consumer_dispatcher_class, getConsumers, 		arginfo_amqp_consumer_dispatcher_class_getConsumers,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_consumer_dispatcher_class, rotateConsumers, 	arginfo_amqp_consumer_dispatcher_class_rotateConsumers,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_consumer_dispatcher_class, removeConsumer, 	arginfo_amqp_consumer_dispatcher_class_removeConsumer,	ZEND_ACC_PUBLIC)
+
+	{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
+};
+
+zend_function_entry amqp_consumer_class_functions[] = {
+	PHP_ME(amqp_consumer_class, __construct, 	arginfo_amqp_consumer_class__construct,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_consumer_class, getQueue, 		arginfo_amqp_consumer_class_getQueue,		ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_consumer_class, consumeOne, 	arginfo_amqp_consumer_class_consumeOne,	ZEND_ACC_PUBLIC)
 
 	{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
 };
@@ -791,9 +833,13 @@ PHP_MINIT_FUNCTION(amqp)
 	ce.create_object = amqp_envelope_ctor;
 	amqp_envelope_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
 
-	INIT_CLASS_ENTRY(ce, "AMQPSelector", amqp_selector_class_functions);
-	ce.create_object = amqp_selector_ctor;
-	amqp_selector_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
+	INIT_CLASS_ENTRY(ce, "AMQPConsumerDispatcher", amqp_consumer_dispatcher_class_functions);
+	ce.create_object = amqp_consumer_dispatcher_ctor;
+	amqp_consumer_dispatcher_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
+
+	INIT_CLASS_ENTRY(ce, "AMQPConsumer", amqp_consumer_class_functions);
+	ce.create_object = amqp_consumer_ctor;
+	amqp_consumer_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
 
 	/* Class Exceptions */
 	INIT_CLASS_ENTRY(ce, "AMQPException", NULL);

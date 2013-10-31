@@ -159,7 +159,8 @@ extern zend_class_entry *amqp_channel_class_entry;
 extern zend_class_entry *amqp_queue_class_entry;
 extern zend_class_entry *amqp_exchange_class_entry;
 extern zend_class_entry *amqp_envelope_class_entry;
-extern zend_class_entry *amqp_selector_class_entry;
+extern zend_class_entry *amqp_consumer_dispatcher_class_entry;
+extern zend_class_entry *amqp_consumer_class_entry;
 
 extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_connection_exception_class_entry,
@@ -380,9 +381,19 @@ typedef struct _amqp_envelope_object {
 	zval *headers;
 } amqp_envelope_object;
 
-typedef struct _amqp_selector_object {
+typedef struct _amqp_consumer_dispatcher_object {
 	zend_object zo;
-} amqp_selector_object;
+	zval *consumers;
+} amqp_consumer_dispatcher_object;
+
+typedef struct _amqp_consumer_object {
+	zend_object zo;
+	zval *queue;
+	struct {
+		zend_fcall_info fci;
+		zend_fcall_info_cache fci_cache;
+	} callback;
+} amqp_consumer_object;
 
 #define AMQP_ERROR_CATEGORY_MASK (1 << 29)
 
