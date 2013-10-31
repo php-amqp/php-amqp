@@ -166,7 +166,8 @@ extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_connection_exception_class_entry,
 	*amqp_channel_exception_class_entry,
 	*amqp_exchange_exception_class_entry,
-	*amqp_queue_exception_class_entry;
+	*amqp_queue_exception_class_entry,
+	*amqp_consumer_exception_class_entry;
 
 
 #define FRAME_MAX							131072		/* max length (size) of frame */

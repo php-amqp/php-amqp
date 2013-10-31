@@ -1,5 +1,12 @@
-[![Build Status](https://secure.travis-ci.org/pdezwart/php-amqp.png)](http://travis-ci.org/pdezwart/php-amqp)
-
 # PHP AMQP bindings
 
-Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/rabbitmq-c)
+A fork of the official bindings here: https://github.com/alanxz/rabbitmq-c.
+
+This fork adds two classes
+
+AMQPConsumer and AMQPConsumerDispatcher
+
+which allow, when using multiple connections, a script to consume
+from multiple queues at the same time.
+
+The code uses select() for efficiency.

@@ -126,8 +126,6 @@ zend_object_value amqp_consumer_dispatcher_ctor(zend_class_entry *ce TSRMLS_DC)
 	return new_value;
 }
 
-
-
 /*
  * Verify that the given zval is a consumer and attempt to return the connection object
  * If NULL is returned, then an exception will be on the stack, so callers should return immediately
@@ -141,12 +139,12 @@ amqp_connection_object *getConsumerConnection(zval *z_consumer)
 	zval *z_queue = NULL;
 	
 	if(!z_consumer) {
-		zend_throw_exception(amqp_queue_exception_class_entry, "Consumer expected", 0 TSRMLS_CC);
+		zend_throw_exception(amqp_consumer_exception_class_entry, "Consumer expected", 0 TSRMLS_CC);
 		return NULL;
 	}
 		
 	if(Z_TYPE_P(z_consumer) != IS_OBJECT) {
-		zend_throw_exception(amqp_queue_exception_class_entry, "AMQPConsumer expected", 0 TSRMLS_CC);
+		zend_throw_exception(amqp_consumer_exception_class_entry, "AMQPConsumer expected", 0 TSRMLS_CC);
 		return NULL;
 	}
 	
@@ -158,7 +156,6 @@ amqp_connection_object *getConsumerConnection(zval *z_consumer)
 	}
 		
 	if (Z_TYPE_P(z_queue) != IS_OBJECT) {
-		php_printf("Type of queue is %d", Z_TYPE_P(z_queue));
 		zend_throw_exception(amqp_queue_exception_class_entry, "Consumer not bound to a queue", 0 TSRMLS_CC);
 		return NULL;
 	}
@@ -188,6 +185,7 @@ void rotate_consumers(amqp_consumer_dispatcher_object *consumer_dispatcher)
 	zend_call_method(NULL, NULL, NULL, "array_shift", sizeof("array_shift")-1, &retval1, 1, arrayRef, NULL);
 	zend_call_method(NULL, NULL, NULL, "array_push", sizeof("array_push")-1, &retval2, 2, arrayRef, retval1);
 	
+	FREE_ZVAL(arrayRef);
 	zval_ptr_dtor(&retval1);
 	zval_ptr_dtor(&retval2);
 	zval_delref_p(arrayRef);
@@ -217,24 +215,6 @@ PHP_METHOD(amqp_consumer_dispatcher_class, __construct)
 	/* Increment the ref count on the consumers array */
 	Z_ADDREF_P(consumer_dispatcher->consumers);
 
-}
-/* }}} */
-
-
-/* {{{ proto AMQPConsumerDispatcher::rotateConsumers()
- */
-PHP_METHOD(amqp_consumer_dispatcher_class, rotateConsumers)
-{
-	zval *id;
-	amqp_consumer_dispatcher_object *consumer_dispatcher;
-	
-	/* Parse out the method parameters */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_consumer_dispatcher_class_entry) == FAILURE) {
-		return;
-	}
-
-	consumer_dispatcher = (amqp_consumer_dispatcher_object *)zend_object_store_get_object(id TSRMLS_CC);
-	rotate_consumers(consumer_dispatcher);
 }
 /* }}} */
 
@@ -300,7 +280,7 @@ PHP_METHOD(amqp_consumer_dispatcher_class, select)
 		}
 		
 		if(amqp_data_in_buffer(connection->connection_resource->connection_state)) {
-			RETURN_ZVAL(z_consumer, 1, 0);
+			RETURN_ZVAL(z_consumer, 0, 0);
 		}
 					
 		int fd = connection->connection_resource->fd;
@@ -335,7 +315,7 @@ PHP_METHOD(amqp_consumer_dispatcher_class, select)
 		
 		int fd = connection->connection_resource->fd;
 		if(FD_ISSET(fd, &read_fd)) {
-			RETURN_ZVAL(z_consumer, 1, 0);
+			RETURN_ZVAL(z_consumer, 0, 0);
 		}
 	}
 	
@@ -364,26 +344,6 @@ PHP_METHOD(amqp_consumer_dispatcher_class, hasConsumers)
 }
 /* }}} */
 
-/* {{{ proto AMQPConsumerDispatcher::getConsumers
-Return the array of consumers */
-PHP_METHOD(amqp_consumer_dispatcher_class, getConsumers)
-{
-	zval *id;
-	amqp_consumer_dispatcher_object *consumer_dispatcher;
-
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_consumer_dispatcher_class_entry) == FAILURE) {
-		return;
-	}
-	
-	consumer_dispatcher = (amqp_consumer_dispatcher_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	*return_value = *consumer_dispatcher->consumers;
-	zval_copy_ctor(return_value);
-
-	/* Increment the ref count */
-	Z_ADDREF_P(consumer_dispatcher->consumers);
-}
-/* }}} */
 
 /* {{{ proto AMQPConsumerDispatcher::removeConsumer(AMQPConsumer consumer);
 create Exchange   */
@@ -403,7 +363,7 @@ PHP_METHOD(amqp_consumer_dispatcher_class, removeConsumer)
 	}
 
 	if (!instanceof_function(Z_OBJCE_P(consumerObj), amqp_consumer_class_entry TSRMLS_CC)) {
-		zend_throw_exception(amqp_exchange_exception_class_entry, "The first parameter must be an instance of AMQPConsumer.", 0 TSRMLS_CC);
+		zend_throw_exception(amqp_consumer_exception_class_entry, "The first parameter must be an instance of AMQPConsumer.", 0 TSRMLS_CC);
 		return;
 	}
 
@@ -428,3 +388,12 @@ PHP_METHOD(amqp_consumer_dispatcher_class, removeConsumer)
 }
 /* }}} */
 
+
+/*
+*Local variables:
+*tab-width: 4
+*c-basic-offset: 4
+*End:
+*vim600: noet sw=4 ts=4 fdm=marker
+*vim<600: noet sw=4 ts=4
+*/

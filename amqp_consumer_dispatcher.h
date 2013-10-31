@@ -22,8 +22,6 @@ zend_object_value amqp_consumer_dispatcher_ctor(zend_class_entry *ce TSRMLS_DC);
 PHP_METHOD(amqp_consumer_dispatcher_class, __construct);
 PHP_METHOD(amqp_consumer_dispatcher_class, select);
 PHP_METHOD(amqp_consumer_dispatcher_class, hasConsumers);
-PHP_METHOD(amqp_consumer_dispatcher_class, getConsumers);
-PHP_METHOD(amqp_consumer_dispatcher_class, rotateConsumers);
 PHP_METHOD(amqp_consumer_dispatcher_class, removeConsumer);
 
 

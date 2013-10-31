@@ -21,6 +21,7 @@ zend_object_value amqp_consumer_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_consumer_class, __construct);
 PHP_METHOD(amqp_consumer_class, getQueue);
+PHP_METHOD(amqp_consumer_class, basicConsume);
 PHP_METHOD(amqp_consumer_class, consumeOne);
 
 

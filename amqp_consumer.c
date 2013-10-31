@@ -145,10 +145,69 @@ PHP_METHOD(amqp_consumer_class, getQueue)
 		
 	consumer = (amqp_consumer_object *)zend_object_store_get_object(id TSRMLS_CC);
 	Z_ADDREF_P(consumer->queue);	
-	RETURN_ZVAL(consumer->queue, 1, 0);
+	RETURN_ZVAL(consumer->queue, 0, 0);
 }
 /* }}} */
 
+
+/* {{{ proto int AMQPConsumer::basicConsume([flags = <bitmask>, consumer_tag]);
+start consuming on the queue
+*/
+PHP_METHOD(amqp_consumer_class, basicConsume)
+{
+	zval *id;
+	amqp_consumer_object *consumer;
+	amqp_queue_object *queue;
+	amqp_channel_object *channel;
+	amqp_connection_object *connection;
+
+	zend_fcall_info fci;
+	zend_fcall_info_cache fci_cache;
+	int function_call_succeeded = 1;
+	int read;
+	amqp_table_t *arguments;
+
+	char *consumer_tag;
+	int consumer_tag_len = 0;
+	amqp_bytes_t consumer_tag_bytes;
+	long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
+
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|ls", &id, amqp_consumer_class_entry, &flags, &consumer_tag, &consumer_tag_len) == FAILURE) {
+		return;
+	}
+
+	consumer = (amqp_consumer_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	queue = (amqp_queue_object*) zend_object_store_get_object(consumer->queue TSRMLS_CC);
+	
+	channel = AMQP_GET_CHANNEL(queue);
+	AMQP_VERIFY_CHANNEL(channel, "Could not get queue.");
+
+	connection = AMQP_GET_CONNECTION(channel);
+	AMQP_VERIFY_CONNECTION(connection, "Could not get queue.");
+
+	/* Setup the consume */
+	arguments = convert_zval_to_arguments(queue->arguments);
+
+	consumer_tag_bytes.bytes = (void *) consumer_tag;
+	consumer_tag_bytes.len = consumer_tag_len;
+
+	amqp_basic_consume(
+		connection->connection_resource->connection_state,
+		channel->channel_id,
+		amqp_cstring_bytes(queue->name),
+		consumer_tag_bytes,					/* Consumer tag */
+		(AMQP_NOLOCAL & flags) ? 1 : 0, 	/* No local */
+		(AMQP_AUTOACK & flags) ? 1 : 0,		/* no_ack, aka AUTOACK */
+		queue->exclusive,
+		*arguments
+	);
+
+	AMQP_EFREE_ARGUMENTS(arguments);
+
+	RETURN_TRUE;
+}
+/* }}} */
 
 /* {{{ proto array AMQPConsumer::consumeOne(callback);
 consume one message and return the value from the callback function
@@ -181,7 +240,7 @@ PHP_METHOD(amqp_consumer_class, consumeOne)
 
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not get connection.");
-
+	
 	/* Initialize the message */
 	zval *message;
 	MAKE_STD_ZVAL(message);
@@ -238,3 +297,12 @@ PHP_METHOD(amqp_consumer_class, consumeOne)
 }
 /* }}} */
 
+
+/*
+*Local variables:
+*tab-width: 4
+*c-basic-offset: 4
+*End:
+*vim600: noet sw=4 ts=4 fdm=marker
+*vim<600: noet sw=4 ts=4
+*/

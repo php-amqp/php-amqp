@@ -1033,62 +1033,6 @@ PHP_METHOD(amqp_queue_class, consume)
 /* }}} */
 
 
-/* {{{ proto int AMQPQueue::basicConsume([flags = <bitmask>, consumer_tag]);
-start consuming on the queue
-*/
-PHP_METHOD(amqp_queue_class, basicConsume)
-{
-	zval *id;
-	amqp_queue_object *queue;
-	amqp_channel_object *channel;
-	amqp_connection_object *connection;
-
-	zend_fcall_info fci;
-	zend_fcall_info_cache fci_cache;
-	int function_call_succeeded = 1;
-	int read;
-	amqp_table_t *arguments;
-
-	char *consumer_tag;
-	int consumer_tag_len = 0;
-	amqp_bytes_t consumer_tag_bytes;
-	long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
-
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|ls", &id, amqp_queue_class_entry, &flags, &consumer_tag, &consumer_tag_len) == FAILURE) {
-		return;
-	}
-
-	/* Pull the queue out */
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	channel = AMQP_GET_CHANNEL(queue);
-	AMQP_VERIFY_CHANNEL(channel, "Could not get queue.");
-
-	connection = AMQP_GET_CONNECTION(channel);
-	AMQP_VERIFY_CONNECTION(connection, "Could not get queue.");
-
-	/* Setup the consume */
-	arguments = convert_zval_to_arguments(queue->arguments);
-
-	consumer_tag_bytes.bytes = (void *) consumer_tag;
-	consumer_tag_bytes.len = consumer_tag_len;
-
-	amqp_basic_consume(
-		connection->connection_resource->connection_state,
-		channel->channel_id,
-		amqp_cstring_bytes(queue->name),
-		consumer_tag_bytes,					/* Consumer tag */
-		(AMQP_NOLOCAL & flags) ? 1 : 0, 	/* No local */
-		(AMQP_AUTOACK & flags) ? 1 : 0,		/* no_ack, aka AUTOACK */
-		queue->exclusive,
-		*arguments
-	);
-
-	AMQP_EFREE_ARGUMENTS(arguments);
-
-	RETURN_TRUE;
-}
-/* }}} */
 /* {{{ proto int AMQPQueue::ack(long deliveryTag, [bit flags=AMQP_NOPARAM]);
 	acknowledge the message
 */
@@ -1522,71 +1466,6 @@ PHP_METHOD(amqp_queue_class, delete)
 	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
-}
-/* }}} */
-
-
-/* {{{ proto int AMQPQueue::select([long timeout = 0]]);
-select
-*/
-PHP_METHOD(amqp_queue_class, select)
-{
-	zval *id;
-	amqp_queue_object *queue;
-	amqp_channel_object *channel;
-	amqp_connection_object *connection;
-
-	long  timeout = 0;
-
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|l", &id, amqp_queue_class_entry, &timeout) == FAILURE) {
-		return;
-	}
-
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
-	/* Check that the given connection has a channel, before trying to pull the connection off the stack */
-	if (queue->is_connected != '\1') {
-		zend_throw_exception(amqp_queue_exception_class_entry, "Could not select. No connection available.", 0 TSRMLS_CC);
-		return;
-	}
-
-	channel = AMQP_GET_CHANNEL(queue);
-	AMQP_VERIFY_CHANNEL(channel, "Could not select.");
-
-	connection = AMQP_GET_CONNECTION(channel);
-	AMQP_VERIFY_CONNECTION(connection, "Could not select.");
-
-	struct timeval tv;
-	tv.tv_sec = timeout;
-	tv.tv_usec = 0;
-	
-	fd_set read_fd;
-	fd_set except_fd;
-
-	
-	int fd = connection->connection_resource->fd;
-
-	if(fd < 0) {
-	  RETURN_LONG(-1);
-	}
-	
-	int arg;
-	if ((arg = fcntl(fd, F_GETFL, NULL)) < 0) {
-		RETURN_FALSE;
-	}
-
-	FD_ZERO(&read_fd);
-	FD_SET(fd, &read_fd);
-	
-	FD_ZERO(&except_fd);
-	FD_SET(fd, &except_fd);
-	
-	if(!amqp_data_in_buffer(connection->connection_resource->connection_state)) {
-	  
-	  select(fd+1, &read_fd, NULL, NULL, &tv);
-	  
-	}
-
-	RETURN_LONG(fd);
 }
 /* }}} */
 
