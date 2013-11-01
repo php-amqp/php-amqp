@@ -135,6 +135,7 @@ amqp_connection_object *getConsumerConnection(zval *z_consumer)
 	amqp_queue_object *queue;
 	amqp_connection_object *connection;
 	amqp_channel_object *channel;
+	amqp_consumer_object *consumer;
 	
 	zval *z_queue = NULL;
 	
@@ -147,20 +148,10 @@ amqp_connection_object *getConsumerConnection(zval *z_consumer)
 		zend_throw_exception(amqp_consumer_exception_class_entry, "AMQPConsumer expected", 0 TSRMLS_CC);
 		return NULL;
 	}
-	
-	zend_call_method(&z_consumer, NULL, NULL, "getQueue", sizeof("getQueue")-1, &z_queue, 0, NULL, NULL TSRMLS_CC);
-	
-	if(!z_queue) {
-		zend_throw_exception(amqp_queue_exception_class_entry, "Consumer not bound", 0 TSRMLS_CC);
-		return NULL;
-	}
-		
-	if (Z_TYPE_P(z_queue) != IS_OBJECT) {
-		zend_throw_exception(amqp_queue_exception_class_entry, "Consumer not bound to a queue", 0 TSRMLS_CC);
-		return NULL;
-	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(z_queue TSRMLS_CC);
+	consumer = (amqp_consumer_object *)zend_object_store_get_object(z_consumer TSRMLS_CC);
+	queue = (amqp_queue_object *)zend_object_store_get_object(consumer->queue TSRMLS_CC);
+
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not get channel.");
 
@@ -267,20 +258,21 @@ PHP_METHOD(amqp_consumer_dispatcher_class, select)
 	cht = Z_ARRVAL_P(consumer_dispatcher->consumers);
 	
 	nConsumers = zend_hash_num_elements(cht);
-	
+
 	for (zend_hash_internal_pointer_reset_ex(cht, &pos);
 		zend_hash_get_current_data_ex(cht, (void**) &data, &pos) == SUCCESS;
 		zend_hash_move_forward_ex(cht, &pos)) {
 		
 		z_consumer = *data;
-		connection = getConsumerConnection(z_consumer);
 	
+		connection = getConsumerConnection(z_consumer);
+
 		if(!connection) {
 			return; /* Exception has been thrown*/
 		}
 		
 		if(amqp_data_in_buffer(connection->connection_resource->connection_state)) {
-			RETURN_ZVAL(z_consumer, 0, 0);
+			RETURN_ZVAL(z_consumer, 1, 0);
 		}
 					
 		int fd = connection->connection_resource->fd;
@@ -315,7 +307,7 @@ PHP_METHOD(amqp_consumer_dispatcher_class, select)
 		
 		int fd = connection->connection_resource->fd;
 		if(FD_ISSET(fd, &read_fd)) {
-			RETURN_ZVAL(z_consumer, 0, 0);
+			RETURN_ZVAL(z_consumer, 1, 0);
 		}
 	}
 	

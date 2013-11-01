@@ -58,12 +58,13 @@ for($i=1; $i<=$iNumConsumers; $i++) {
 	
 	$aConsumers[] = $oConsumer;
 }
+
+$oLast = $oConsumer;
 	
 $oDispatcher = new \AMQPConsumerDispatcher($aConsumers);
 
 while($oDispatcher->hasConsumers()) {
 	$oConsumer = $oDispatcher->select(1);
-
 	if($oConsumer !== null) {
 		if(!$oConsumer->consumeOne()) {
 			$oDispatcher->removeConsumer($oConsumer);

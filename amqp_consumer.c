@@ -144,8 +144,7 @@ PHP_METHOD(amqp_consumer_class, getQueue)
 	}
 		
 	consumer = (amqp_consumer_object *)zend_object_store_get_object(id TSRMLS_CC);
-	Z_ADDREF_P(consumer->queue);	
-	RETURN_ZVAL(consumer->queue, 0, 0);
+	RETURN_ZVAL(consumer->queue, 1, 0);
 }
 /* }}} */
 
@@ -232,7 +231,6 @@ PHP_METHOD(amqp_consumer_class, consumeOne)
 
 	/* Pull the queue out */
 	consumer = (amqp_consumer_object *)zend_object_store_get_object(id TSRMLS_CC);
-
 	queue = (amqp_queue_object*) zend_object_store_get_object(consumer->queue TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
@@ -266,7 +264,7 @@ PHP_METHOD(amqp_consumer_class, consumeOne)
 
 		/* Add a pointer to the queue: */
 		add_index_zval(params, 1, consumer->queue);
-		Z_ADDREF_P(id);
+		Z_ADDREF_P(consumer->queue);
 
 		/* Convert everything to be callable */
 		zend_fcall_info_args(&consumer->callback.fci, params TSRMLS_CC);
