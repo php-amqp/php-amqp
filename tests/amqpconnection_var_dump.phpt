@@ -12,7 +12,7 @@ $cnn = new AMQPConnection();
 var_dump($cnn);
 ?>
 --EXPECT--
-object(AMQPConnection)#1 (7) {
+object(AMQPConnection)#1 (8) {
   ["login"]=>
   string(5) "guest"
   ["password"]=>
@@ -26,5 +26,7 @@ object(AMQPConnection)#1 (7) {
   ["read_timeout"]=>
   float(0)
   ["write_timeout"]=>
+  float(0)
+  ["connect_timeout"]=>
   float(0)
 }

@@ -179,6 +179,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define DEFAULT_TIMEOUT						NULL
 #define DEFAULT_READ_TIMEOUT				"0"
 #define DEFAULT_WRITE_TIMEOUT				"0"
+#define DEFAULT_CONNECT_TIMEOUT			"0"
 #define DEFAULT_VHOST						"/"
 #define DEFAULT_LOGIN						"guest"
 #define DEFAULT_PASSWORD					"guest"
@@ -304,9 +305,9 @@ typedef struct _amqp_channel_object {
 typedef struct _amqp_connection_resource {
 	int used_slots;
 	amqp_channel_object **slots;
-	int fd;
 	int is_persistent;
 	amqp_connection_state_t connection_state;
+	amqp_socket_t *socket;
 } amqp_connection_resource;
 
 typedef struct _amqp_connection_object {
@@ -323,6 +324,7 @@ typedef struct _amqp_connection_object {
 	int port;
 	double read_timeout;
 	double write_timeout;
+	double connect_timeout;
 	amqp_connection_resource *connection_resource;
 } amqp_connection_object;
 
