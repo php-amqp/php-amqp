@@ -545,6 +545,29 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 /* }}} */
 
 
+/* {{{ proto int AMQPChannel::getConnection();
+select
+*/
+PHP_METHOD(amqp_channel_class, getConnection)
+{
+	zval *id;
+	amqp_channel_object *channel;
+	
+	/* Get the vhost from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_channel_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the channel object out of the store */
+	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* return the connection */
+	RETURN_ZVAL(channel->connection, 1, 0);
+}
+/* }}} */
+
+
+
 /*
 *Local variables:
 *tab-width: 4

@@ -55,6 +55,8 @@ PHP_METHOD(amqp_queue_class, delete);
 PHP_METHOD(amqp_queue_class, basicConsume);
 PHP_METHOD(amqp_queue_class, select);
 
+PHP_METHOD(amqp_queue_class, getChannel);
+
 /*
 *Local variables:
 *tab-width: 4

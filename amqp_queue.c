@@ -1469,6 +1469,30 @@ PHP_METHOD(amqp_queue_class, delete)
 }
 /* }}} */
 
+
+/* {{{ proto int AMQPQueue::getChannel();
+select
+*/
+PHP_METHOD(amqp_queue_class, getChannel)
+{
+	zval *id;
+	amqp_queue_object *queue;
+	
+	/* Get the vhost from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_queue_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the queue object out of the store */
+	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* return the connection */
+	RETURN_ZVAL(queue->channel, 1, 0);
+}
+/* }}} */
+
+
+
 /*
 *Local variables:
 *tab-width: 4

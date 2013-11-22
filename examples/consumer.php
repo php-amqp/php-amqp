@@ -47,14 +47,14 @@ for($i=1; $i<=$iNumConsumers; $i++) {
 
 	$fn = function(\AMQPEnvelope $oEnvelope, \AMQPQueue $oQueue) {
 	
-		$oQueue->ack($oEnvelope->getDeliveryTag());
+		//$oQueue->ack($oEnvelope->getDeliveryTag());
 	
 		return $oEnvelope->getBody() != "STOP!!";
 	
 	};
 
 	$oConsumer = new \AMQPConsumer($oQueue, $fn);
-	$oConsumer->basicConsume();
+	$oConsumer->basicConsume(AMQP_AUTOACK);
 	
 	$aConsumers[] = $oConsumer;
 }
@@ -68,9 +68,12 @@ while($oDispatcher->hasConsumers()) {
 	if($oConsumer !== null) {
 		if(!$oConsumer->consumeOne()) {
 			$oDispatcher->removeConsumer($oConsumer);
+			$oConsumer->getQueue()->getChannel()->getConnection()->disconnect();
 		}
 	}
 }
+
+
 
 echo "Finished\n";
 

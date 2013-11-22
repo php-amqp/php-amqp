@@ -70,6 +70,7 @@ HashTable *amqp_consumer_object_get_debug_info(zval *object, int *is_temp TSRMLS
 
 void amqp_consumer_dtor(void *object TSRMLS_DC)
 {
+	
 	amqp_consumer_object *consumer = (amqp_consumer_object*)object;
 	
 	zend_object_std_dtor(&consumer->zo TSRMLS_CC);
