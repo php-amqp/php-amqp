@@ -246,8 +246,8 @@ PHP_METHOD(amqp_exchange_class, setName)
 	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* Verify that the name is not null and not an empty string */
-	if (name_len < 1 || name_len > 255) {
-		zend_throw_exception(amqp_exchange_exception_class_entry, "Invalid exchange name given, must be between 1 and 255 characters long.", 0 TSRMLS_CC);
+	if (name_len > 255) {
+		zend_throw_exception(amqp_exchange_exception_class_entry, "Invalid exchange name given, must be less than 255 characters long.", 0 TSRMLS_CC);
 		return;
 	}
 
