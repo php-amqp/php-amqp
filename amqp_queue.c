@@ -35,9 +35,21 @@
 #ifdef PHP_WIN32
 # include "win32/php_stdint.h"
 # include "win32/signal.h"
+# include <Winsock2.h>
+# include <ws2tcpip.h>
 #else
 # include <signal.h>
 # include <stdint.h>
+
+# include <sys/types.h>      /* On older BSD this must come before net includes */
+# include <netinet/in.h>
+# include <netinet/tcp.h>
+# include <sys/socket.h>
+# include <netdb.h>
+# include <sys/uio.h>
+# include <fcntl.h>
+
+
 #endif
 #include <amqp.h>
 #include <amqp_framing.h>
@@ -92,6 +104,7 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	ZVAL_BOOL(value, queue->auto_delete);
 	zend_hash_add(debug_info, "auto_delete", sizeof("auto_delete"), &value, sizeof(zval *), NULL);
 
+	Z_ADDREF_P(queue->arguments);
 	zend_hash_add(debug_info, "arguments", sizeof("arguments"), &queue->arguments, sizeof(&queue->arguments), NULL);
 
 	return debug_info;
@@ -1455,6 +1468,29 @@ PHP_METHOD(amqp_queue_class, delete)
 	RETURN_TRUE;
 }
 /* }}} */
+
+
+/* {{{ proto int AMQPQueue::getChannel();
+select
+*/
+PHP_METHOD(amqp_queue_class, getChannel)
+{
+	zval *id;
+	amqp_queue_object *queue;
+	
+	/* Get the vhost from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_queue_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the queue object out of the store */
+	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* return the connection */
+	RETURN_ZVAL(queue->channel, 1, 0);
+}
+/* }}} */
+
 
 
 /*

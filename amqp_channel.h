@@ -40,6 +40,8 @@ PHP_METHOD(amqp_channel_class, startTransaction);
 PHP_METHOD(amqp_channel_class, commitTransaction);
 PHP_METHOD(amqp_channel_class, rollbackTransaction);
 
+PHP_METHOD(amqp_channel_class, getConnection);
+
 /*
 *Local variables:
 *tab-width: 4
