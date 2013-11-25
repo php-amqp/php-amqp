@@ -9,10 +9,16 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <description>This extension can communicate with any AMQP spec 0-9-1 compatible server, such as RabbitMQ, OpenAMQP and Qpid, giving you the ability to create and delete exchanges and queues, as well as publish to any exchange and consume from any queue.
  </description>
  <lead>
+  <name>Lars Strojny</name>
+  <user>lstrojny</user>
+  <email>lstrojny@php.net</email>
+  <active>yes</active>
+ </lead>
+ <lead>
   <name>Pieter de Zwart</name>
   <user>pdezwart</user>
   <email>pdezwart@php.net</email>
-  <active>yes</active>
+  <active>no</active>
  </lead>
  <date>2013-11-25</date>
  <time>13:00:00</time>
