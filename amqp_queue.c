@@ -757,7 +757,8 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char ** pstr = (char **) &str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
+
 		channel->is_connected = '\0';
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
 		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
@@ -836,7 +837,7 @@ PHP_METHOD(amqp_queue_class, bind)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char **pstr = (char **)&str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
@@ -1236,7 +1237,8 @@ PHP_METHOD(amqp_queue_class, purge)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char **pstr = (char **)&str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
+
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
 		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
@@ -1307,7 +1309,8 @@ PHP_METHOD(amqp_queue_class, cancel)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char **pstr = (char **)&str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
+
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
 		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
@@ -1376,7 +1379,7 @@ PHP_METHOD(amqp_queue_class, unbind)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char ** pstr = (char **) &str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
@@ -1444,7 +1447,8 @@ PHP_METHOD(amqp_queue_class, delete)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char **pstr = (char **)&str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
+
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_queue_exception_class_entry, *pstr, 0 TSRMLS_CC);
 		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
