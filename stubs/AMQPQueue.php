@@ -125,7 +125,7 @@ class AMQPQueue
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool true on success or false on failure.
+     * @return integer The number of deleted messages.
      */
     public function delete ($flags = AMQP_NOPARAM)
     {

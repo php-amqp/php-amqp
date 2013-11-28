@@ -908,7 +908,7 @@ PHP_METHOD(amqp_queue_class, get)
 	} else {
 		zval_ptr_dtor(&message);
 		RETURN_FALSE;
-    	}
+	}
 }
 /* }}} */
 
@@ -1394,7 +1394,7 @@ PHP_METHOD(amqp_queue_class, unbind)
 
 
 /* {{{ proto int AMQPQueue::delete([long flags = AMQP_NOPARAM]]);
-delete queue
+delete queue and return the number of messages deleted in it
 */
 PHP_METHOD(amqp_queue_class, delete)
 {
@@ -1405,10 +1405,10 @@ PHP_METHOD(amqp_queue_class, delete)
 
 	long flags = AMQP_NOPARAM;
 
+	amqp_queue_delete_ok_t *r;
 	amqp_rpc_reply_t res;
-	amqp_rpc_reply_t result;
-	amqp_queue_delete_t s;
-	amqp_method_number_t method_ok = AMQP_QUEUE_DELETE_OK_METHOD;
+
+	long message_count;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|l", &id, amqp_queue_class_entry, &flags) == FAILURE) {
 		return;
@@ -1427,22 +1427,15 @@ PHP_METHOD(amqp_queue_class, delete)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not delete queue.");
 
-	s.queue.len		= queue->name_len;
-	s.queue.bytes	= queue->name;
-	s.ticket		= 0;
-	s.if_unused		= (AMQP_IFUNUSED & flags) ? 1 : 0;
-	s.if_empty		= (AMQP_IFEMPTY & flags) ? 1 : 0;
-	s.nowait		= 0;
-
-	result = amqp_simple_rpc(
+	r = amqp_queue_delete(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
-		AMQP_QUEUE_DELETE_METHOD,
-		&method_ok,
-		&s
+		amqp_cstring_bytes(queue->name),
+		(AMQP_IFUNUSED & flags) ? 1 : 0,
+		(AMQP_IFEMPTY & flags) ? 1 : 0
 	);
 
-	res = AMQP_RPC_REPLY_T_CAST result;
+	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state);
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -1454,9 +1447,11 @@ PHP_METHOD(amqp_queue_class, delete)
 		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
+
+	message_count = r->message_count;
 	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
-	RETURN_TRUE;
+	RETURN_LONG(message_count);
 }
 /* }}} */
 
