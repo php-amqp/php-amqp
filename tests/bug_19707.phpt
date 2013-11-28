@@ -33,28 +33,29 @@ $funcs = array(
   'getTimeStamp', 'getType', 'getUserId', 'isRedelivery'
 );
 foreach ($funcs as $func) {
-  printf("%s => %s\n", $func, json_encode($msg->$func()));
+  printf("%s => %s\n", $func, var_export($msg->$func(), true));
 };
 
 $q->delete();
 $ex->delete();
 ?>
---EXPECTF--
+--EXPECT--
 message received from get:
-getAppId => ""
-getBody => "message"
-getContentEncoding => ""
-getContentType => "text\/plain"
-getCorrelationId => ""
+getAppId => ''
+getBody => 'message'
+getContentEncoding => ''
+getContentType => 'text/plain'
+getCorrelationId => ''
 getDeliveryTag => 1
-getExchangeName => "exchange_testing_19707"
-getExpiration => ""
-getHeaders => []
-getMessageId => ""
+getExchangeName => 'exchange_testing_19707'
+getExpiration => ''
+getHeaders => array (
+)
+getMessageId => ''
 getPriority => 0
-getReplyTo => ""
-getRoutingKey => "routing.key"
+getReplyTo => ''
+getRoutingKey => 'routing.key'
 getTimeStamp => 0
-getType => ""
-getUserId => ""
+getType => ''
+getUserId => ''
 isRedelivery => false

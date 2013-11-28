@@ -11,13 +11,13 @@ $funcs = array(
   'getHost', 'getLogin', 'getPassword', 'getPort', 'getVHost', 'isConnected'
 );
 foreach ($funcs as $func) {
-  printf("%s => %s\n", $func, json_encode($o->conn->$func()));
+  printf("%s => %s\n", $func, var_export($o->conn->$func(), true));
 };
 ?>
---EXPECTF--
-getHost => "localhost"
-getLogin => "guest"
-getPassword => "guest"
+--EXPECT--
+getHost => 'localhost'
+getLogin => 'guest'
+getPassword => 'guest'
 getPort => 5672
-getVHost => "\/"
+getVHost => '/'
 isConnected => false
