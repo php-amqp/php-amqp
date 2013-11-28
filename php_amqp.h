@@ -149,7 +149,6 @@ PHP_MINIT_FUNCTION(amqp);
 PHP_MSHUTDOWN_FUNCTION(amqp);
 PHP_MINFO_FUNCTION(amqp);
 
-void amqp_error(amqp_rpc_reply_t x, char ** pstr);
 amqp_table_t *convert_zval_to_arguments(zval *zvalArguments);
 char *stringify_bytes(amqp_bytes_t bytes);
 
@@ -171,8 +170,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define CHANNEL_MAX							10			/* max number of channels allowed */
 #define HEADER_FOOTER_SIZE					8			/*  7 bytes up front, then payload, then 1 byte footer */
 #define AMQP_HEARTBEAT						0	   		/* heartbeat */
-
-#define DEFAULT_NUM_CONNECTION_CHANNELS		255
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
@@ -410,6 +407,8 @@ typedef struct _amqp_envelope_object {
 #endif
 
 #define PHP_AMQP_VERSION "1.3.1-dev"
+
+void amqp_error(amqp_rpc_reply_t x, char **pstr, amqp_connection_object *connection, amqp_channel_object *channel);
 
 #endif	/* PHP_AMQP_H */
 

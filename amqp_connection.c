@@ -209,7 +209,8 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	);
 
 	if (x.reply_type != AMQP_RESPONSE_NORMAL) {
-		amqp_error(x, pstr);
+		amqp_error(x, pstr, connection, NULL);
+
 		strcat(*pstr, " - Potential login failure.");
 		zend_throw_exception(amqp_connection_exception_class_entry, *pstr, 0 TSRMLS_CC);
 		return 0;
@@ -230,6 +231,7 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 	void * old_handler;
 #endif
 	int slot;
+	amqp_channel_object *channel;
 
 	/* Pull the connection resource out for easy access */
 	amqp_connection_resource *resource = connection->connection_resource;
@@ -256,6 +258,9 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 				if ((long) resource->slots[slot] != -1) {
 					/* We found the channel, disconnect it: */
 					amqp_channel_close(connection->connection_resource->connection_state, slot, AMQP_REPLY_SUCCESS);
+
+					channel = (amqp_channel_object *) resource->slots[slot];
+					channel->is_connected = '\0';
 				}
 
 				/* Clean up our local storage */
@@ -272,7 +277,6 @@ void php_amqp_disconnect(amqp_connection_object *connection)
 	}
 
 	connection->is_connected = '\0';
-
 
 #ifndef PHP_WIN32
 	/* End ignoring of SIGPIPEs */
@@ -365,6 +369,8 @@ int get_next_available_channel(amqp_connection_object *connection, amqp_channel_
 void remove_channel_from_connection(amqp_connection_object *connection, amqp_channel_object *channel)
 {
 	int slot;
+
+	channel->is_connected = '\0';
 
 	/* Pull out the ring buffer for ease of use */
 	amqp_connection_resource *resource = connection->connection_resource;

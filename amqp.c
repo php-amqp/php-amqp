@@ -570,14 +570,14 @@ zend_module_entry amqp_module_entry = {
 #endif
 	STANDARD_MODULE_PROPERTIES
 };
-	/* }}} */
+/* }}} */
 
 #ifdef COMPILE_DL_AMQP
 	ZEND_GET_MODULE(amqp)
 #endif
 
 
-void amqp_error(amqp_rpc_reply_t x, char ** pstr)
+void amqp_error(amqp_rpc_reply_t x, char **pstr, amqp_connection_object *connection, amqp_channel_object *channel)
 {
 	/* Trim new lines */
 	switch (x.reply_type) {
@@ -600,6 +600,10 @@ void amqp_error(amqp_rpc_reply_t x, char ** pstr)
 						m->reply_code,
 						(int) m->reply_text.len,
 						(char *)m->reply_text.bytes);
+
+					/* Close connection with all its channels */
+					php_amqp_disconnect(connection);
+
 					/* No more error handling necessary, returning. */
 					return;
 				}
@@ -609,6 +613,10 @@ void amqp_error(amqp_rpc_reply_t x, char ** pstr)
 						m->reply_code,
 						(int)m->reply_text.len,
 						(char *)m->reply_text.bytes);
+
+					/* Close channel */
+					remove_channel_from_connection(connection, channel);
+
 					/* No more error handling necessary, returning. */
 					return;
 				}

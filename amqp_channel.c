@@ -182,7 +182,8 @@ PHP_METHOD(amqp_channel_class, __construct)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char ** pstr = (char **) &str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
+
 		zend_throw_exception(amqp_channel_exception_class_entry, *pstr, 0 TSRMLS_CC);
 		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
@@ -436,7 +437,7 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char **pstr = (char **)&str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_channel_exception_class_entry, *pstr, 0 TSRMLS_CC);
@@ -484,7 +485,7 @@ PHP_METHOD(amqp_channel_class, commitTransaction)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char **pstr = (char **)&str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_channel_exception_class_entry, *pstr, 0 TSRMLS_CC);
@@ -531,7 +532,7 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
 		char **pstr = (char **)&str;
-		amqp_error(res, pstr);
+		amqp_error(res, pstr, connection, channel);
 
 		channel->is_connected = 0;
 		zend_throw_exception(amqp_channel_exception_class_entry, *pstr, 0 TSRMLS_CC);
