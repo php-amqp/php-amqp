@@ -251,6 +251,8 @@ Fixed bugs:
    <file name="tests/amqpconnection_setReadTimeout_out_of_range.phpt" role="test"/>
    <file name="tests/amqpqueue_bind_basic_empty_routing_key.phpt" role="test"/>
    <file name="tests/amqpchannel_var_dump.phpt" role="test"/>
+   <file name="tests/amqpqueue_bind_basic_headers_arguments.phpt" role="test"/>
+   <file name="tests/amqpqueue_unbind_basic_headers_arguments.phpt" role="test"/>
   </dir> <!-- / -->
  </contents>
  <dependencies>
