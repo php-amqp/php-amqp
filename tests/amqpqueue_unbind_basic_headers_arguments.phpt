@@ -18,7 +18,7 @@ $queue = new AMQPQueue($ch);
 $queue->setName("queue-" . time());
 $queue->declareQueue();
 
-$arguments = ['x-match' => 'all', 'type' => 'custom'];
+$arguments = array('x-match' => 'all', 'type' => 'custom');
 
 var_dump($queue->bind($ex->getName(), '', $arguments));
 var_dump($queue->unbind($ex->getName(), '', $arguments));
