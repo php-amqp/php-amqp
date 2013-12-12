@@ -5,4 +5,3 @@
 class AMQPExchangeException extends AMQPException
 {
 }
-

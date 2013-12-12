@@ -69,7 +69,7 @@ class AMQPExchange
      *
      * @return boolean true on success or false on failure.
      */
-    public function delete ($exchangeName = null, $flags = AMQP_NOPARAM)
+    public function delete($exchangeName = null, $flags = AMQP_NOPARAM)
     {
     }
 
@@ -82,7 +82,7 @@ class AMQPExchange
      *                                with the given key, or FALSE if the key
      *                                is not set.
      */
-    public function getArgument ($key)
+    public function getArgument($key)
     {
     }
 
@@ -144,7 +144,7 @@ class AMQPExchange
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function publish (
+    public function publish(
         $message,
         $routing_key = null,
         $flags = AMQP_NOPARAM,
@@ -213,4 +213,3 @@ class AMQPExchange
     {
     }
 }
-

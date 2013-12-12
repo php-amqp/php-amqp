@@ -5,4 +5,3 @@
 class AMQPChannelException extends AMQPException
 {
 }
-
