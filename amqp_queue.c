@@ -638,10 +638,10 @@ PHP_METHOD(amqp_queue_class, getArguments)
 Overwrite all queue arguments with given args */
 PHP_METHOD(amqp_queue_class, setArguments)
 {
-	zval *id, *zval_arguments;
+	zval *id, *arguments;
 	amqp_queue_object *queue;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oa", &id, amqp_queue_class_entry, &zval_arguments) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oa", &id, amqp_queue_class_entry, &arguments) == FAILURE) {
 		return;
 	}
 
@@ -653,7 +653,7 @@ PHP_METHOD(amqp_queue_class, setArguments)
 		zval_ptr_dtor(&queue->arguments);
 	}
 
-	queue->arguments = zval_arguments;
+	queue->arguments = arguments;
 
 	/* Increment the ref count */
 	Z_ADDREF_P(queue->arguments);
@@ -783,7 +783,7 @@ bind queue to exchange by routing key
 */
 PHP_METHOD(amqp_queue_class, bind)
 {
-	zval *id, *zval_arguments = NULL;
+	zval *id, *arguments = NULL;
 	amqp_queue_object *queue;
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
@@ -795,10 +795,8 @@ PHP_METHOD(amqp_queue_class, bind)
 	amqp_rpc_reply_t res;
 	amqp_queue_bind_t s;
 	amqp_method_number_t bind_ok = AMQP_QUEUE_BIND_OK_METHOD;
-	amqp_table_t *arguments;
 
-
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &id, amqp_queue_class_entry, &exchange_name, &exchange_name_len, &keyname, &keyname_len, &zval_arguments) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &id, amqp_queue_class_entry, &exchange_name, &exchange_name_len, &keyname, &keyname_len, &arguments) == FAILURE) {
 		return;
 	}
 
@@ -827,9 +825,8 @@ PHP_METHOD(amqp_queue_class, bind)
 	s.arguments.num_entries = 0;
 	s.arguments.entries     = NULL;
 
-	if (zval_arguments) {
-		arguments   = convert_zval_to_arguments(zval_arguments);
-		s.arguments = *arguments;
+	if (arguments) {
+		s.arguments = *convert_zval_to_arguments(arguments);
 	}
 
 	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
@@ -839,10 +836,6 @@ PHP_METHOD(amqp_queue_class, bind)
 		&bind_ok,
 		&s
 	);
-
-	if (zval_arguments) {
-		AMQP_EFREE_ARGUMENTS(arguments);
-	}
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -1338,7 +1331,7 @@ unbind queue from exchange
 */
 PHP_METHOD(amqp_queue_class, unbind)
 {
-	zval *id, *zval_arguments = NULL;
+	zval *id, *arguments = NULL;
 	amqp_queue_object *queue;
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
@@ -1351,9 +1344,8 @@ PHP_METHOD(amqp_queue_class, unbind)
 	amqp_rpc_reply_t res;
 	amqp_queue_unbind_t s;
 	amqp_method_number_t method_ok = AMQP_QUEUE_UNBIND_OK_METHOD;
-	amqp_table_t *arguments;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &id, amqp_queue_class_entry, &exchange_name, &exchange_name_len, &keyname, &keyname_len, &zval_arguments) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &id, amqp_queue_class_entry, &exchange_name, &exchange_name_len, &keyname, &keyname_len, &arguments) == FAILURE) {
 		return;
 	}
 
@@ -1380,9 +1372,8 @@ PHP_METHOD(amqp_queue_class, unbind)
 	s.arguments.num_entries = 0;
 	s.arguments.entries		= NULL;
 
-	if (zval_arguments) {
-		arguments   = convert_zval_to_arguments(zval_arguments);
-		s.arguments = *arguments;
+	if (arguments) {
+		s.arguments = *convert_zval_to_arguments(arguments);
 	}
 
 	res = AMQP_RPC_REPLY_T_CAST amqp_simple_rpc(
@@ -1391,10 +1382,6 @@ PHP_METHOD(amqp_queue_class, unbind)
 		AMQP_QUEUE_UNBIND_METHOD,
 		&method_ok,
 		&s);
-
-	if (zval_arguments) {
-		AMQP_EFREE_ARGUMENTS(arguments);
-	}
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
