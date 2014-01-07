@@ -5,4 +5,3 @@
 class AMQPQueueException extends AMQPException
 {
 }
-

@@ -30,13 +30,14 @@ class AMQPQueue
      *
      * @param string $exchange_name Name of the exchange to bind to.
      * @param string $routing_key   Pattern or routing key to bind with.
+     * @param array  $arguments     Additional binding arguments.
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return boolean
      */
-    public function bind ($exchange_name, $routing_key = null)
+    public function bind($exchange_name, $routing_key = null, array $arguments = array())
     {
     }
 
@@ -52,7 +53,7 @@ class AMQPQueue
      *
      * @return bool;
      */
-    public function cancel ($consumer_tag = '')
+    public function cancel($consumer_tag = '')
     {
     }
 
@@ -65,7 +66,7 @@ class AMQPQueue
      *                                 broker.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      */
-    public function __construct (AMQPChannel $amqp_channel)
+    public function __construct(AMQPChannel $amqp_channel)
     {
     }
 
@@ -94,7 +95,7 @@ class AMQPQueue
      *
      * @return void
      */
-    public function consume (
+    public function consume(
         callable $callback,
         $flags = AMQP_NOPARAM,
         $consumerTag = null
@@ -109,7 +110,7 @@ class AMQPQueue
      *
      * @return integer the message count.
      */
-    public function declareQueue ()
+    public function declareQueue()
     {
     }
 
@@ -127,7 +128,7 @@ class AMQPQueue
      *
      * @return integer The number of deleted messages.
      */
-    public function delete ($flags = AMQP_NOPARAM)
+    public function delete($flags = AMQP_NOPARAM)
     {
     }
 
@@ -153,7 +154,7 @@ class AMQPQueue
      *
      * @return AMQPEnvelope|boolean
      */
-    public function get ($flags = AMQP_NOPARAM)
+    public function get($flags = AMQP_NOPARAM)
     {
     }
 
@@ -175,7 +176,7 @@ class AMQPQueue
      *
      * @return array An array containing all of the set key/value pairs.
      */
-    public function getArguments ()
+    public function getArguments()
     {
     }
 
@@ -185,7 +186,7 @@ class AMQPQueue
      * @return int An integer bitmask of all the flags currently set on this
      *             exchange object.
      */
-    public function getFlags ()
+    public function getFlags()
     {
     }
 
@@ -194,7 +195,7 @@ class AMQPQueue
      *
      * @return string The configured name as a string.
      */
-    public function getName ()
+    public function getName()
     {
     }
 
@@ -221,7 +222,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function nack ($delivery_tag, $flags = AMQP_NOPARAM)
+    public function nack($delivery_tag, $flags = AMQP_NOPARAM)
     {
     }
 
@@ -242,7 +243,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function reject ($delivery_tag, $flags = AMQP_NOPARAM)
+    public function reject($delivery_tag, $flags = AMQP_NOPARAM)
     {
     }
 
@@ -254,7 +255,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function purge ()
+    public function purge()
     {
     }
 
@@ -266,7 +267,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setArgument ($key, $value)
+    public function setArgument($key, $value)
     {
     }
 
@@ -279,7 +280,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setArguments (array $arguments)
+    public function setArguments(array $arguments)
     {
     }
 
@@ -292,7 +293,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setFlags ($flags)
+    public function setFlags($flags)
     {
     }
 
@@ -303,7 +304,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function setName ($queue_name)
+    public function setName($queue_name)
     {
     }
 
@@ -314,14 +315,14 @@ class AMQPQueue
      *                              queue is bound.
      * @param string $routing_key   The binding routing key used by the
      *                              queue.
+     * @param array  $arguments     Additional binding arguments.
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return boolean
      */
-    public function unbind ($exchange_name, $routing_key = null)
+    public function unbind($exchange_name, $routing_key = null, array $arguments = array())
     {
     }
 }
-
