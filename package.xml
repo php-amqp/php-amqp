@@ -23,7 +23,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <date>2014-01-15</date>
  <time>13:00:00</time>
  <version>
-  <release>1.4.0beta1</release>
+  <release>1.4.0-dev</release>
   <api>1.0.0</api>
  </version>
  <stability>
