@@ -20,14 +20,14 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>pdezwart@php.net</email>
   <active>no</active>
  </lead>
- <date>2013-11-25</date>
+ <date>2014-01-15</date>
  <time>13:00:00</time>
  <version>
-  <release>1.4.0-dev</release>
+  <release>1.4.0beta1</release>
   <api>1.0.0</api>
  </version>
  <stability>
-  <release>stable</release>
+  <release>beta</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
