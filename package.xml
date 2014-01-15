@@ -37,7 +37,6 @@ http://pear.php.net/dtd/package-2.0.xsd">
     * Fix #77: AMQPQueue::delete() now no longer returns a boolean, but an integer of how many messages were deleted. WARNING: this can potentially break BC (Bogdan Padalko)
     * Fix #75: adhering to the AMQP spec by closing channel and sometimes even the connection in case of certain errors (Bogdan Padalko)
     * Fix #81: Add optional arguments parameter to bind()/unbind() (Michael Squires)
-    * Your change here (Author)
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.3.0...v1.4.0
