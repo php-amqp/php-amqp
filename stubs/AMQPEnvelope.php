@@ -1,4 +1,5 @@
 <?php
+
 /**
  * stub class representing AMQPEnvelope from pecl-amqp
  */

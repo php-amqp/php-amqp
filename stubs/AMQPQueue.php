@@ -1,4 +1,5 @@
 <?php
+
 /**
  * stub class representing AMQPQueue from pecl-amqp
  */
@@ -118,6 +119,7 @@ class AMQPQueue
      * Delete a queue from the broker.
      *
      * This includes its entire contents of unread or unacknowledged messages.
+     *
      * @param integer $flags        Optionally AMQP_IFUNUSED can be specified
      *                              to indicate the queue should not be
      *                              deleted until no clients are connected to

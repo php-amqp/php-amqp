@@ -1,4 +1,5 @@
 <?php
+
 /**
  * stub class representing AMQPChannel from pecl-amqp
  */
@@ -27,7 +28,7 @@ class AMQPChannel
      * @throws AMQPConnectionException        If the connection to the broker
      *                                        was lost.
      */
-    public function __construct (AMQPConnection $amqp_connection)
+    public function __construct(AMQPConnection $amqp_connection)
     {
     }
 

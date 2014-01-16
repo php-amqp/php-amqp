@@ -1,4 +1,5 @@
 <?php
+
 /**
  * stub class representing AMQPConnectionException from pecl-amqp
  */
