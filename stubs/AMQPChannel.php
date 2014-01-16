@@ -161,4 +161,13 @@ class AMQPChannel
     public function startTransaction()
     {
     }
+
+    /**
+     * Get the AMQPConnection object in use
+     *
+     * @return AMQPConnection
+     */
+    public function getConnection()
+    {
+    }
 }

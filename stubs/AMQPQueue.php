@@ -327,4 +327,13 @@ class AMQPQueue
     public function unbind($exchange_name, $routing_key = null, array $arguments = array())
     {
     }
+
+    /**
+     * Get the AMQPChannel object in use
+     *
+     * @return AMQPChannel
+     */
+    public function getChannel()
+    {
+    }
 }

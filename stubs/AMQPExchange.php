@@ -213,4 +213,13 @@ class AMQPExchange
     public function setType($exchange_type)
     {
     }
+
+    /**
+     * Get the AMQPChannel object in use
+     *
+     * @return AMQPChannel
+     */
+    public function getChannel()
+    {
+    }
 }
