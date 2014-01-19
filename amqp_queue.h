@@ -53,6 +53,9 @@ PHP_METHOD(amqp_queue_class, cancel);
 PHP_METHOD(amqp_queue_class, unbind);
 PHP_METHOD(amqp_queue_class, delete);
 
+PHP_METHOD(amqp_queue_class, getChannel);
+PHP_METHOD(amqp_queue_class, getConnection);
+
 /*
 *Local variables:
 *tab-width: 4

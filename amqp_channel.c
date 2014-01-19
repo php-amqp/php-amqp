@@ -80,6 +80,10 @@ HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_
 	ZVAL_LONG(value, channel->prefetch_size);
 	zend_hash_add(debug_info, "prefetch_size", sizeof("prefetch_size"), &value, sizeof(zval *), NULL);
 
+	MAKE_STD_ZVAL(value);
+	ZVAL_BOOL(value, channel->is_connected);
+	zend_hash_add(debug_info, "is_connected", sizeof("is_connected"), &value, sizeof(zval *), NULL);
+
 	/* Start adding values */
 	return debug_info;
 }
@@ -545,6 +549,22 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 }
 /* }}} */
 
+/* {{{ proto AMQPChannel::getConnection()
+Get the AMQPConnection object in use */
+PHP_METHOD(amqp_channel_class, getConnection)
+{
+	zval *id;
+	amqp_channel_object *channel;
+
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_channel_class_entry) == FAILURE) {
+		return;
+	}
+
+	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+    RETURN_ZVAL(channel->connection, 1, 0);
+}
+/* }}} */
 
 /*
 *Local variables:

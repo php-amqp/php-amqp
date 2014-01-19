@@ -1,4 +1,5 @@
 <?php
+
 /**
  * stub class representing AMQPConnection from pecl-amqp
  */
@@ -134,8 +135,6 @@ class AMQPConnection
     public function pdisconnect()
     {
     }
-
-
 
     /**
      * Close any open connections and initiate a new one with the AMQP broker.

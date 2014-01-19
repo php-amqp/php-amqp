@@ -1,4 +1,5 @@
 <?php
+
 /**
  * stub class representing AMQPExchange from pecl-amqp
  */
@@ -210,6 +211,24 @@ class AMQPExchange
      * @return boolean TRUE on success or FALSE on failure.
      */
     public function setType($exchange_type)
+    {
+    }
+
+    /**
+     * Get the AMQPChannel object in use
+     *
+     * @return AMQPChannel
+     */
+    public function getChannel()
+    {
+    }
+
+    /**
+     * Get the AMQPConnection object in use
+     *
+     * @return AMQPConnection
+     */
+    public function getConnection()
     {
     }
 }
