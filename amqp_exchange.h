@@ -48,6 +48,7 @@ PHP_METHOD(amqp_exchange_class, bind);
 PHP_METHOD(amqp_exchange_class, publish);
 
 PHP_METHOD(amqp_exchange_class, getChannel);
+PHP_METHOD(amqp_exchange_class, getConnection);
 
 /*
 *Local variables:

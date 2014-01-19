@@ -1479,6 +1479,25 @@ PHP_METHOD(amqp_queue_class, getChannel)
 }
 /* }}} */
 
+/* {{{ proto AMQPChannel::getConnection()
+Get the AMQPConnection object in use */
+PHP_METHOD(amqp_queue_class, getConnection)
+{
+	zval *id;
+	amqp_queue_object *queue;
+	amqp_channel_object *channel;
+
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|l", &id, amqp_queue_class_entry) == FAILURE) {
+		return;
+	}
+
+	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	channel = AMQP_GET_CHANNEL(queue);
+
+    RETURN_ZVAL(channel->connection, 1, 0);
+}
+/* }}} */
+
 /*
 *Local variables:
 *tab-width: 4

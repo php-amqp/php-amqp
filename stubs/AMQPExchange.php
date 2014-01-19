@@ -222,4 +222,13 @@ class AMQPExchange
     public function getChannel()
     {
     }
+
+    /**
+     * Get the AMQPConnection object in use
+     *
+     * @return AMQPConnection
+     */
+    public function getConnection()
+    {
+    }
 }
