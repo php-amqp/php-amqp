@@ -56,6 +56,7 @@
 #endif
 
 int php_amqp_set_read_timeout(amqp_connection_object *connection TSRMLS_DC);
+int php_amqp_set_write_timeout(amqp_connection_object *connection TSRMLS_DC);
 
 #if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 zend_object_handlers amqp_connection_object_handlers;
@@ -373,11 +374,12 @@ int get_next_available_channel(amqp_connection_object *connection, amqp_channel_
 void remove_channel_from_connection(amqp_connection_object *connection, amqp_channel_object *channel)
 {
 	int slot;
+	amqp_connection_resource *resource;
 
 	channel->is_connected = '\0';
 
 	/* Pull out the ring buffer for ease of use */
-	amqp_connection_resource *resource = connection->connection_resource;
+	resource = connection->connection_resource;
 
 	/* Check that there is actually an open connection */
 	if (!resource) {
