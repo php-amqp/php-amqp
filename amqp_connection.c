@@ -496,7 +496,7 @@ void php_signal_callback_handler(int signo)
 
 	/* Get php callback function */
 	if(zend_hash_index_find(&AMQP_G(php_signal_table), signo, (void **) &handle) == FAILURE){
-		php_error_docref(NULL TSRMLS_CC, E_ERROR, "Callback function not found for signo: %lu", signo);
+		php_error_docref(NULL TSRMLS_CC, E_ERROR, "Callback function not found for signo: %d", signo);
 		return;
 	}
 
