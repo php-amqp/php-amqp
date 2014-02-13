@@ -489,6 +489,28 @@ zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
 	return new_value;
 }
 
+void php_signal_callback_handler(int signo)
+{
+	TSRMLS_FETCH();
+	zval *param, **handle, *retval;
+
+	/* Get php callback function */
+	if(zend_hash_index_find(&AMQP_G(php_signal_table), signo, (void **) &handle) == FAILURE){
+		php_error_docref(NULL TSRMLS_CC, E_ERROR, "Callback function not found for signo: %lu", signo);
+		return;
+	}
+
+	MAKE_STD_ZVAL(retval);
+	MAKE_STD_ZVAL(param);
+	ZVAL_NULL(retval);
+	ZVAL_LONG(param, signo);
+
+	/* Call the function */
+	call_user_function(EG(function_table), NULL, *handle, retval, 1, &param TSRMLS_CC);
+
+	zval_ptr_dtor(&param);
+	zval_ptr_dtor(&retval);
+}
 
 /* {{{ proto AMQPConnection::__construct([array optional])
  * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'read_timeout', 'write_timeout', 'connect_timeout' and 'timeout' (deprecated) indexes
@@ -1293,6 +1315,73 @@ PHP_METHOD(amqp_connection_class, setWriteTimeout)
 }
 /* }}} */
 
+/* {{{ proto amqp::attachSignal(int signo, callback)
+attach signal handler */
+PHP_METHOD(amqp_connection_class, attachSignal)
+{
+	zval *handle, **dest_handle = NULL;
+	char *func_name;
+	long signo;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &signo, &handle) == FAILURE) {
+		return;
+	}
+
+	/* Check signal code */
+	if (signo < 1 || signo > 32) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid signal");
+		RETURN_FALSE;
+	}
+
+	/* Check if given parameter is callable */
+	if (!zend_is_callable(handle, 0, &func_name TSRMLS_CC)) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s is not a callable function name error", func_name);
+		efree(func_name);
+		RETURN_FALSE;
+	}
+
+	efree(func_name);
+
+	/* Set the handler for the signal */
+    if (signal(signo, php_signal_callback_handler) == SIG_ERR) {
+    	php_error_docref(NULL TSRMLS_CC, E_WARNING, "An error occurred while setting a signal handler for signo: %lu", signo);
+		RETURN_FALSE;
+    }
+
+	/* Add the function name to our signal table */
+	zend_hash_index_update(&AMQP_G(php_signal_table), signo, (void **) &handle, sizeof(zval *), (void **) &dest_handle);
+	if (dest_handle) zval_add_ref(dest_handle);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
+/* {{{ proto amqp::detachSignal(int signo)
+detach signal handler */
+PHP_METHOD(amqp_connection_class, detachSignal)
+{
+	long signo;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &signo) == FAILURE) {
+		return;
+	}
+
+	/* Check signal code */
+	if (signo < 1 || signo > 32) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid signal");
+		RETURN_FALSE;
+	}
+
+	/* If signal handler is registred, set SIG_DFL */
+	if(zend_hash_index_exists(&AMQP_G(php_signal_table), signo) && signal(signo, SIG_DFL) != SIG_ERR){
+		zend_hash_index_del(&AMQP_G(php_signal_table), signo);
+		RETURN_TRUE;
+	}else{
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Cannot detach signo: %lu ", signo);
+		RETURN_FALSE;
+	}
+}
+/* }}} */
 
 /*
 *Local variables:

@@ -56,6 +56,10 @@
 # include <unistd.h>
 #endif
 
+/* AMQP module global structure declaration */
+ZEND_DECLARE_MODULE_GLOBALS(amqp);
+static PHP_GINIT_FUNCTION(amqp);
+
 /* True global resources - no need for thread safety here */
 zend_class_entry *amqp_connection_class_entry;
 zend_class_entry *amqp_channel_class_entry;
@@ -153,6 +157,14 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setWriteTimeout, ZEND_SEND_
 	ZEND_ARG_INFO(0, timeout)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_attachSignal, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+	ZEND_ARG_INFO(0, signo)
+	ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_detachSignal, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+	ZEND_ARG_INFO(0, signo)
+ZEND_END_ARG_INFO()
 
 /* amqp_channel_class ARG_INFO definition */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
@@ -456,6 +468,9 @@ zend_function_entry amqp_connection_class_functions[] = {
     PHP_ME(amqp_connection_class, getWriteTimeout, 	arginfo_amqp_connection_class_getWriteTimeout,	ZEND_ACC_PUBLIC)
     PHP_ME(amqp_connection_class, setWriteTimeout, 	arginfo_amqp_connection_class_setWriteTimeout,	ZEND_ACC_PUBLIC)
 
+    PHP_ME(amqp_connection_class, attachSignal,	arginfo_amqp_connection_class_attachSignal,	ZEND_ACC_PUBLIC)
+    PHP_ME(amqp_connection_class, detachSignal,	arginfo_amqp_connection_class_detachSignal,	ZEND_ACC_PUBLIC)
+
 	{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
 };
 
@@ -579,20 +594,24 @@ zend_function_entry amqp_functions[] = {
 /* {{{ amqp_module_entry
 */
 zend_module_entry amqp_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
-	STANDARD_MODULE_HEADER,
-#endif
+	#if ZEND_MODULE_API_NO >= 20010901
+		STANDARD_MODULE_HEADER,
+	#endif
 	"amqp",
 	amqp_functions,
 	PHP_MINIT(amqp),
 	PHP_MSHUTDOWN(amqp),
-	NULL,
-	NULL,
+	PHP_RINIT(amqp),
+	PHP_RSHUTDOWN(amqp),
 	PHP_MINFO(amqp),
-#if ZEND_MODULE_API_NO >= 20010901
-	PHP_AMQP_VERSION,
-#endif
-	STANDARD_MODULE_PROPERTIES
+	#if ZEND_MODULE_API_NO >= 20010901
+		PHP_AMQP_VERSION,
+	#endif
+	PHP_MODULE_GLOBALS(amqp),
+	PHP_GINIT(amqp),
+	NULL,
+	NULL,
+	STANDARD_MODULE_PROPERTIES_EX
 };
 /* }}} */
 
@@ -865,6 +884,32 @@ PHP_MINFO_FUNCTION(amqp)
 	php_info_print_table_header(2, "librabbitmq version", amqp_version());
 	DISPLAY_INI_ENTRIES();
 
+}
+/* }}} */
+
+/* {{{ PHP_GINIT_FUNCTION
+*/
+static PHP_GINIT_FUNCTION(amqp)
+{
+	memset(amqp_globals, 0, sizeof(*amqp_globals));
+}
+/* }}} */
+
+/* {{{ PHP_RINIT_FUNCTION
+*/
+PHP_RINIT_FUNCTION(amqp)
+{
+	zend_hash_init(&AMQP_G(php_signal_table), 16, NULL, ZVAL_PTR_DTOR, 0);
+	return SUCCESS;
+}
+/* }}} */
+
+/* {{{ PHP_RSHUTDOWN_FUNCTION
+*/
+PHP_RSHUTDOWN_FUNCTION(amqp)
+{
+	zend_hash_destroy(&AMQP_G(php_signal_table));
+	return SUCCESS;
 }
 /* }}} */
 

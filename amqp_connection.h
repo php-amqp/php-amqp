@@ -66,6 +66,9 @@ PHP_METHOD(amqp_connection_class, setReadTimeout);
 PHP_METHOD(amqp_connection_class, getWriteTimeout);
 PHP_METHOD(amqp_connection_class, setWriteTimeout);
 
+PHP_METHOD(amqp_connection_class, attachSignal);
+PHP_METHOD(amqp_connection_class, detachSignal);
+
 /*
 *Local variables:
 *tab-width: 4

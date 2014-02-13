@@ -148,6 +148,8 @@ extern zend_module_entry amqp_module_entry;
 PHP_MINIT_FUNCTION(amqp);
 PHP_MSHUTDOWN_FUNCTION(amqp);
 PHP_MINFO_FUNCTION(amqp);
+PHP_RINIT_FUNCTION(amqp);
+PHP_RSHUTDOWN_FUNCTION(amqp);
 
 amqp_table_t *convert_zval_to_arguments(zval *zvalArguments);
 char *stringify_bytes(amqp_bytes_t bytes);
@@ -399,6 +401,11 @@ typedef struct _amqp_envelope_object {
 # define AMQP_OS_SOCKET_TIMEOUT_ERRNO AMQP_ERROR_CATEGORY_MASK | EAGAIN
 #endif
 
+ZEND_BEGIN_MODULE_GLOBALS(amqp);
+	HashTable php_signal_table;
+ZEND_END_MODULE_GLOBALS(amqp);
+
+ZEND_EXTERN_MODULE_GLOBALS(amqp);
 
 #ifdef ZTS
 #define AMQP_G(v) TSRMG(amqp_globals_id, zend_amqp_globals *, v)
