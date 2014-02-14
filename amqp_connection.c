@@ -1334,7 +1334,11 @@ PHP_METHOD(amqp_connection_class, attachSignal)
 	}
 
 	/* Check if given parameter is callable */
-	if (!zend_is_callable(handle, 0, &func_name TSRMLS_CC)) {
+	#if ZEND_MODULE_API_NO <= 20060613
+		if (!zend_is_callable(handle, 0, &func_name)) {
+	#else
+		if (!zend_is_callable(handle, 0, &func_name TSRMLS_CC)) {
+	#endif
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s is not a callable function name error", func_name);
 		efree(func_name);
 		RETURN_FALSE;
