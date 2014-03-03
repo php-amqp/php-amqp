@@ -35,3 +35,10 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
  5. You has correct RabbitMQ credentials.
  6. You are using the latest php-amqp, librabbitm, RabbitMQ and sometimes PHP version itself. Sometimes your problem is already solved.
  7. Other extensions disabled (especially useful when PHP interpreter crashes and you get stack trace and segmentation fault).
+
+##### Keeping track of the workers
+ It is a good practice to keep php processes (i.e workers/consumers) under control. Usually, system administrators write their own scripts which ask services about current status or performs some desired actions. Usually request is sent via UNIX signals.<br />
+ Because amqp <i>consume</i> method is blocking, pcntl extension seems to be useless.
+ 
+ [php-signal-handler](https://github.com/RST-com-pl/php-signal-handler) extension uses <i>signal</i> syscall, so it will work even if blocking method was executed.
+ Some use cases are presented on extension's github page and examples are available [here](https://github.com/pdezwart/php-amqp/pull/89).
