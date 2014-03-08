@@ -893,6 +893,11 @@ PHP_METHOD(amqp_connection_class, setLogin)
 	/* Get the connection object out of the store */
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
 
+	/* Free previously existing login, in cases where setLogin() is called multiple times */
+	if (connection->login) {
+		efree(connection->login);
+	}
+
 	/* Copy the login to the amqp object */
 	connection->login = estrndup(login, login_len);
 
@@ -943,6 +948,11 @@ PHP_METHOD(amqp_connection_class, setPassword)
 
 	/* Get the connection object out of the store */
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* Free previously existing password, in cases where setPassword() is called multiple times */
+	if (connection->password) {
+		efree(connection->password);
+	}
 
 	/* Copy the password to the amqp object */
 	connection->password = estrndup(password, password_len);
@@ -995,6 +1005,11 @@ PHP_METHOD(amqp_connection_class, setHost)
 
 	/* Get the connection object out of the store */
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	/* Free previously existing host, in cases where setHost() is called multiple times */
+	if (connection->host) {
+		efree(connection->host);
+	}
 
 	/* Copy the host to the amqp object */
 	connection->host = estrndup(host, host_len);
@@ -1110,6 +1125,11 @@ PHP_METHOD(amqp_connection_class, setVhost)
 	if (vhost_len > 128) {
 		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'vhost' exceeds 128 characters limit.", 0 TSRMLS_CC);
 		return;
+	}
+
+	/* Free previously existing vhost, in cases where setVhost() is called multiple times */
+	if (connection->vhost) {
+		efree(connection->vhost);
 	}
 
 	/* Get the connection object out of the store */
