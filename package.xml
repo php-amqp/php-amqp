@@ -23,11 +23,11 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <date>2014-03-09</date>
  <time>02:00:00</time>
  <version>
-  <release>1.4.0beta2</release>
+  <release>1.4.0-dev</release>
   <api>1.0.0</api>
  </version>
  <stability>
-  <release>beta</release>
+  <release>stable</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
@@ -41,7 +41,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
     * Fix #92: fix various memory leaks in the AMQPConnection class (Lars Strojny)
 
     For a complete list of changes see:
-    https://github.com/pdezwart/php-amqp/compare/v1.3.0...v1.4.0beta2
+    https://github.com/pdezwart/php-amqp/compare/v1.3.0...v1.4.0
 
 1.3.0 Release:
     * Allow retrieving auto-delete exchanges (Guilherme Blanco)
