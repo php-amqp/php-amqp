@@ -873,7 +873,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	if (r < 0) {
 		char str[256];
 		char ** pstr = (char **) &str;
-        spprintf(pstr, 0, "Socket error: %s", amqp_error_string(-r));
+        spprintf(pstr, 0, "Socket error: %s", amqp_error_string2(-r));
         zend_throw_exception(amqp_exchange_exception_class_entry, *pstr, 0 TSRMLS_CC);
 		return;
 	}

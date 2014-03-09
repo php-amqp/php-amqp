@@ -613,7 +613,7 @@ void amqp_error(amqp_rpc_reply_t x, char **pstr, amqp_connection_object *connect
 			break;
 
 		case AMQP_RESPONSE_LIBRARY_EXCEPTION:
-			spprintf(pstr, 0, "Library error: %s", amqp_error_string(x.library_error));
+			spprintf(pstr, 0, "Library error: %s", amqp_error_string2(x.library_error));
 			break;
 
 		case AMQP_RESPONSE_SERVER_EXCEPTION:
