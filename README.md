@@ -15,7 +15,7 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
 
 ### Documentation
 
- There official docs on PHP website [here](http://www.php.net/manual/en/book.amqp.php), but it is a bit outdated (see issue [#17](https://github.com/pdezwart/php-amqp/issues/17)) but there perfect [stub files](https://github.com/pdezwart/php-amqp/tree/master/stubs) with accurate PHPDoc which may be also used in your IDE for code completion, navigation and documentation in-place.
+[stub files](https://github.com/pdezwart/php-amqp/tree/master/stubs) with accurate PHPDoc which may be also used in your IDE for code completion, navigation and documentation in-place.
 
 ### How to report a problem
  
