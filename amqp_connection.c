@@ -1127,13 +1127,13 @@ PHP_METHOD(amqp_connection_class, setVhost)
 		return;
 	}
 
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
 	/* Free previously existing vhost, in cases where setVhost() is called multiple times */
 	if (connection->vhost) {
 		efree(connection->vhost);
 	}
-
-	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* Copy the vhost to the amqp object */
 	connection->vhost = estrndup(vhost, vhost_len);
