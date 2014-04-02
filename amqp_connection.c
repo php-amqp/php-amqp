@@ -130,7 +130,7 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	void * old_handler;
 #endif
 	amqp_rpc_reply_t x;
-	struct timeval *tv;
+	struct timeval tv = {0};
 
 
 	/* Clean up old memory allocations which are now invalid (new connection) */
@@ -174,15 +174,12 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	connection->connection_resource->socket = amqp_tcp_socket_new(connection->connection_resource->connection_state);
 
 	if (connection->connect_timeout > 0) {
-		tv = malloc(sizeof(struct timeval));
-		tv->tv_sec = (long int) connection->connect_timeout;
-		tv->tv_usec = (long int) ((connection->connect_timeout - tv->tv_sec) * 1000000);
-	} else {
-		tv = NULL;
+		tv.tv_sec = (long int) connection->connect_timeout;
+		tv.tv_usec = (long int) ((connection->connect_timeout - tv.tv_sec) * 1000000);
 	}
 
 	/* Try to connect and verify that no error occurred */
-	if (amqp_socket_open_noblock(connection->connection_resource->socket, connection->host, connection->port, tv)) {
+	if (amqp_socket_open_noblock(connection->connection_resource->socket, connection->host, connection->port, &tv)) {
 #ifndef PHP_WIN32
 		/* Start ignoring SIGPIPE */
 		old_handler = signal(SIGPIPE, SIG_IGN);
