@@ -137,7 +137,7 @@ class AMQPExchange
      * @param array   $attributes  One of content_type, content_encoding,
      *                             message_id, user_id, app_id, delivery_mode,
      *                             priority, timestamp, expiration, type
-     *                             or reply_to.
+     *                             or reply_to, headers.
      *
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
