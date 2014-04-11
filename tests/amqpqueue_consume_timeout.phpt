@@ -22,9 +22,17 @@ try {
 	echo PHP_EOL;
 }
 $end = microtime(true);
-echo abs($end - $start - $timeout) < 0.005 ? 'true' : 'false';
+$error = $end - $start - $timeout;
+$limit = abs(log10($timeout)); // empirical value
+
+echo 'error: ', $error, PHP_EOL;
+echo 'limit: ', $limit, PHP_EOL;
+
+echo abs($error) <= $limit ? 'timings OK' : 'timings failed'; // error should be less than 5% of timeout value
 $queue->delete();
 ?>
---EXPECT--
+--EXPECTF--
 AMQPConnectionException
-true
+error: %f
+limit: %f
+timings OK
