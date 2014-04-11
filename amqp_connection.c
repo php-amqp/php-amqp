@@ -202,8 +202,8 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	x = amqp_login(
 		connection->connection_resource->connection_state,
 		connection->vhost,
-		CHANNEL_MAX,
-		FRAME_MAX,
+		AMQP_DEFAULT_MAX_CHANNELS,
+		AMQP_DEFAULT_FRAME_SIZE,
 		AMQP_HEARTBEAT,
 		AMQP_SASL_METHOD_PLAIN,
 		connection->login,
