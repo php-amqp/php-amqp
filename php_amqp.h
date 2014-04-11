@@ -165,10 +165,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_exchange_exception_class_entry,
 	*amqp_queue_exception_class_entry;
 
-
-#define FRAME_MAX							131072		/* max length (size) of frame */
-#define CHANNEL_MAX							10			/* max number of channels allowed */
-#define HEADER_FOOTER_SIZE					8			/*  7 bytes up front, then payload, then 1 byte footer */
 #define AMQP_HEARTBEAT						0	   		/* heartbeat */
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
