@@ -168,7 +168,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 
 
 #define FRAME_MAX							131072		/* max length (size) of frame */
-#define CHANNEL_MAX							10			/* max number of channels allowed */
+#define CHANNEL_MAX							0			/* max number of channels allowed, default is 0 (unlimited) */
 #define HEADER_FOOTER_SIZE					8			/*  7 bytes up front, then payload, then 1 byte footer */
 #define AMQP_HEARTBEAT						0	   		/* heartbeat */
 
@@ -409,7 +409,7 @@ typedef struct _amqp_envelope_object {
 #define AMQP_G(v) (amqp_globals.v)
 #endif
 
-#define PHP_AMQP_VERSION "1.3.0"
+#define PHP_AMQP_VERSION "1.3.1"
 
 #endif	/* PHP_AMQP_H */
 
