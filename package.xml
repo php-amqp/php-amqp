@@ -40,6 +40,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
     * Fix #82: additional getters (getChannel(), getConnection()) (Bogdan Padalko)
     * Fix #92: fix various memory leaks in the AMQPConnection class (Lars Strojny)
     * Using amqp_error_string2() instead of deprecated amqp_error_string() (Lars Strojny)
+    * Fix memory leaks in setHost, setLogin, setPassword, setVhost (Lars Strojny, Bogdan Padalko)
+    * Fixed a memleak in php_amqp_connect (Julien Pauli)
+    * Use rabbitmq-c defaults for max channels and default frame size (Bogdan Padalko)
+    * Fix socket timeout error when connecting over high-latency network (Bogdan Padalko)
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.3.0...v1.4.0
