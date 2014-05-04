@@ -859,7 +859,7 @@ PHP_MINFO_FUNCTION(amqp)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "Version",					PHP_AMQP_VERSION);
-	php_info_print_table_header(2, "Revision",					"$Revision: 327551 $");
+	php_info_print_table_header(2, "Revision",					PHP_AMQP_REVISION);
 	php_info_print_table_header(2, "Compiled",					__DATE__ " @ "  __TIME__);
 	php_info_print_table_header(2, "AMQP protocol version", 	"0-9-1");
 	php_info_print_table_header(2, "librabbitmq version", amqp_version());

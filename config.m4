@@ -60,6 +60,25 @@ if test "$PHP_AMQP" != "no"; then
 	LIBNAME=rabbitmq
 	LIBSYMBOL=rabbitmq
 
+	if test -z "$TRAVIS" ; then
+		type git &>/dev/null
+
+		if test $? -eq 0 ; then
+			git describe --tags &>/dev/null
+
+			if test $? -eq 0 ; then
+				AC_DEFINE_UNQUOTED([PHP_AMQP_VERSION], ["`git describe --tags --abbr=0`-dev"], [git version])
+			fi
+
+			git rev-parse --short HEAD &>/dev/null
+
+			if test $? -eq 0 ; then
+				AC_DEFINE_UNQUOTED([PHP_AMQP_REVISION], ["`git rev-parse --short HEAD`"], [git revision])
+			fi
+		else
+			AC_MSG_NOTICE([git not installed. Cannot obtain php_amqp version tag. Install git.])
+		fi
+	fi
 
 	PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $AMQP_DIR/lib, AMQP_SHARED_LIBADD)
 	PHP_SUBST(AMQP_SHARED_LIBADD)
