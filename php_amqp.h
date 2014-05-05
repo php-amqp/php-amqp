@@ -402,7 +402,13 @@ typedef struct _amqp_envelope_object {
 #define AMQP_G(v) (amqp_globals.v)
 #endif
 
+#ifndef PHP_AMQP_VERSION
 #define PHP_AMQP_VERSION "1.4.0"
+#endif
+
+#ifndef PHP_AMQP_REVISION
+#define PHP_AMQP_REVISION "no revision"
+#endif
 
 void amqp_error(amqp_rpc_reply_t x, char **pstr, amqp_connection_object *connection, amqp_channel_object *channel);
 
