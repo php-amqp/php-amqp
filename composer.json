@@ -1,0 +1,18 @@
+{
+    "name": "pdezwart/php-amqp",
+    "type": "library",
+    "description": "PHP AMQP Binding Library",
+    "keywords": ["rabbitmq", "amqp", "message", "queue"],
+    "homepage": "https://github.com/pdezwart/php-amqp",
+    "license": "PHP-3.01",
+    "authors": [
+        {
+            "name": "Pieter de Zwart",
+            "email": "pdezwart@php.net",
+            "role": "lead"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0"
+    }
+}
