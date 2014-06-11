@@ -593,7 +593,7 @@ PHP_METHOD(amqp_exchange_class, delete)
 		amqp_error(res, pstr, connection, channel);
 
 		zend_throw_exception(amqp_exchange_exception_class_entry, *pstr, 0 TSRMLS_CC);
-		amqp_release_buffers(connection->connection_resource->connection_state);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
 	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
