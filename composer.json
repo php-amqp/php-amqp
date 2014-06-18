@@ -12,6 +12,9 @@
             "role": "lead"
         }
     ],
+    "autoload": {
+        "psr-0": { "AMQP": "stubs/" }
+    },
     "require": {
         "php": ">=5.2.0"
     }
