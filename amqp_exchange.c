@@ -88,6 +88,7 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	ZVAL_LONG(value, exchange->auto_delete);
 	zend_hash_add(debug_info, "auto_delete", sizeof("auto_delete"), &value, sizeof(zval *), NULL);
 
+	Z_ADDREF_P(exchange->arguments);
 	zend_hash_add(debug_info, "arguments", sizeof("arguments"), &exchange->arguments, sizeof(&exchange->arguments), NULL);
 
 	/* Start adding values */
@@ -564,8 +565,6 @@ PHP_METHOD(amqp_exchange_class, delete)
 	long flags = 0;
 
 	amqp_rpc_reply_t res;
-	amqp_exchange_delete_t s;
-	amqp_method_number_t method_ok = AMQP_EXCHANGE_DELETE_OK_METHOD;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|sl", &id, amqp_exchange_class_entry, &name, &name_len, &flags) == FAILURE) {
 		return;
@@ -573,33 +572,20 @@ PHP_METHOD(amqp_exchange_class, delete)
 
 	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	if (name_len) {
-		AMQP_SET_NAME(exchange, name);
-		s.ticket = 0;
-		s.exchange.len = name_len;
-		s.exchange.bytes = name;
-		s.if_unused = (AMQP_IFUNUSED & flags) ? 1 : 0;
-		s.nowait = 0;
-	} else {
-		s.ticket = 0;
-		s.exchange.len = exchange->name_len;
-		s.exchange.bytes = exchange->name;
-		s.if_unused = (AMQP_IFUNUSED & flags) ? 1 : 0;
-		s.nowait = 0;
-	}
-
 	channel = AMQP_GET_CHANNEL(exchange);
-	AMQP_VERIFY_CHANNEL(channel, "Could not declare exchange.");
+	AMQP_VERIFY_CHANNEL(channel, "Could not delete exchange.");
 
 	connection = AMQP_GET_CONNECTION(channel);
-	AMQP_VERIFY_CONNECTION(connection, "Could not declare exchange.");
+	AMQP_VERIFY_CONNECTION(connection, "Could not delete exchange.");
 
-	res = amqp_simple_rpc(
+ 	amqp_exchange_delete(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
-		AMQP_EXCHANGE_DELETE_METHOD,
-		&method_ok, &s
+		amqp_cstring_bytes(name_len ? name : exchange->name),
+		(AMQP_IFUNUSED & flags) ? 1 : 0
 	);
+
+	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state);
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];
@@ -610,7 +596,6 @@ PHP_METHOD(amqp_exchange_class, delete)
 		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 		return;
 	}
-	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
 
 	RETURN_TRUE;
 }
@@ -842,10 +827,10 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	channel = AMQP_GET_CHANNEL(exchange);
-	AMQP_VERIFY_CHANNEL(channel, "Could not publish to exchange exchange.");
+	AMQP_VERIFY_CHANNEL(channel, "Could not publish to exchange.");
 
 	connection = AMQP_GET_CONNECTION(channel);
-	AMQP_VERIFY_CONNECTION(connection, "Could not publish to exchange exchange.");
+	AMQP_VERIFY_CONNECTION(connection, "Could not publish to exchange.");
 
 #ifndef PHP_WIN32
 	/* Start ignoring SIGPIPE */
@@ -897,27 +882,26 @@ PHP_METHOD(amqp_exchange_class, publish)
 /* }}} */
 
 
-/* {{{ proto int exchange::bind(string srcExchangeName, string routingKey[, int flags]);
+/* {{{ proto int exchange::bind(string srcExchangeName[, string routingKey, array arguments]);
 bind exchange to exchange by routing key
 */
 PHP_METHOD(amqp_exchange_class, bind)
 {
-	zval *id;
+	zval *id, *zvalArguments = NULL;
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
 
 	char *src_name;
-	int src_name_len;
+	int src_name_len = 0;
 	char *keyname;
-	int keyname_len;
+	int keyname_len = 0;
 	int flags;
 
 	amqp_rpc_reply_t res;
-	amqp_exchange_bind_t s;
-	amqp_method_number_t method_ok = AMQP_EXCHANGE_BIND_OK_METHOD;
+	amqp_table_t *arguments;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss|l", &id, amqp_exchange_class_entry, &src_name, &src_name_len, &keyname, &keyname_len, &flags) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &id, amqp_exchange_class_entry, &src_name, &src_name_len, &keyname, &keyname_len, &zvalArguments) == FAILURE) {
 		return;
 	}
 
@@ -929,29 +913,89 @@ PHP_METHOD(amqp_exchange_class, bind)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not bind to exchanges.");
 
-	if (!keyname_len) {
-		zend_throw_exception(amqp_exchange_exception_class_entry, "Could not bind exchange. No routing key given.", 0 TSRMLS_CC);
+	if (zvalArguments) {
+		arguments = convert_zval_to_arguments(zvalArguments);
+	}
+
+	amqp_exchange_bind(
+		connection->connection_resource->connection_state,
+		channel->channel_id,
+		amqp_cstring_bytes(exchange->name),
+		(src_name_len > 0 ? amqp_cstring_bytes(src_name) : amqp_empty_bytes),
+		(keyname_len  > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
+		(zvalArguments ? *arguments : amqp_empty_table)
+	);
+
+	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state);
+
+	if (zvalArguments) {
+		AMQP_EFREE_ARGUMENTS(arguments);
+	}
+
+	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
+		char str[256];
+		char ** pstr = (char **) &str;
+		amqp_error(res, pstr, connection, channel);
+
+		zend_throw_exception(amqp_exchange_exception_class_entry, *pstr, 0 TSRMLS_CC);
+		amqp_maybe_release_buffers(connection->connection_resource->connection_state);
+		return;
+	}
+	amqp_maybe_release_buffers(connection->connection_resource->connection_state);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
+/* {{{ proto int exchange::unbind(string srcExchangeName[, string routingKey, array arguments]);
+remove exchange to exchange binding by routing key
+*/
+PHP_METHOD(amqp_exchange_class, unbind)
+{
+	zval *id, *zvalArguments = NULL;
+	amqp_exchange_object *exchange;
+	amqp_channel_object *channel;
+	amqp_connection_object *connection;
+
+	char *src_name;
+	int src_name_len = 0;
+	char *keyname;
+	int keyname_len = 0;
+	int flags;
+
+	amqp_rpc_reply_t res;
+	amqp_table_t *arguments;
+
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &id, amqp_exchange_class_entry, &src_name, &src_name_len, &keyname, &keyname_len, &zvalArguments) == FAILURE) {
 		return;
 	}
 
-	s.ticket				= 0;
-	s.destination.len		= exchange->name_len;
-	s.destination.bytes		= exchange->name;
-	s.source.len			= src_name_len;
-	s.source.bytes			= src_name;
-	s.routing_key.len		= keyname_len;
-	s.routing_key.bytes		= keyname;
-	s.nowait				= IS_NOWAIT(flags);
-	s.arguments.num_entries = 0;
-	s.arguments.entries		= NULL;
+	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	res = amqp_simple_rpc(
+	channel = AMQP_GET_CHANNEL(exchange);
+	AMQP_VERIFY_CHANNEL(channel, "Could not unbind from exchange.");
+
+	connection = AMQP_GET_CONNECTION(channel);
+	AMQP_VERIFY_CONNECTION(connection, "Could not unbind from exchanges.");
+
+	if (zvalArguments) {
+		arguments = convert_zval_to_arguments(zvalArguments);
+	}
+
+	amqp_exchange_unbind(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
-		AMQP_EXCHANGE_BIND_METHOD,
-		&method_ok,
-		&s
+		amqp_cstring_bytes(exchange->name),
+		(src_name_len > 0 ? amqp_cstring_bytes(src_name) : amqp_empty_bytes),
+		(keyname_len  > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
+		(zvalArguments ? *arguments : amqp_empty_table)
 	);
+
+	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state);
+
+	if (zvalArguments) {
+		AMQP_EFREE_ARGUMENTS(arguments);
+	}
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		char str[256];

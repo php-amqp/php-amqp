@@ -45,6 +45,7 @@ PHP_METHOD(amqp_exchange_class, setArguments);
 PHP_METHOD(amqp_exchange_class, declareExchange);
 PHP_METHOD(amqp_exchange_class, delete);
 PHP_METHOD(amqp_exchange_class, bind);
+PHP_METHOD(amqp_exchange_class, unbind);
 PHP_METHOD(amqp_exchange_class, publish);
 
 PHP_METHOD(amqp_exchange_class, getChannel);

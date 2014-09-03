@@ -147,8 +147,7 @@ void amqp_envelope_dtor(void *object TSRMLS_DC)
 	amqp_envelope_object *envelope = (amqp_envelope_object*)object;
 
 	if (envelope->headers) {
-		zval_dtor(envelope->headers);
-		efree(envelope->headers);
+		zval_ptr_dtor(&envelope->headers);
 	}
 
 	if (envelope->body) {

@@ -189,7 +189,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define AMQP_READ_ERROR						-1
 
 
-#define EMPTY_ARGUMENTS			{0, NULL};
 #define IS_PASSIVE(bitmask)		(AMQP_PASSIVE & (bitmask)) ? 1 : 0;
 #define IS_DURABLE(bitmask)		(AMQP_DURABLE & (bitmask)) ? 1 : 0;
 #define IS_EXCLUSIVE(bitmask)	(AMQP_EXCLUSIVE & (bitmask)) ? 1 : 0;

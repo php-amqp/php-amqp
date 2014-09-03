@@ -415,7 +415,7 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
 	amqp_tx_select_t s;
-	amqp_method_number_t select_ok = AMQP_TX_SELECT_OK_METHOD;
+	amqp_method_number_t select_ok[] = { AMQP_TX_SELECT_OK_METHOD, 0};
 	amqp_rpc_reply_t res;
 
 
@@ -434,7 +434,7 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 		connection->connection_resource->connection_state,
 		channel->channel_id,
 		AMQP_TX_SELECT_METHOD,
-		&select_ok,
+		select_ok,
 		&s
 	);
 
@@ -464,7 +464,7 @@ PHP_METHOD(amqp_channel_class, commitTransaction)
 	amqp_connection_object *connection;
 	amqp_tx_commit_t s;
 	amqp_rpc_reply_t res;
-	amqp_method_number_t commit_ok = AMQP_TX_COMMIT_OK_METHOD;
+	amqp_method_number_t commit_ok[] = { AMQP_TX_COMMIT_OK_METHOD, 0 };
 
 
 	/* Get the vhost from the method params */
@@ -482,7 +482,7 @@ PHP_METHOD(amqp_channel_class, commitTransaction)
 		connection->connection_resource->connection_state,
 		channel->channel_id,
 		AMQP_TX_COMMIT_METHOD,
-		&commit_ok,
+		commit_ok,
 		&s
 	);
 
@@ -510,7 +510,7 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
 	amqp_tx_rollback_t s;
-	amqp_method_number_t rollback_ok = AMQP_TX_ROLLBACK_OK_METHOD;
+	amqp_method_number_t rollback_ok[] = { AMQP_TX_ROLLBACK_OK_METHOD, 0};
 	amqp_rpc_reply_t res;
 
 
@@ -529,7 +529,7 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 		connection->connection_resource->connection_state,
 		channel->channel_id,
 		AMQP_TX_ROLLBACK_METHOD,
-		&rollback_ok,
+		rollback_ok,
 		&s
 	);
 

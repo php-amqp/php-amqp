@@ -15,6 +15,13 @@ $ex->setName('exchange-' . time());
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
+// Declare a new exchange
+$ex2 = new AMQPExchange($ch);
+$ex2->setName('exchange2-' . time());
+$ex2->setType(AMQP_EX_TYPE_FANOUT);
+$ex2->declareExchange();
+
+
 // Create a new queue
 $q = new AMQPQueue($ch);
 $q->setName('queue-' . time());
@@ -38,10 +45,12 @@ function consumeThings($message, $queue) {
 	$count++;
 
 	if ($count >= 2) {
-		global $ex;
+		global $ex, $ex2;
 		global $q;
-		$ex->delete();
-		$q->delete();
+
+        $ex->bind($ex2->getName(), 'first-*', array('test' => 'passed', 'at' => time()));
+        $ex->bind($ex2->getName(), 'second-*');
+        $q->delete();
 		return false;
 	}
 	return true;
@@ -49,6 +58,7 @@ function consumeThings($message, $queue) {
 
 // Read from the queue
 $q->consume("consumeThings");
+
 
 ?>
 --EXPECT--

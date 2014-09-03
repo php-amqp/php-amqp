@@ -23,11 +23,13 @@ $q->declareQueue();
 $q->bind($ex->getName(), 'routing.*');
 // Publish a message to the exchange with a routing key
 $ex->publish('message', 'routing.1');
+$ex->publish('message', 'routing.1', AMQP_NOPARAM, array("headers" => array("test" => "passed")));
 function consumeThings($message, $queue) {
 	var_dump($message);
 	return false;
 }
 // Read from the queue
+$q->consume("consumeThings");
 $q->consume("consumeThings");
 ?>
 --EXPECT--
@@ -68,5 +70,46 @@ object(AMQPEnvelope)#5 (18) {
   string(0) ""
   ["headers"]=>
   array(0) {
+  }
+}
+object(AMQPEnvelope)#5 (18) {
+  ["body"]=>
+  string(7) "message"
+  ["content_type"]=>
+  string(10) "text/plain"
+  ["routing_key"]=>
+  string(9) "routing.1"
+  ["delivery_tag"]=>
+  int(2)
+  ["delivery_mode"]=>
+  int(0)
+  ["exchange_name"]=>
+  string(9) "exchange1"
+  ["is_redelivery"]=>
+  int(0)
+  ["content_encoding"]=>
+  string(0) ""
+  ["type"]=>
+  string(0) ""
+  ["timestamp"]=>
+  int(0)
+  ["priority"]=>
+  int(0)
+  ["expiration"]=>
+  string(0) ""
+  ["user_id"]=>
+  string(0) ""
+  ["app_id"]=>
+  string(0) ""
+  ["message_id"]=>
+  string(0) ""
+  ["reply_to"]=>
+  string(0) ""
+  ["correlation_id"]=>
+  string(0) ""
+  ["headers"]=>
+  array(1) {
+    ["test"]=>
+    string(6) "passed"
   }
 }

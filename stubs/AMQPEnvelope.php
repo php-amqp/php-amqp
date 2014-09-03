@@ -119,9 +119,7 @@ class AMQPEnvelope
     /**
      * Get the priority of the message.
      *
-     * @todo verify return type. docs wrong?
-     *
-     * @return string The message priority.
+     * @return int The message priority.
      */
     public function getPriority()
     {

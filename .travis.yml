@@ -10,6 +10,8 @@ php:
 services:
   - rabbitmq
 
+install:
+  - sudo apt-get -qq install valgrind
 env:
   - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=master
   - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=v0.5.2

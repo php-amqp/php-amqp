@@ -14,10 +14,26 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange1');
 $ex->setType(AMQP_EX_TYPE_FANOUT);
+var_dump($ex);
 $ex->setArguments(array("x-ha-policy" => "all"));
 var_dump($ex);
 ?>
 --EXPECT--
+object(AMQPExchange)#3 (6) {
+  ["name"]=>
+  string(9) "exchange1"
+  ["type"]=>
+  string(6) "fanout"
+  ["passive"]=>
+  int(0)
+  ["durable"]=>
+  int(0)
+  ["auto_delete"]=>
+  int(0)
+  ["arguments"]=>
+  array(0) {
+  }
+}
 object(AMQPExchange)#3 (6) {
   ["name"]=>
   string(9) "exchange1"
