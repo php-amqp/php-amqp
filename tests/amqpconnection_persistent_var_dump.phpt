@@ -1,25 +1,21 @@
 --TEST--
-AMQPConnection var_dump
+AMQPConnection: persistent connection var_dump
 --SKIPIF--
-<?php
-if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
-  print "skip";
-}
-?>
+<?php if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<') ) print "skip"; ?>
 --FILE--
 <?php
+
 $cnn = new AMQPConnection();
 var_dump($cnn);
-$cnn->connect();
-$cnn->connect();
+$cnn->pconnect();
 var_dump($cnn);
 
-$c = new AMQPChannel($cnn);
-
+$ch = new AMQPChannel($cnn);
 var_dump($cnn);
 
-$cnn->disconnect();
+$cnn->pdisconnect();
 var_dump($cnn);
+
 ?>
 --EXPECT--
 object(AMQPConnection)#1 (13) {
@@ -70,7 +66,7 @@ object(AMQPConnection)#1 (13) {
   ["is_connected"]=>
   bool(true)
   ["is_persistent"]=>
-  bool(false)
+  bool(true)
   ["connection_resource"]=>
   resource(4) of type (AMQP Connection Resource)
   ["used_channels"]=>
@@ -98,7 +94,7 @@ object(AMQPConnection)#1 (13) {
   ["is_connected"]=>
   bool(true)
   ["is_persistent"]=>
-  bool(false)
+  bool(true)
   ["connection_resource"]=>
   resource(4) of type (AMQP Connection Resource)
   ["used_channels"]=>

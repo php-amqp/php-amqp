@@ -9,12 +9,12 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-' . time());
+$ex->setName('exchange-' . microtime(true));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
 $queue = new AMQPQueue($ch);
-$queue->setName("queue-" . time());
+$queue->setName("queue-" . microtime(true));
 $queue->declareQueue();
 $queue->bind($ex->getName());
 

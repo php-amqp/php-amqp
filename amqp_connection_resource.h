@@ -20,28 +20,35 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
+#ifndef PHP_AMQP_CONNECTION_RESOURCE_H
+#define PHP_AMQP_CONNECTION_RESOURCE_H
 
-/* $Id: amqp_channel.h 305865 2010-12-01 01:30:56Z pdezwart $ */
+#define PHP_AMQP_RESOURCE_RESPONSE_OK                       0
+#define PHP_AMQP_RESOURCE_RESPONSE_ERROR                   -1
+#define PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED    -2
+#define PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED -3
 
-void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC);
-void amqp_channel_dtor(void *object TSRMLS_DC);
-zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC);
+int le_amqp_connection_resource;
+int le_amqp_connection_resource_persistent;
 
-PHP_METHOD(amqp_channel_class, __construct);
-PHP_METHOD(amqp_channel_class, isConnected);
-PHP_METHOD(amqp_channel_class, getChannelId);
-PHP_METHOD(amqp_channel_class, setPrefetchSize);
-PHP_METHOD(amqp_channel_class, getPrefetchSize);
-PHP_METHOD(amqp_channel_class, setPrefetchCount);
-PHP_METHOD(amqp_channel_class, getPrefetchCount);
-PHP_METHOD(amqp_channel_class, qos);
+/* Figure out what's going on connection and handle protocol exceptions, if any */
+int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id TSRMLS_DC);
 
-PHP_METHOD(amqp_channel_class, startTransaction);
-PHP_METHOD(amqp_channel_class, commitTransaction);
-PHP_METHOD(amqp_channel_class, rollbackTransaction);
+/* Socket-related functions */
+int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double read_timeout TSRMLS_DC);
+int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double write_timeout TSRMLS_DC);
 
-PHP_METHOD(amqp_channel_class, getConnection);
+/* Channel-related functions */
+amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connection_resource *resource);
+int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *resource, amqp_channel_t channel_id);
+int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_object *channel, amqp_channel_t channel_id);
 
+/* Creating and destroying resource */
+amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, zend_bool persistent TSRMLS_DC);
+ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent);
+ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor);
+
+#endif
 /*
 *Local variables:
 *tab-width: 4

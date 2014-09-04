@@ -12,14 +12,14 @@ $ch = new AMQPChannel($cnn);
 
 // Declare a new exchange
 $ex = new AMQPExchange($ch);
-$ex->setName('testnack' . time());
+$ex->setName('testnack' . microtime(true));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 $exchangeName = $ex->getName();
 
 // Create a new queue
 $q = new AMQPQueue($ch);
-$q->setName('testnack' . time());
+$q->setName('testnack' . microtime(true));
 $q->declareQueue();
 $q->bind($exchangeName, '#');
 

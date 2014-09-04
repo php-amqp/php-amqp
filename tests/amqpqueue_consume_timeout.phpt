@@ -17,14 +17,16 @@ $queue->declareQueue();
 $start = microtime(true);
 try {
 	$queue->consume('nop');
-} catch (Exception $e) {
-	echo get_class($e);
+} catch (AMQPException $e) {
+	echo get_class($e), ': ', $e->getMessage();
 	echo PHP_EOL;
 }
 $end = microtime(true);
 $error = $end - $start - $timeout;
 $limit = abs(log10($timeout)); // empirical value
 
+echo 'timeout: ', $timeout, PHP_EOL;
+echo 'takes: ', $end - $start, PHP_EOL;
 echo 'error: ', $error, PHP_EOL;
 echo 'limit: ', $limit, PHP_EOL;
 
@@ -32,7 +34,9 @@ echo abs($error) <= $limit ? 'timings OK' : 'timings failed'; // error should be
 $queue->delete();
 ?>
 --EXPECTF--
-AMQPConnectionException
+AMQPQueueException: Consumer timeout exceed
+timeout: %f
+takes: %f
 error: %f
 limit: %f
 timings OK

@@ -49,6 +49,8 @@
 #include "amqp_queue.h"
 #include "amqp_exchange.h"
 #include "amqp_envelope.h"
+#include "amqp_connection_resource.h"
+
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -69,7 +71,6 @@ zend_class_entry *amqp_exception_class_entry,
 				 *amqp_queue_exception_class_entry,
 				 *amqp_exchange_exception_class_entry;
 
-int le_amqp_connection_resource;
 
 /* The last parameter of ZEND_BEGIN_ARG_INFO_EX indicates how many of the method flags are required. */
 /* The first parameter of ZEND_ARG_INFO indicates whether the variable is being passed by reference */
@@ -95,6 +96,9 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_disconnect, ZEND_SEND_BY_VA
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_reconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_preconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
@@ -151,6 +155,16 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setWriteTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, timeout)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getUsedChannels, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getMaxChannels, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_isPersistent, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
 
@@ -437,6 +451,7 @@ zend_function_entry amqp_connection_class_functions[] = {
 	PHP_ME(amqp_connection_class, pdisconnect, 	arginfo_amqp_connection_class_pdisconnect,	ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_connection_class, disconnect, 	arginfo_amqp_connection_class_disconnect,	ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_connection_class, reconnect, 	arginfo_amqp_connection_class_reconnect,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_connection_class, preconnect, 	arginfo_amqp_connection_class_preconnect,	ZEND_ACC_PUBLIC)
 
 	PHP_ME(amqp_connection_class, getLogin, 	arginfo_amqp_connection_class_getLogin,		ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_connection_class, setLogin, 	arginfo_amqp_connection_class_setLogin,		ZEND_ACC_PUBLIC)
@@ -461,6 +476,10 @@ zend_function_entry amqp_connection_class_functions[] = {
 
     PHP_ME(amqp_connection_class, getWriteTimeout, 	arginfo_amqp_connection_class_getWriteTimeout,	ZEND_ACC_PUBLIC)
     PHP_ME(amqp_connection_class, setWriteTimeout, 	arginfo_amqp_connection_class_setWriteTimeout,	ZEND_ACC_PUBLIC)
+
+    PHP_ME(amqp_connection_class, getUsedChannels, arginfo_amqp_connection_class_getUsedChannels,	ZEND_ACC_PUBLIC)
+    PHP_ME(amqp_connection_class, getMaxChannels,  arginfo_amqp_connection_class_getMaxChannels,	ZEND_ACC_PUBLIC)
+    PHP_ME(amqp_connection_class, isPersistent, 	arginfo_amqp_connection_class_isPersistent,		ZEND_ACC_PUBLIC)
 
 	{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
 };
@@ -607,55 +626,83 @@ zend_module_entry amqp_module_entry = {
 	ZEND_GET_MODULE(amqp)
 #endif
 
-
-void amqp_error(amqp_rpc_reply_t x, char **pstr, amqp_connection_object *connection, amqp_channel_object *channel)
+void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_object *connection, amqp_channel_object *channel TSRMLS_DC)
 {
-	/* Trim new lines */
-	switch (x.reply_type) {
+	assert(connection != NULL);
+	assert(connection->connection_resource != NULL);
+
+	switch (php_amqp_connection_resource_error(reply, message, connection->connection_resource, (channel ? channel->channel_id : 0) TSRMLS_CC)) {
+		case PHP_AMQP_RESOURCE_RESPONSE_OK:
+			break;
+		case PHP_AMQP_RESOURCE_RESPONSE_ERROR:
+			/* Library or other non-protocol or even protocol related errors may be here, do nothing with this for now. */
+			break;
+		case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED:
+			/* Mark channel as closed to prevent sending channel.close request */
+			assert(channel != NULL);
+			channel->is_connected = '\0';
+
+			/* Close channel */
+			php_amqp_close_channel(channel TSRMLS_CC);
+
+			/* No more error handling necessary, returning. */
+			break;
+		case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED:
+			/* Mark connection as closed to prevent sending any further requests */
+			connection->is_connected = '\0';
+
+			/* Close connection with all its channels */
+			php_amqp_disconnect_force(connection TSRMLS_CC);
+
+			/* No more error handling necessary, returning. */
+			break;
+		default:
+			spprintf(message, 0, "Unknown server error, method id 0x%08X (not handled by extension)", reply.reply.id);
+			break;
+	}
+}
+
+void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, long code TSRMLS_DC)
+{
+	switch (reply.reply_type) {
 		case AMQP_RESPONSE_NORMAL:
-			return;
-
+			break;
 		case AMQP_RESPONSE_NONE:
-			spprintf(pstr, 0, "Missing RPC reply type.");
+			exception_ce = amqp_exception_class_entry;
 			break;
-
 		case AMQP_RESPONSE_LIBRARY_EXCEPTION:
-			spprintf(pstr, 0, "Library error: %s", amqp_error_string2(x.library_error));
+			exception_ce = amqp_exception_class_entry;
 			break;
-
 		case AMQP_RESPONSE_SERVER_EXCEPTION:
-			switch (x.reply.id) {
-				case AMQP_CONNECTION_CLOSE_METHOD: {
-					amqp_connection_close_t *m = (amqp_connection_close_t *)x.reply.decoded;
-					spprintf(pstr, 0, "Server connection error: %d, message: %.*s",
-						m->reply_code,
-						(int) m->reply_text.len,
-						(char *)m->reply_text.bytes);
-
-					/* Close connection with all its channels */
-					php_amqp_disconnect(connection);
-
-					/* No more error handling necessary, returning. */
-					return;
-				}
-				case AMQP_CHANNEL_CLOSE_METHOD: {
-					amqp_channel_close_t *m = (amqp_channel_close_t *) x.reply.decoded;
-					spprintf(pstr, 0, "Server channel error: %d, message: %.*s",
-						m->reply_code,
-						(int)m->reply_text.len,
-						(char *)m->reply_text.bytes);
-
-					/* Close channel */
-					remove_channel_from_connection(connection, channel);
-
-					/* No more error handling necessary, returning. */
-					return;
-				}
+			switch (reply.reply.id) {
+				case AMQP_CONNECTION_CLOSE_METHOD:
+					/* Fatal errors - pass them to connection level */
+					exception_ce = amqp_connection_exception_class_entry;
+					break;
+				case AMQP_CHANNEL_CLOSE_METHOD:
+					/* Most channel-level errors occurs due to previously known action and thus their kind can be predicted. */
+					/* exception_ce = amqp_channel_exception_class_entry; */
+					break;
 			}
+			break;
 		/* Default for the above switch should be handled by the below default. */
 		default:
-			spprintf(pstr, 0, "Unknown server error, method id 0x%08X",	x.reply.id);
+			exception_ce = amqp_exception_class_entry;
 			break;
+	}
+
+	zend_throw_exception(exception_ce, message, code TSRMLS_CC);
+}
+
+
+void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connection, amqp_channel_object *channel)
+{
+	assert(connection != NULL);
+	assert(channel != NULL);
+	assert(channel->channel_id > 0);
+
+	if (connection->connection_resource) {
+		amqp_maybe_release_buffers_on_channel(connection->connection_resource->connection_state, channel->channel_id);
 	}
 }
 
@@ -781,7 +828,8 @@ PHP_MINIT_FUNCTION(amqp)
 	zend_class_entry ce;
 
 	/* Set up the connection resource */
-	le_amqp_connection_resource = zend_register_list_destructors_ex(NULL, NULL, PHP_AMQP_CONNECTION_RES_NAME, module_number);
+	le_amqp_connection_resource = zend_register_list_destructors_ex(amqp_connection_resource_dtor, NULL, PHP_AMQP_CONNECTION_RES_NAME, module_number);
+	le_amqp_connection_resource_persistent = zend_register_list_destructors_ex(NULL, amqp_connection_resource_dtor_persistent, PHP_AMQP_CONNECTION_RES_NAME, module_number);
 
 	INIT_CLASS_ENTRY(ce, "AMQPConnection", amqp_connection_class_functions);
 	ce.create_object = amqp_connection_ctor;
@@ -843,9 +891,9 @@ PHP_MINIT_FUNCTION(amqp)
 	REGISTER_STRING_CONSTANT("AMQP_EX_TYPE_HEADERS",AMQP_EX_TYPE_HEADERS,	CONST_CS | CONST_PERSISTENT);
 
 	REGISTER_LONG_CONSTANT("AMQP_OS_SOCKET_TIMEOUT_ERRNO",	AMQP_OS_SOCKET_TIMEOUT_ERRNO,	CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("PHP_AMQP_MAX_CHANNELS",			PHP_AMQP_MAX_CHANNELS,			CONST_CS | CONST_PERSISTENT);
 
 	return SUCCESS;
-
 }
 /* }}} */
 
@@ -870,8 +918,8 @@ PHP_MINFO_FUNCTION(amqp)
 	php_info_print_table_header(2, "Compiled",					__DATE__ " @ "  __TIME__);
 	php_info_print_table_header(2, "AMQP protocol version", 	"0-9-1");
 	php_info_print_table_header(2, "librabbitmq version", amqp_version());
+	php_info_print_table_header(2, "Max channels per connection",	PHP_AMQP_STRINGIFY(PHP_AMQP_MAX_CHANNELS));
 	DISPLAY_INI_ENTRIES();
-
 }
 /* }}} */
 

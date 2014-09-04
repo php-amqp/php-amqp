@@ -110,3 +110,10 @@ define('AMQP_EX_TYPE_HEADERS', 'headers');
  *
  */
 define('AMQP_OS_SOCKET_TIMEOUT_ERRNO', 536870947);
+
+
+/**
+ *
+ */
+define('PHP_AMQP_MAX_CHANNELS', 256);
+

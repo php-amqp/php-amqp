@@ -15,7 +15,7 @@ $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
 $q = new AMQPQueue($ch);
-$q->setName('queue' . time());
+$q->setName('queue' . microtime(true));
 $q->setFlags(AMQP_DURABLE);
 $q->declareQueue();
 

@@ -24,7 +24,7 @@ if (0 === strcmp($packageVersion, $srcVersion)) {
 if (0 === strcmp($packageVersion, $ext->getVersion())) {
 	echo "package.xml matches extension version\n";
 } else {
-	printf("ext version: %s, package.xml %s\n", $ext->getVersion(), $packageVersion);
+	printf("ext version: %s, package.xml: %s\n", $ext->getVersion(), $packageVersion);
 }
 --EXPECT--
 package.xml matches phpinfo() output

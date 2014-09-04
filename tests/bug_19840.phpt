@@ -1,5 +1,5 @@
 --TEST--
-Connection Exception
+Bug 19840: Connection Exception
 --SKIPIF--
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
@@ -15,8 +15,8 @@ try {
 	$conn->connect();
     echo "No exception thrown\n";
 } catch (Exception $e) {
-    echo $e->getMessage();
+    echo get_class($e), ': ', $e->getMessage();
 }
 ?>
 --EXPECT--
-Socket error: could not connect to host.
+AMQPConnectionException: Socket error: could not connect to host.

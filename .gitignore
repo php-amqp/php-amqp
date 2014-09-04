@@ -11,6 +11,7 @@ amqp.la
 amqp.lo
 amqp_channel.lo
 amqp_connection.lo
+amqp_connection_resource.lo
 amqp_envelope.lo
 amqp_exchange.lo
 amqp_queue.lo

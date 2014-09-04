@@ -9,20 +9,21 @@ $cnn->connect();
 
 $channels = array();
 
-for ($i = 0; $i < 254; $i++) {
-	$channels[$i] = new AMQPChannel($cnn);
+for ($i = 0; $i < PHP_AMQP_MAX_CHANNELS; $i++) {
+	$channel = $channels[] = new AMQPChannel($cnn);
+    //echo '#', $channel->getChannelId(), ', used ', $cnn->getUsedChannels(), ' of ', $cnn->getMaxChannels(), PHP_EOL;
 }
 
 echo "Good\n";
 
 try {
-	$channels[255] = new AMQPChannel($cnn);
+	new AMQPChannel($cnn);
 	echo "Bad\n";
 } catch(Exception $e) {
-	echo "Caught!";
+    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
 }
 
 ?>
 --EXPECT--
 Good
-Caught!
+AMQPChannelException: Could not create channel. Connection has no open channel slots remaining.

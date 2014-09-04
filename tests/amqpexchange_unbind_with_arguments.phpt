@@ -11,17 +11,17 @@ $ch = new AMQPChannel($cnn);
 
 // Declare a new exchange
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-unbind-' . time());
+$ex->setName('exchange-unbind-' . microtime(true));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
 // Declare a new exchange
 $ex2 = new AMQPExchange($ch);
-$ex2->setName('exchange2-exchange-unbind-' . time());
+$ex2->setName('exchange2-exchange-unbind-' . microtime(true));
 $ex2->setType(AMQP_EX_TYPE_FANOUT);
 $ex2->declareExchange();
 
-$time = time();
+$time = microtime(true);
 
 var_dump($ex->bind($ex2->getName(), 'test', array('test' => 'passed', 'at' => $time)));
 
