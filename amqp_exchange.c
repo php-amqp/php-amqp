@@ -83,7 +83,7 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	MAKE_STD_ZVAL(value);
 	ZVAL_LONG(value, exchange->durable);
 	zend_hash_add(debug_info, "durable", sizeof("durable"), &value, sizeof(zval *), NULL);
-	
+
 	MAKE_STD_ZVAL(value);
 	ZVAL_LONG(value, exchange->auto_delete);
 	zend_hash_add(debug_info, "auto_delete", sizeof("auto_delete"), &value, sizeof(zval *), NULL);
@@ -342,7 +342,7 @@ PHP_METHOD(amqp_exchange_class, setType)
 
 	/* Pull the exchange off the object store */
 	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
-	
+
 	AMQP_SET_TYPE(exchange, type);
 }
 /* }}} */
@@ -370,7 +370,7 @@ PHP_METHOD(amqp_exchange_class, getArgument)
 	}
 
 	*return_value = **tmp;
-	
+
 	zval_copy_ctor(return_value);
 	INIT_PZVAL(return_value);
 }
@@ -504,6 +504,19 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 
 	arguments = convert_zval_to_arguments(exchange->arguments);
 	
+#if AMQP_VERSION_MAJOR == 0 && AMQP_VERSION_MINOR >= 5 && AMQP_VERSION_PATCH >= 2
+	amqp_exchange_declare(
+		connection->connection_resource->connection_state,
+		channel->channel_id,
+		amqp_cstring_bytes(exchange->name),
+		amqp_cstring_bytes(exchange->type),
+		exchange->passive,
+		exchange->durable,
+		exchange->auto_delete,
+		0, /* no internal exchanges support for now*/
+		*arguments
+	);
+#else
 	amqp_exchange_declare(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
@@ -513,6 +526,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 		exchange->durable,
 		*arguments
 	);
+#endif
 
 	res = AMQP_RPC_REPLY_T_CAST amqp_get_rpc_reply(connection->connection_resource->connection_state);
 

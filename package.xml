@@ -32,6 +32,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+X.Y.Z Release:
+    * Add AMQP_DURABLE flag support to AMQPExchange::setFlags (librabbitmq version >= 0.5.3 required) (Bogdan Padalko)
+    * Fix inconsistent INI values comparison which leads to deprecation warnings (Bogdan Padalko)
+
 1.4.0 Release:
     * Fix #72: Publishing to an exchange with an empty name is valid and should not throw an exception (lstrojny)
     * Fix #77: AMQPQueue::delete() now no longer returns a boolean, but an integer of how many messages were deleted. WARNING: this can potentially break BC (Bogdan Padalko)
