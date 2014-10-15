@@ -36,6 +36,31 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
  6. You are using the latest php-amqp, librabbitm, RabbitMQ and sometimes PHP version itself. Sometimes your problem is already solved.
  7. Other extensions disabled (especially useful when PHP interpreter crashes and you get stack trace and segmentation fault).
 
+
+##### Development
+
+ There are vagrant environment with pre-installed software and libraries necessary to build, test and run php-amqp extension.
+
+ To start it, just type `vagrant up` and then `vagrant ssh` in php-amqp directory.
+
+ Services available out of the box are:
+
+ - Apache2 - on [192.168.33.10:8080](http://192.168.33.10:8080)
+ - nginx - on [192.168.33.10:80](http://192.168.33.10:80)
+ - RabbitMQ on [192.168.33.10:15672](http://192.168.33.10:15672/#/login/guest/guest)
+
+ Additional tools are pre-installed to make development process as simple as possible:
+
+ - valgrind is ready to help find memory-related problems if you `export TEST_PHP_ARGS=m` before running tests
+ - [phpbrew](https://github.com/phpbrew/phpbrew) waits to help you test extension on various PHP versions.
+   `phpbrew install 5.6 +debug+default+fpm` is a nice start. To switch to some version just use `phpbrew switch <version>`.
+
+   To start php-fpm just run `phpbrew fpm start` (don't forget to run `sudo service stop php5-fpm` befor).
+
+   This development environment out of the box ready for php-fpm and cli extension usage, if need to test it when php
+   used as apache module, refer to [Apache2 support on phpbrew wiki](https://github.com/phpbrew/phpbrew/wiki/Cookbook#apache2-support).
+   Keep in mind that `+apxs2` conficts with `+fpm` and it is a bit tricky to specify which libphp .so will be loaded.
+
 ##### Keeping track of the workers
  It is a good practice to keep php processes (i.e workers/consumers) under control. Usually, system administrators write their own scripts which ask services about current status or performs some desired actions. Usually request is sent via UNIX signals.<br />
  Because amqp <i>consume</i> method is blocking, pcntl extension seems to be useless.
