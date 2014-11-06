@@ -1,5 +1,5 @@
 --TEST--
-AMQPExchange var_dump
+AMQPExchange setFlags()
 --SKIPIF--
 <?php
 if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
@@ -14,8 +14,9 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange-' . microtime(true));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
-var_dump($ex);
 $ex->setArguments(array("x-ha-policy" => "all"));
+$ex->setFlags(AMQP_PASSIVE | AMQP_DURABLE | AMQP_AUTODELETE | AMQP_INTERNAL);
+
 var_dump($ex);
 ?>
 --EXPECTF--
@@ -25,30 +26,13 @@ object(AMQPExchange)#3 (7) {
   ["type"]=>
   string(6) "fanout"
   ["passive"]=>
-  bool(false)
+  bool(true)
   ["durable"]=>
-  bool(false)
+  bool(true)
   ["auto_delete"]=>
-  bool(false)
+  bool(true)
   ["internal"]=>
-  bool(false)
-  ["arguments"]=>
-  array(0) {
-  }
-}
-object(AMQPExchange)#3 (7) {
-  ["name"]=>
-  string(%d) "exchange-%f"
-  ["type"]=>
-  string(6) "fanout"
-  ["passive"]=>
-  bool(false)
-  ["durable"]=>
-  bool(false)
-  ["auto_delete"]=>
-  bool(false)
-  ["internal"]=>
-  bool(false)
+  bool(true)
   ["arguments"]=>
   array(1) {
     ["x-ha-policy"]=>

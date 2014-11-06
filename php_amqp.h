@@ -148,9 +148,10 @@ extern zend_module_entry amqp_module_entry;
 #define AMQP_REQUEUE		16384
 
 /* passive, durable, auto-delete, internal, no-wait (see https://www.rabbitmq.com/amqp-0-9-1-reference.html#exchange.declare) */
-#define PHP_AMQP_EXCHANGE_FLAGS     AMQP_PASSIVE | AMQP_DURABLE
+#define PHP_AMQP_EXCHANGE_FLAGS     (AMQP_PASSIVE | AMQP_DURABLE | AMQP_AUTODELETE | AMQP_INTERNAL)
+
 /* passive, durable, exclusive, auto-delete, no-wait (see https://www.rabbitmq.com/amqp-0-9-1-reference.html#queue.declare) */
-#define PHP_AMQP_QUEUE_FLAGS        AMQP_PASSIVE | AMQP_DURABLE | AMQP_EXCLUSIVE | AMQP_AUTODELETE | AMQP_EXCLUSIVE
+#define PHP_AMQP_QUEUE_FLAGS        (AMQP_PASSIVE | AMQP_DURABLE | AMQP_EXCLUSIVE | AMQP_AUTODELETE | AMQP_EXCLUSIVE)
 
 #define AMQP_EX_TYPE_DIRECT		"direct"
 #define AMQP_EX_TYPE_FANOUT		"fanout"
@@ -217,6 +218,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define IS_DURABLE(bitmask)		(AMQP_DURABLE & (bitmask)) ? 1 : 0
 #define IS_EXCLUSIVE(bitmask)	(AMQP_EXCLUSIVE & (bitmask)) ? 1 : 0
 #define IS_AUTODELETE(bitmask)	(AMQP_AUTODELETE & (bitmask)) ? 1 : 0
+#define IS_INTERNAL(bitmask)	(AMQP_INTERNAL & (bitmask)) ? 1 : 0
 #define IS_NOWAIT(bitmask)		(AMQP_NOWAIT & (bitmask)) ? 1 : 0 /* NOTE: always 0 in rabbitmq-c internals, so don't use it unless you are clearly understand aftermath*/
 
 

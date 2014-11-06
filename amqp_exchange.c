@@ -77,16 +77,20 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	zend_hash_add(debug_info, "type", sizeof("type"), &value, sizeof(zval *), NULL);
 
 	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, IS_PASSIVE(exchange->flags));
+	ZVAL_BOOL(value, IS_PASSIVE(exchange->flags));
 	zend_hash_add(debug_info, "passive", sizeof("passive"), &value, sizeof(zval *), NULL);
 
 	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, IS_DURABLE(exchange->flags));
+	ZVAL_BOOL(value, IS_DURABLE(exchange->flags));
 	zend_hash_add(debug_info, "durable", sizeof("durable"), &value, sizeof(zval *), NULL);
 
 	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, IS_AUTODELETE(exchange->flags));
+	ZVAL_BOOL(value, IS_AUTODELETE(exchange->flags));
 	zend_hash_add(debug_info, "auto_delete", sizeof("auto_delete"), &value, sizeof(zval *), NULL);
+
+	MAKE_STD_ZVAL(value);
+	ZVAL_BOOL(value, IS_INTERNAL(exchange->flags));
+	zend_hash_add(debug_info, "internal", sizeof("internal"), &value, sizeof(zval *), NULL);
 
 	Z_ADDREF_P(exchange->arguments);
 	zend_hash_add(debug_info, "arguments", sizeof("arguments"), &exchange->arguments, sizeof(&exchange->arguments), NULL);
