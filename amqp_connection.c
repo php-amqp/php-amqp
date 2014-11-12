@@ -611,10 +611,10 @@ PHP_METHOD(amqp_connection_class, __construct)
 		}
 	} else {
 
-	   if (DEFAULT_TIMEOUT != INI_STR("amqp.timeout")) {
+	   if (strcmp(DEFAULT_TIMEOUT, INI_STR("amqp.timeout")) != 0) {
 		   php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "INI setting 'amqp.timeout' is deprecated; use 'amqp.read_timeout' instead");
 
-		   if (DEFAULT_READ_TIMEOUT == INI_STR("amqp.read_timeout")) {
+		   if (strcmp(DEFAULT_READ_TIMEOUT, INI_STR("amqp.read_timeout")) == 0) {
 				connection->read_timeout = INI_FLT("amqp.timeout");
 		   } else {
 				php_error_docref(NULL TSRMLS_CC, E_NOTICE, "INI setting 'amqp.read_timeout' will be used instead of 'amqp.timeout'");

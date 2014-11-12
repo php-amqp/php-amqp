@@ -169,7 +169,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
-#define DEFAULT_TIMEOUT						NULL
+#define DEFAULT_TIMEOUT						""
 #define DEFAULT_READ_TIMEOUT				"0"
 #define DEFAULT_WRITE_TIMEOUT				"0"
 #define DEFAULT_CONNECT_TIMEOUT			"0"

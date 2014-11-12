@@ -35,12 +35,11 @@ try {
 } catch (AMQPChannelException $e) {
     echo $e->getMessage(), PHP_EOL;
 }
-
 ?>
 --EXPECTF--
 Channel id: %d
 Exchange declared: true
-Server channel error: 406, message: PRECONDITION_FAILED - cannot redeclare exchange 'exchange-%d.%d' in vhost '/' with different type, durable, internal or autodelete value
+Server channel error: 406, message: PRECONDITION_FAILED - %s exchange 'exchange-%d.%d' in vhost '/'%s
 Channel connected: false
 Connection connected: true
 Could not create exchange. No channel available.

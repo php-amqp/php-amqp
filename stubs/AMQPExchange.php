@@ -181,7 +181,8 @@ class AMQPExchange
      *
      * @param integer $flags A bitmask of flags. This call currently only
      *                       considers the following flags:
-     *                       AMQP_DURABLE, AMQP_PASSIVE.
+     *                       AMQP_DURABLE, AMQP_PASSIVE
+     *                       (and AMQP_DURABLE, if librabbitmq version >= 0.5.3)
      *
      * @return boolean True on success or false on failure.
      */
