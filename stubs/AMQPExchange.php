@@ -204,7 +204,7 @@ class AMQPExchange
      * Set the type of the exchange.
      *
      * Set the type of the exchange. This can be any of AMQP_EX_TYPE_DIRECT,
-     * AMQP_EX_TYPE_FANOUT, AMQP_EX_TYPE_HEADER or AMQP_EX_TYPE_TOPIC.
+     * AMQP_EX_TYPE_FANOUT, AMQP_EX_TYPE_HEADERS or AMQP_EX_TYPE_TOPIC.
      *
      * @param string $exchange_type The type of exchange as a string.
      *
