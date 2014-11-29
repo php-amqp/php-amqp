@@ -58,6 +58,8 @@
 #define Z_UNSET_ISREF(z)				Z_UNSET_ISREF_P(&(z))
 #define Z_SET_ISREF_TO(z, isref)		Z_SET_ISREF_TO_P(&(z), isref)
 
+#define ZEND_FCI_INITIALIZED(fci) ((fci).size != 0)
+
 #if defined(__GNUC__)
 #define zend_always_inline inline __attribute__((always_inline))
 #elif defined(_MSC_VER)
@@ -97,6 +99,8 @@ static zend_always_inline zend_bool zval_unset_isref_p(zval* pz) {
 static zend_always_inline zend_bool zval_set_isref_to_p(zval* pz, zend_bool isref) {
 	return pz->is_ref = isref;
 }
+
+static zend_always_inline zend_fcall_info empty_fcall_info = { 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0 };
 
 #else
 

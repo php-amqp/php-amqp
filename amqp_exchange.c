@@ -504,7 +504,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 
 	arguments = convert_zval_to_arguments(exchange->arguments);
 	
-#if AMQP_VERSION_MAJOR == 0 && AMQP_VERSION_MINOR >= 5 && AMQP_VERSION_PATCH >= 2
+#if AMQP_VERSION_MAJOR == 0 && AMQP_VERSION_MINOR >= 5 && AMQP_VERSION_PATCH > 2
 	amqp_exchange_declare(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
