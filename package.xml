@@ -33,6 +33,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
 X.Y.Z Release:
+    * Add support to consume messages from multiple queues (Bogdan Padalko)
     * Add AMQP_DURABLE flag support to AMQPExchange::setFlags (librabbitmq version >= 0.5.3 required) (Bogdan Padalko)
     * Fix inconsistent INI values comparison which leads to deprecation warnings (Bogdan Padalko)
 

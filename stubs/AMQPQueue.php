@@ -77,16 +77,21 @@ class AMQPQueue
      * Blocking function that will retrieve the next message from the queue as
      * it becomes available and will pass it off to the callback.
      *
-     * @param callable $callback    A callback function to which the
+     * @param callable | null $callback    A callback function to which the
      *                              consumed message will be passed. The
      *                              function must accept at a minimum
      *                              one parameter, an AMQPEnvelope object,
      *                              and an optional second parameter
-     *                              the AMQPQueue from which the message was
-     *                              consumed. The AMQPQueue::consume() will
+     *                              the AMQPQueue object from which callback
+     *                              was invoked. The AMQPQueue::consume() will
      *                              not return the processing thread back to
      *                              the PHP script until the callback
      *                              function returns FALSE.
+     *                              If the callback is omitted or null is passed,
+     *                              then the messages delivered to this client will
+     *                              be made available to the first real callback
+     *                              registered. That allows one to have a single
+     *                              callback consuming from multiple queues.
      * @param integer  $flags       A bitmask of any of the flags: AMQP_AUTOACK.
      * @param string   $consumerTag A string describing this consumer. Used
      *                              for canceling subscriptions with cancel().
@@ -97,7 +102,7 @@ class AMQPQueue
      * @return void
      */
     public function consume(
-        callable $callback,
+        callable $callback = null,
         $flags = AMQP_NOPARAM,
         $consumerTag = null
     ) {

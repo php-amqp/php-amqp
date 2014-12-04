@@ -41,7 +41,7 @@ define('AMQP_INTERNAL', 32);
 define('AMQP_NOLOCAL', 64);
 
 /**
- * When passed to the {@link AMQPQueue::get()} and {@link AMQPQueue::get()} methods as a flag,
+ * When passed to the {@link AMQPQueue::get()} and {@link AMQPQueue::consume()} methods as a flag,
  * the messages will be immediately marked as acknowledged by the server upon delivery.
  */
 define('AMQP_AUTOACK', 128);
