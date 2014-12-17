@@ -164,7 +164,9 @@ PHP_MINIT_FUNCTION(amqp);
 PHP_MSHUTDOWN_FUNCTION(amqp);
 PHP_MINFO_FUNCTION(amqp);
 
-amqp_table_t *convert_zval_to_arguments(zval *zvalArguments);
+amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC);
+void php_amqp_free_amqp_table(amqp_table_t * table);
+
 char *stringify_bytes(amqp_bytes_t bytes);
 
 /* True global resources - no need for thread safety here */
@@ -242,19 +244,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define AMQP_SET_STR_PROPERTY(object, str, len) \
 	strncpy((object), (str), (len) >= sizeof(object) ? sizeof(object) - 1 : (len)); \
 	(object)[(len) >= sizeof(object) ? sizeof(object) - 1 : (len)] = '\0';
-
-#define AMQP_EFREE_ARGUMENTS(object) \
-	if ((object)->entries) { \
-		int macroEntryCounter; \
-		for (macroEntryCounter = 0; macroEntryCounter < (object)->num_entries; macroEntryCounter++) { \
-			efree((object)->entries[macroEntryCounter].key.bytes); \
-			if ((object)->entries[macroEntryCounter].value.kind == AMQP_FIELD_KIND_UTF8) { \
-				efree((object)->entries[macroEntryCounter].value.value.bytes.bytes); \
-			} \
-		} \
-		efree((object)->entries); \
-	} \
-	efree(object); \
 
 #define AMQP_GET_CHANNEL(object) \
 	(amqp_channel_object *) amqp_object_store_get_valid_object((object)->channel TSRMLS_CC);

@@ -150,30 +150,6 @@ zend_object_value amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 	return new_value;
 }
 
-void free_field_value(struct amqp_field_value_t_ value) {
-	switch (value.kind) {
-		case AMQP_FIELD_KIND_ARRAY:
-			{
-				int i;
-				for (i=0; i<value.value.array.num_entries; ++i) {
-					free_field_value(value.value.array.entries[i]);
-				}
-				efree(value.value.array.entries);
-			}
-			break;
-		case AMQP_FIELD_KIND_TABLE:
-			{
-				int i;
-				for (i=0; i<value.value.table.num_entries; ++i) {
-					free_field_value(value.value.table.entries[i].value);
-				}
-				efree(value.value.table.entries);
-			}
-			break;
-	}
-}
-
-
 /* {{{ proto AMQPExchange::__construct(AMQPChannel channel);
 create Exchange   */
 PHP_METHOD(amqp_exchange_class, __construct)
@@ -494,7 +470,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 		return;
 	}
 
-	arguments = convert_zval_to_arguments(exchange->arguments);
+	arguments = convert_zval_to_amqp_table(exchange->arguments TSRMLS_CC);
 	
 #if AMQP_VERSION_MAJOR == 0 && AMQP_VERSION_MINOR >= 5 && AMQP_VERSION_PATCH > 2
 	amqp_exchange_declare(
@@ -522,7 +498,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(connection->connection_resource->connection_state);
 
-	AMQP_EFREE_ARGUMENTS(arguments);
+	php_amqp_free_amqp_table(arguments);
 
 	/* handle any errors that occured outside of signals */
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
@@ -635,6 +611,8 @@ PHP_METHOD(amqp_exchange_class, publish)
 	/* By default (and for BC) content type is text/plain (may be skipped at all, then set props._flags to 0) */
 	props.content_type = amqp_cstring_bytes("text/plain");
 	props._flags       = AMQP_BASIC_CONTENT_TYPE_FLAG;
+
+	props.headers.entries = 0;
 
 	ALLOC_ZVAL(ztmp);
 
@@ -755,92 +733,16 @@ PHP_METHOD(amqp_exchange_class, publish)
 
 	}
 
+	amqp_table_t *headers = NULL;
+
 	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF(ini_arr), "headers", sizeof("headers"), (void*)&zdata)) {
-		HashTable *headers;
-		HashPosition pos;
-		zval **z;
-
 		MAKE_COPY_ZVAL(zdata, ztmp);
-
 		convert_to_array(ztmp);
 
-		headers = HASH_OF(ztmp);
-		zend_hash_internal_pointer_reset_ex(headers, &pos);
+		headers = convert_zval_to_amqp_table(ztmp TSRMLS_CC);
 
 		props._flags |= AMQP_BASIC_HEADERS_FLAG;
-		props.headers.entries = emalloc(sizeof(struct amqp_table_entry_t_) * zend_hash_num_elements(headers));
-		props.headers.num_entries = 0;
-
-		/* TODO: merge codebase with convert_zval_to_arguments function (then also merge AMQP_EFREE_ARGUMENTS macro and free_field_value function) */
-		while (zend_hash_get_current_data_ex(headers, (void **)&z, &pos) == SUCCESS) {
-			char *string_key;
-			uint  string_key_len;
-
-			int	type;
-			ulong  num_key;
-
-			type = zend_hash_get_current_key_ex(headers, &string_key, &string_key_len, &num_key, 0, &pos);
-
-			zend_hash_move_forward_ex(headers, &pos);
-
-			if (HASH_KEY_IS_STRING == type) {
-				props.headers.entries[props.headers.num_entries].key.bytes = string_key;
-				props.headers.entries[props.headers.num_entries].key.len = string_key_len - 1;
-			} else {
-				/* previous version ignored non-string keys, so we just make notice about it */
-				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string header field '%lu'", num_key);
-
-				continue;
-			}
-
-			if (Z_TYPE_PP(z) == IS_STRING) {
-				props.headers.entries[props.headers.num_entries].value.kind              = AMQP_FIELD_KIND_UTF8;
-				props.headers.entries[props.headers.num_entries].value.value.bytes.bytes = Z_STRVAL_PP(z);
-				props.headers.entries[props.headers.num_entries].value.value.bytes.len   = Z_STRLEN_PP(z);
-				props.headers.num_entries++;
-			} else if (Z_TYPE_PP(z) == IS_LONG) {
-				props.headers.entries[props.headers.num_entries].value.kind      = AMQP_FIELD_KIND_I64;
-				props.headers.entries[props.headers.num_entries].value.value.i64 = (int64_t) Z_LVAL_PP(z);
-				props.headers.num_entries++;
-			} else if (Z_TYPE_PP(z) == IS_DOUBLE) {
-				props.headers.entries[props.headers.num_entries].value.kind      = AMQP_FIELD_KIND_F64;
-				props.headers.entries[props.headers.num_entries].value.value.f64 = (double)Z_DVAL_PP(z);
-				props.headers.num_entries++;
-			} else if (Z_TYPE_PP(z) == IS_BOOL) {
-				props.headers.entries[props.headers.num_entries].value.kind      = AMQP_FIELD_KIND_BOOLEAN;
-				props.headers.entries[props.headers.num_entries].value.value.boolean = (amqp_boolean_t)Z_BVAL_PP(z);
-				props.headers.num_entries++;
-			} else if (Z_TYPE_PP(z) == IS_ARRAY) {
-				zval **arr_data;
-				amqp_array_t array;
-				HashPosition arr_pos;
-
-				array.entries     = emalloc(sizeof(struct amqp_field_value_t_) * zend_hash_num_elements(Z_ARRVAL_PP(z)));
-				array.num_entries = 0;
-				for(
-					zend_hash_internal_pointer_reset_ex(Z_ARRVAL_PP(z), &arr_pos);
-					zend_hash_get_current_data_ex(Z_ARRVAL_PP(z), (void**) &arr_data, &arr_pos) == SUCCESS;
-					zend_hash_move_forward_ex(Z_ARRVAL_PP(z), &arr_pos)
-				) {
-					if (Z_TYPE_PP(arr_data) == IS_STRING) {
-						array.entries[array.num_entries].kind              = AMQP_FIELD_KIND_UTF8;
-						array.entries[array.num_entries].value.bytes.bytes = Z_STRVAL_PP(arr_data);
-						array.entries[array.num_entries].value.bytes.len   = Z_STRLEN_PP(arr_data);
-						array.num_entries ++;
-					} else {
-						php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string header nested array member type %d for field '%s'", Z_TYPE_PP(arr_data), string_key);
-					}
-				}
-
-				props.headers.entries[props.headers.num_entries].value.kind = AMQP_FIELD_KIND_ARRAY;
-				props.headers.entries[props.headers.num_entries].value.value.array = array;
-				props.headers.num_entries++;
-			} else {
-				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring header field '%s' due to unsupported value type (NULL, array or resource)", string_key);
-			}
-		}
-	} else {
-		props.headers.entries = 0;
+		props.headers = *headers;
 	}
 
 	channel = AMQP_GET_CHANNEL(exchange);
@@ -866,12 +768,8 @@ PHP_METHOD(amqp_exchange_class, publish)
 		(msg_len > 0 ? amqp_cstring_bytes(msg) : amqp_empty_bytes) /* message body */
 	);
 
-	if (props.headers.entries) {
-		int i;
-		for (i=0; i < props.headers.num_entries; ++i) {
-			free_field_value(props.headers.entries[i].value);
-		}
-		efree(props.headers.entries);
+	if (headers) {
+		php_amqp_free_amqp_table(headers);
 	}
 
 	FREE_ZVAL(ztmp);
@@ -935,7 +833,7 @@ PHP_METHOD(amqp_exchange_class, bind)
 	AMQP_VERIFY_CONNECTION(connection, "Could not bind to exchanges.");
 
 	if (zvalArguments) {
-		arguments = convert_zval_to_arguments(zvalArguments);
+		arguments = convert_zval_to_amqp_table(zvalArguments TSRMLS_CC);
 	}
 
 	amqp_exchange_bind(
@@ -948,7 +846,7 @@ PHP_METHOD(amqp_exchange_class, bind)
 	);
 
 	if (zvalArguments) {
-		AMQP_EFREE_ARGUMENTS(arguments);
+		php_amqp_free_amqp_table(arguments);
 	}
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(connection->connection_resource->connection_state);
@@ -1003,7 +901,7 @@ PHP_METHOD(amqp_exchange_class, unbind)
 	AMQP_VERIFY_CONNECTION(connection, "Could not unbind from exchanges.");
 
 	if (zvalArguments) {
-		arguments = convert_zval_to_arguments(zvalArguments);
+		arguments = convert_zval_to_amqp_table(zvalArguments TSRMLS_CC);
 	}
 
 	amqp_exchange_unbind(
@@ -1016,7 +914,7 @@ PHP_METHOD(amqp_exchange_class, unbind)
 	);
 
 	if (zvalArguments) {
-		AMQP_EFREE_ARGUMENTS(arguments);
+		php_amqp_free_amqp_table(arguments);
 	}
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(connection->connection_resource->connection_state);

@@ -598,7 +598,7 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 	connection = AMQP_GET_CONNECTION(channel);
 	AMQP_VERIFY_CONNECTION(connection, "Could not declare queue.");
 
-	arguments = convert_zval_to_arguments(queue->arguments);
+	arguments = convert_zval_to_amqp_table(queue->arguments TSRMLS_CC);
 
 	amqp_queue_declare_ok_t *r = amqp_queue_declare(
 		connection->connection_resource->connection_state,
@@ -611,7 +611,7 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 		*arguments
 	);
 
-	AMQP_EFREE_ARGUMENTS(arguments);
+	php_amqp_free_amqp_table(arguments);
 
 	if (!r) {
 		amqp_rpc_reply_t res = amqp_get_rpc_reply(connection->connection_resource->connection_state);
@@ -672,7 +672,7 @@ PHP_METHOD(amqp_queue_class, bind)
 	AMQP_VERIFY_CONNECTION(connection, "Could not bind queue.");
 
 	if (zvalArguments) {
-		arguments = convert_zval_to_arguments(zvalArguments);
+		arguments = convert_zval_to_amqp_table(zvalArguments TSRMLS_CC);
 	}
 
 	amqp_queue_bind(
@@ -685,7 +685,7 @@ PHP_METHOD(amqp_queue_class, bind)
 	);
 
 	if (zvalArguments) {
-		AMQP_EFREE_ARGUMENTS(arguments);
+		php_amqp_free_amqp_table(arguments);
 	}
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(connection->connection_resource->connection_state);
@@ -839,7 +839,7 @@ PHP_METHOD(amqp_queue_class, consume)
 	AMQP_VERIFY_CONNECTION(connection, "Could not get connection.");
 
 	/* Setup the consume */
-	arguments = convert_zval_to_arguments(queue->arguments);
+	arguments = convert_zval_to_amqp_table(queue->arguments TSRMLS_CC);
 
 	amqp_basic_consume_ok_t * r = amqp_basic_consume(
 		connection->connection_resource->connection_state,
@@ -852,7 +852,7 @@ PHP_METHOD(amqp_queue_class, consume)
 		*arguments
 	);
 
-	AMQP_EFREE_ARGUMENTS(arguments);
+	php_amqp_free_amqp_table(arguments);
 
 	if (!r) {
 		amqp_rpc_reply_t res = amqp_get_rpc_reply(connection->connection_resource->connection_state);
@@ -1262,7 +1262,7 @@ PHP_METHOD(amqp_queue_class, unbind)
 	AMQP_VERIFY_CONNECTION(connection, "Could not unbind queue.");
 
 	if (zvalArguments) {
-		arguments = convert_zval_to_arguments(zvalArguments);
+		arguments = convert_zval_to_amqp_table(zvalArguments TSRMLS_CC);
 	}
 
 	amqp_queue_unbind(
@@ -1275,7 +1275,7 @@ PHP_METHOD(amqp_queue_class, unbind)
 	);
 
 	if (zvalArguments) {
-		AMQP_EFREE_ARGUMENTS(arguments);
+		php_amqp_free_amqp_table(arguments);
 	}
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(connection->connection_resource->connection_state);

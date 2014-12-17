@@ -729,19 +729,15 @@ char *stringify_bytes(amqp_bytes_t bytes)
 	return res;
 }
 
-
-
-amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
+void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *arguments, char allow_int_keys TSRMLS_DC)
 {
 	HashTable *argumentHash;
 	HashPosition pos;
 	zval **data;
-	amqp_table_t *arguments;
+	char type[16];
+	amqp_table_t *inner_table;
 
 	argumentHash = Z_ARRVAL_P(zvalArguments);
-
-	/* In setArguments, we are overwriting all the existing values */
-	arguments = (amqp_table_t *)emalloc(sizeof(amqp_table_t));
 
 	/* Allocate all the memory necessary for storing the arguments */
 	arguments->entries = (amqp_table_entry_t *)ecalloc(zend_hash_num_elements(argumentHash), sizeof(amqp_table_entry_t));
@@ -768,44 +764,119 @@ amqp_table_t *convert_zval_to_arguments(zval *zvalArguments)
 		/* Now pull the key */
 
 		if (zend_hash_get_current_key_ex(argumentHash, &key, &key_len, &index, 0, &pos) != HASH_KEY_IS_STRING) {
-			/* Skip things that are not strings */
-			continue;
+
+			if (allow_int_keys) {
+				/* Convert to strings non-string keys */
+				char str[32];
+
+				key_len = sprintf(str, "%lu", index);
+				key     = str;
+			} else {
+				/* Skip things that are not strings */
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string header field '%lu'", index);
+
+				continue;
+			}
+
 		}
 
 		/* Build the value */
 		table = &arguments->entries[arguments->num_entries++];
 		field = &table->value;
-		strKey = estrndup(key, key_len);
-		table->key = amqp_cstring_bytes(strKey);
 
 		switch (Z_TYPE_P(&value)) {
 			case IS_BOOL:
-				field->kind = AMQP_FIELD_KIND_BOOLEAN;
+				field->kind          = AMQP_FIELD_KIND_BOOLEAN;
 				field->value.boolean = (amqp_boolean_t)Z_LVAL_P(&value);
 				break;
 			case IS_DOUBLE:
-				field->kind = AMQP_FIELD_KIND_F64;
+				field->kind      = AMQP_FIELD_KIND_F64;
 				field->value.f64 = Z_DVAL_P(&value);
 				break;
 			case IS_LONG:
-				field->kind = AMQP_FIELD_KIND_I64;
+				field->kind      = AMQP_FIELD_KIND_I64;
 				field->value.i64 = Z_LVAL_P(&value);
 				break;
 			case IS_STRING:
-				field->kind = AMQP_FIELD_KIND_UTF8;
-				strValue = estrndup(Z_STRVAL_P(&value), Z_STRLEN_P(&value));
+				field->kind        = AMQP_FIELD_KIND_UTF8;
+				strValue           = estrndup(Z_STRVAL_P(&value), Z_STRLEN_P(&value));
 				field->value.bytes = amqp_cstring_bytes(strValue);
 				break;
+			case IS_ARRAY:
+				field->kind = AMQP_FIELD_KIND_TABLE;
+				internal_convert_zval_to_amqp_table(&value, &field->value.table, 1 TSRMLS_CC);
+
+				break;
 			default:
+				switch(Z_TYPE_P(&value)) {
+					case IS_NULL:     strcpy(type, "null"); break;
+					case IS_OBJECT:   strcpy(type, "object"); break;
+					case IS_RESOURCE: strcpy(type, "resource"); break;
+					default:          strcpy(type, "unknown");
+				}
+
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring field '%s' due to unsupported value type (%s)", key, type);
+
+				/* Reset entries counter back */
+				arguments->num_entries --;
 				continue;
 		}
+
+		strKey     = estrndup(key, key_len);
+		table->key = amqp_cstring_bytes(strKey);
 
 		/* Clean up the zval */
 		zval_dtor(&value);
 	}
+}
+
+inline amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC)
+{
+	amqp_table_t *arguments;
+	/* In setArguments, we are overwriting all the existing values */
+	arguments = (amqp_table_t *)emalloc(sizeof(amqp_table_t));
+
+	internal_convert_zval_to_amqp_table(zvalArguments, arguments, 0 TSRMLS_CC);
 
 	return arguments;
 }
+
+
+
+
+void internal_php_amqp_free_amqp_table(amqp_table_t *object, char clear_root)
+{
+	if (!object) {
+		return;
+	}
+
+	if ((object)->entries) {
+		int macroEntryCounter;
+		for (macroEntryCounter = 0; macroEntryCounter < (object)->num_entries; macroEntryCounter++) {
+			efree((object)->entries[macroEntryCounter].key.bytes);
+
+			switch ((object)->entries[macroEntryCounter].value.kind) {
+				case AMQP_FIELD_KIND_TABLE:
+					internal_php_amqp_free_amqp_table(&(object)->entries[macroEntryCounter].value.value.table, 0);
+					break;
+				case AMQP_FIELD_KIND_UTF8:
+					efree((object)->entries[macroEntryCounter].value.value.bytes.bytes);
+					break;
+			}
+		}
+		efree((object)->entries);
+	}
+
+	if (clear_root) {
+		efree(object);
+	}
+}
+
+void php_amqp_free_amqp_table(amqp_table_t *object)
+{
+	internal_php_amqp_free_amqp_table(object, 1);
+}
+
 
 PHP_INI_BEGIN()
 	PHP_INI_ENTRY("amqp.host",				DEFAULT_HOST,				PHP_INI_ALL, NULL)
