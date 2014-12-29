@@ -15,18 +15,28 @@ $channel->setPrefetchCount(10);
 var_dump($channel->getPrefetchSize());
 var_dump($channel->getPrefetchCount());
 
-$channel->setPrefetchSize(1024);
+// NOTE: RabbitMQ Doesn't support prefetch size
+try {
+    $channel->setPrefetchSize(1024);
+
+} catch (AMQPConnectionException $e) {
+    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+}
+var_dump($channel->isConnected());
+var_dump($connection->isConnected());
 var_dump($channel->getPrefetchSize());
 var_dump($channel->getPrefetchCount());
 
-
 ?>
 ==DONE==
---EXPECT--
+--EXPECTF--
 int(0)
 int(3)
 int(0)
 int(10)
-int(1024)
+AMQPConnectionException: Server connection error: 540, message: NOT_IMPLEMENTED - prefetch_size!=0 (%d)
+bool(false)
+bool(false)
 int(0)
+int(10)
 ==DONE==

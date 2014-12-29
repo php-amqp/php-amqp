@@ -147,8 +147,7 @@ void amqp_envelope_dtor(void *object TSRMLS_DC)
 	amqp_envelope_object *envelope = (amqp_envelope_object*)object;
 
 	if (envelope->headers) {
-		zval_dtor(envelope->headers);
-		efree(envelope->headers);
+		zval_ptr_dtor(&envelope->headers);
 	}
 
 	if (envelope->body) {
@@ -434,10 +433,6 @@ PHP_METHOD(amqp_envelope_class, getExpiration)
 
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	if (envelope->expiration == 0) {
-		RETURN_FALSE;
-	}
 
 	RETURN_STRING(envelope->expiration, 1);
 }

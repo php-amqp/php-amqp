@@ -10,24 +10,47 @@ php:
 services:
   - rabbitmq
 
+install:
+  - sudo apt-get -qq install valgrind
+
 env:
-  - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=master
-  - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=v0.5.2
-  - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=v0.5.1
-  - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=v0.5.0
-  - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=v0.4.1
-  - NO_INTERACTION=1 TEST_TIMEOUT=120 LIBRABBITMQ_VERSION=v0.4.0
+  global:
+    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+    #   via the "travis encrypt" command using the project repo's public key
+    - secure: "KQZ2SfQEDucLTAhoHJ2o09nOOLr0O6cSyOiTd1WlJyio9+wRvPUkcEPJZ0wP5wkSxAuDN6vp0hPK1wks1Ue8njWRvd9Yki2rMSkn+WNsogu8+3tpgTG7IH7PwVIQ6LtOhaIpocy7XAhDrxCm9G6yaA2BpggEdstsFGAtHh30CfY="
+    - NO_INTERACTION=1
+    - TEST_TIMEOUT=120
+  matrix:
+    - LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+    - LIBRABBITMQ_VERSION=master
+    - LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
+    - LIBRABBITMQ_VERSION=v0.5.2
+    - LIBRABBITMQ_VERSION=v0.5.1
+    - LIBRABBITMQ_VERSION=v0.5.0
+    - LIBRABBITMQ_VERSION=v0.4.1
+    - LIBRABBITMQ_VERSION=v0.4.0
 
 before_script:
   - sh -c "git clone git://github.com/alanxz/rabbitmq-c.git"
   - sh -c "cd rabbitmq-c && git checkout ${LIBRABBITMQ_VERSION}"
   - sh -c "cd rabbitmq-c && git submodule init && git submodule update"
   - sh -c "cd rabbitmq-c && autoreconf -i && ./configure && make && sudo make install"
-  - sh -c "phpize && ./configure && make"
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then phpize && ./configure && make ; fi
 
 script:
   - sh -c "make test | tee result.txt"
   - sh test-report.sh
+
+addons:
+  coverity_scan:
+    project:
+      name: "pinepain/php-amqp"
+      description: "Build submitted via Travis CI"
+    notification_email: pinepain@gmail.com
+    build_command_prepend: phpize && ./configure
+    build_command:   make
+    branch_pattern: coverity_scan
+
 
 notifications:
   email:

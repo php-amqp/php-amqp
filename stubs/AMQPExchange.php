@@ -10,17 +10,34 @@ class AMQPExchange
      *
      * Bind an exchange to another exchange using the specified routing key.
      *
-     * @param string  $exchange_name Name of the exchange to bind.
-     * @param string  $routing_key   The routing key to use for binding.
-     * @param integer $flags         Flags to use for binding, defaults to
-     *                               AMQP_NOPARAM.
+     * @param string $exchange_name Name of the exchange to bind.
+     * @param string $routing_key   The routing key to use for binding.
+     * @param array  $arguments     Additional binding arguments.
      *
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @return boolean true on success or false on failure.
      */
-    public function bind($exchange_name, $routing_key, $flags = AMQP_NOPARAM)
+    public function bind($exchange_name, $routing_key = '', array $arguments = array())
+    {
+    }
+
+    /**
+     * Remove binding to another exchange.
+     *
+     * Remove a routing key binding on an another exchange from the given exchange.
+     *
+     * @param string $exchange_name Name of the exchange to bind.
+     * @param string $routing_key   The routing key to use for binding.
+     * @param array  $arguments     Additional binding arguments.
+     *
+     * @throws AMQPExchangeException   On failure.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     * @return boolean true on success or false on failure.
+     */
+    public function unbind($exchange_name, $routing_key = '', array $arguments = array())
     {
     }
 

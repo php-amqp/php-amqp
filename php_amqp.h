@@ -60,6 +60,11 @@
 
 #define ZEND_FCI_INITIALIZED(fci) ((fci).size != 0)
 
+#define MAKE_COPY_ZVAL(ppzv, pzv) \
+	*(pzv) = **(ppzv);            \
+	zval_copy_ctor((pzv));        \
+	INIT_PZVAL((pzv));
+
 #if defined(__GNUC__)
 #define zend_always_inline inline __attribute__((always_inline))
 #elif defined(_MSC_VER)
@@ -126,7 +131,7 @@ extern zend_module_entry amqp_module_entry;
 #endif
 
 #define AMQP_NOPARAM		0
-
+/* Where is 1?*/
 #define AMQP_DURABLE		2
 #define AMQP_PASSIVE		4
 #define AMQP_EXCLUSIVE		8
@@ -142,6 +147,12 @@ extern zend_module_entry amqp_module_entry;
 #define AMQP_NOWAIT			8192
 #define AMQP_REQUEUE		16384
 
+/* passive, durable, auto-delete, internal, no-wait (see https://www.rabbitmq.com/amqp-0-9-1-reference.html#exchange.declare) */
+#define PHP_AMQP_EXCHANGE_FLAGS     (AMQP_PASSIVE | AMQP_DURABLE | AMQP_AUTODELETE | AMQP_INTERNAL)
+
+/* passive, durable, exclusive, auto-delete, no-wait (see https://www.rabbitmq.com/amqp-0-9-1-reference.html#queue.declare) */
+#define PHP_AMQP_QUEUE_FLAGS        (AMQP_PASSIVE | AMQP_DURABLE | AMQP_EXCLUSIVE | AMQP_AUTODELETE | AMQP_EXCLUSIVE)
+
 #define AMQP_EX_TYPE_DIRECT		"direct"
 #define AMQP_EX_TYPE_FANOUT		"fanout"
 #define AMQP_EX_TYPE_TOPIC		"topic"
@@ -153,7 +164,9 @@ PHP_MINIT_FUNCTION(amqp);
 PHP_MSHUTDOWN_FUNCTION(amqp);
 PHP_MINFO_FUNCTION(amqp);
 
-amqp_table_t *convert_zval_to_arguments(zval *zvalArguments);
+amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC);
+void php_amqp_free_amqp_table(amqp_table_t * table);
+
 char *stringify_bytes(amqp_bytes_t bytes);
 
 /* True global resources - no need for thread safety here */
@@ -169,7 +182,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_exchange_exception_class_entry,
 	*amqp_queue_exception_class_entry;
 
-#define AMQP_HEARTBEAT						0	   		/* heartbeat */
+#define PHP_AMQP_HEARTBEAT					0	   		/* heartbeat */
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
@@ -182,19 +195,33 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define DEFAULT_PASSWORD					"guest"
 #define DEFAULT_AUTOACK						"0"			/* These are all strings to facilitate setting default ini values */
 #define DEFAULT_PREFETCH_COUNT				"3"
-#define DEFAULT_CHANNELS_PER_CONNECTION 	255
+
+/* Usually, default is 0 which means 65535, but underlying rabbitmq-c library pool allocates minimal pool for each channel,
+ * so it takes a lot of memory to keep all that channels. Even after channel closing that buffer still keep memory allocation.
+ */
+/* #define DEFAULT_CHANNELS_PER_CONNECTION AMQP_DEFAULT_MAX_CHANNELS */
+#define PHP_AMQP_PROTOCOL_MAX_CHANNELS 256
+
+#if PHP_AMQP_PROTOCOL_MAX_CHANNELS > 0
+	#define PHP_AMQP_MAX_CHANNELS PHP_AMQP_PROTOCOL_MAX_CHANNELS
+#else
+	#define PHP_AMQP_MAX_CHANNELS 65535 // Note that the maximum number of channels the protocol supports is 65535 (2^16, with the 0-channel reserved)
+#endif
+
+#define PHP_AMQP_STRINGIFY(value) PHP_AMQP_TO_STRING(value)
+#define PHP_AMQP_TO_STRING(value) #value
 
 #define AMQP_READ_SUCCESS					1
 #define AMQP_READ_NO_MESSAGES				0
 #define AMQP_READ_ERROR						-1
 
 
-#define EMPTY_ARGUMENTS			{0, NULL};
-#define IS_PASSIVE(bitmask)		(AMQP_PASSIVE & (bitmask)) ? 1 : 0;
-#define IS_DURABLE(bitmask)		(AMQP_DURABLE & (bitmask)) ? 1 : 0;
-#define IS_EXCLUSIVE(bitmask)	(AMQP_EXCLUSIVE & (bitmask)) ? 1 : 0;
-#define IS_AUTODELETE(bitmask)	(AMQP_AUTODELETE & (bitmask)) ? 1 : 0;
-#define IS_NOWAIT(bitmask)		(AMQP_NOWAIT & (bitmask)) ? 1 : 0;
+#define IS_PASSIVE(bitmask)		(AMQP_PASSIVE & (bitmask)) ? 1 : 0
+#define IS_DURABLE(bitmask)		(AMQP_DURABLE & (bitmask)) ? 1 : 0
+#define IS_EXCLUSIVE(bitmask)	(AMQP_EXCLUSIVE & (bitmask)) ? 1 : 0
+#define IS_AUTODELETE(bitmask)	(AMQP_AUTODELETE & (bitmask)) ? 1 : 0
+#define IS_INTERNAL(bitmask)	(AMQP_INTERNAL & (bitmask)) ? 1 : 0
+#define IS_NOWAIT(bitmask)		(AMQP_NOWAIT & (bitmask)) ? 1 : 0 /* NOTE: always 0 in rabbitmq-c internals, so don't use it unless you are clearly understand aftermath*/
 
 
 
@@ -217,19 +244,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define AMQP_SET_STR_PROPERTY(object, str, len) \
 	strncpy((object), (str), (len) >= sizeof(object) ? sizeof(object) - 1 : (len)); \
 	(object)[(len) >= sizeof(object) ? sizeof(object) - 1 : (len)] = '\0';
-
-#define AMQP_EFREE_ARGUMENTS(object) \
-	if ((object)->entries) { \
-		int macroEntryCounter; \
-		for (macroEntryCounter = 0; macroEntryCounter < (object)->num_entries; macroEntryCounter++) { \
-			efree((object)->entries[macroEntryCounter].key.bytes); \
-			if ((object)->entries[macroEntryCounter].value.kind == AMQP_FIELD_KIND_UTF8) { \
-				efree((object)->entries[macroEntryCounter].value.value.bytes.bytes); \
-			} \
-		} \
-		efree((object)->entries); \
-	} \
-	efree(object); \
 
 #define AMQP_GET_CHANNEL(object) \
 	(amqp_channel_object *) amqp_object_store_get_valid_object((object)->channel TSRMLS_CC);
@@ -278,6 +292,10 @@ extern zend_class_entry *amqp_exception_class_entry,
 		AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
 	} \
 
+#define PHP_AMQP_INIT_ERROR_MESSAGE()\
+	char __internal_message[256]; \
+	char ** message = (char **) &__internal_message; \
+
 #if ZEND_MODULE_API_NO >= 20100000
 	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
 #else
@@ -289,20 +307,24 @@ extern zend_class_entry *amqp_exception_class_entry,
 #endif
 
 extern int le_amqp_connection_resource;
+extern int le_amqp_connection_resource_persistent;
 
 typedef struct _amqp_channel_object {
 	zend_object zo;
 	zval *connection;
-	int channel_id;
+	amqp_channel_t channel_id;
 	char is_connected;
 	int prefetch_count;
 	int prefetch_size;
 } amqp_channel_object;
 
 typedef struct _amqp_connection_resource {
-	int used_slots;
-	amqp_channel_object **slots;
-	int is_persistent;
+	zend_bool is_connected;
+	int resource_id;
+	amqp_channel_t used_slots;
+    amqp_channel_object **slots;
+	char *resource_key;
+	int resource_key_len;
 	amqp_connection_state_t connection_state;
 	amqp_socket_t *socket;
 } amqp_connection_resource;
@@ -310,6 +332,7 @@ typedef struct _amqp_connection_resource {
 typedef struct _amqp_connection_object {
 	zend_object zo;
 	char is_connected;
+	char is_persistent;
 	char *login;
 	int login_len;
 	char *password;
@@ -328,18 +351,13 @@ typedef struct _amqp_connection_object {
 typedef struct _amqp_queue_object {
 	zend_object zo;
 	zval *channel;
-	char is_connected;
 	char name[256];
 	int name_len;
 	char consumer_tag[256];
 	int consumer_tag_len;
-	int passive; /* @TODO: consider making these bit fields */
-	int durable;
-	int exclusive;
-	int auto_delete; /* end @TODO */
+	int flags;
 	zval *arguments;
 } amqp_queue_object;
-
 
 typedef struct _amqp_exchange_object {
 	zend_object zo;
@@ -349,9 +367,7 @@ typedef struct _amqp_exchange_object {
 	int name_len;
 	char type[256];
 	int type_len;
-	int passive; /* @TODO: consider making these bit fields */
-	int durable;
-	int auto_delete; /* end @TODO */
+	int flags;
 	zval *arguments;
 } amqp_exchange_object;
 
@@ -411,10 +427,13 @@ typedef struct _amqp_envelope_object {
 #endif
 
 #ifndef PHP_AMQP_REVISION
-#define PHP_AMQP_REVISION "no revision"
+#define PHP_AMQP_REVISION "release"
 #endif
 
-void amqp_error(amqp_rpc_reply_t x, char **pstr, amqp_connection_object *connection, amqp_channel_object *channel);
+void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_object *connection, amqp_channel_object *channel TSRMLS_DC);
+void amqp_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, long code TSRMLS_DC);
+
+void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connection, amqp_channel_object *channel);
 
 #endif	/* PHP_AMQP_H */
 

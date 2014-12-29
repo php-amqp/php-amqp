@@ -10,11 +10,11 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange' . time());
+$ex->setName('exchange' . microtime(true));
 $ex->setType(AMQP_EX_TYPE_TOPIC);
 $ex->declareExchange();
 $q = new AMQPQueue($ch);
-$q->setName('queue1' . time());
+$q->setName('queue1' . microtime(true));
 $q->declareQueue();
 $q->bind($ex->getName(), '#');
 

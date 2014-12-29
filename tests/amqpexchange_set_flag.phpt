@@ -11,6 +11,7 @@ $ch = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($ch);
 
+echo $ex->getFlags();
 $ex->setFlags("2");
 echo $ex->getFlags();
 
@@ -22,4 +23,4 @@ echo $ex->getFlags();
 
 ?>
 --EXPECT--
-202
+0202

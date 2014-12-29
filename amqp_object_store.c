@@ -14,5 +14,5 @@ void *amqp_object_store_get_valid_object(const zval *zobject TSRMLS_DC)
 	handle = Z_OBJ_HANDLE_P(zobject);
 	bucket = EG(objects_store).object_buckets[handle];
 
-	return bucket.valid ? bucket.bucket.obj.object : 0;
+	return bucket.valid ? bucket.bucket.obj.object : NULL;
 }

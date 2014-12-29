@@ -1,5 +1,5 @@
 #!/bin/sh
-result=`find tests -type f -and -name "*.diff" -or -name "*.out" | sort | while read file; do
+result=`find tests -type f -and -name "*.diff" -or -name "*.out" -or -name "*.mem" | sort | while read file; do
     echo "FILE: ${file}"
     cat "$file"
     echo "\n"

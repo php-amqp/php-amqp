@@ -48,7 +48,7 @@ if test "$PHP_AMQP" != "no"; then
 
 	if test -z "$AMQP_DIR"; then
 		AC_MSG_RESULT([not found])
-		AC_MSG_ERROR([Please reinstall the librabbit-mq distribution])
+		AC_MSG_ERROR([Please reinstall the librabbitmq distribution itself or (re)install librabbitmq development package if it available in your system])
 	fi
 
 	dnl # --with-amqp -> add include path
@@ -67,7 +67,7 @@ if test "$PHP_AMQP" != "no"; then
 			git describe --tags &>/dev/null
 
 			if test $? -eq 0 ; then
-				AC_DEFINE_UNQUOTED([PHP_AMQP_VERSION], ["`git describe --tags --abbr=0`-dev"], [git version])
+				AC_DEFINE_UNQUOTED([PHP_AMQP_VERSION], ["`git describe --abbr=0`-`git rev-parse --abbrev-ref HEAD`-dev"], [git version])
 			fi
 
 			git rev-parse --short HEAD &>/dev/null
@@ -83,7 +83,7 @@ if test "$PHP_AMQP" != "no"; then
 	PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $AMQP_DIR/lib, AMQP_SHARED_LIBADD)
 	PHP_SUBST(AMQP_SHARED_LIBADD)
 
-	AMQP_SOURCES="amqp.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_channel.c amqp_envelope.c amqp_object_store.c"
+	AMQP_SOURCES="amqp.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_object_store.c"
 
 	PHP_NEW_EXTENSION(amqp, $AMQP_SOURCES, $ext_shared)
 fi
