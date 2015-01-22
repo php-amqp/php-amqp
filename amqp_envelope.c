@@ -579,11 +579,8 @@ PHP_METHOD(amqp_envelope_class, getHeaders)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	*return_value = *envelope->headers;
-	zval_copy_ctor(return_value);
-
-	/* Increment the ref count */
-	Z_ADDREF_P(envelope->headers);
+	zval_dtor(return_value);
+	MAKE_COPY_ZVAL(&envelope->headers, return_value);
 }
 /* }}} */
 

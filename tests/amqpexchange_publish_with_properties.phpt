@@ -58,25 +58,48 @@ echo 'Message attributes are ', $attrs == $attrs_control ? 'the same' : 'not the
 
 $msg = $q->get(AMQP_AUTOACK);
 
-function dump_message(AMQPEnvelope $msg) {
+function dump_message($msg) {
+    if (!$msg) {
+        var_dump($msg);
+        return;
+    }
+
     echo get_class($msg), PHP_EOL;
+    echo "    getBody:", PHP_EOL, "        ";
     var_dump($msg->getBody());
+    echo "    getContentType:", PHP_EOL, "        ";
     var_dump($msg->getContentType());
+    echo "    getRoutingKey:", PHP_EOL, "        ";
     var_dump($msg->getRoutingKey());
+    echo "    getDeliveryTag:", PHP_EOL, "        ";
     var_dump($msg->getDeliveryTag());
+    echo "    getDeliveryMode:", PHP_EOL, "        ";
     var_dump($msg->getDeliveryMode());
+    echo "    getExchangeName:", PHP_EOL, "        ";
     var_dump($msg->getExchangeName());
+    echo "    isRedelivery:", PHP_EOL, "        ";
     var_dump($msg->isRedelivery());
+    echo "    getContentEncoding:", PHP_EOL, "        ";
     var_dump($msg->getContentEncoding());
+    echo "    getType:", PHP_EOL, "        ";
     var_dump($msg->getType());
+    echo "    getTimeStamp:", PHP_EOL, "        ";
     var_dump($msg->getTimeStamp());
+    echo "    getPriority:", PHP_EOL, "        ";
     var_dump($msg->getPriority());
+    echo "    getExpiration:", PHP_EOL, "        ";
     var_dump($msg->getExpiration());
+    echo "    getUserId:", PHP_EOL, "        ";
     var_dump($msg->getUserId());
+    echo "    getAppId:", PHP_EOL, "        ";
     var_dump($msg->getAppId());
+    echo "    getMessageId:", PHP_EOL, "        ";
     var_dump($msg->getMessageId());
+    echo "    getReplyTo:", PHP_EOL, "        ";
     var_dump($msg->getReplyTo());
+    echo "    getCorrelationId:", PHP_EOL, "        ";
     var_dump($msg->getCorrelationId());
+    echo "    getHeaders:", PHP_EOL, "        ";
     var_dump($msg->getHeaders());
 }
 
@@ -91,22 +114,40 @@ $q->delete();
 true
 Message attributes are the same
 AMQPEnvelope
-string(7) "message"
-string(1) "1"
-string(11) "routing.key"
-int(1)
-int(1)
-string(%d) "exchange-%f"
-bool(false)
-string(1) "2"
-string(1) "7"
-int(123)
-int(2)
-string(9) "100000000"
-string(0) ""
-string(1) "5"
-string(1) "3"
-string(1) "8"
-string(1) "9"
-array(0) {
+    getBody:
+        string(7) "message"
+    getContentType:
+        string(1) "1"
+    getRoutingKey:
+        string(11) "routing.key"
+    getDeliveryTag:
+        int(1)
+    getDeliveryMode:
+        int(1)
+    getExchangeName:
+        string(%d) "exchange-%f"
+    isRedelivery:
+        bool(false)
+    getContentEncoding:
+        string(1) "2"
+    getType:
+        string(1) "7"
+    getTimeStamp:
+        int(123)
+    getPriority:
+        int(2)
+    getExpiration:
+        string(9) "100000000"
+    getUserId:
+        string(0) ""
+    getAppId:
+        string(1) "5"
+    getMessageId:
+        string(1) "3"
+    getReplyTo:
+        string(1) "8"
+    getCorrelationId:
+        string(1) "9"
+    getHeaders:
+        array(0) {
 }

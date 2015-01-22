@@ -118,7 +118,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 
 	if (connection && connection->connection_resource) {
 		ZVAL_RESOURCE(value, connection->connection_resource->resource_id);
-        zend_list_addref(connection->connection_resource->resource_id);
+		zend_list_addref(connection->connection_resource->resource_id);
 	} else {
 		ZVAL_NULL(value);
 	}
@@ -242,7 +242,7 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	if (persistent) {
 		zend_rsrc_list_entry *le;
 		/* Look for an established resource */
-    	key_len = spprintf(&key, 0, "amqp_conn_res_%s_%d_%s_%s_%s", connection->host, connection->port, connection->vhost, connection->login, connection->password);
+		key_len = spprintf(&key, 0, "amqp_conn_res_%s_%d_%s_%s_%s", connection->host, connection->port, connection->vhost, connection->login, connection->password);
 
 		if (zend_hash_find(&EG(persistent_list), key, key_len + 1, (void **)&le) == SUCCESS) {
 			efree(key);

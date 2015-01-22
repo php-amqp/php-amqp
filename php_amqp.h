@@ -189,7 +189,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define DEFAULT_TIMEOUT						""
 #define DEFAULT_READ_TIMEOUT				"0"
 #define DEFAULT_WRITE_TIMEOUT				"0"
-#define DEFAULT_CONNECT_TIMEOUT			"0"
+#define DEFAULT_CONNECT_TIMEOUT				"0"
 #define DEFAULT_VHOST						"/"
 #define DEFAULT_LOGIN						"guest"
 #define DEFAULT_PASSWORD					"guest"
@@ -292,9 +292,14 @@ extern zend_class_entry *amqp_exception_class_entry,
 		AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
 	} \
 
+#define PHP_AMQP_ERROR_MESSAGE_PTR  &php_amqp_internal_error_message
+#define PHP_AMQP_ERROR_MESSAGE       php_amqp_internal_error_message
+
 #define PHP_AMQP_INIT_ERROR_MESSAGE()\
-	char __internal_message[256]; \
-	char ** message = (char **) &__internal_message; \
+	char *PHP_AMQP_ERROR_MESSAGE = NULL;
+
+#define PHP_AMQP_DESTROY_ERROR_MESSAGE()\
+	if (PHP_AMQP_ERROR_MESSAGE != NULL) { efree(PHP_AMQP_ERROR_MESSAGE); }
 
 #if ZEND_MODULE_API_NO >= 20100000
 	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
@@ -322,7 +327,7 @@ typedef struct _amqp_connection_resource {
 	zend_bool is_connected;
 	int resource_id;
 	amqp_channel_t used_slots;
-    amqp_channel_object **slots;
+	amqp_channel_object **slots;
 	char *resource_key;
 	int resource_key_len;
 	amqp_connection_state_t connection_state;
@@ -334,13 +339,9 @@ typedef struct _amqp_connection_object {
 	char is_connected;
 	char is_persistent;
 	char *login;
-	int login_len;
 	char *password;
-	int password_len;
 	char *host;
-	int host_len;
 	char *vhost;
-	int vhost_len;
 	int port;
 	double read_timeout;
 	double write_timeout;

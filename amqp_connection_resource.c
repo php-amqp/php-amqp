@@ -221,8 +221,8 @@ amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connec
 
 	/* Check if there are any open slots */
 	if (resource->used_slots >= PHP_AMQP_MAX_CHANNELS + 1) {
-    	return 0;
-    }
+		return 0;
+	}
 
 	amqp_channel_t slot;
 
@@ -274,11 +274,11 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	struct timeval *tv_ptr = &tv;
 
 	char *std_datetime;
-    amqp_table_entry_t client_properties_entries[5];
-    amqp_table_t       client_properties_table;
+	amqp_table_entry_t client_properties_entries[5];
+	amqp_table_t       client_properties_table;
 
-    amqp_table_entry_t custom_properties_entries[1];
-    amqp_table_t       custom_properties_table;
+	amqp_table_entry_t custom_properties_entries[1];
+	amqp_table_t       custom_properties_table;
 
 	amqp_connection_resource *resource;
 
@@ -350,8 +350,8 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	client_properties_entries[4].value.kind        = AMQP_FIELD_KIND_UTF8;
 	client_properties_entries[4].value.value.bytes = amqp_cstring_bytes(std_datetime);
 
-    client_properties_table.entries = client_properties_entries;
-    client_properties_table.num_entries = sizeof(client_properties_entries) / sizeof(amqp_table_entry_t);
+	client_properties_table.entries = client_properties_entries;
+	client_properties_table.num_entries = sizeof(client_properties_entries) / sizeof(amqp_table_entry_t);
 
 	custom_properties_entries[0].key               = amqp_cstring_bytes("client");
 	custom_properties_entries[0].value.kind        = AMQP_FIELD_KIND_TABLE;
@@ -377,12 +377,16 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	efree(std_datetime);
 
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
-		PHP_AMQP_INIT_ERROR_MESSAGE();
+		char *message, *long_message;
 
-		php_amqp_connection_resource_error(res, message, resource, 0 TSRMLS_CC);
+		php_amqp_connection_resource_error(res, &message, resource, 0 TSRMLS_CC);
 
-		strcat(*message, " - Potential login failure.");
-		zend_throw_exception(amqp_connection_exception_class_entry, *message, 0 TSRMLS_CC);
+		spprintf(&long_message, 0, "%s - Potential login failure.", message);
+		zend_throw_exception(amqp_connection_exception_class_entry, long_message, 0 TSRMLS_CC);
+
+		efree(message);
+		efree(long_message);
+
 		/* https://www.rabbitmq.com/resources/specs/amqp0-9-1.pdf
 		 *
 		 * 2.2.4 The Connection Class:
