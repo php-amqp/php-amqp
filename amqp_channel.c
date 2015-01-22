@@ -136,18 +136,15 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 void amqp_channel_dtor(void *object TSRMLS_DC)
 {
 	amqp_channel_object *channel = (amqp_channel_object*)object;
-	amqp_connection_object *connection;
-
-	connection = AMQP_GET_CONNECTION(channel);
 
 	if (channel->is_connected) {
 		php_amqp_close_channel(channel TSRMLS_CC);
 	}
 
-	assert(connection != NULL);
-
-	/* Destroy the connection storage */
-	zval_ptr_dtor(&channel->connection);
+	if (channel->connection != NULL) {
+		/* Destroy the connection storage */
+		zval_ptr_dtor(&channel->connection);
+	}
 
 	zend_object_std_dtor(&channel->zo TSRMLS_CC);
 
@@ -241,7 +238,8 @@ PHP_METHOD(amqp_channel_class, __construct)
 		return;
 	}
 
-	assert (r->channel_id == channel->channel_id);
+	/* r->channel_id is a 16-bit channel number insibe amqp_bytes_t, assertion below will without converting to uint16_t*/
+	/* assert (r->channel_id == channel->channel_id);*/
 	php_amqp_maybe_release_buffers_on_channel(connection, channel);
 
 	channel->is_connected = '\1';

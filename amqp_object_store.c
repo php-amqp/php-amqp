@@ -8,6 +8,10 @@
 
 void *amqp_object_store_get_valid_object(const zval *zobject TSRMLS_DC)
 {
+	if(zobject == NULL) {
+		return NULL;
+	}
+
 	zend_object_handle handle;
 	zend_object_store_bucket bucket;
 

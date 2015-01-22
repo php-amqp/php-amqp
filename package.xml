@@ -34,7 +34,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <notes>
 X.Y.Z Release:
     * Add support for nested arguments values (Bogdan Padalko)
-    * Add auto_delete and internal flags support for AMQPExchange::declare (requires rabbitmq (Bogdan Padalko)
+    * Add auto_delete and internal flags support for AMQPExchange::declare (librabbitmq version > 0.5.2 required) (Bogdan Padalko)
     * Fix persistence support (Bogdan Padalko)
     * Add AMQPExchange::unbind method and fix AMQPExchange::bind method. WARNING: this can potentially break BC
     * Add support to consume messages from multiple queues (Bogdan Padalko)
