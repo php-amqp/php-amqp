@@ -20,12 +20,14 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>pdezwart@php.net</email>
   <active>no</active>
  </lead>
+ <!-- no PECL account
  <developer>
   <name>Bogdan Padalko</name>
   <user>pinepain</user>
   <email>pinepain@gmail.com</email>
-  <active>yes</active> <!-- yes, very -->
+  <active>yes</active> <!- - yes, very - ->
  </developer>
+ -->
  <date>2015-01-25</date>
  <time>02:00:00</time>
  <version>
