@@ -20,10 +20,16 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>pdezwart@php.net</email>
   <active>no</active>
  </lead>
- <date>2014-04-14</date>
+ <developer>
+  <name>Bogdan Padalko</name>
+  <user>pinepain</user>
+  <email>pinepain@gmail.com</email>
+  <active>yes</active> <!-- yes, very -->
+ </developer>
+ <date>2015-01-25</date>
  <time>02:00:00</time>
  <version>
-  <release>1.4.0</release>
+  <release>1.6.0beta1</release>
   <api>1.0.0</api>
  </version>
  <stability>
@@ -32,7 +38,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-X.Y.Z Release:
+1.6.0beta1 Release:
     * Add support for nested arguments values (Bogdan Padalko)
     * Add auto_delete and internal flags support for AMQPExchange::declare (librabbitmq version > 0.5.2 required) (Bogdan Padalko)
     * Fix persistence support (Bogdan Padalko)
@@ -40,6 +46,9 @@ X.Y.Z Release:
     * Add support to consume messages from multiple queues (Bogdan Padalko)
     * Add AMQP_DURABLE flag support to AMQPExchange::setFlags (librabbitmq version > 0.5.2 required) (Bogdan Padalko)
     * Fix inconsistent INI values comparison which leads to deprecation warnings (Bogdan Padalko)
+    * Various segfault and memory leak fixes (Bogdan Padalko)
+    For a complete list of changes see:
+    https://github.com/pdezwart/php-amqp/compare/v1.4.0...v1.6.0beta1
 
 1.4.0 Release:
     * Fix #72: Publishing to an exchange with an empty name is valid and should not throw an exception (lstrojny)
@@ -182,93 +191,132 @@ Fixed bugs:
  <contents>
   <dir name="/">
    <file name="amqp.c" role="src" />
-   <file name="amqp_connection.c" role="src" />
    <file name="amqp_channel.c" role="src" />
-   <file name="amqp_exchange.c" role="src" />
-   <file name="amqp_queue.c" role="src" />
+   <file name="amqp_connection.c" role="src" />
+   <file name="amqp_connection_resource.c" role="src" />
    <file name="amqp_envelope.c" role="src" />
+   <file name="amqp_exchange.c" role="src" />
    <file name="amqp_object_store.c" role="src" />
+   <file name="amqp_queue.c" role="src" />
    <file name="config.m4" role="src" />
    <file name="config.w32" role="src" />
    <file name="CREDITS" role="doc" />
    <file name="LICENSE" role="doc" />
-   <file name="php_amqp.h" role="src" />
-   <file name="amqp_connection.h" role="src" />
    <file name="amqp_channel.h" role="src" />
-   <file name="amqp_exchange.h" role="src" />
-   <file name="amqp_queue.h" role="src" />
+   <file name="amqp_connection.h" role="src" />
+   <file name="amqp_connection_resource.h" role="src" />
    <file name="amqp_envelope.h" role="src" />
+   <file name="amqp_exchange.h" role="src" />
    <file name="amqp_object_store.h" role="src" />
-   <file name="tests/amqpexchange_invalid_type.phpt" role="test"/>
-   <file name="tests/bug_19707.phpt" role="test"/>
-   <file name="tests/amqpenvelope_get_accessors.phpt" role="test"/>
-   <file name="tests/amqpqueue_get_empty_body.phpt" role="test"/>
-   <file name="tests/amqpqueue_get_basic.phpt" role="test"/>
-   <file name="tests/amqpconnection_setTimeout_out_of_range.phpt" role="test"/>
-   <file name="tests/bug_gh53.phpt" role="test"/>
-   <file name="tests/amqpqueue_construct_basic.phpt" role="test"/>
-   <file name="tests/amqpqueue_var_dump.phpt" role="test"/>
-   <file name="tests/amqpenvelope_var_dump.phpt" role="test"/>
-   <file name="tests/amqpconnection_construct_basic.phpt" role="test"/>
+   <file name="amqp_queue.h" role="src" />
+   <file name="php_amqp.h" role="src" />
    <file name="tests/amqpchannel_construct_basic.phpt" role="test"/>
-   <file name="tests/amqpqueue_nack.phpt" role="test"/>
-   <file name="tests/amqpconnection_setTimeout_deprecated.phpt" role="test"/>
-   <file name="tests/amqpconnection_setTimeout_int.phpt" role="test"/>
-   <file name="tests/amqpconnection_setPort_out_of_range.phpt" role="test"/>
-   <file name="tests/amqpqueue_consume_timeout.phpt" role="test"/>
-   <file name="tests/amqpqueue_purge_basic.phpt" role="test"/>
-   <file name="tests/amqpconnection_construct_with_timeout.phpt" role="test"/>
-   <file name="tests/bug_gh50-2.phpt" role="test"/>
-   <file name="tests/bug_gh53-2.phpt" role="test"/>
-   <file name="tests/amqpconnection_setWriteTimeout_out_of_range.phpt" role="test"/>
-   <file name="tests/amqpconnection_setTimeout_float.phpt" role="test"/>
-   <file name="tests/amqpqueue_get_headers.phpt" role="test"/>
-   <file name="tests/amqpconnection_setReadTimeout_int.phpt" role="test"/>
-   <file name="tests/amqpqueue_declare_basic.phpt" role="test"/>
-   <file name="tests/amqpconnection_setPort_string.phpt" role="test"/>
-   <file name="tests/amqpconnection_construct_with_write_timeout.phpt" role="test"/>
-   <file name="tests/amqpconnection_setWriteTimeout_string.phpt" role="test"/>
-   <file name="tests/amqpqueue_empty_name.phpt" role="test"/>
-   <file name="tests/amqpexchange_var_dump.phpt" role="test"/>
+   <file name="tests/amqpchannel_get_connection.phpt" role="test"/>
    <file name="tests/amqpchannel_multi_channel_connection.phpt" role="test"/>
-   <file name="tests/bug_61533.phpt" role="test"/>
-   <file name="tests/amqpconnection_setWriteTimeout_int.phpt" role="test"/>
-   <file name="tests/bug_gh50-4.phpt" role="test"/>
-   <file name="tests/amqpconnection_construct_ini_timeout.phpt" role="test"/>
-   <file name="tests/amqpconnection_setReadTimeout_string.phpt" role="test"/>
-   <file name="tests/amqpconnection_persistent.phpt" role="test"/>
-   <file name="tests/amqpconnection_toomanychannels.phpt" role="test"/>
-   <file name="tests/package-version.phpt" role="test"/>
-   <file name="tests/amqpexchange_declare_basic.phpt" role="test"/>
-   <file name="tests/bug_17831.phpt" role="test"/>
-   <file name="tests/amqpconnection_construct_ini_timeout_and_read_timeout.phpt" role="test"/>
-   <file name="tests/amqpqueue_unbind_basic_empty_routing_key.phpt" role="test"/>
-   <file name="tests/amqpexchange_construct_basic.phpt" role="test"/>
-   <file name="tests/amqpconnection_setTimeout_string.phpt" role="test"/>
-   <file name="tests/amqpexchange_channel_refcount.phpt" role="test"/>
-   <file name="tests/amqpconnection_construct_ini_read_timeout.phpt" role="test"/>
-   <file name="tests/amqpexchange_set_flag.phpt" role="test"/>
-   <file name="tests/amqpconnection_var_dump.phpt" role="test"/>
-   <file name="tests/amqpconnection_setPort_int.phpt" role="test"/>
-   <file name="tests/amqpconnection_construct_with_timeout_and_read_timeout.phpt" role="test"/>
-   <file name="tests/amqpexchange_publish_basic.phpt" role="test"/>
-   <file name="tests/amqpqueue_nested_headers.phpt" role="test"/>
-   <file name="tests/amqpqueue_consume_basic.phpt" role="test"/>
-   <file name="tests/amqpqueue_bind_basic.phpt" role="test"/>
-   <file name="tests/bug_62354.phpt" role="test"/>
-   <file name="tests/bug_19840.phpt" role="test"/>
-   <file name="tests/bug_gh50-1.phpt" role="test"/>
-   <file name="tests/amqpconnection_setWriteTimeout_float.phpt" role="test"/>
-   <file name="tests/amqpconnection_setReadTimeout_float.phpt" role="test"/>
-   <file name="tests/bug_gh50-3.phpt" role="test"/>
-   <file name="tests/amqpexchange_publish_empty_routing_key.phpt" role="test"/>
-   <file name="tests/amqpqueue_cancel.phpt" role="test"/>
-   <file name="tests/amqpqueue_nested_arrays.phpt" role="test"/>
-   <file name="tests/amqpconnection_setReadTimeout_out_of_range.phpt" role="test"/>
-   <file name="tests/amqpqueue_bind_basic_empty_routing_key.phpt" role="test"/>
+   <file name="tests/amqpchannel_slots_usage.phpt" role="test"/>
    <file name="tests/amqpchannel_var_dump.phpt" role="test"/>
+   <file name="tests/amqpconnection_connect_login_failure.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_basic.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_ini_read_timeout.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_ini_timeout.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_ini_timeout_and_read_timeout.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_ini_timeout_default.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_with_connect_timeout.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_with_timeout.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_with_timeout_and_read_timeout.phpt" role="test"/>
+   <file name="tests/amqpconnection_construct_with_write_timeout.phpt" role="test"/>
+   <file name="tests/amqpconnection_persistent_construct_basic.phpt" role="test"/>
+   <file name="tests/amqpconnection_persistent_in_use.phpt" role="test"/>
+   <file name="tests/amqpconnection_persistent_reusable.phpt" role="test"/>
+   <file name="tests/amqpconnection_persistent_var_dump.phpt" role="test"/>
+   <file name="tests/amqpconnection_setHost.phpt" role="test"/>
+   <file name="tests/amqpconnection_setLogin.phpt" role="test"/>
+   <file name="tests/amqpconnection_setPassword.phpt" role="test"/>
+   <file name="tests/amqpconnection_setPort_int.phpt" role="test"/>
+   <file name="tests/amqpconnection_setPort_out_of_range.phpt" role="test"/>
+   <file name="tests/amqpconnection_setPort_string.phpt" role="test"/>
+   <file name="tests/amqpconnection_setReadTimeout_float.phpt" role="test"/>
+   <file name="tests/amqpconnection_setReadTimeout_int.phpt" role="test"/>
+   <file name="tests/amqpconnection_setReadTimeout_out_of_range.phpt" role="test"/>
+   <file name="tests/amqpconnection_setReadTimeout_string.phpt" role="test"/>
+   <file name="tests/amqpconnection_setTimeout_deprecated.phpt" role="test"/>
+   <file name="tests/amqpconnection_setTimeout_float.phpt" role="test"/>
+   <file name="tests/amqpconnection_setTimeout_int.phpt" role="test"/>
+   <file name="tests/amqpconnection_setTimeout_out_of_range.phpt" role="test"/>
+   <file name="tests/amqpconnection_setTimeout_string.phpt" role="test"/>
+   <file name="tests/amqpconnection_setVhost.phpt" role="test"/>
+   <file name="tests/amqpconnection_setWriteTimeout_float.phpt" role="test"/>
+   <file name="tests/amqpconnection_setWriteTimeout_int.phpt" role="test"/>
+   <file name="tests/amqpconnection_setWriteTimeout_out_of_range.phpt" role="test"/>
+   <file name="tests/amqpconnection_setWriteTimeout_string.phpt" role="test"/>
+   <file name="tests/amqpconnection_toomanychannels.phpt" role="test"/>
+   <file name="tests/amqpconnection_var_dump.phpt" role="test"/>
+   <file name="tests/amqpenvelope_get_accessors.phpt" role="test"/>
+   <file name="tests/amqpenvelope_var_dump.phpt" role="test"/>
+   <file name="tests/amqpexchange_bind.phpt" role="test"/>
+   <file name="tests/amqpexchange_bind_with_arguments.phpt" role="test"/>
+   <file name="tests/amqpexchange_bind_without_key.phpt" role="test"/>
+   <file name="tests/amqpexchange_bind_without_key_with_arguments.phpt" role="test"/>
+   <file name="tests/amqpexchange_channel_refcount.phpt" role="test"/>
+   <file name="tests/amqpexchange_construct_basic.phpt" role="test"/>
+   <file name="tests/amqpexchange_declare_basic.phpt" role="test"/>
+   <file name="tests/amqpexchange_declare_existent.phpt" role="test"/>
+   <file name="tests/amqpexchange_get_channel.phpt" role="test"/>
+   <file name="tests/amqpexchange_get_connection.phpt" role="test"/>
+   <file name="tests/amqpexchange_invalid_type.phpt" role="test"/>
+   <file name="tests/amqpexchange_publish_basic.phpt" role="test"/>
+   <file name="tests/amqpexchange_publish_empty_routing_key.phpt" role="test"/>
+   <file name="tests/amqpexchange_publish_with_properties.phpt" role="test"/>
+   <file name="tests/amqpexchange_publish_with_properties_ignore_num_header.phpt" role="test"/>
+   <file name="tests/amqpexchange_publish_with_properties_ignore_unsupported_header_values.phpt" role="test"/>
+   <file name="tests/amqpexchange_publish_with_properties_nested_header.phpt" role="test"/>
+   <file name="tests/amqpexchange_publish_with_properties_user_id_failure.phpt" role="test"/>
+   <file name="tests/amqpexchange_set_flag.phpt" role="test"/>
+   <file name="tests/amqpexchange_set_flags.phpt" role="test"/>
+   <file name="tests/amqpexchange_unbind.phpt" role="test"/>
+   <file name="tests/amqpexchange_unbind_with_arguments.phpt" role="test"/>
+   <file name="tests/amqpexchange_unbind_without_key.phpt" role="test"/>
+   <file name="tests/amqpexchange_unbind_without_key_with_arguments.phpt" role="test"/>
+   <file name="tests/amqpexchange_var_dump.phpt" role="test"/>
+   <file name="tests/amqpqueue_bind_basic.phpt" role="test"/>
+   <file name="tests/amqpqueue_bind_basic_empty_routing_key.phpt" role="test"/>
    <file name="tests/amqpqueue_bind_basic_headers_arguments.phpt" role="test"/>
+   <file name="tests/amqpqueue_cancel.phpt" role="test"/>
+   <file name="tests/amqpqueue_construct_basic.phpt" role="test"/>
+   <file name="tests/amqpqueue_consume_basic.phpt" role="test"/>
+   <file name="tests/amqpqueue_consume_multiple.phpt" role="test"/>
+   <file name="tests/amqpqueue_consume_nonexistent.phpt" role="test"/>
+   <file name="tests/amqpqueue_consume_timeout.phpt" role="test"/>
+   <file name="tests/amqpqueue_declare_basic.phpt" role="test"/>
+   <file name="tests/amqpqueue_delete_basic.phpt" role="test"/>
+   <file name="tests/amqpqueue_empty_name.phpt" role="test"/>
+   <file name="tests/amqpqueue_get_basic.phpt" role="test"/>
+   <file name="tests/amqpqueue_get_channel.phpt" role="test"/>
+   <file name="tests/amqpqueue_get_connection.phpt" role="test"/>
+   <file name="tests/amqpqueue_get_empty_body.phpt" role="test"/>
+   <file name="tests/amqpqueue_get_headers.phpt" role="test"/>
+   <file name="tests/amqpqueue_get_nonexistent.phpt" role="test"/>
+   <file name="tests/amqpqueue_nack.phpt" role="test"/>
+   <file name="tests/amqpqueue_nested_arrays.phpt" role="test"/>
+   <file name="tests/amqpqueue_nested_headers.phpt" role="test"/>
+   <file name="tests/amqpqueue_purge_basic.phpt" role="test"/>
+   <file name="tests/amqpqueue_unbind_basic_empty_routing_key.phpt" role="test"/>
    <file name="tests/amqpqueue_unbind_basic_headers_arguments.phpt" role="test"/>
+   <file name="tests/amqpqueue_var_dump.phpt" role="test"/>
+   <file name="tests/bug_17831.phpt" role="test"/>
+   <file name="tests/bug_19707.phpt" role="test"/>
+   <file name="tests/bug_19840.phpt" role="test"/>
+   <file name="tests/bug_61533.phpt" role="test"/>
+   <file name="tests/bug_62354.phpt" role="test"/>
+   <file name="tests/bug_gh50-1.phpt" role="test"/>
+   <file name="tests/bug_gh50-2.phpt" role="test"/>
+   <file name="tests/bug_gh50-3.phpt" role="test"/>
+   <file name="tests/bug_gh50-4.phpt" role="test"/>
+   <file name="tests/bug_gh53-2.phpt" role="test"/>
+   <file name="tests/bug_gh53.phpt" role="test"/>
+   <file name="tests/bug_gh72-1.phpt" role="test"/>
+   <file name="tests/bug_gh72-2.phpt" role="test"/>
+   <file name="tests/package-version.phpt" role="test"/>
   </dir> <!-- / -->
  </contents>
  <dependencies>
