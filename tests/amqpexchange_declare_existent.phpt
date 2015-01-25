@@ -23,6 +23,7 @@ try {
     $ex->setName($exchangge_name);
     $ex->setType(AMQP_EX_TYPE_TOPIC);
     $ex->declareExchange();
+    echo 'exchange ', $ex->getName(), ' declared', PHP_EOL;
 } catch (AMQPException $e) {
     echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
 }

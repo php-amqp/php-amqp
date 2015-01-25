@@ -17,7 +17,7 @@ $ex->declareExchange();
 $attrs = array(
     'headers' => array(
         'null'     => null,
-        'object'   => new DateTime(),
+        'object'   => new stdClass(),
         'resource' => fopen(__FILE__, 'r'),
     ),
 );

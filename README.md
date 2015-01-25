@@ -68,7 +68,7 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
 
  Additional tools are pre-installed to make development process as simple as possible:
 
- - valgrind is ready to help find memory-related problems if you `export TEST_PHP_ARGS=m` before running tests
+ - valgrind is ready to help find memory-related problems if you `export TEST_PHP_ARGS=-m` before running tests
  - [phpbrew](https://github.com/phpbrew/phpbrew) waits to help you test extension on various PHP versions.
    `phpbrew install 5.6 +debug+default+fpm` is a nice start. To switch to some version just use `phpbrew switch <version>`.
 
