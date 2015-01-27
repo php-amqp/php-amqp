@@ -424,7 +424,7 @@ typedef struct _amqp_envelope_object {
 #endif
 
 #ifndef PHP_AMQP_VERSION
-#define PHP_AMQP_VERSION "1.6.0beta1"
+#define PHP_AMQP_VERSION "1.6.0beta2"
 #endif
 
 #ifndef PHP_AMQP_REVISION

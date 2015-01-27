@@ -28,18 +28,22 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active> <!- - yes, very - ->
  </developer>
  -->
- <date>2015-01-25</date>
+ <date>2015-01-27</date>
  <time>02:00:00</time>
  <version>
-  <release>1.6.0beta1</release>
+  <release>1.6.0beta2</release>
   <api>1.0.0</api>
  </version>
  <stability>
-  <release>stable</release>
+  <release>beta</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+1.6.0beta2 Release:
+    * Pulled 1.6.0beta1, as it had the stable tag
+    https://github.com/pdezwart/php-amqp/compare/v1.6.0beta1...v1.6.0beta2
+
 1.6.0beta1 Release:
     * Add support for nested arguments values (Bogdan Padalko)
     * Add auto_delete and internal flags support for AMQPExchange::declare (librabbitmq version > 0.5.2 required) (Bogdan Padalko)
