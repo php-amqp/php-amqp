@@ -311,9 +311,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 		} while (0);
 #endif
 
-extern int le_amqp_connection_resource;
-extern int le_amqp_connection_resource_persistent;
-
 typedef struct _amqp_channel_object {
 	zend_object zo;
 	zval *connection;
@@ -432,7 +429,7 @@ typedef struct _amqp_envelope_object {
 #endif
 
 void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_object *connection, amqp_channel_object *channel TSRMLS_DC);
-void amqp_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, long code TSRMLS_DC);
+void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, long code TSRMLS_DC);
 
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connection, amqp_channel_object *channel);
 

@@ -28,8 +28,8 @@
 #define PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED    -2
 #define PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED -3
 
-int le_amqp_connection_resource;
-int le_amqp_connection_resource_persistent;
+extern int le_amqp_connection_resource;
+extern int le_amqp_connection_resource_persistent;
 
 /* Figure out what's going on connection and handle protocol exceptions, if any */
 int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id TSRMLS_DC);
