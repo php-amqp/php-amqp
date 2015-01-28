@@ -40,19 +40,28 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+1.6.0beta3 Release:
+     * Fix building on OS X (Bogdan Padalko)
+
+     For a complete list of changes see:
+     https://github.com/pdezwart/php-amqp/compare/v1.6.0beta2...v1.6.0beta3
+
 1.6.0beta2 Release:
     * Pulled 1.6.0beta1, as it had the stable tag
-    https://github.com/pdezwart/php-amqp/compare/v1.6.0beta1...v1.6.0beta2
+
+     For a complete list of changes see:
+     https://github.com/pdezwart/php-amqp/compare/v1.6.0beta1...v1.6.0beta2
 
 1.6.0beta1 Release:
     * Add support for nested arguments values (Bogdan Padalko)
     * Add auto_delete and internal flags support for AMQPExchange::declare (librabbitmq version > 0.5.2 required) (Bogdan Padalko)
     * Fix persistence support (Bogdan Padalko)
-    * Add AMQPExchange::unbind method and fix AMQPExchange::bind method. WARNING: this can potentially break BC
+    * Add AMQPExchange::unbind method and fix AMQPExchange::bind method. WARNING: this can potentially break BC (Bogdan Padalko)
     * Add support to consume messages from multiple queues (Bogdan Padalko)
     * Add AMQP_DURABLE flag support to AMQPExchange::setFlags (librabbitmq version > 0.5.2 required) (Bogdan Padalko)
     * Fix inconsistent INI values comparison which leads to deprecation warnings (Bogdan Padalko)
     * Various segfault and memory leak fixes (Bogdan Padalko)
+
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.4.0...v1.6.0beta1
 

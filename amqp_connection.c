@@ -50,6 +50,7 @@
 #endif
 
 #include "php_amqp.h"
+#include "amqp_channel.h"
 #include "amqp_connection_resource.h"
 
 #ifndef E_DEPRECATED

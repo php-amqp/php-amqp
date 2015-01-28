@@ -57,6 +57,9 @@
 #define E_DEPRECATED E_WARNING
 #endif
 
+int le_amqp_connection_resource;
+int le_amqp_connection_resource_persistent;
+
 static void connection_resource_destructor(amqp_connection_resource *resource, int persistent TSRMLS_DC);
 
 
