@@ -40,6 +40,9 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+X.Y.Z Release:
+     * Add basic.recover AMQP method support (see AMQPChannel::basicRecover() method) (Bogdan Padalko)
+
 1.6.0beta3 Release:
      * Fix building on OS X (Bogdan Padalko)
 
