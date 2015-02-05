@@ -98,10 +98,12 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 	/* Pull out and verify the connection */
 	connection = AMQP_GET_CONNECTION(channel);
 
-	assert(connection != NULL);
-
-	/* First, remove it from active channels table to prevent recursion in case of connection error */
-	php_amqp_connection_resource_unregister_channel(connection->connection_resource, channel->channel_id);
+	if (connection != NULL) {
+        /* First, remove it from active channels table to prevent recursion in case of connection error */
+        php_amqp_connection_resource_unregister_channel(connection->connection_resource, channel->channel_id);
+	} else {
+	    channel->is_connected = '\0';
+	}
 
 	if (!channel->is_connected) {
 		/* Nothing to do more - channel was previously marked as closed, possibly, due to channel-level error */
