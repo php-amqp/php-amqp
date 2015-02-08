@@ -10,7 +10,8 @@ services:
   - rabbitmq
 
 install:
-  - sudo apt-get -qq install valgrind
+  - sudo apt-get update
+  - sudo apt-get -qq --fix-missing install valgrind
 
 env:
   global:

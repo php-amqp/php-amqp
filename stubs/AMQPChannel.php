@@ -170,4 +170,13 @@ class AMQPChannel
     public function getConnection()
     {
     }
+
+    /**
+     * Redeliver unacknowledged messages.
+     *
+     * @param bool $requeue
+     */
+    public function basicRecover($requeue = true)
+    {
+    }
 }

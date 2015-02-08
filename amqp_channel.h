@@ -42,6 +42,8 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction);
 
 PHP_METHOD(amqp_channel_class, getConnection);
 
+PHP_METHOD(amqp_channel_class, basicRecover);
+
 /*
 *Local variables:
 *tab-width: 4

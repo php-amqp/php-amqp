@@ -681,6 +681,56 @@ PHP_METHOD(amqp_channel_class, getConnection)
 }
 /* }}} */
 
+/* {{{ proto bool amqp::basicRecover([bool requeue=TRUE])
+Redeliver unacknowledged messages */
+PHP_METHOD(amqp_channel_class, basicRecover)
+{
+	zval *id;
+	amqp_channel_object *channel;
+	amqp_connection_object *connection;
+
+	amqp_rpc_reply_t res;
+
+	zend_bool requeue = 1;
+
+	/* Get the vhost from the method params */
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|b", &id, amqp_channel_class_entry, &requeue) == FAILURE) {
+		return;
+	}
+
+	/* Get the channel object out of the store */
+	channel = (amqp_channel_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	connection = AMQP_GET_CONNECTION(channel);
+	AMQP_VERIFY_CONNECTION(connection, "Could not redeliver unacknowledged messages.");
+
+	amqp_basic_recover(
+		connection->connection_resource->connection_state,
+		channel->channel_id,
+		(amqp_boolean_t) requeue
+	);
+
+	res = amqp_get_rpc_reply(connection->connection_resource->connection_state);
+
+	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
+		PHP_AMQP_INIT_ERROR_MESSAGE();
+
+		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+
+		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
+		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+
+		PHP_AMQP_DESTROY_ERROR_MESSAGE();
+		return;
+	}
+
+	php_amqp_maybe_release_buffers_on_channel(connection, channel);
+
+	RETURN_TRUE;
+
+}
+/* }}} */
+
 /*
 *Local variables:
 *tab-width: 4
