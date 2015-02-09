@@ -29,5 +29,5 @@ echo ($cnn->isConnected() ? 'connected' : 'disconnected'), PHP_EOL;
 ?>
 --EXPECTF--
 disconnected
-AMQPConnectionException: Library error: %s - Potential login failure.
+AMQPConnectionException: %s error: %s - Potential login failure.
 disconnected

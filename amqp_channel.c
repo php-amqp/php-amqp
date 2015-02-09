@@ -239,6 +239,9 @@ PHP_METHOD(amqp_channel_class, __construct)
 		php_amqp_maybe_release_buffers_on_channel(connection, channel);
 
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
+
+		php_amqp_connection_resource_unregister_channel(connection->connection_resource, channel->channel_id);
+		channel->channel_id = 0;
 		return;
 	}
 

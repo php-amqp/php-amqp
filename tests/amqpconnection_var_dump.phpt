@@ -22,7 +22,7 @@ $cnn->disconnect();
 var_dump($cnn);
 ?>
 --EXPECT--
-object(AMQPConnection)#1 (13) {
+object(AMQPConnection)#1 (15) {
   ["login"]=>
   string(5) "guest"
   ["password"]=>
@@ -49,8 +49,12 @@ object(AMQPConnection)#1 (13) {
   NULL
   ["max_channel_id"]=>
   NULL
+  ["max_frame_size"]=>
+  NULL
+  ["heartbeat_interval"]=>
+  NULL
 }
-object(AMQPConnection)#1 (13) {
+object(AMQPConnection)#1 (15) {
   ["login"]=>
   string(5) "guest"
   ["password"]=>
@@ -77,8 +81,12 @@ object(AMQPConnection)#1 (13) {
   int(0)
   ["max_channel_id"]=>
   int(256)
+  ["max_frame_size"]=>
+  int(131072)
+  ["heartbeat_interval"]=>
+  int(0)
 }
-object(AMQPConnection)#1 (13) {
+object(AMQPConnection)#1 (15) {
   ["login"]=>
   string(5) "guest"
   ["password"]=>
@@ -105,8 +113,12 @@ object(AMQPConnection)#1 (13) {
   int(1)
   ["max_channel_id"]=>
   int(256)
+  ["max_frame_size"]=>
+  int(131072)
+  ["heartbeat_interval"]=>
+  int(0)
 }
-object(AMQPConnection)#1 (13) {
+object(AMQPConnection)#1 (15) {
   ["login"]=>
   string(5) "guest"
   ["password"]=>
@@ -132,5 +144,9 @@ object(AMQPConnection)#1 (13) {
   ["used_channels"]=>
   NULL
   ["max_channel_id"]=>
+  NULL
+  ["max_frame_size"]=>
+  NULL
+  ["heartbeat_interval"]=>
   NULL
 }

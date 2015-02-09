@@ -114,7 +114,7 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 					return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED;
 				}
 				case AMQP_CHANNEL_CLOSE_METHOD: {
-					assert(channel_id > 0 && channel_id <= PHP_AMQP_MAX_CHANNELS);
+					assert(channel_id > 0 && channel_id <= resource->max_slots);
 
 					amqp_channel_close_t *m = (amqp_channel_close_t *) reply.reply.decoded;
 
@@ -223,15 +223,15 @@ amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connec
 	assert(resource->slots != NULL);
 
 	/* Check if there are any open slots */
-	if (resource->used_slots >= PHP_AMQP_MAX_CHANNELS + 1) {
+	if (resource->used_slots >= resource->max_slots) {
 		return 0;
 	}
 
 	amqp_channel_t slot;
 
-	for (slot = 1; slot < PHP_AMQP_MAX_CHANNELS + 1; slot++) {
+	for (slot = 0; slot < resource->max_slots; slot++) {
 		if (resource->slots[slot] == 0) {
-			return slot;
+			return (amqp_channel_t) (slot + 1);
 		}
 	}
 
@@ -242,13 +242,13 @@ int php_amqp_connection_resource_register_channel(amqp_connection_resource *reso
 {
 	assert(resource != NULL);
 	assert(resource->slots != NULL);
-	assert(channel_id > 0 && channel_id <= PHP_AMQP_MAX_CHANNELS);
+	assert(channel_id > 0 && channel_id <= resource->max_slots);
 
-	if (resource->slots[channel_id] != 0) {
+	if (resource->slots[channel_id - 1] != 0) {
 		return FAILURE;
 	}
 
-	resource->slots[channel_id] = channel;
+	resource->slots[channel_id - 1] = channel;
 	resource->used_slots++;
 
 	return SUCCESS;
@@ -258,10 +258,10 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 {
 	assert(resource != NULL);
 	assert(resource->slots != NULL);
-	assert(channel_id > 0 && channel_id <= PHP_AMQP_MAX_CHANNELS);
+	assert(channel_id > 0 && channel_id <= resource->max_slots);
 
-	if (resource->slots[channel_id] != 0) {
-		resource->slots[channel_id] = 0;
+	if (resource->slots[channel_id - 1] != 0) {
+		resource->slots[channel_id - 1] = 0;
 		resource->used_slots--;
 	}
 
@@ -286,15 +286,11 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	amqp_connection_resource *resource;
 
 	/* Allocate space for the connection resource */
-	resource = (amqp_connection_resource *)pemalloc(sizeof(amqp_connection_resource), persistent);
-	memset(resource, 0, sizeof(amqp_connection_resource));
-
-	/* Allocate space for the channel slots in the ring buffer */
-	resource->slots = (amqp_channel_object **)pecalloc(PHP_AMQP_MAX_CHANNELS + 1, sizeof(amqp_channel_object*), persistent);
-	memset(resource->slots, 0, sizeof(amqp_channel_object*));
+	resource = (amqp_connection_resource *)pecalloc(1, sizeof(amqp_connection_resource), persistent);
 
 	/* Initialize all the data */
 	resource->is_connected  = 0;
+	resource->max_slots     = 0;
 	resource->used_slots    = 0;
 	resource->resource_id   = 0;
 
@@ -365,12 +361,14 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 
 	/* We can assume that connection established here but it is not true, real handshake goes during login */
 
+	assert(connection->frame_max > 0);
+
 	amqp_rpc_reply_t res = amqp_login_with_properties(
 		resource->connection_state,
 		connection->vhost,
-		PHP_AMQP_PROTOCOL_MAX_CHANNELS,
-		AMQP_DEFAULT_FRAME_SIZE,
-		PHP_AMQP_HEARTBEAT,
+		connection->channel_max,
+		connection->frame_max,
+		connection->heartbeat,
 		&custom_properties_table,
 		AMQP_SASL_METHOD_PLAIN,
 		connection->login,
@@ -403,6 +401,12 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 		connection_resource_destructor(resource, persistent TSRMLS_CC);
 		return NULL;
 	}
+
+	/* Allocate space for the channel slots in the ring buffer */
+    resource->max_slots = (amqp_channel_t) amqp_get_channel_max(resource->connection_state);
+	assert(resource->max_slots > 0);
+
+	resource->slots = (amqp_channel_object **)pecalloc(resource->max_slots + 1, sizeof(amqp_channel_object*), persistent);
 
 	resource->is_connected = '\1';
 
@@ -456,7 +460,11 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 		pefree(resource->resource_key, persistent);
 	}
 
-	pefree(resource->slots, persistent);
+	if (resource->slots) {
+		pefree(resource->slots, persistent);
+		resource->slots = NULL;
+	}
+
 	pefree(resource, persistent);
 }
 

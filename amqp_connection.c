@@ -72,7 +72,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 
 	/* Keep the first number matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
-	ZEND_INIT_SYMTABLE_EX(debug_info, 13 + 1, 0);
+	ZEND_INIT_SYMTABLE_EX(debug_info, 15 + 1, 0);
 
 	/* Start adding values */
 	MAKE_STD_ZVAL(value);
@@ -141,6 +141,22 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	}
 	zend_hash_add(debug_info, "max_channel_id", sizeof("max_channel_id"), &value, sizeof(zval *), NULL);
 
+	MAKE_STD_ZVAL(value);
+	if (connection->connection_resource) {
+		ZVAL_LONG(value, amqp_get_frame_max(connection->connection_resource->connection_state));
+	} else {
+		ZVAL_NULL(value);
+	}
+	zend_hash_add(debug_info, "max_frame_size", sizeof("max_frame_size"), &value, sizeof(zval *), NULL);
+
+	MAKE_STD_ZVAL(value);
+	if (connection->connection_resource) {
+		ZVAL_LONG(value, amqp_get_heartbeat(connection->connection_resource->connection_state));
+	} else {
+		ZVAL_NULL(value);
+	}
+	zend_hash_add(debug_info, "heartbeat_interval", sizeof("heartbeat_interval"), &value, sizeof(zval *), NULL);
+
 	/* Start adding values */
 	return debug_info;
 }
@@ -170,7 +186,7 @@ static void php_amqp_prepare_for_disconnect(amqp_connection_object *connection T
 	/* Clean up old memory allocations which are now invalid (new connection) */
 	amqp_channel_t slot;
 
-	for (slot = 1; slot < PHP_AMQP_MAX_CHANNELS + 1; slot++) {
+	for (slot = 0; slot < resource->max_slots; slot++) {
 		if (resource->slots[slot] != 0) {
 			php_amqp_close_channel(resource->slots[slot] TSRMLS_CC);
 		}
@@ -243,7 +259,17 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	if (persistent) {
 		zend_rsrc_list_entry *le;
 		/* Look for an established resource */
-		key_len = spprintf(&key, 0, "amqp_conn_res_%s_%d_%s_%s_%s", connection->host, connection->port, connection->vhost, connection->login, connection->password);
+		key_len = spprintf(&key, 0,
+						   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
+						   connection->host,
+						   connection->port,
+						   connection->vhost,
+						   connection->login,
+						   connection->password,
+						   connection->frame_max,
+						   connection->channel_max,
+						   connection->heartbeat
+		);
 
 		if (zend_hash_find(&EG(persistent_list), key, key_len + 1, (void **)&le) == SUCCESS) {
 			efree(key);
@@ -304,7 +330,17 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 
 		connection->is_persistent = persistent;
 
-		key_len = spprintf(&key, 0, "amqp_conn_res_%s_%d_%s_%s_%s", connection->host, connection->port, connection->vhost, connection->login, connection->password);
+		key_len = spprintf(&key, 0,
+						   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
+						   connection->host,
+						   connection->port,
+						   connection->vhost,
+						   connection->login,
+						   connection->password,
+						   connection->frame_max,
+						   connection->channel_max,
+						   connection->heartbeat
+		);
 
 		connection->connection_resource->resource_key     = pestrndup(key, key_len, persistent);
 		connection->connection_resource->resource_key_len = key_len;
@@ -539,6 +575,47 @@ PHP_METHOD(amqp_connection_class, __construct)
 			connection->connect_timeout = Z_DVAL_PP(zdata);
 		}
 	}
+
+	connection->channel_max = (int) INI_INT("amqp.channel_max");
+
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "channel_max", sizeof("channel_max"), (void*)&zdata)) {
+		convert_to_long(*zdata);
+		if (Z_LVAL_PP(zdata) < 0 || Z_LVAL_PP(zdata) > PHP_AMQP_MAX_CHANNELS) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'channel_max' is out of range.", 0 TSRMLS_CC);
+		} else {
+			connection->channel_max = (int) Z_LVAL_PP(zdata);
+			if(connection->channel_max == 0) {
+				connection->channel_max = PHP_AMQP_DEFAULT_CHANNEL_MAX;
+			}
+
+		}
+	}
+
+	connection->frame_max = (int) INI_INT("amqp.frame_max");
+
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "frame_max", sizeof("frame_max"), (void*)&zdata)) {
+		convert_to_long(*zdata);
+		if (Z_LVAL_PP(zdata) < 0 || Z_LVAL_PP(zdata) > PHP_AMQP_MAX_FRAME) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'frame_max' is out of range.", 0 TSRMLS_CC);
+		} else {
+			connection->frame_max = (int) Z_LVAL_PP(zdata);
+			if(connection->frame_max == 0) {
+				connection->frame_max = PHP_AMQP_DEFAULT_FRAME_MAX;
+			}
+		}
+	}
+
+	connection->heartbeat = (int) INI_INT("amqp.heartbeat");
+
+	if (ini_arr && SUCCESS == zend_hash_find(HASH_OF (ini_arr), "heartbeat", sizeof("heartbeat"), (void*)&zdata)) {
+		convert_to_long(*zdata);
+		if (Z_LVAL_PP(zdata) < 0 || Z_LVAL_PP(zdata) > PHP_AMQP_MAX_HEARTBEAT) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'heartbeat' is out of range.", 0 TSRMLS_CC);
+		} else {
+			connection->heartbeat = (int) Z_LVAL_PP(zdata);
+		}
+	}
+
 }
 /* }}} */
 
@@ -1256,19 +1333,17 @@ PHP_METHOD(amqp_connection_class, getUsedChannels)
 		RETURN_LONG(0);
 	}
 
-	/* Copy the timeout to the amqp object */
 	RETURN_LONG(connection->connection_resource->used_slots);
 }
 /* }}} */
 
 /* {{{ proto amqp::getMaxChannels()
-Get max supported channels number per connection*/
+Get max supported channels number per connection */
 PHP_METHOD(amqp_connection_class, getMaxChannels)
 {
 	zval *id;
 	amqp_connection_object *connection;
 
-	/* Get the timeout from the method params */
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_connection_class_entry) == FAILURE) {
 		return;
 	}
@@ -1279,14 +1354,60 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
 	if (!connection->is_connected) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
 
-		RETURN_LONG(0);
+		RETURN_NULL();
 	}
 
-	/* Copy the timeout to the amqp object */
-	RETURN_LONG(amqp_get_channel_max(connection->connection_resource->connection_state));
+	RETURN_LONG(connection->connection_resource->max_slots);
 }
 /* }}} */
 
+/* {{{ proto amqp::getMaxFrameSize()
+Get max supported frame size per connection in bytes */
+PHP_METHOD(amqp_connection_class, getMaxFrameSize)
+{
+	zval *id;
+	amqp_connection_object *connection;
+
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_connection_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	if (!connection->is_connected) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
+
+		RETURN_NULL();
+	}
+
+	RETURN_LONG(amqp_get_frame_max(connection->connection_resource->connection_state));
+}
+/* }}} */
+
+/* {{{ proto amqp::getHeartbeatInterval()
+Get number of seconds between heartbeats of the connection in seconds */
+PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
+{
+	zval *id;
+	amqp_connection_object *connection;
+
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_connection_class_entry) == FAILURE) {
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+
+	if (!connection->is_connected) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
+
+		RETURN_NULL();
+	}
+
+	RETURN_LONG(amqp_get_heartbeat(connection->connection_resource->connection_state));
+}
+/* }}} */
 
 /* {{{ proto amqp::isPersistent()
 check whether amqp connection is persistent */

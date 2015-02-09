@@ -68,7 +68,9 @@ PHP_METHOD(amqp_connection_class, getWriteTimeout);
 PHP_METHOD(amqp_connection_class, setWriteTimeout);
 
 PHP_METHOD(amqp_connection_class, getUsedChannels);
+PHP_METHOD(amqp_connection_class, getMaxFrameSize);
 PHP_METHOD(amqp_connection_class, getMaxChannels);
+PHP_METHOD(amqp_connection_class, getHeartbeatInterval);
 PHP_METHOD(amqp_connection_class, isPersistent);
 
 /*

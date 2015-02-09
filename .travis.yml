@@ -5,9 +5,17 @@ php:
   - 5.4
   - 5.5
   - 5.6
+  - 7.0
 
 services:
   - rabbitmq
+
+matrix:
+#  exclude:
+#    - php: hhvm
+#      env: DB=pgsql  # PDO driver for pgsql is unsupported by HHVM (3rd party install for support)
+  allow_failures:
+    - php: 7.0
 
 install:
   - sudo apt-get update
@@ -31,8 +39,6 @@ env:
     - LIBRABBITMQ_VERSION=master
     - LIBRABBITMQ_VERSION=v0.6.0 TEST_PHP_ARGS=-m
     - LIBRABBITMQ_VERSION=v0.6.0
-    - LIBRABBITMQ_VERSION=v0.5.2
-    - LIBRABBITMQ_VERSION=v0.5.1
 
 before_script:
   - sh -c "php -i"
