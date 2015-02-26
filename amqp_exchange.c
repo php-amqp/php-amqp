@@ -469,7 +469,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 
 	arguments = convert_zval_to_amqp_table(exchange->arguments TSRMLS_CC);
 	
-#if AMQP_VERSION_MAJOR == 0 && AMQP_VERSION_MINOR >= 5 && AMQP_VERSION_PATCH > 2
+#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH > 52
 	amqp_exchange_declare(
 		connection->connection_resource->connection_state,
 		channel->channel_id,
