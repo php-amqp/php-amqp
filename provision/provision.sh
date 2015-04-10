@@ -4,7 +4,11 @@ echo Provisioning...
 sudo apt-get update
 
 # Make sure these tools installed
-sudo apt-get install -y git curl
+sudo apt-get install -y git curl pkgconf
+
+# Add PPA with fresh PHP:
+sudo add-apt-repository -y ppa:ondrej/php5-5.6
+sudo apt-get update
 
 # Install available php from packages
 sudo apt-get install -y php5 php5-cli php5-dev php5-fpm
@@ -21,6 +25,9 @@ sudo mv phpbrew /usr/bin/phpbrew
 phpbrew init
 
 cp ~/php-amqp/provision/.bashrc ~/.bashrc
+
+sudo mkdir -p /var/www/html/
+sudo chown -R vagrant:vagrant /var/www
 
 # Requirements to build php from sources
 sudo apt-get install -y libxml2-dev \
@@ -62,7 +69,12 @@ sudo cp ~/php-amqp/provision/nginx/default /etc/nginx/sites-available/default
 sudo service nginx restart
 sudo cp -f /usr/share/nginx/html/index.html /var/www/html/index-nginx.html
 
+#http://www.rabbitmq.com/releases/rabbitmq-server/v3.5.1/rabbitmq-server_3.5.1-1_all.deb
 # Install and configure RabbitMQ
+wget -qO - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | sudo apt-key add -
+sudo add-apt-repository 'deb http://www.rabbitmq.com/debian/ testing main'
+sudo apt-get update
+#sudo apt-get install --only-upgrade -y rabbitmq-server
 sudo apt-get install -y rabbitmq-server
 sudo rabbitmq-plugins enable rabbitmq_management
 sudo service rabbitmq-server restart
@@ -71,10 +83,21 @@ sudo service rabbitmq-server restart
 cd ~
 git clone -q git://github.com/alanxz/rabbitmq-c.git
 cd rabbitmq-c && autoreconf -i && ./configure && make && sudo make install
+# or install packaged version:
+#sudo apt-get install -y librabbitmq1 librabbitmq-dev librabbitmq-dbg
 
 # Do it manually when you need it,
-#cd ~
-#cd php-amqp && phpize && ./configure && make install
+#cd ~/php-amqp
+#phpize --clean && phpize && ./configure && sudo make install
+#sudo cp ~/php-amqp/provision/php/amqp.ini /etc/php5/mods-available/
+#sudo php5enmod amqp
+#sudo service php5-fpm restart
+
+# For debugging segfault when amqp fails in php-fpm mode:
+#sudo sh -c "echo '/home/vagrant/php-amqp/coredump-%e.%p' > /proc/sys/kernel/core_pattern"
+
+# To test with typical dev configuration - with xdebug:
+#sudo apt-get install php5-xdebug
 
 # Cleanup unused stuff
 sudo apt-get autoremove -y

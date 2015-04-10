@@ -40,6 +40,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+X.Y.Z Release:
+     * Add ability to re-attach consuming callback (Bogdan Padalko)
+     * Add AMQPQueue::getConsumerTag() method and fix consumer tag handling in AMQPQueue class methods (Bogdan Padalko)
+
 1.6.0beta3 Release:
      * Add basic.recover AMQP method support (see AMQPChannel::basicRecover() method) (Bogdan Padalko)
      * Fix building on OS X (Bogdan Padalko)

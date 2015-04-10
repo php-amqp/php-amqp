@@ -13,6 +13,12 @@ install:
   - sudo apt-get update
   - sudo apt-get -qq --fix-missing install valgrind
 
+  - wget -qO - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | sudo apt-key add -
+  - sudo add-apt-repository 'deb http://www.rabbitmq.com/debian/ testing main'
+  - sudo apt-get update
+  - sudo apt-get install --only-upgrade -y rabbitmq-server
+  - sudo service rabbitmq-server restart
+
 env:
   global:
     # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
