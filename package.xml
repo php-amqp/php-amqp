@@ -28,10 +28,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active> <!- - yes, very - ->
  </developer>
  -->
- <date>2015-01-27</date>
- <time>02:00:00</time>
+ <date>2015-04-18</date>
+ <time>18:00:00</time>
  <version>
-  <release>1.6.0beta2</release>
+  <release>1.6.0beta3</release>
   <api>1.0.0</api>
  </version>
  <stability>
@@ -40,10 +40,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-X.Y.Z Release:
-     * Add basic.recover AMQP method support (see AMQPChannel::basicRecover() method) (Bogdan Padalko)
-
 1.6.0beta3 Release:
+     * Add basic.recover AMQP method support (see AMQPChannel::basicRecover() method) (Bogdan Padalko)
      * Fix building on OS X (Bogdan Padalko)
 
      For a complete list of changes see:
@@ -228,6 +226,7 @@ Fixed bugs:
    <file name="amqp_object_store.h" role="src" />
    <file name="amqp_queue.h" role="src" />
    <file name="php_amqp.h" role="src" />
+   <file name="tests/amqpchannel_basicRecover.phpt" role="test"/>
    <file name="tests/amqpchannel_construct_basic.phpt" role="test"/>
    <file name="tests/amqpchannel_get_connection.phpt" role="test"/>
    <file name="tests/amqpchannel_multi_channel_connection.phpt" role="test"/>
@@ -334,6 +333,7 @@ Fixed bugs:
    <file name="tests/bug_gh53.phpt" role="test"/>
    <file name="tests/bug_gh72-1.phpt" role="test"/>
    <file name="tests/bug_gh72-2.phpt" role="test"/>
+   <file name="tests/bug_gh147.phpt" role="test"/>
    <file name="tests/package-version.phpt" role="test"/>
   </dir> <!-- / -->
  </contents>
