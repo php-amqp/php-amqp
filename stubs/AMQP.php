@@ -7,6 +7,13 @@
 define('AMQP_NOPARAM', 0);
 
 /**
+ * Passing in this constant as a flag to proper methods will forcefully ignore all other flags.
+ * Do not send basic.consume request during AMQPQueue::consume(). Use this if you want to run callback on top of previously
+ * declared consumers.
+ */
+define('AMQP_JUST_CONSUME', 1);
+
+/**
  * Durable exchanges and queues will survive a broker restart, complete with all of their data.
  */
 define('AMQP_DURABLE', 2);

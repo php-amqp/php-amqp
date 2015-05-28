@@ -26,7 +26,7 @@ object(AMQPQueue)#4 (7) {
   ["queue_name"]=>
   string(14) "queue_var_dump"
   ["consumer_tag"]=>
-  string(0) ""
+  NULL
   ["passive"]=>
   bool(false)
   ["durable"]=>
@@ -39,4 +39,3 @@ object(AMQPQueue)#4 (7) {
   array(0) {
   }
 }
-

@@ -306,6 +306,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_queue_class_getConnection, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_queue_class_getConsumerTag, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 /* amqp_exchange ARG_INFO definition */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_exchange_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, amqp_channel)
@@ -541,6 +544,7 @@ zend_function_entry amqp_queue_class_functions[] = {
 
 	PHP_ME(amqp_queue_class, getChannel,		arginfo_amqp_queue_class_getChannel,		ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_queue_class, getConnection,		arginfo_amqp_queue_class_getConnection,		ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_queue_class, getConsumerTag,	arginfo_amqp_queue_class_getConsumerTag,	ZEND_ACC_PUBLIC)
 
 	PHP_MALIAS(amqp_queue_class, declare, declareQueue, arginfo_amqp_queue_class_declareQueue,	ZEND_ACC_PUBLIC | ZEND_ACC_DEPRECATED)
 
@@ -947,6 +951,7 @@ PHP_MINIT_FUNCTION(amqp)
 	REGISTER_INI_ENTRIES();
 
 	REGISTER_LONG_CONSTANT("AMQP_NOPARAM",			AMQP_NOPARAM,		CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("AMQP_JUST_CONSUME",		AMQP_JUST_CONSUME,	CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("AMQP_DURABLE",			AMQP_DURABLE,		CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("AMQP_PASSIVE",			AMQP_PASSIVE,		CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("AMQP_EXCLUSIVE",		AMQP_EXCLUSIVE,		CONST_CS | CONST_PERSISTENT);
@@ -994,7 +999,8 @@ PHP_MINFO_FUNCTION(amqp)
 	php_info_print_table_header(2, "Revision",					PHP_AMQP_REVISION);
 	php_info_print_table_header(2, "Compiled",					__DATE__ " @ "  __TIME__);
 	php_info_print_table_header(2, "AMQP protocol version", 	"0-9-1");
-	php_info_print_table_header(2, "librabbitmq version", amqp_version());
+	php_info_print_table_header(2, "Compiled librabbitmq version",	AMQP_VERSION_STRING);
+	php_info_print_table_header(2, "Linked librabbitmq version",	amqp_version());
 	php_info_print_table_header(2, "Max channels per connection",	PHP_AMQP_STRINGIFY(PHP_AMQP_MAX_CHANNELS));
 	DISPLAY_INI_ENTRIES();
 }

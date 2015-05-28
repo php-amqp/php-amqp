@@ -45,9 +45,14 @@ class AMQPQueue
     /**
      * Cancel a queue that is already bound to an exchange and routing key.
      *
-     * @param string $consumer_tag The queue name to cancel, if the queue
-     *                             object is not already representative of
-     *                             a queue.
+     * @param string $consumer_tag The consumer tag cancel. If no tag provided,
+     *                             or it is empty string, the latest consumer
+     *                             tag on this queue will be used and after
+     *                             successful request it will set to null.
+     *                             If it also empty, no `basic.cancel`
+     *                             request will be sent. When consumer_tag give
+     *                             and it equals to latest consumer_tag on queue,
+     *                             it will be interpreted as latest consumer_tag usage.
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
@@ -92,7 +97,14 @@ class AMQPQueue
      *                              be made available to the first real callback
      *                              registered. That allows one to have a single
      *                              callback consuming from multiple queues.
-     * @param integer  $flags       A bitmask of any of the flags: AMQP_AUTOACK.
+     * @param integer $flags        A bitmask of any of the flags: AMQP_AUTOACK,
+     *                              AMQP_JUST_CONSUME. Note: when AMQP_JUST_CONSUME
+     *                              flag used all other flags are ignored and
+     *                              $consumerTag parameter has no sense.
+     *                              AMQP_JUST_CONSUME flag prevent from sending
+     *                              `basic.consume` request and just run $callback
+     *                              if it provided. Calling method with empty $callback
+     *                              and AMQP_JUST_CONSUME makes no sense.
      * @param string   $consumerTag A string describing this consumer. Used
      *                              for canceling subscriptions with cancel().
      *
@@ -350,4 +362,14 @@ class AMQPQueue
     public function getConnection()
     {
     }
+
+    /**
+     * Get latest consumer tag. If no consumer available or the latest on was canceled null will be returned.
+     *
+     * @return string | null
+     */
+    public function getConsumerTag()
+    {
+    }
+
 }

@@ -61,7 +61,9 @@ $errorQ->delete();
 --EXPECTF--
 array(1) {
   [0]=>
-  array(5) {
+  array(6) {
+    ["count"]=>
+    int(1)
     ["reason"]=>
     string(8) "rejected"
     ["queue"]=>

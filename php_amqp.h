@@ -132,6 +132,7 @@ extern zend_module_entry amqp_module_entry;
 
 #define AMQP_NOPARAM		0
 /* Where is 1?*/
+#define AMQP_JUST_CONSUME	1
 #define AMQP_DURABLE		2
 #define AMQP_PASSIVE		4
 #define AMQP_EXCLUSIVE		8
