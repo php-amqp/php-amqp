@@ -36,7 +36,7 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
 
 ### How to report a problem
  
- 1. First, search through the closed issues and [stackoverflow.com](stackoverflow.com).
+ 1. First, search through the closed issues and [stackoverflow.com](http://stackoverflow.com).
  3. Submit an issue with short and definitive title that describe your problem
  4. Provide platform info, php interpreter version, SAPI mode (cli, fpm, cgi, etc) extension is used in, php-amqp extension version, librabbitmq version, make tools version.
  5. Description should provide information how to reproduce a problem ([gist](https://gist.github.com/) is the most preferable way to include large sources) in a definitive way. When special environment [Vagrant](http://www.vagrantup.com/) may be in handy.
