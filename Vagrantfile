@@ -130,6 +130,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   chef.validation_client_name = "ORGNAME-validator"
 
   config.vm.synced_folder ".", "/home/vagrant/php-amqp"
+  #config.vm.synced_folder "../rabbitmq-c", "/home/vagrant/rabbitmq-c"
 
   config.vm.provision "shell", path: './provision/provision.sh', privileged: false
 end

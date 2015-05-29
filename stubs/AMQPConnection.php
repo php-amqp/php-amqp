@@ -33,6 +33,15 @@ class AMQPConnection
      *      'read_timeout'  => Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
      *      'write_timeout' => Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
      *      'connect_timeout' => Connection timeout. Note: 0 or greater seconds. May be fractional.
+     *
+     *      Connection tuning options (see http://www.rabbitmq.com/amqp-0-9-1-reference.html#connection.tune for details):
+     *      'channel_max' => Specifies highest channel number that the server permits. 0 means standard extension limit
+     *                       (see PHP_AMQP_MAX_CHANNELS constant)
+     *      'frame_max'   => The largest frame size that the server proposes for the connection, including frame header
+     *                       and end-byte. 0 means standard extension limit (depends on librabbimq default frame size limit)
+     *      'heartbeat'   => The delay, in seconds, of the connection heartbeat that the server wants.
+     *                       0 means the server does not want a heartbeat. Note, librabbitmq has limited heartbeat support,
+     *                       which means heartbeats checked only during blocking calls.
      * )
      *
      * @param array $credentials Optional array of credential information for
@@ -306,6 +315,24 @@ class AMQPConnection
      * @return int|null
      */
     public function getMaxChannels()
+    {
+    }
+
+    /**
+     * Get max supported frame size per connection in bytes.
+     *
+     * @return int|null
+     */
+    public function getMaxFrameSize()
+    {
+    }
+
+    /**
+     * Get number of seconds between heartbeats of the connection in seconds.
+     *
+     * @return int|null
+     */
+    public function getHeartbeatInterval()
     {
     }
 

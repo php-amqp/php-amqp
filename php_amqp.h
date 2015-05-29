@@ -183,7 +183,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_exchange_exception_class_entry,
 	*amqp_queue_exception_class_entry;
 
-#define PHP_AMQP_HEARTBEAT					0	   		/* heartbeat */
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
@@ -203,14 +202,28 @@ extern zend_class_entry *amqp_exception_class_entry,
 /* #define DEFAULT_CHANNELS_PER_CONNECTION AMQP_DEFAULT_MAX_CHANNELS */
 #define PHP_AMQP_PROTOCOL_MAX_CHANNELS 256
 
+//AMQP_DEFAULT_FRAME_SIZE 131072
+
 #if PHP_AMQP_PROTOCOL_MAX_CHANNELS > 0
 	#define PHP_AMQP_MAX_CHANNELS PHP_AMQP_PROTOCOL_MAX_CHANNELS
 #else
 	#define PHP_AMQP_MAX_CHANNELS 65535 // Note that the maximum number of channels the protocol supports is 65535 (2^16, with the 0-channel reserved)
 #endif
 
+#define PHP_AMQP_MAX_FRAME INT_MAX
+#define PHP_AMQP_MAX_HEARTBEAT INT_MAX
+
+#define PHP_AMQP_DEFAULT_CHANNEL_MAX PHP_AMQP_MAX_CHANNELS
+#define PHP_AMQP_DEFAULT_FRAME_MAX AMQP_DEFAULT_FRAME_SIZE
+#define PHP_AMQP_DEFAULT_HEARTBEAT AMQP_DEFAULT_HEARTBEAT
+
 #define PHP_AMQP_STRINGIFY(value) PHP_AMQP_TO_STRING(value)
 #define PHP_AMQP_TO_STRING(value) #value
+
+
+#define DEFAULT_CHANNEL_MAX					PHP_AMQP_STRINGIFY(PHP_AMQP_MAX_CHANNELS)
+#define DEFAULT_FRAME_MAX					PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_FRAME_MAX)
+#define DEFAULT_HEARTBEAT					PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_HEARTBEAT)
 
 #define AMQP_READ_SUCCESS					1
 #define AMQP_READ_NO_MESSAGES				0
@@ -324,6 +337,7 @@ typedef struct _amqp_channel_object {
 typedef struct _amqp_connection_resource {
 	zend_bool is_connected;
 	int resource_id;
+	amqp_channel_t max_slots;
 	amqp_channel_t used_slots;
 	amqp_channel_object **slots;
 	char *resource_key;
@@ -341,6 +355,9 @@ typedef struct _amqp_connection_object {
 	char *host;
 	char *vhost;
 	int port;
+	int channel_max;
+	int frame_max;
+	int heartbeat;
 	double read_timeout;
 	double write_timeout;
 	double connect_timeout;

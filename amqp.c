@@ -163,6 +163,12 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getMaxChannels, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getMaxFrameSize, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getHeartbeatInterval, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_isPersistent, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
@@ -900,6 +906,9 @@ PHP_INI_BEGIN()
 	PHP_INI_ENTRY("amqp.password",			DEFAULT_PASSWORD,			PHP_INI_ALL, NULL)
 	PHP_INI_ENTRY("amqp.auto_ack",			DEFAULT_AUTOACK,			PHP_INI_ALL, NULL)
 	PHP_INI_ENTRY("amqp.prefetch_count",	DEFAULT_PREFETCH_COUNT,		PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("amqp.channel_max",		DEFAULT_CHANNEL_MAX,		PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("amqp.frame_max",			DEFAULT_FRAME_MAX,			PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("amqp.heartbeat",			DEFAULT_HEARTBEAT,			PHP_INI_ALL, NULL)
 PHP_INI_END()
 
 /* {{{ PHP_MINIT_FUNCTION
@@ -999,9 +1008,10 @@ PHP_MINFO_FUNCTION(amqp)
 	php_info_print_table_header(2, "Revision",					PHP_AMQP_REVISION);
 	php_info_print_table_header(2, "Compiled",					__DATE__ " @ "  __TIME__);
 	php_info_print_table_header(2, "AMQP protocol version", 	"0-9-1");
-	php_info_print_table_header(2, "Compiled librabbitmq version",	AMQP_VERSION_STRING);
-	php_info_print_table_header(2, "Linked librabbitmq version",	amqp_version());
-	php_info_print_table_header(2, "Max channels per connection",	PHP_AMQP_STRINGIFY(PHP_AMQP_MAX_CHANNELS));
+	php_info_print_table_header(2, "librabbitmq version", amqp_version());
+	php_info_print_table_header(2, "Default max channels per connection",	DEFAULT_CHANNEL_MAX);
+	php_info_print_table_header(2, "Default max frame size",	DEFAULT_FRAME_MAX);
+	php_info_print_table_header(2, "Default heartbeats interval",	DEFAULT_HEARTBEAT);
 	DISPLAY_INI_ENTRIES();
 }
 /* }}} */
