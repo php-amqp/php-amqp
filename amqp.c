@@ -722,6 +722,18 @@ void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connectio
 	}
 }
 
+amqp_bytes_t php_amqp_long_string(char const *cstr, int len)
+{
+	if (len < 1) {
+		return amqp_empty_bytes;
+	}
+
+	amqp_bytes_t result;
+	result.len   = len;
+	result.bytes = (void *) cstr;
+	return result;
+}
+
 char *stringify_bytes(amqp_bytes_t bytes)
 {
 /* We will need up to 4 chars per byte, plus the terminating 0 */
@@ -816,7 +828,7 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 			case IS_STRING:
 				field->kind        = AMQP_FIELD_KIND_UTF8;
 				strValue           = estrndup(Z_STRVAL_P(&value), Z_STRLEN_P(&value));
-				field->value.bytes = amqp_cstring_bytes(strValue);
+				field->value.bytes = php_amqp_long_string(strValue, Z_STRLEN_P(&value));
 				break;
 			case IS_ARRAY:
 				field->kind = AMQP_FIELD_KIND_TABLE;

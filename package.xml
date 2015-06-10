@@ -44,6 +44,7 @@ X.Y.Z Release:
   * Add ability to re-attach consuming callback (Bogdan Padalko)
   * Add AMQPQueue::getConsumerTag() method and fix consumer tag handling in AMQPQueue class methods (Bogdan Padalko)
   * Add channel_max, frame_max and hearbeat support (see AMQPConnection::__construct() method) (librabbitmq version >= 0.6.0 required) (Bogdan Padalko)
+  * Fix issue with message truncating to first null-byte during sending (Bogdan Padalko, special thanks to Alex Kazinskiy, Alvaro Videla and Michael Klishin)
 
 1.6.0beta3 Release:
      * Add basic.recover AMQP method support (see AMQPChannel::basicRecover() method) (Bogdan Padalko)

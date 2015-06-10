@@ -756,7 +756,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		(AMQP_MANDATORY & flags) ? 1 : 0, /* mandatory */
 		(AMQP_IMMEDIATE & flags) ? 1 : 0, /* immediate */
 		&props,
-		(msg_len > 0 ? amqp_cstring_bytes(msg) : amqp_empty_bytes) /* message body */
+		php_amqp_long_string(msg, msg_len) /* message body */
 	);
 
 	if (headers) {
