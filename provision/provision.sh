@@ -47,7 +47,8 @@ sudo apt-get install -y libxml2-dev \
                         autoconf \
                         libtool \
                         pkg-config \
-                        valgrind
+                        valgrind \
+                        tshark
 
 # Benchmarking...
 sudo apt-get install -y apache2-utils

@@ -451,6 +451,8 @@ void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exc
 
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connection, amqp_channel_object *channel);
 
+amqp_bytes_t php_amqp_long_string(char const *cstr, int len);
+
 #endif	/* PHP_AMQP_H */
 
 
