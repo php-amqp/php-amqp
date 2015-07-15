@@ -21,8 +21,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_channel.c 318036 2011-10-11 20:30:46Z pdezwart $ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -39,6 +37,7 @@
 # include <stdint.h>
 # include <signal.h>
 #endif
+
 #include <amqp.h>
 #include <amqp_framing.h>
 
@@ -51,8 +50,8 @@
 #include "php_amqp.h"
 #include "amqp_connection_resource.h"
 
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 zend_object_handlers amqp_channel_object_handlers;
+
 HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
 	zval *value;
 	HashTable *debug_info;
@@ -87,7 +86,6 @@ HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_
 	/* Start adding values */
 	return debug_info;
 }
-#endif
 
 void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 {
@@ -135,7 +133,6 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 	}
 }
 
-
 void amqp_channel_dtor(void *object TSRMLS_DC)
 {
 	amqp_channel_object *channel = (amqp_channel_object*)object;
@@ -154,9 +151,9 @@ void amqp_channel_dtor(void *object TSRMLS_DC)
 	efree(object);
 }
 
-zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	zend_object_value new_value;
+	zend_object new_value;
 	amqp_channel_object *channel = (amqp_channel_object*)emalloc(sizeof(amqp_channel_object));
 
 	memset(channel, 0, sizeof(amqp_channel_object));
@@ -171,17 +168,12 @@ zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 		NULL TSRMLS_CC
 	);
 
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 	memcpy((void *)&amqp_channel_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_channel_object_handlers.get_debug_info = amqp_channel_object_get_debug_info;
 	new_value.handlers = &amqp_channel_object_handlers;
-#else
-	new_value.handlers = zend_get_std_object_handlers();
-#endif
 
 	return new_value;
 }
-
 
 /* {{{ proto AMQPChannel::__construct(AMQPConnection obj)
  */
@@ -395,7 +387,6 @@ PHP_METHOD(amqp_channel_class, getPrefetchCount)
 }
 /* }}} */
 
-
 /* {{{ proto bool amqp::setPrefetchSize(long size)
 set the number of prefetches */
 PHP_METHOD(amqp_channel_class, setPrefetchSize)
@@ -468,8 +459,6 @@ PHP_METHOD(amqp_channel_class, getPrefetchSize)
 }
 /* }}} */
 
-
-
 /* {{{ proto amqp::qos(long size, long count)
 set the number of prefetches */
 PHP_METHOD(amqp_channel_class, qos)
@@ -527,7 +516,6 @@ PHP_METHOD(amqp_channel_class, qos)
 }
 /* }}} */
 
-
 /* {{{ proto amqp::startTransaction()
 start a transaction on the given channel */
 PHP_METHOD(amqp_channel_class, startTransaction)
@@ -573,7 +561,6 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto amqp::startTransaction()
 start a transaction on the given channel */
@@ -730,7 +717,6 @@ PHP_METHOD(amqp_channel_class, basicRecover)
 	php_amqp_maybe_release_buffers_on_channel(connection, channel);
 
 	RETURN_TRUE;
-
 }
 /* }}} */
 

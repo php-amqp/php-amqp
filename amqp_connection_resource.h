@@ -20,6 +20,7 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
+
 #ifndef PHP_AMQP_CONNECTION_RESOURCE_H
 #define PHP_AMQP_CONNECTION_RESOURCE_H
 
@@ -49,6 +50,7 @@ ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor);
 
 #endif
+
 /*
 *Local variables:
 *tab-width: 4

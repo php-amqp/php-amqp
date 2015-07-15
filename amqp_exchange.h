@@ -21,33 +21,25 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_exchange.h 318206 2011-10-19 04:17:01Z pdezwart $ */
-
 void amqp_exchange_dtor(void *object TSRMLS_DC);
-zend_object_value amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC);
+zend_object amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_exchange_class, __construct);
-
 PHP_METHOD(amqp_exchange_class, getName);
 PHP_METHOD(amqp_exchange_class, setName);
-
 PHP_METHOD(amqp_exchange_class, getType);
 PHP_METHOD(amqp_exchange_class, setType);
-
 PHP_METHOD(amqp_exchange_class, getFlags);
 PHP_METHOD(amqp_exchange_class, setFlags);
-
 PHP_METHOD(amqp_exchange_class, getArgument);
 PHP_METHOD(amqp_exchange_class, getArguments);
 PHP_METHOD(amqp_exchange_class, setArgument);
 PHP_METHOD(amqp_exchange_class, setArguments);
-
 PHP_METHOD(amqp_exchange_class, declareExchange);
 PHP_METHOD(amqp_exchange_class, delete);
 PHP_METHOD(amqp_exchange_class, bind);
 PHP_METHOD(amqp_exchange_class, unbind);
 PHP_METHOD(amqp_exchange_class, publish);
-
 PHP_METHOD(amqp_exchange_class, getChannel);
 PHP_METHOD(amqp_exchange_class, getConnection);
 

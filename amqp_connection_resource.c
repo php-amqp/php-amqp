@@ -21,8 +21,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_connection.c 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -40,6 +38,7 @@
 # include <signal.h>
 # include <stdint.h>
 #endif
+
 #include <amqp.h>
 #include <amqp_framing.h>
 #include <amqp_tcp_socket.h>
@@ -62,9 +61,7 @@ int le_amqp_connection_resource_persistent;
 
 static void connection_resource_destructor(amqp_connection_resource *resource, int persistent TSRMLS_DC);
 
-
 /* Figure out what's going on connection and handle protocol exceptions, if any */
-
 int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id TSRMLS_DC)
 {
 	assert (resource != NULL);
@@ -155,7 +152,6 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 	/* Should not never get here*/
 }
 
-
 /* Socket-related functions */
 int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC)
 {
@@ -214,9 +210,7 @@ int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, doub
 	return 1;
 }
 
-
 /* Channel-related functions */
-
 amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connection_resource *resource)
 {
 	assert(resource != NULL);
@@ -268,9 +262,7 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 	return SUCCESS;
 }
 
-
 /* Creating and destroying resource */
-
 amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, zend_bool persistent TSRMLS_DC)
 {
 	struct timeval tv = {0};
@@ -360,7 +352,6 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	custom_properties_table.num_entries = sizeof(custom_properties_entries) / sizeof(amqp_table_entry_t);
 
 	/* We can assume that connection established here but it is not true, real handshake goes during login */
-
 	assert(connection->frame_max > 0);
 
 	amqp_rpc_reply_t res = amqp_login_with_properties(

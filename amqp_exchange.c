@@ -21,8 +21,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_exchange.c 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -39,6 +37,7 @@
 # include <signal.h>
 # include <stdint.h>
 #endif
+
 #include <amqp.h>
 #include <amqp_framing.h>
 
@@ -50,9 +49,8 @@
 
 #include "php_amqp.h"
 
-
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 zend_object_handlers amqp_exchange_object_handlers;
+
 HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
 	zval *value;
 	HashTable *debug_info;
@@ -69,11 +67,11 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 
 	/* Start adding values */
 	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, exchange->name, strlen(exchange->name), 1);
+	ZVAL_STRINGL(value, exchange->name, strlen(exchange->name));
 	zend_hash_add(debug_info, "name", sizeof("name"), &value, sizeof(zval *), NULL);
 
 	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, exchange->type, strlen(exchange->type), 1);
+	ZVAL_STRINGL(value, exchange->type, strlen(exchange->type));
 	zend_hash_add(debug_info, "type", sizeof("type"), &value, sizeof(zval *), NULL);
 
 	MAKE_STD_ZVAL(value);
@@ -98,7 +96,6 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	/* Start adding values */
 	return debug_info;
 }
-#endif
 
 void amqp_exchange_dtor(void *object TSRMLS_DC)
 {
@@ -118,9 +115,9 @@ void amqp_exchange_dtor(void *object TSRMLS_DC)
 	efree(object);
 }
 
-zend_object_value amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	zend_object_value new_value;
+	zend_object new_value;
 	amqp_exchange_object* exchange = (amqp_exchange_object*)emalloc(sizeof(amqp_exchange_object));
 
 	memset(exchange, 0, sizeof(amqp_exchange_object));
@@ -139,13 +136,9 @@ zend_object_value amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 		NULL TSRMLS_CC
 	);
 
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 	memcpy((void *)&amqp_exchange_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_exchange_object_handlers.get_debug_info = amqp_exchange_object_get_debug_info;
 	new_value.handlers = &amqp_exchange_object_handlers;
-#else
-	new_value.handlers = zend_get_std_object_handlers();
-#endif
 
 	return new_value;
 }
@@ -182,7 +175,6 @@ PHP_METHOD(amqp_exchange_class, __construct)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPExchange::getName()
 Get the exchange name */
 PHP_METHOD(amqp_exchange_class, getName)
@@ -204,7 +196,6 @@ PHP_METHOD(amqp_exchange_class, getName)
 	}
 }
 /* }}} */
-
 
 /* {{{ proto AMQPExchange::setName(string name)
 Set the exchange name */
@@ -233,7 +224,6 @@ PHP_METHOD(amqp_exchange_class, setName)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPExchange::getFlags()
 Get the exchange parameters */
 PHP_METHOD(amqp_exchange_class, getFlags)
@@ -250,7 +240,6 @@ PHP_METHOD(amqp_exchange_class, getFlags)
 	RETURN_LONG(exchange->flags);
 }
 /* }}} */
-
 
 /* {{{ proto AMQPExchange::setFlags(long bitmask)
 Set the exchange parameters */
@@ -271,7 +260,6 @@ PHP_METHOD(amqp_exchange_class, setFlags)
 	exchange->flags = flagBitmask ? flagBitmask & PHP_AMQP_EXCHANGE_FLAGS : flagBitmask;
 }
 /* }}} */
-
 
 /* {{{ proto AMQPExchange::getType()
 Get the exchange type */
@@ -295,7 +283,6 @@ PHP_METHOD(amqp_exchange_class, getType)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPExchange::setType(string type)
 Set the exchange type */
 PHP_METHOD(amqp_exchange_class, setType)
@@ -316,13 +303,12 @@ PHP_METHOD(amqp_exchange_class, setType)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPExchange::getArgument(string key)
 Get the exchange argument referenced by key */
 PHP_METHOD(amqp_exchange_class, getArgument)
 {
 	zval *id;
-	zval **tmp;
+	zval *tmp;
 	amqp_exchange_object *exchange;
 	char *key;
 	int key_len;
@@ -333,17 +319,16 @@ PHP_METHOD(amqp_exchange_class, getArgument)
 
 	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	if (zend_hash_find(Z_ARRVAL_P(exchange->arguments), key, key_len + 1, (void **)&tmp) == FAILURE) {
+	if ((tmp = zend_hash_str_find(Z_ARRVAL_P(exchange->arguments), key, key_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	*return_value = **tmp;
+	*return_value = *tmp;
 
 	zval_copy_ctor(return_value);
 	INIT_PZVAL(return_value);
 }
 /* }}} */
-
 
 /* {{{ proto AMQPExchange::getArguments
 Get the exchange arguments */
@@ -362,7 +347,6 @@ PHP_METHOD(amqp_exchange_class, getArguments)
 	MAKE_COPY_ZVAL(&exchange->arguments, return_value);
 }
 /* }}} */
-
 
 /* {{{ proto AMQPExchange::setArguments(array args)
 Overwrite all exchange arguments with given args */
@@ -391,7 +375,6 @@ PHP_METHOD(amqp_exchange_class, setArguments)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto AMQPExchange::setArgument(key, value)
 Get the exchange name */
@@ -428,7 +411,6 @@ PHP_METHOD(amqp_exchange_class, setArgument)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto AMQPExchange::declareExchange();
 declare Exchange
@@ -516,7 +498,6 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPExchange::delete([string name[, long params]]);
 delete Exchange
 */
@@ -572,7 +553,6 @@ PHP_METHOD(amqp_exchange_class, delete)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPExchange::publish(string msg, [string key, [int flags, [array headers]]]);
 publish into Exchange
 */
@@ -580,9 +560,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 {
 	zval *id;
 	zval *ini_arr = NULL;
-	zval** ppztmp;
-	zval *ini_arr_tmp = NULL;
-
+	zval *pztmp;
 
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
@@ -615,122 +593,114 @@ PHP_METHOD(amqp_exchange_class, publish)
 
 	props.headers.entries = 0;
 
-	if (ini_arr) {
-		ALLOC_ZVAL(ini_arr_tmp);
-		MAKE_COPY_ZVAL(&ini_arr, ini_arr_tmp);
-	}
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "content_type", sizeof("content_type")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-	{
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "content_type", sizeof("content_type"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
-
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.content_type = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.content_type = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_CONTENT_TYPE_FLAG;
 		}
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "content_encoding", sizeof("content_encoding"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "content_encoding", sizeof("content_encoding")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.content_encoding = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.content_encoding = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_CONTENT_ENCODING_FLAG;
 		}
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "message_id", sizeof("message_id"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "message_id", sizeof("message_id")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.message_id = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.message_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_MESSAGE_ID_FLAG;
 		}
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "user_id", sizeof("user_id"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "user_id", sizeof("user_id")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.user_id = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.user_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_USER_ID_FLAG;
 		}
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "app_id", sizeof("app_id"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "app_id", sizeof("app_id")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.app_id = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.app_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_APP_ID_FLAG;
 		}
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "delivery_mode", sizeof("delivery_mode"), (void*)&ppztmp)) {
-		convert_to_long(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "delivery_mode", sizeof("delivery_mode")-1)) != NULL) {
+		convert_to_long(&pztmp);
 
-		props.delivery_mode = (uint8_t)Z_LVAL_PP(ppztmp);
+		props.delivery_mode = (uint8_t)Z_LVAL_P(pztmp);
 		props._flags |= AMQP_BASIC_DELIVERY_MODE_FLAG;
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "priority", sizeof("priority"), (void*)&ppztmp)) {
-		convert_to_long(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "priority", sizeof("priority")-1)) != NULL) {
+		convert_to_long(&pztmp);
 
-		props.priority = (uint8_t)Z_LVAL_PP(ppztmp);
+		props.priority = (uint8_t)Z_LVAL_P(pztmp);
 		props._flags |= AMQP_BASIC_PRIORITY_FLAG;
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "timestamp", sizeof("timestamp"), (void*)&ppztmp)) {
-		convert_to_long(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "timestamp", sizeof("timestamp")-1)) != NULL) {
+		convert_to_long(&pztmp);
 
-		props.timestamp = (uint64_t)Z_LVAL_PP(ppztmp);
+		props.timestamp = (uint64_t)Z_LVAL_P(pztmp);
 		props._flags |= AMQP_BASIC_TIMESTAMP_FLAG;
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "expiration", sizeof("expiration"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "expiration", sizeof("expiration")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.expiration = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.expiration = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_EXPIRATION_FLAG;
 		}
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "type", sizeof("type"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "type", sizeof("type")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.type = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.type = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_TYPE_FLAG;
 		}
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "reply_to", sizeof("reply_to"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "reply_to", sizeof("reply_to")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.reply_to = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.reply_to = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_REPLY_TO_FLAG;
 		}
 	}
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF (ini_arr_tmp), "correlation_id", sizeof("correlation_id"), (void*)&ppztmp)) {
-		convert_to_string(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "correlation_id", sizeof("correlation_id")-1)) != NULL) {
+		convert_to_string(&pztmp);
 
-		if (Z_STRLEN_PP(ppztmp) > 0) {
-			props.correlation_id = amqp_cstring_bytes((char *)Z_STRVAL_PP(ppztmp));
+		if (Z_STRLEN_P(pztmp) > 0) {
+			props.correlation_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_CORRELATION_ID_FLAG;
 		}
 	}
 
-	}
-
 	amqp_table_t *headers = NULL;
 
-	if (ini_arr_tmp && SUCCESS == zend_hash_find(HASH_OF(ini_arr_tmp), "headers", sizeof("headers"), (void*)&ppztmp)) {
-		convert_to_array(*ppztmp);
+	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "headers", sizeof("headers")-1)) != NULL) {
+		convert_to_array(*pztmp);
 
-		headers = convert_zval_to_amqp_table(*ppztmp TSRMLS_CC);
+		headers = convert_zval_to_amqp_table(*pztmp TSRMLS_CC);
 
 		props._flags |= AMQP_BASIC_HEADERS_FLAG;
 		props.headers = *headers;
@@ -763,11 +733,6 @@ PHP_METHOD(amqp_exchange_class, publish)
 		php_amqp_free_amqp_table(headers);
 	}
 
-	if (ini_arr_tmp) {
-		zval_dtor(ini_arr_tmp);
-		FREE_ZVAL(ini_arr_tmp);
-	}
-
 #ifndef PHP_WIN32
 	/* End ignoring of SIGPIPEs */
 	signal(SIGPIPE, old_handler);
@@ -793,7 +758,6 @@ PHP_METHOD(amqp_exchange_class, publish)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto int exchange::bind(string srcExchangeName[, string routingKey, array arguments]);
 bind exchange to exchange by routing key

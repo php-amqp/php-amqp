@@ -21,18 +21,12 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_connection.h 326660 2012-07-17 05:32:34Z pdezwart $ */
-
-
 void amqp_connection_dtor(void *object TSRMLS_DC);
-zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC);
+zend_object amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC);
 
 void php_amqp_connect(amqp_connection_object *amqp_connection, int persistent TSRMLS_DC);
 void php_amqp_disconnect_force(amqp_connection_object *connection TSRMLS_DC);
 void php_amqp_disconnect_safe(amqp_connection_object *connection TSRMLS_DC);
-
-
-
 
 PHP_METHOD(amqp_connection_class, __construct);
 PHP_METHOD(amqp_connection_class, isConnected);
@@ -42,31 +36,20 @@ PHP_METHOD(amqp_connection_class, pdisconnect);
 PHP_METHOD(amqp_connection_class, disconnect);
 PHP_METHOD(amqp_connection_class, reconnect);
 PHP_METHOD(amqp_connection_class, preconnect);
-
 PHP_METHOD(amqp_connection_class, getLogin);
 PHP_METHOD(amqp_connection_class, setLogin);
-
 PHP_METHOD(amqp_connection_class, getPassword);
 PHP_METHOD(amqp_connection_class, setPassword);
-
 PHP_METHOD(amqp_connection_class, getHost);
 PHP_METHOD(amqp_connection_class, setHost);
-
 PHP_METHOD(amqp_connection_class, getPort);
 PHP_METHOD(amqp_connection_class, setPort);
-
 PHP_METHOD(amqp_connection_class, getVhost);
 PHP_METHOD(amqp_connection_class, setVhost);
-
-PHP_METHOD(amqp_connection_class, getTimeout);
-PHP_METHOD(amqp_connection_class, setTimeout);
-
 PHP_METHOD(amqp_connection_class, getReadTimeout);
 PHP_METHOD(amqp_connection_class, setReadTimeout);
-
 PHP_METHOD(amqp_connection_class, getWriteTimeout);
 PHP_METHOD(amqp_connection_class, setWriteTimeout);
-
 PHP_METHOD(amqp_connection_class, getUsedChannels);
 PHP_METHOD(amqp_connection_class, getMaxFrameSize);
 PHP_METHOD(amqp_connection_class, getMaxChannels);

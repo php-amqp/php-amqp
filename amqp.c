@@ -21,8 +21,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp.c 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -40,6 +38,7 @@
 # include <stdint.h>
 # include <signal.h>
 #endif
+
 #include <amqp.h>
 #include <amqp_framing.h>
 
@@ -169,10 +168,8 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getHeartbeatInterval, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_isPersistent, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
-
 
 /* amqp_channel_class ARG_INFO definition */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
@@ -621,9 +618,7 @@ zend_function_entry amqp_functions[] = {
 /* {{{ amqp_module_entry
 */
 zend_module_entry amqp_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
-#endif
 	"amqp",
 	amqp_functions,
 	PHP_MINIT(amqp),
@@ -631,9 +626,7 @@ zend_module_entry amqp_module_entry = {
 	NULL,
 	NULL,
 	PHP_MINFO(amqp),
-#if ZEND_MODULE_API_NO >= 20010901
 	PHP_AMQP_VERSION,
-#endif
 	STANDARD_MODULE_PROPERTIES
 };
 /* }}} */
@@ -709,7 +702,6 @@ void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exc
 
 	zend_throw_exception(exception_ce, message, code TSRMLS_CC);
 }
-
 
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connection, amqp_channel_object *channel)
 {
@@ -827,13 +819,12 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				break;
 			case IS_STRING:
 				field->kind        = AMQP_FIELD_KIND_UTF8;
-				strValue           = estrndup(Z_STRVAL_P(&value), Z_STRLEN_P(&value));
+				strValue           = estrndup(Z_STR_P(&value), Z_STRLEN_P(&value));
 				field->value.bytes = php_amqp_long_string(strValue, Z_STRLEN_P(&value));
 				break;
 			case IS_ARRAY:
 				field->kind = AMQP_FIELD_KIND_TABLE;
 				internal_convert_zval_to_amqp_table(&value, &field->value.table, 1 TSRMLS_CC);
-
 				break;
 			default:
 				switch(Z_TYPE_P(&value)) {
@@ -869,9 +860,6 @@ inline amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC)
 	return arguments;
 }
 
-
-
-
 void internal_php_amqp_free_amqp_table(amqp_table_t *object, char clear_root)
 {
 	if (!object) {
@@ -904,7 +892,6 @@ void php_amqp_free_amqp_table(amqp_table_t *object)
 {
 	internal_php_amqp_free_amqp_table(object, 1);
 }
-
 
 PHP_INI_BEGIN()
 	PHP_INI_ENTRY("amqp.host",				DEFAULT_HOST,				PHP_INI_ALL, NULL)
@@ -1009,7 +996,6 @@ PHP_MSHUTDOWN_FUNCTION(amqp)
 	return SUCCESS;
 }
 /* }}} */
-
 
 /* {{{ PHP_MINFO_FUNCTION
 */

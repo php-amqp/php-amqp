@@ -21,11 +21,8 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_envelope.h 321054 2011-12-16 01:23:28Z pdezwart $ */
-
-
 void amqp_envelope_dtor(void *object TSRMLS_DC);
-zend_object_value amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC);
+zend_object amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_envelope_class, __construct);
 PHP_METHOD(amqp_envelope_class, getBody);
@@ -47,8 +44,6 @@ PHP_METHOD(amqp_envelope_class, getReplyTo);
 PHP_METHOD(amqp_envelope_class, getCorrelationId);
 PHP_METHOD(amqp_envelope_class, getHeaders);
 PHP_METHOD(amqp_envelope_class, getHeader);
-
-
 
 /*
 *Local variables:

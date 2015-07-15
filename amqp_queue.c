@@ -21,8 +21,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_queue.c 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -39,6 +37,7 @@
 # include <signal.h>
 # include <stdint.h>
 #endif
+
 #include <amqp.h>
 #include <amqp_framing.h>
 
@@ -50,9 +49,8 @@
 
 #include "php_amqp.h"
 
-
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 zend_object_handlers amqp_queue_object_handlers;
+
 HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
 	zval *value;
 	HashTable *debug_info;
@@ -69,12 +67,12 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 
 	/* Start adding values */
 	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, queue->name, strlen(queue->name), 1);
+	ZVAL_STRINGL(value, queue->name, strlen(queue->name));
 	zend_hash_add(debug_info, "queue_name", sizeof("queue_name"), &value, sizeof(zval *), NULL);
 
 	MAKE_STD_ZVAL(value);
 	if (queue->consumer_tag_len > 0) {
-		ZVAL_STRINGL(value, queue->consumer_tag, strlen(queue->consumer_tag), 1);
+		ZVAL_STRINGL(value, queue->consumer_tag, strlen(queue->consumer_tag));
 	} else {
 		ZVAL_NULL(value);
 	}
@@ -102,7 +100,6 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 
 	return debug_info;
 }
-#endif
 
 /* Used in ctor, so must be declated first */
 void amqp_queue_dtor(void *object TSRMLS_DC)
@@ -125,9 +122,9 @@ void amqp_queue_dtor(void *object TSRMLS_DC)
 	efree(object);
 }
 
-zend_object_value amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	zend_object_value new_value;
+	zend_object new_value;
 	amqp_queue_object* queue = (amqp_queue_object*)emalloc(sizeof(amqp_queue_object));
 
 	memset(queue, 0, sizeof(amqp_queue_object));
@@ -146,13 +143,9 @@ zend_object_value amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 		NULL TSRMLS_CC
 	);
 
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 	memcpy((void *)&amqp_queue_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_queue_object_handlers.get_debug_info = amqp_queue_object_get_debug_info;
 	new_value.handlers = &amqp_queue_object_handlers;
-#else
-	new_value.handlers = zend_get_std_object_handlers();
-#endif
 
 	return new_value;
 }
@@ -204,7 +197,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result)
 				break;
 			case AMQP_FIELD_KIND_UTF8:
 			case AMQP_FIELD_KIND_BYTES:
-				ZVAL_STRINGL(value, entry->value.value.bytes.bytes, entry->value.value.bytes.len, 1);
+				ZVAL_STRINGL(value, entry->value.value.bytes.bytes, entry->value.value.bytes.len);
 				break;
 			case AMQP_FIELD_KIND_ARRAY:
 				{
@@ -368,7 +361,6 @@ PHP_METHOD(amqp_queue_class, __construct)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPQueue::getName()
 Get the queue name */
 PHP_METHOD(amqp_queue_class, getName)
@@ -390,7 +382,6 @@ PHP_METHOD(amqp_queue_class, getName)
 	}
 }
 /* }}} */
-
 
 /* {{{ proto AMQPQueue::setName(string name)
 Set the queue name */
@@ -419,8 +410,6 @@ PHP_METHOD(amqp_queue_class, setName)
 }
 /* }}} */
 
-
-
 /* {{{ proto AMQPQueue::getFlags()
 Get the queue parameters */
 PHP_METHOD(amqp_queue_class, getFlags)
@@ -437,7 +426,6 @@ PHP_METHOD(amqp_queue_class, getFlags)
 	RETURN_LONG(queue->flags);
 }
 /* }}} */
-
 
 /* {{{ proto AMQPQueue::setFlags(long bitmask)
 Set the queue parameters */
@@ -461,13 +449,12 @@ PHP_METHOD(amqp_queue_class, setFlags)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPQueue::getArgument(string key)
 Get the queue argument referenced by key */
 PHP_METHOD(amqp_queue_class, getArgument)
 {
 	zval *id;
-	zval **tmp;
+	zval *tmp;
 	amqp_queue_object *queue;
 	char *key;
 	int key_len;
@@ -478,11 +465,11 @@ PHP_METHOD(amqp_queue_class, getArgument)
 
 	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	if (zend_hash_find(Z_ARRVAL_P(queue->arguments), key, key_len + 1, (void **)&tmp) == FAILURE) {
+	if ((tmp = zend_hash_str_find(Z_ARRVAL_P(queue->arguments), key, key_len)) == NULL) {) {
 		RETURN_FALSE;
 	}
 
-	*return_value = **tmp;
+	*return_value = *tmp;
 	zval_copy_ctor(return_value);
 	INIT_PZVAL(return_value);
 
@@ -532,7 +519,6 @@ PHP_METHOD(amqp_queue_class, setArguments)
 }
 /* }}} */
 
-
 /* {{{ proto AMQPQueue::setArgument(key, value)
 Get the queue name */
 PHP_METHOD(amqp_queue_class, setArgument)
@@ -568,7 +554,6 @@ PHP_METHOD(amqp_queue_class, setArgument)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto int AMQPQueue::declareQueue();
 declare queue
@@ -643,7 +628,6 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 }
 /* }}} */
 
-
 /* {{{ proto int AMQPQueue::bind(string exchangeName, [string routingKey, array arguments]);
 bind queue to exchange by routing key
 */
@@ -711,7 +695,6 @@ PHP_METHOD(amqp_queue_class, bind)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto int AMQPQueue::get([bit flags=AMQP_NOPARAM]);
 read messages from queue
@@ -809,7 +792,6 @@ PHP_METHOD(amqp_queue_class, get)
 }
 /* }}} */
 
-
 /* {{{ proto array AMQPQueue::consume([callback, flags = <bitmask>, consumer_tag]);
 consume the message
 */
@@ -897,7 +879,7 @@ PHP_METHOD(amqp_queue_class, consume)
 		tv_ptr = NULL;
 	}
 
-	while(1) {
+	while (1) {
 		/* Initialize the message */
 		zval *message;
 
@@ -980,7 +962,6 @@ PHP_METHOD(amqp_queue_class, consume)
 }
 /* }}} */
 
-
 /* {{{ proto int AMQPQueue::ack(long deliveryTag, [bit flags=AMQP_NOPARAM]);
 	acknowledge the message
 */
@@ -1034,7 +1015,6 @@ PHP_METHOD(amqp_queue_class, ack)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto int AMQPQueue::nack(long deliveryTag, [bit flags=AMQP_NOPARAM]);
 	acknowledge the message
@@ -1091,7 +1071,6 @@ PHP_METHOD(amqp_queue_class, nack)
 }
 /* }}} */
 
-
 /* {{{ proto int AMQPQueue::reject(long deliveryTag, [bit flags=AMQP_NOPARAM]);
 	acknowledge the message
 */
@@ -1146,7 +1125,6 @@ PHP_METHOD(amqp_queue_class, reject)
 }
 /* }}} */
 
-
 /* {{{ proto int AMQPQueue::purge();
 purge queue
 */
@@ -1197,7 +1175,6 @@ PHP_METHOD(amqp_queue_class, purge)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto int AMQPQueue::cancel([string consumer_tag]);
 cancel queue to consumer
@@ -1258,7 +1235,6 @@ PHP_METHOD(amqp_queue_class, cancel)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto int AMQPQueue::unbind(string exchangeName, [string routingKey, array arguments]);
 unbind queue from exchange
@@ -1325,7 +1301,6 @@ PHP_METHOD(amqp_queue_class, unbind)
 	RETURN_TRUE;
 }
 /* }}} */
-
 
 /* {{{ proto int AMQPQueue::delete([long flags = AMQP_NOPARAM]]);
 delete queue and return the number of messages deleted in it
@@ -1438,7 +1413,6 @@ PHP_METHOD(amqp_queue_class, getConsumerTag)
 	RETURN_NULL();
 }
 /* }}} */
-
 
 /*
 *Local variables:

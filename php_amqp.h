@@ -21,103 +21,14 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: php_amqp.h 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifndef PHP_AMQP_H
 #define PHP_AMQP_H
-
-
-
-/* Add pseudo refcount macros for PHP version < 5.3 */
-#ifndef Z_REFCOUNT_PP
-
-#define Z_REFCOUNT_PP(ppz)				Z_REFCOUNT_P(*(ppz))
-#define Z_SET_REFCOUNT_PP(ppz, rc)		Z_SET_REFCOUNT_P(*(ppz), rc)
-#define Z_ADDREF_PP(ppz)				Z_ADDREF_P(*(ppz))
-#define Z_DELREF_PP(ppz)				Z_DELREF_P(*(ppz))
-#define Z_ISREF_PP(ppz)					Z_ISREF_P(*(ppz))
-#define Z_SET_ISREF_PP(ppz)				Z_SET_ISREF_P(*(ppz))
-#define Z_UNSET_ISREF_PP(ppz)			Z_UNSET_ISREF_P(*(ppz))
-#define Z_SET_ISREF_TO_PP(ppz, isref)	Z_SET_ISREF_TO_P(*(ppz), isref)
-
-#define Z_REFCOUNT_P(pz)				zval_refcount_p(pz)
-#define Z_SET_REFCOUNT_P(pz, rc)		zval_set_refcount_p(pz, rc)
-#define Z_ADDREF_P(pz)					zval_addref_p(pz)
-#define Z_DELREF_P(pz)					zval_delref_p(pz)
-#define Z_ISREF_P(pz)					zval_isref_p(pz)
-#define Z_SET_ISREF_P(pz)				zval_set_isref_p(pz)
-#define Z_UNSET_ISREF_P(pz)				zval_unset_isref_p(pz)
-#define Z_SET_ISREF_TO_P(pz, isref)		zval_set_isref_to_p(pz, isref)
-
-#define Z_REFCOUNT(z)					Z_REFCOUNT_P(&(z))
-#define Z_SET_REFCOUNT(z, rc)			Z_SET_REFCOUNT_P(&(z), rc)
-#define Z_ADDREF(z)						Z_ADDREF_P(&(z))
-#define Z_DELREF(z)						Z_DELREF_P(&(z))
-#define Z_ISREF(z)						Z_ISREF_P(&(z))
-#define Z_SET_ISREF(z)					Z_SET_ISREF_P(&(z))
-#define Z_UNSET_ISREF(z)				Z_UNSET_ISREF_P(&(z))
-#define Z_SET_ISREF_TO(z, isref)		Z_SET_ISREF_TO_P(&(z), isref)
-
-#define ZEND_FCI_INITIALIZED(fci) ((fci).size != 0)
-
-#define MAKE_COPY_ZVAL(ppzv, pzv) \
-	*(pzv) = **(ppzv);            \
-	zval_copy_ctor((pzv));        \
-	INIT_PZVAL((pzv));
-
-#if defined(__GNUC__)
-#define zend_always_inline inline __attribute__((always_inline))
-#elif defined(_MSC_VER)
-#define zend_always_inline __forceinline
-#else
-#define zend_always_inline inline
-#endif
-
-static zend_always_inline zend_uint zval_refcount_p(zval* pz) {
-	return pz->refcount;
-}
-
-static zend_always_inline zend_uint zval_set_refcount_p(zval* pz, zend_uint rc) {
-	return pz->refcount = rc;
-}
-
-static zend_always_inline zend_uint zval_addref_p(zval* pz) {
-	return ++pz->refcount;
-}
-
-static zend_always_inline zend_uint zval_delref_p(zval* pz) {
-	return --pz->refcount;
-}
-
-static zend_always_inline zend_bool zval_isref_p(zval* pz) {
-	return pz->is_ref;
-}
-
-static zend_always_inline zend_bool zval_set_isref_p(zval* pz) {
-	return pz->is_ref = 1;
-}
-
-static zend_always_inline zend_bool zval_unset_isref_p(zval* pz) {
-	return pz->is_ref = 0;
-}
-
-static zend_always_inline zend_bool zval_set_isref_to_p(zval* pz, zend_bool isref) {
-	return pz->is_ref = isref;
-}
-
-static zend_always_inline zend_fcall_info empty_fcall_info = { 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0 };
-
-#else
-
-#define PHP_ATLEAST_5_3   true
-
-#endif
-
 
 #include "amqp.h"
 #include "amqp_object_store.h"
 
 extern zend_module_entry amqp_module_entry;
+
 #define phpext_amqp_ptr &amqp_module_entry
 
 #ifdef PHP_WIN32
@@ -131,7 +42,6 @@ extern zend_module_entry amqp_module_entry;
 #endif
 
 #define AMQP_NOPARAM		0
-/* Where is 1?*/
 #define AMQP_JUST_CONSUME	1
 #define AMQP_DURABLE		2
 #define AMQP_PASSIVE		4
@@ -183,7 +93,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_exchange_exception_class_entry,
 	*amqp_queue_exception_class_entry;
 
-
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
 #define DEFAULT_TIMEOUT						""
@@ -220,7 +129,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define PHP_AMQP_STRINGIFY(value) PHP_AMQP_TO_STRING(value)
 #define PHP_AMQP_TO_STRING(value) #value
 
-
 #define DEFAULT_CHANNEL_MAX					PHP_AMQP_STRINGIFY(PHP_AMQP_MAX_CHANNELS)
 #define DEFAULT_FRAME_MAX					PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_FRAME_MAX)
 #define DEFAULT_HEARTBEAT					PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_HEARTBEAT)
@@ -229,15 +137,12 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define AMQP_READ_NO_MESSAGES				0
 #define AMQP_READ_ERROR						-1
 
-
 #define IS_PASSIVE(bitmask)		(AMQP_PASSIVE & (bitmask)) ? 1 : 0
 #define IS_DURABLE(bitmask)		(AMQP_DURABLE & (bitmask)) ? 1 : 0
 #define IS_EXCLUSIVE(bitmask)	(AMQP_EXCLUSIVE & (bitmask)) ? 1 : 0
 #define IS_AUTODELETE(bitmask)	(AMQP_AUTODELETE & (bitmask)) ? 1 : 0
 #define IS_INTERNAL(bitmask)	(AMQP_INTERNAL & (bitmask)) ? 1 : 0
 #define IS_NOWAIT(bitmask)		(AMQP_NOWAIT & (bitmask)) ? 1 : 0 /* NOTE: always 0 in rabbitmq-c internals, so don't use it unless you are clearly understand aftermath*/
-
-
 
 #define AMQP_SET_NAME(object, str) \
 	(object)->name_len = strlen(str) >= sizeof((object)->name) ? sizeof((object)->name) - 1 : strlen(str); \
@@ -277,7 +182,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 	} \
 	connection = AMQP_GET_CONNECTION(object)
 
-
 #define AMQP_VERIFY_CHANNEL_ERROR(error, reason) \
 		char verify_channel_error_tmp[255]; \
 		snprintf(verify_channel_error_tmp, 255, "%s %s", error, reason); \
@@ -315,15 +219,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define PHP_AMQP_DESTROY_ERROR_MESSAGE()\
 	if (PHP_AMQP_ERROR_MESSAGE != NULL) { efree(PHP_AMQP_ERROR_MESSAGE); }
 
-#if ZEND_MODULE_API_NO >= 20100000
-	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
-#else
-	#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) \
-		do { \
-			zval *tmp; \
-			zend_hash_copy((obj).properties, &(ce)->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *)); \
-		} while (0);
-#endif
+#define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
 
 typedef struct _amqp_channel_object {
 	zend_object zo;
@@ -431,7 +327,6 @@ typedef struct _amqp_envelope_object {
 # define AMQP_OS_SOCKET_TIMEOUT_ERRNO AMQP_ERROR_CATEGORY_MASK | EAGAIN
 #endif
 
-
 #ifdef ZTS
 #define AMQP_G(v) TSRMG(amqp_globals_id, zend_amqp_globals *, v)
 #else
@@ -448,13 +343,10 @@ typedef struct _amqp_envelope_object {
 
 void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_object *connection, amqp_channel_object *channel TSRMLS_DC);
 void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, long code TSRMLS_DC);
-
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connection, amqp_channel_object *channel);
-
 amqp_bytes_t php_amqp_long_string(char const *cstr, int len);
 
 #endif	/* PHP_AMQP_H */
-
 
 /*
  * Local variables:
