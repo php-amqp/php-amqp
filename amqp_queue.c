@@ -52,7 +52,7 @@
 zend_object_handlers amqp_queue_object_handlers;
 
 HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
-	zval *value;
+	zval value;
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
@@ -66,37 +66,31 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	ZEND_INIT_SYMTABLE_EX(debug_info, 7 + 1, 0);
 
 	/* Start adding values */
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, queue->name, strlen(queue->name));
-	zend_hash_add(debug_info, "queue_name", sizeof("queue_name"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, queue->name, strlen(queue->name));
+	zend_hash_str_add(debug_info, "queue_name", sizeof("queue_name"), &value);
 
-	MAKE_STD_ZVAL(value);
 	if (queue->consumer_tag_len > 0) {
-		ZVAL_STRINGL(value, queue->consumer_tag, strlen(queue->consumer_tag));
+		ZVAL_STRINGL(&value, queue->consumer_tag, strlen(queue->consumer_tag));
 	} else {
-		ZVAL_NULL(value);
+		ZVAL_NULL(&value);
 	}
 
-	zend_hash_add(debug_info, "consumer_tag", sizeof("consumer_tag"), &value, sizeof(zval *), NULL);
+	zend_hash_str_add(debug_info, "consumer_tag", sizeof("consumer_tag"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, IS_PASSIVE(queue->flags));
-	zend_hash_add(debug_info, "passive", sizeof("passive"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, IS_PASSIVE(queue->flags));
+	zend_hash_str_add(debug_info, "passive", sizeof("passive"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, IS_DURABLE(queue->flags));
-	zend_hash_add(debug_info, "durable", sizeof("durable"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, IS_DURABLE(queue->flags));
+	zend_hash_str_add(debug_info, "durable", sizeof("durable"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, IS_EXCLUSIVE(queue->flags));
-	zend_hash_add(debug_info, "exclusive", sizeof("exclusive"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, IS_EXCLUSIVE(queue->flags));
+	zend_hash_str_add(debug_info, "exclusive", sizeof("exclusive"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, IS_AUTODELETE(queue->flags));
-	zend_hash_add(debug_info, "auto_delete", sizeof("auto_delete"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, IS_AUTODELETE(queue->flags));
+	zend_hash_str_add(debug_info, "auto_delete", sizeof("auto_delete"), &value);
 
 	Z_ADDREF_P(queue->arguments);
-	zend_hash_add(debug_info, "arguments", sizeof("arguments"), &queue->arguments, sizeof(&queue->arguments), NULL);
+	zend_hash_str_add(debug_info, "arguments", sizeof("arguments"), queue->arguments);
 
 	return debug_info;
 }
@@ -153,61 +147,62 @@ zend_object amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 void parse_amqp_table(amqp_table_t *table, zval *result)
 {
 	int i;
-	zval *value;
+	zval value;
 
 	assert(Z_TYPE_P(result) == IS_ARRAY);
 
 	for (i = 0; i < table->num_entries; i++) {
-		MAKE_STD_ZVAL(value);
-
 		amqp_table_entry_t *entry = &(table->entries[i]);
+
 		switch (entry->value.kind) {
 			case AMQP_FIELD_KIND_BOOLEAN:
-				ZVAL_BOOL(value, entry->value.value.boolean);
+				ZVAL_BOOL(&value, entry->value.value.boolean);
 				break;
 			case AMQP_FIELD_KIND_I8:
-				ZVAL_LONG(value, entry->value.value.i8);
+				ZVAL_LONG(&value, entry->value.value.i8);
 				break;
 			case AMQP_FIELD_KIND_U8:
-				ZVAL_LONG(value, entry->value.value.u8);
+				ZVAL_LONG(&value, entry->value.value.u8);
 				break;
 			case AMQP_FIELD_KIND_I16:
-				ZVAL_LONG(value, entry->value.value.i16);
+				ZVAL_LONG(&value, entry->value.value.i16);
 				break;
 			case AMQP_FIELD_KIND_U16:
-				ZVAL_LONG(value, entry->value.value.u16);
+				ZVAL_LONG(&value, entry->value.value.u16);
 				break;
 			case AMQP_FIELD_KIND_I32:
-				ZVAL_LONG(value, entry->value.value.i32);
+				ZVAL_LONG(&value, entry->value.value.i32);
 				break;
 			case AMQP_FIELD_KIND_U32:
-				ZVAL_LONG(value, entry->value.value.u32);
+				ZVAL_LONG(&value, entry->value.value.u32);
 				break;
 			case AMQP_FIELD_KIND_I64:
-				ZVAL_LONG(value, entry->value.value.i64);
+				ZVAL_LONG(&value, entry->value.value.i64);
 				break;
 			case AMQP_FIELD_KIND_U64:
-				ZVAL_LONG(value, entry->value.value.i64);
+				ZVAL_LONG(&value, entry->value.value.i64);
 				break;
 			case AMQP_FIELD_KIND_F32:
-				ZVAL_DOUBLE(value, entry->value.value.f32);
+				ZVAL_DOUBLE(&value, entry->value.value.f32);
 				break;
 			case AMQP_FIELD_KIND_F64:
-				ZVAL_DOUBLE(value, entry->value.value.f64);
+				ZVAL_DOUBLE(&value, entry->value.value.f64);
 				break;
 			case AMQP_FIELD_KIND_UTF8:
 			case AMQP_FIELD_KIND_BYTES:
-				ZVAL_STRINGL(value, entry->value.value.bytes.bytes, entry->value.value.bytes.len);
+				ZVAL_STRINGL(&value, entry->value.value.bytes.bytes, entry->value.value.bytes.len);
 				break;
 			case AMQP_FIELD_KIND_ARRAY:
 				{
 					int j;
-					array_init(value);
+
+					array_init(&value);
+
 					for (j = 0; j < entry->value.value.array.num_entries; ++j) {
 						switch (entry->value.value.array.entries[j].kind) {
 							case AMQP_FIELD_KIND_UTF8:
 								add_next_index_stringl(
-									value,
+									&value,
 									entry->value.value.array.entries[j].value.bytes.bytes,
 									entry->value.value.array.entries[j].value.bytes.len,
 									1
@@ -215,14 +210,15 @@ void parse_amqp_table(amqp_table_t *table, zval *result)
 								break;
 							case AMQP_FIELD_KIND_TABLE:
 								{
-									zval *subtable;
-									MAKE_STD_ZVAL(subtable);
-									array_init(subtable);
+									zval subtable;
+
+									array_init(&subtable);
+
 									parse_amqp_table(
 										&(entry->value.value.array.entries[j].value.table),
-										subtable
+										&subtable
 									);
-									add_next_index_zval(value, subtable);
+									add_next_index_zval(&value, &subtable);
 								}
 								break;
 						}
@@ -230,27 +226,28 @@ void parse_amqp_table(amqp_table_t *table, zval *result)
 				}
 				break;
 			case AMQP_FIELD_KIND_TABLE:
-			    array_init(value);
-				parse_amqp_table(&(entry->value.value.table), value);
+			    array_init(&value);
+				parse_amqp_table(&(entry->value.value.table), &value);
 				break;
 			case AMQP_FIELD_KIND_TIMESTAMP:
-				ZVAL_DOUBLE(value, entry->value.value.u64);
+				ZVAL_DOUBLE(&value, entry->value.value.u64);
 				break;
 			case AMQP_FIELD_KIND_VOID:
 			case AMQP_FIELD_KIND_DECIMAL:
 			default:
-				ZVAL_NULL(value);
+				ZVAL_NULL(&value);
 				break;
 		}
 
-		if (Z_TYPE_P(value) != IS_NULL) {
+		if (Z_TYPE(value) != IS_NULL) {
 			char *key = estrndup(entry->key.bytes, entry->key.len);
-			add_assoc_zval(result, key, value);
+			add_assoc_zval(result, key, &value);
 			efree(key);
 		} else {
-			zval_dtor(value);
+			zval_dtor(&value);
 		}
 	}
+
 	return;
 }
 
@@ -376,7 +373,7 @@ PHP_METHOD(amqp_queue_class, getName)
 
 	/* Check if there is a name to be had: */
 	if (queue->name_len) {
-		RETURN_STRING(queue->name, 1);
+		RETURN_STR(queue->name);
 	} else {
 		RETURN_FALSE;
 	}
@@ -1407,7 +1404,7 @@ PHP_METHOD(amqp_queue_class, getConsumerTag)
 	queue = (amqp_queue_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
 
 	if (queue->consumer_tag_len > 0) {
-		RETURN_STRINGL(queue->consumer_tag, strlen(queue->consumer_tag), 1);
+		RETURN_STRING(queue->consumer_tag);
 	}
 
 	RETURN_NULL();

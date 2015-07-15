@@ -52,7 +52,7 @@
 zend_object_handlers amqp_exchange_object_handlers;
 
 HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
-	zval *value;
+	zval value;
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
@@ -66,32 +66,26 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	ZEND_INIT_SYMTABLE_EX(debug_info, 6 + 1, 0);
 
 	/* Start adding values */
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, exchange->name, strlen(exchange->name));
-	zend_hash_add(debug_info, "name", sizeof("name"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, exchange->name, strlen(exchange->name));
+	zend_hash_str_add(debug_info, "name", sizeof("name"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, exchange->type, strlen(exchange->type));
-	zend_hash_add(debug_info, "type", sizeof("type"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, exchange->type, strlen(exchange->type));
+	zend_hash_str_add(debug_info, "type", sizeof("type"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, IS_PASSIVE(exchange->flags));
-	zend_hash_add(debug_info, "passive", sizeof("passive"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, IS_PASSIVE(exchange->flags));
+	zend_hash_str_add(debug_info, "passive", sizeof("passive"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, IS_DURABLE(exchange->flags));
-	zend_hash_add(debug_info, "durable", sizeof("durable"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, IS_DURABLE(exchange->flags));
+	zend_hash_str_add(debug_info, "durable", sizeof("durable"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, IS_AUTODELETE(exchange->flags));
-	zend_hash_add(debug_info, "auto_delete", sizeof("auto_delete"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, IS_AUTODELETE(exchange->flags));
+	zend_hash_str_add(debug_info, "auto_delete", sizeof("auto_delete"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, IS_INTERNAL(exchange->flags));
-	zend_hash_add(debug_info, "internal", sizeof("internal"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, IS_INTERNAL(exchange->flags));
+	zend_hash_str_add(debug_info, "internal", sizeof("internal"), &value);
 
 	Z_ADDREF_P(exchange->arguments);
-	zend_hash_add(debug_info, "arguments", sizeof("arguments"), &exchange->arguments, sizeof(&exchange->arguments), NULL);
+	zend_hash_str_add(debug_info, "arguments", sizeof("arguments"), exchange->arguments);
 
 	/* Start adding values */
 	return debug_info;
@@ -190,7 +184,7 @@ PHP_METHOD(amqp_exchange_class, getName)
 
 	/* Check if there is a name to be had: */
 	if (exchange->name_len) {
-		RETURN_STRING(exchange->name, 1);
+		RETURN_STR(exchange->name);
 	} else {
 		RETURN_FALSE;
 	}
@@ -276,7 +270,7 @@ PHP_METHOD(amqp_exchange_class, getType)
 
 	/* Check if there is a type to be had: */
 	if (exchange->type_len) {
-		RETURN_STRING(exchange->type, 1);
+		RETURN_STR(exchange->type);
 	} else {
 		RETURN_FALSE;
 	}

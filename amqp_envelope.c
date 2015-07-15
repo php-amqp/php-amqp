@@ -52,7 +52,7 @@
 zend_object_handlers amqp_envelope_object_handlers;
 
 HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
-	zval *value;
+	zval value;
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
@@ -66,76 +66,59 @@ HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	ZEND_INIT_SYMTABLE_EX(debug_info, 18 + 1, 0);
 
 	/* Start adding values */
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->body, envelope->body_len);
-	zend_hash_add(debug_info, "body", sizeof("body"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->body, envelope->body_len);
+	zend_hash_add(debug_info, "body", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->content_type, strlen(envelope->content_type));
-	zend_hash_add(debug_info, "content_type", sizeof("content_type"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->content_type, strlen(envelope->content_type));
+	zend_hash_add(debug_info, "content_type", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->routing_key, strlen(envelope->routing_key));
-	zend_hash_add(debug_info, "routing_key", sizeof("routing_key"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->routing_key, strlen(envelope->routing_key));
+	zend_hash_add(debug_info, "routing_key", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->delivery_tag);
-	zend_hash_add(debug_info, "delivery_tag", sizeof("delivery_tag"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->delivery_tag);
+	zend_hash_add(debug_info, "delivery_tag", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->delivery_mode);
-	zend_hash_add(debug_info, "delivery_mode", sizeof("delivery_mode"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->delivery_mode);
+	zend_hash_add(debug_info, "delivery_mode", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->exchange_name, strlen(envelope->exchange_name));
-	zend_hash_add(debug_info, "exchange_name", sizeof("exchange_name"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->exchange_name, strlen(envelope->exchange_name));
+	zend_hash_add(debug_info, "exchange_name", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->is_redelivery);
-	zend_hash_add(debug_info, "is_redelivery", sizeof("is_redelivery"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->is_redelivery);
+	zend_hash_add(debug_info, "is_redelivery", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->content_encoding, strlen(envelope->content_encoding));
-	zend_hash_add(debug_info, "content_encoding", sizeof("content_encoding"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->content_encoding, strlen(envelope->content_encoding));
+	zend_hash_add(debug_info, "content_encoding", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->type, strlen(envelope->type));
-	zend_hash_add(debug_info, "type", sizeof("type"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->type, strlen(envelope->type));
+	zend_hash_add(debug_info, "type", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->timestamp);
-	zend_hash_add(debug_info, "timestamp", sizeof("timestamp"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->timestamp);
+	zend_hash_add(debug_info, "timestamp", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->priority);
-	zend_hash_add(debug_info, "priority", sizeof("priority"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->priority);
+	zend_hash_add(debug_info, "priority", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->expiration, strlen(envelope->expiration));
-	zend_hash_add(debug_info, "expiration", sizeof("expiration"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->expiration, strlen(envelope->expiration));
+	zend_hash_add(debug_info, "expiration", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->user_id, strlen(envelope->user_id));
-	zend_hash_add(debug_info, "user_id", sizeof("user_id"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->user_id, strlen(envelope->user_id));
+	zend_hash_add(debug_info, "user_id", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->app_id, strlen(envelope->app_id));
-	zend_hash_add(debug_info, "app_id", sizeof("app_id"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->app_id, strlen(envelope->app_id));
+	zend_hash_add(debug_info, "app_id", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->message_id, strlen(envelope->message_id));
-	zend_hash_add(debug_info, "message_id", sizeof("message_id"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->message_id, strlen(envelope->message_id));
+	zend_hash_add(debug_info, "message_id", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->reply_to, strlen(envelope->reply_to));
-	zend_hash_add(debug_info, "reply_to", sizeof("reply_to"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->reply_to, strlen(envelope->reply_to));
+	zend_hash_add(debug_info, "reply_to", &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->correlation_id, strlen(envelope->correlation_id));
-	zend_hash_add(debug_info, "correlation_id", sizeof("correlation_id"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->correlation_id, strlen(envelope->correlation_id));
+	zend_hash_add(debug_info, "correlation_id", &value);
 
 	Z_ADDREF_P(envelope->headers);
-	zend_hash_add(debug_info, "headers", sizeof("headers"), &envelope->headers, sizeof(envelope->headers), NULL);
+	zend_hash_add(debug_info, "headers", envelope->headers);
 
 	return debug_info;
 }
@@ -216,7 +199,7 @@ PHP_METHOD(amqp_envelope_class, getBody)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRINGL(envelope->body, envelope->body_len, 1);
+	RETURN_STR(envelope->body);
 }
 /* }}} */
 
@@ -235,7 +218,7 @@ PHP_METHOD(amqp_envelope_class, getRoutingKey)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->routing_key, 1);
+	RETURN_STR(envelope->routing_key);
 }
 /* }}} */
 
@@ -292,7 +275,7 @@ PHP_METHOD(amqp_envelope_class, getExchangeName)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->exchange_name, 1);
+	RETURN_STR(envelope->exchange_name);
 }
 /* }}} */
 
@@ -331,7 +314,7 @@ PHP_METHOD(amqp_envelope_class, getContentType)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->content_type, 1);
+	RETURN_STR(envelope->content_type);
 }
 /* }}} */
 
@@ -350,7 +333,7 @@ PHP_METHOD(amqp_envelope_class, getContentEncoding)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->content_encoding, 1);
+	RETURN_STR(envelope->content_encoding);
 }
 /* }}} */
 
@@ -369,7 +352,7 @@ PHP_METHOD(amqp_envelope_class, getType)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->type, 1);
+	RETURN_STR(envelope->type);
 }
 /* }}} */
 
@@ -426,7 +409,7 @@ PHP_METHOD(amqp_envelope_class, getExpiration)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->expiration, 1);
+	RETURN_STR(envelope->expiration);
 }
 /* }}} */
 
@@ -445,7 +428,7 @@ PHP_METHOD(amqp_envelope_class, getUserId)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->user_id, 1);
+	RETURN_STR(envelope->user_id);
 }
 /* }}} */
 
@@ -464,7 +447,7 @@ PHP_METHOD(amqp_envelope_class, getAppId)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->app_id, 1);
+	RETURN_STR(envelope->app_id);
 }
 /* }}} */
 
@@ -483,7 +466,7 @@ PHP_METHOD(amqp_envelope_class, getMessageId)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->message_id, 1);
+	RETURN_STR(envelope->message_id);
 }
 /* }}} */
 
@@ -502,7 +485,7 @@ PHP_METHOD(amqp_envelope_class, getReplyTo)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->reply_to, 1);
+	RETURN_STR(envelope->reply_to);
 }
 /* }}} */
 
@@ -521,7 +504,7 @@ PHP_METHOD(amqp_envelope_class, getCorrelationId)
 	/* Get the envelope object out of the store */
 	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
-	RETURN_STRING(envelope->correlation_id, 1);
+	RETURN_STR(envelope->correlation_id);
 }
 /* }}} */
 

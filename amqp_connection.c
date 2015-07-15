@@ -59,7 +59,7 @@
 zend_object_handlers amqp_connection_object_handlers;
 
 HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
-	zval *value;
+	zval value;
 	HashTable *debug_info;
 	amqp_connection_object *connection;
 
@@ -74,87 +74,76 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	ZEND_INIT_SYMTABLE_EX(debug_info, 15 + 1, 0);
 
 	/* Start adding values */
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, connection->login, strlen(connection->login));
-	zend_hash_add(debug_info, "login", sizeof("login"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, connection->login, strlen(connection->login));
+	zend_hash_str_add(debug_info, "login", sizeof("login"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, connection->password, strlen(connection->password));
-	zend_hash_add(debug_info, "password", sizeof("password"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, connection->password, strlen(connection->password));
+	zend_hash_str_add(debug_info, "password", sizeof("password"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, connection->host, strlen(connection->host));
-	zend_hash_add(debug_info, "host", sizeof("host"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, connection->host, strlen(connection->host));
+	zend_hash_str_add(debug_info, "host", sizeof("host"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, connection->vhost, strlen(connection->vhost));
-	zend_hash_add(debug_info, "vhost", sizeof("vhost"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, connection->vhost, strlen(connection->vhost));
+	zend_hash_str_add(debug_info, "vhost", sizeof("vhost"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, connection->port);
-	zend_hash_add(debug_info, "port", sizeof("port"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, connection->port);
+	zend_hash_str_add(debug_info, "port", sizeof("port"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_DOUBLE(value, connection->read_timeout);
-	zend_hash_add(debug_info, "read_timeout", sizeof("read_timeout"), &value, sizeof(zval *), NULL);
+	ZVAL_DOUBLE(&value, connection->read_timeout);
+	zend_hash_str_add(debug_info, "read_timeout", sizeof("read_timeout"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_DOUBLE(value, connection->write_timeout);
-	zend_hash_add(debug_info, "write_timeout", sizeof("write_timeout"), &value, sizeof(zval *), NULL);
+	ZVAL_DOUBLE(&value, connection->write_timeout);
+	zend_hash_str_add(debug_info, "write_timeout", sizeof("write_timeout"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_DOUBLE(value, connection->connect_timeout);
-	zend_hash_add(debug_info, "connect_timeout", sizeof("connect_timeout"), &value, sizeof(zval *), NULL);
+	ZVAL_DOUBLE(&value, connection->connect_timeout);
+	zend_hash_str_add(debug_info, "connect_timeout", sizeof("connect_timeout"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, connection->is_connected);
-	zend_hash_add(debug_info, "is_connected", sizeof("is_connected"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, connection->is_connected);
+	zend_hash_str_add(debug_info, "is_connected", sizeof("is_connected"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, connection->is_persistent);
-	zend_hash_add(debug_info, "is_persistent", sizeof("is_persistent"), &value, sizeof(zval *), NULL);
-
-	MAKE_STD_ZVAL(value);
+	ZVAL_BOOL(&value, connection->is_persistent);
+	zend_hash_str_add(debug_info, "is_persistent", sizeof("is_persistent"), &value);
 
 	if (connection && connection->connection_resource) {
-		ZVAL_RESOURCE(value, connection->connection_resource->resource_id);
+		ZVAL_RESOURCE(&value, connection->connection_resource->resource_id);
 		zend_list_addref(connection->connection_resource->resource_id);
 	} else {
-		ZVAL_NULL(value);
+		ZVAL_NULL(&value);
 	}
-	zend_hash_add(debug_info, "connection_resource", sizeof("connection_resource"), &value, sizeof(zval *), NULL);
 
-	MAKE_STD_ZVAL(value);
-	if (connection->connection_resource) {
-		ZVAL_LONG(value, connection->connection_resource->used_slots);
-	} else {
-		ZVAL_NULL(value);
-	}
-	zend_hash_add(debug_info, "used_channels", sizeof("used_channels"), &value, sizeof(zval *), NULL);
+	zend_hash_str_add(debug_info, "connection_resource", sizeof("connection_resource"), &value);
 
-	MAKE_STD_ZVAL(value);
 	if (connection->connection_resource) {
-		ZVAL_LONG(value, amqp_get_channel_max(connection->connection_resource->connection_state));
+		ZVAL_LONG(&value, connection->connection_resource->used_slots);
 	} else {
-		ZVAL_NULL(value);
+		ZVAL_NULL(&value);
 	}
-	zend_hash_add(debug_info, "max_channel_id", sizeof("max_channel_id"), &value, sizeof(zval *), NULL);
 
-	MAKE_STD_ZVAL(value);
-	if (connection->connection_resource) {
-		ZVAL_LONG(value, amqp_get_frame_max(connection->connection_resource->connection_state));
-	} else {
-		ZVAL_NULL(value);
-	}
-	zend_hash_add(debug_info, "max_frame_size", sizeof("max_frame_size"), &value, sizeof(zval *), NULL);
+	zend_hash_str_add(debug_info, "used_channels", sizeof("used_channels"), &value);
 
-	MAKE_STD_ZVAL(value);
 	if (connection->connection_resource) {
-		ZVAL_LONG(value, amqp_get_heartbeat(connection->connection_resource->connection_state));
+		ZVAL_LONG(&value, amqp_get_channel_max(connection->connection_resource->connection_state));
 	} else {
-		ZVAL_NULL(value);
+		ZVAL_NULL(&value);
 	}
-	zend_hash_add(debug_info, "heartbeat_interval", sizeof("heartbeat_interval"), &value, sizeof(zval *), NULL);
+
+	zend_hash_str_add(debug_info, "max_channel_id", sizeof("max_channel_id"), &value);
+
+	if (connection->connection_resource) {
+		ZVAL_LONG(&value, amqp_get_frame_max(connection->connection_resource->connection_state));
+	} else {
+		ZVAL_NULL(&value);
+	}
+
+	zend_hash_str_add(debug_info, "max_frame_size", sizeof("max_frame_size"), &value);
+
+	if (connection->connection_resource) {
+		ZVAL_LONG(&value, amqp_get_heartbeat(connection->connection_resource->connection_state));
+	} else {
+		ZVAL_NULL(&value);
+	}
+
+	zend_hash_str_add(debug_info, "heartbeat_interval", sizeof("heartbeat_interval"), &value);
 
 	/* Start adding values */
 	return debug_info;
@@ -225,7 +214,7 @@ void php_amqp_disconnect_force(amqp_connection_object *connection TSRMLS_DC)
 		if (connection->is_persistent) {
 			zend_rsrc_list_entry *le;
 
-			if (zend_hash_find(&EG(persistent_list), connection->connection_resource->resource_key, connection->connection_resource->resource_key_len + 1, (void **)&le) == SUCCESS) {
+			if ((le = zend_hash_str_find(&EG(persistent_list), connection->connection_resource->resource_key)) != NULL) {
 				if (Z_TYPE_P(le) == le_amqp_connection_resource_persistent) {
 					zend_hash_del(&EG(persistent_list), connection->connection_resource->resource_key, connection->connection_resource->resource_key_len + 1);
 				}
@@ -247,7 +236,6 @@ void php_amqp_disconnect_force(amqp_connection_object *connection TSRMLS_DC)
 int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_DC)
 {
 	char *key;
-	int key_len;
 
 	/* Clean up old memory allocations which are now invalid (new connection) */
 	assert(connection->connection_resource == NULL);
@@ -255,20 +243,8 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 
 	if (persistent) {
 		zend_rsrc_list_entry *le;
-		/* Look for an established resource */
-		key_len = spprintf(&key, 0,
-						   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
-						   connection->host,
-						   connection->port,
-						   connection->vhost,
-						   connection->login,
-						   connection->password,
-						   connection->frame_max,
-						   connection->channel_max,
-						   connection->heartbeat
-		);
 
-		if (zend_hash_find(&EG(persistent_list), key, key_len + 1, (void **)&le) == SUCCESS) {
+		if ((le = zend_hash_str_find(&EG(persistent_list), key)) != NULL) {
 			efree(key);
 
 			if (Z_TYPE_P(le) != le_amqp_connection_resource_persistent) {
@@ -348,7 +324,7 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 		new_le.ptr  = connection->connection_resource;
 		new_le.type = persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource;
 
-		if (FAILURE == zend_hash_add(&EG(persistent_list), connection->connection_resource->resource_key, connection->connection_resource->resource_key_len + 1, &new_le, sizeof(zend_rsrc_list_entry), NULL)) {
+		if (zend_hash_add(&EG(persistent_list), connection->connection_resource->resource_key, &new_le) != NULL) {
 			php_amqp_disconnect_force(connection TSRMLS_CC);
 			return 0;
 		}
@@ -825,7 +801,7 @@ PHP_METHOD(amqp_connection_class, getLogin)
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* Copy the login to the amqp object */
-	RETURN_STR(connection->login, 1);
+	RETURN_STRING(connection->login);
 }
 /* }}} */
 
@@ -880,7 +856,7 @@ PHP_METHOD(amqp_connection_class, getPassword)
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* Copy the password to the amqp object */
-	RETURN_STR(connection->password, 1);
+	RETURN_STRING(connection->password);
 }
 /* }}} */
 
@@ -935,7 +911,7 @@ PHP_METHOD(amqp_connection_class, getHost)
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* Copy the host to the amqp object */
-	RETURN_STR(connection->host, 1);
+	RETURN_STRING(connection->host);
 }
 /* }}} */
 
@@ -1056,7 +1032,7 @@ PHP_METHOD(amqp_connection_class, getVhost)
 	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* Copy the vhost to the amqp object */
-	RETURN_STR(connection->vhost, 1);
+	RETURN_STRING(connection->vhost);
 }
 /* }}} */
 

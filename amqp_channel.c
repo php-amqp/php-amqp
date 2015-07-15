@@ -53,7 +53,7 @@
 zend_object_handlers amqp_channel_object_handlers;
 
 HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
-	zval *value;
+	zval value;
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
@@ -67,21 +67,17 @@ HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_
 	ZEND_INIT_SYMTABLE_EX(debug_info, 4 + 1, 0);
 
 	/* Start adding values */
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, channel->channel_id);
-	zend_hash_add(debug_info, "channel_id", sizeof("channel_id"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, channel->channel_id);
+	zend_hash_str_add(debug_info, "channel_id", sizeof("channel_id"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, channel->prefetch_count);
-	zend_hash_add(debug_info, "prefetch_count", sizeof("prefetch_count"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, channel->prefetch_count);
+	zend_hash_str_add(debug_info, "prefetch_count", sizeof("prefetch_count"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, channel->prefetch_size);
-	zend_hash_add(debug_info, "prefetch_size", sizeof("prefetch_size"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, channel->prefetch_size);
+	zend_hash_str_add(debug_info, "prefetch_size", sizeof("prefetch_size"), &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_BOOL(value, channel->is_connected);
-	zend_hash_add(debug_info, "is_connected", sizeof("is_connected"), &value, sizeof(zval *), NULL);
+	ZVAL_BOOL(&value, channel->is_connected);
+	zend_hash_str_add(debug_info, "is_connected", sizeof("is_connected"), &value);
 
 	/* Start adding values */
 	return debug_info;
