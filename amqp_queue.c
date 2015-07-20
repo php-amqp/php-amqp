@@ -56,7 +56,7 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
-	amqp_queue_object *queue = (amqp_queue_object *)zend_object_store_get_object(object TSRMLS_CC);
+	amqp_queue_object *queue = (amqp_queue_object *)Z_OBJ_P(object TSRMLS_CC);
 
 	/* Let zend clean up for us: */
 	*is_temp = 1;
@@ -257,7 +257,7 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
 
 	/* Build the envelope */
 	object_init_ex(envelopeZval, amqp_envelope_class_entry);
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(envelopeZval TSRMLS_CC);
+	envelope = (amqp_envelope_object *)Z_OBJ_P(envelopeZval TSRMLS_CC);
 
 	AMQP_SET_STR_PROPERTY(envelope->routing_key,	amqp_envelope->routing_key.bytes, amqp_envelope->routing_key.len);
 	AMQP_SET_STR_PROPERTY(envelope->exchange_name,	amqp_envelope->exchange.bytes, amqp_envelope->exchange.len);
@@ -339,7 +339,7 @@ PHP_METHOD(amqp_queue_class, __construct)
 	}
 
 	/* Store the connection object for later */
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Store the channel object */
 	queue->channel = channelObj;
@@ -369,7 +369,7 @@ PHP_METHOD(amqp_queue_class, getName)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Check if there is a name to be had: */
 	if (queue->name_len) {
@@ -394,7 +394,7 @@ PHP_METHOD(amqp_queue_class, setName)
 	}
 
 	/* Pull the queue off the object store */
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Verify that the name is not null and not an empty string */
 	if (name_len < 1 || name_len > 255) {
@@ -418,7 +418,7 @@ PHP_METHOD(amqp_queue_class, getFlags)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	RETURN_LONG(queue->flags);
 }
@@ -437,7 +437,7 @@ PHP_METHOD(amqp_queue_class, setFlags)
 	}
 
 	/* Pull the queue off the object store */
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Set the flags based on the bitmask we were given */
 	queue->flags = flagBitmask ? flagBitmask & PHP_AMQP_QUEUE_FLAGS : flagBitmask;
@@ -460,7 +460,7 @@ PHP_METHOD(amqp_queue_class, getArgument)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if ((tmp = zend_hash_str_find(Z_ARRVAL_P(queue->arguments), key, key_len)) == NULL) {) {
 		RETURN_FALSE;
@@ -484,7 +484,7 @@ PHP_METHOD(amqp_queue_class, getArguments)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	zval_dtor(return_value);
 	MAKE_COPY_ZVAL(&queue->arguments, return_value);
@@ -503,7 +503,7 @@ PHP_METHOD(amqp_queue_class, setArguments)
 	}
 
 	/* Pull the queue off the object store */
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Destroy the arguments storage */
 	if (queue->arguments) {
@@ -530,7 +530,7 @@ PHP_METHOD(amqp_queue_class, setArgument)
 	}
 
 	/* Pull the queue off the object store */
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
@@ -570,7 +570,7 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Make sure we have a queue name, even if its empty: */
 	if (queue->name_len < 1) {
@@ -648,7 +648,7 @@ PHP_METHOD(amqp_queue_class, bind)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not bind queue.");
@@ -712,7 +712,7 @@ PHP_METHOD(amqp_queue_class, get)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not get messages from queue.");
@@ -817,7 +817,7 @@ PHP_METHOD(amqp_queue_class, consume)
 	}
 
 	/* Pull the queue out */
-	queue = (amqp_queue_object *) zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *) Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not get channel.");
@@ -976,7 +976,7 @@ PHP_METHOD(amqp_queue_class, ack)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not ack message.");
@@ -1030,7 +1030,7 @@ PHP_METHOD(amqp_queue_class, nack)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not nack message.");
@@ -1085,7 +1085,7 @@ PHP_METHOD(amqp_queue_class, reject)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not reject message.");
@@ -1136,7 +1136,7 @@ PHP_METHOD(amqp_queue_class, purge)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not purge queue.");
@@ -1190,7 +1190,7 @@ PHP_METHOD(amqp_queue_class, cancel)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not cancel queue.");
@@ -1254,7 +1254,7 @@ PHP_METHOD(amqp_queue_class, unbind)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not unbind queue.");
@@ -1317,7 +1317,7 @@ PHP_METHOD(amqp_queue_class, delete)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(queue);
 	AMQP_VERIFY_CHANNEL(channel, "Could not delete queue.");
@@ -1366,7 +1366,7 @@ PHP_METHOD(amqp_queue_class, getChannel)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	RETURN_ZVAL(queue->channel, 1, 0);
 }
@@ -1384,7 +1384,7 @@ PHP_METHOD(amqp_queue_class, getConnection)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(id TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(id TSRMLS_CC);
 	channel = AMQP_GET_CHANNEL(queue);
 
 	RETURN_ZVAL(channel->connection, 1, 0);
@@ -1401,7 +1401,7 @@ PHP_METHOD(amqp_queue_class, getConsumerTag)
 		return;
 	}
 
-	queue = (amqp_queue_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	queue = (amqp_queue_object *)Z_OBJ_P(getThis() TSRMLS_CC);
 
 	if (queue->consumer_tag_len > 0) {
 		RETURN_STRING(queue->consumer_tag);

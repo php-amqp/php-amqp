@@ -56,7 +56,7 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
-	amqp_exchange_object *exchange = (amqp_exchange_object *)zend_object_store_get_object(object TSRMLS_CC);
+	amqp_exchange_object *exchange = (amqp_exchange_object *)Z_OBJ_P(object TSRMLS_CC);
 
 	/* Let zend clean up for us: */
 	*is_temp = 1;
@@ -156,7 +156,7 @@ PHP_METHOD(amqp_exchange_class, __construct)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	exchange->channel = channelObj;
 
@@ -180,7 +180,7 @@ PHP_METHOD(amqp_exchange_class, getName)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Check if there is a name to be had: */
 	if (exchange->name_len) {
@@ -205,7 +205,7 @@ PHP_METHOD(amqp_exchange_class, setName)
 	}
 
 	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Verify that the name is not null and not an empty string */
 	if (name_len > 255) {
@@ -229,7 +229,7 @@ PHP_METHOD(amqp_exchange_class, getFlags)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	RETURN_LONG(exchange->flags);
 }
@@ -248,7 +248,7 @@ PHP_METHOD(amqp_exchange_class, setFlags)
 	}
 
 	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Set the flags based on the bitmask we were given */
 	exchange->flags = flagBitmask ? flagBitmask & PHP_AMQP_EXCHANGE_FLAGS : flagBitmask;
@@ -266,7 +266,7 @@ PHP_METHOD(amqp_exchange_class, getType)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Check if there is a type to be had: */
 	if (exchange->type_len) {
@@ -291,7 +291,7 @@ PHP_METHOD(amqp_exchange_class, setType)
 	}
 
 	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	AMQP_SET_TYPE(exchange, type);
 }
@@ -311,7 +311,7 @@ PHP_METHOD(amqp_exchange_class, getArgument)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if ((tmp = zend_hash_str_find(Z_ARRVAL_P(exchange->arguments), key, key_len)) == NULL) {
 		RETURN_FALSE;
@@ -335,7 +335,7 @@ PHP_METHOD(amqp_exchange_class, getArguments)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	zval_dtor(return_value);
 	MAKE_COPY_ZVAL(&exchange->arguments, return_value);
@@ -354,7 +354,7 @@ PHP_METHOD(amqp_exchange_class, setArguments)
 	}
 
 	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Destroy the arguments storage */
 	if (exchange->arguments) {
@@ -384,7 +384,7 @@ PHP_METHOD(amqp_exchange_class, setArgument)
 	}
 
 	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
@@ -423,7 +423,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	AMQP_ASSIGN_CHANNEL(channel, exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not declare exchange.");
@@ -512,7 +512,7 @@ PHP_METHOD(amqp_exchange_class, delete)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not delete exchange.");
@@ -579,7 +579,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* By default (and for BC) content type is text/plain (may be skipped at all, then set props._flags to 0) */
 	props.content_type = amqp_cstring_bytes("text/plain");
@@ -777,7 +777,7 @@ PHP_METHOD(amqp_exchange_class, bind)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not bind to exchange.");
@@ -846,7 +846,7 @@ PHP_METHOD(amqp_exchange_class, unbind)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	channel = AMQP_GET_CHANNEL(exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not unbind from exchange.");
@@ -902,7 +902,7 @@ PHP_METHOD(amqp_exchange_class, getChannel)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	RETURN_ZVAL(exchange->channel, 1, 0);
 }
@@ -920,7 +920,7 @@ PHP_METHOD(amqp_exchange_class, getConnection)
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)zend_object_store_get_object(id TSRMLS_CC);
+	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 	channel = AMQP_GET_CHANNEL(exchange);
 
 	RETURN_ZVAL(channel->connection, 1, 0);

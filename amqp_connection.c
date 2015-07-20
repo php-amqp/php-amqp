@@ -67,7 +67,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	*is_temp = 1;
 
 	/* Get the envelope object from which to read */
-	connection = (amqp_connection_object *)zend_object_store_get_object(object TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(object TSRMLS_CC);
 
 	/* Keep the first number matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
@@ -404,7 +404,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 	}
 
 	/* Pull the connection off of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Pull the login out of the $params array */
 	zdata = NULL;
@@ -585,7 +585,7 @@ PHP_METHOD(amqp_connection_class, isConnected)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* If the channel_connect is 1, we have a connection */
 	if (connection->is_connected == '\1') {
@@ -610,7 +610,7 @@ PHP_METHOD(amqp_connection_class, connect)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (connection->is_connected) {
 		assert(connection->connection_resource != NULL);
@@ -640,7 +640,7 @@ PHP_METHOD(amqp_connection_class, pconnect)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (connection->is_connected) {
 		assert(connection->connection_resource != NULL);
@@ -670,7 +670,7 @@ PHP_METHOD(amqp_connection_class, pdisconnect)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (!connection->is_connected) {
 		RETURN_TRUE;
@@ -703,7 +703,7 @@ PHP_METHOD(amqp_connection_class, disconnect)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (!connection->is_connected) {
 		RETURN_TRUE;
@@ -736,7 +736,7 @@ PHP_METHOD(amqp_connection_class, reconnect)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (connection->is_connected == '\1') {
 		assert(connection->connection_resource != NULL);
@@ -767,7 +767,7 @@ PHP_METHOD(amqp_connection_class, preconnect)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (connection->is_connected == '\1') {
 		assert(connection->connection_resource != NULL);
@@ -798,7 +798,7 @@ PHP_METHOD(amqp_connection_class, getLogin)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the login to the amqp object */
 	RETURN_STRING(connection->login);
@@ -826,7 +826,7 @@ PHP_METHOD(amqp_connection_class, setLogin)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Free previously existing login, in cases where setLogin() is called multiple times */
 	if (connection->login) {
@@ -853,7 +853,7 @@ PHP_METHOD(amqp_connection_class, getPassword)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the password to the amqp object */
 	RETURN_STRING(connection->password);
@@ -881,7 +881,7 @@ PHP_METHOD(amqp_connection_class, setPassword)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Free previously existing password, in cases where setPassword() is called multiple times */
 	if (connection->password) {
@@ -908,7 +908,7 @@ PHP_METHOD(amqp_connection_class, getHost)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the host to the amqp object */
 	RETURN_STRING(connection->host);
@@ -936,7 +936,7 @@ PHP_METHOD(amqp_connection_class, setHost)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Free previously existing host, in cases where setHost() is called multiple times */
 	if (connection->host) {
@@ -963,7 +963,7 @@ PHP_METHOD(amqp_connection_class, getPort)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the port to the amqp object */
 	RETURN_LONG(connection->port);
@@ -1007,7 +1007,7 @@ PHP_METHOD(amqp_connection_class, setPort)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the port to the amqp object */
 	connection->port = port;
@@ -1029,7 +1029,7 @@ PHP_METHOD(amqp_connection_class, getVhost)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the vhost to the amqp object */
 	RETURN_STRING(connection->vhost);
@@ -1057,7 +1057,7 @@ PHP_METHOD(amqp_connection_class, setVhost)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Free previously existing vhost, in cases where setVhost() is called multiple times */
 	if (connection->vhost) {
@@ -1084,7 +1084,7 @@ PHP_METHOD(amqp_connection_class, getReadTimeout)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the timeout to the amqp object */
 	RETURN_DOUBLE(connection->read_timeout);
@@ -1111,7 +1111,7 @@ PHP_METHOD(amqp_connection_class, setReadTimeout)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the timeout to the amqp object */
 	connection->read_timeout = read_timeout;
@@ -1141,7 +1141,7 @@ PHP_METHOD(amqp_connection_class, getWriteTimeout)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the timeout to the amqp object */
 	RETURN_DOUBLE(connection->write_timeout);
@@ -1168,7 +1168,7 @@ PHP_METHOD(amqp_connection_class, setWriteTimeout)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Copy the timeout to the amqp object */
 	connection->write_timeout = write_timeout;
@@ -1198,7 +1198,7 @@ PHP_METHOD(amqp_connection_class, getUsedChannels)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (!connection->is_connected) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
@@ -1222,7 +1222,7 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (!connection->is_connected) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
@@ -1246,7 +1246,7 @@ PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (!connection->is_connected) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
@@ -1270,7 +1270,7 @@ PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if (!connection->is_connected) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
@@ -1294,7 +1294,7 @@ PHP_METHOD(amqp_connection_class, isPersistent)
 	}
 
 	/* Get the connection object out of the store */
-	connection = (amqp_connection_object *)zend_object_store_get_object(id TSRMLS_CC);
+	connection = (amqp_connection_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	RETURN_BOOL(connection->is_persistent);
 }
