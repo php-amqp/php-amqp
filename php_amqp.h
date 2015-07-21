@@ -164,24 +164,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 	strncpy((object), (str), (len) >= sizeof(object) ? sizeof(object) - 1 : (len)); \
 	(object)[(len) >= sizeof(object) ? sizeof(object) - 1 : (len)] = '\0';
 
-#define AMQP_GET_CHANNEL(object) \
-	(amqp_channel_object *) amqp_object_store_get_valid_object((object)->channel TSRMLS_CC);
-
-#define AMQP_ASSIGN_CHANNEL(channel, object) \
-	if (!(object)->channel) { \
-		return; \
-	} \
-	channel = AMQP_GET_CHANNEL(object)
-
-#define AMQP_GET_CONNECTION(object) \
-	(amqp_connection_object *) amqp_object_store_get_valid_object((object)->connection TSRMLS_CC);
-
-#define AMQP_ASSIGN_CONNECTION(connection, object) \
-	if (!(object)->connection) { \
-		return; \
-	} \
-	connection = AMQP_GET_CONNECTION(object)
-
 #define AMQP_VERIFY_CHANNEL_ERROR(error, reason) \
 		char verify_channel_error_tmp[255]; \
 		snprintf(verify_channel_error_tmp, 255, "%s %s", error, reason); \

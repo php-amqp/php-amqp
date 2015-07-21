@@ -141,30 +141,21 @@ zend_object amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 create Exchange   */
 PHP_METHOD(amqp_exchange_class, __construct)
 {
-	zval *id;
-	zval *channelObj;
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "OO", &id, amqp_exchange_class_entry, &channelObj, amqp_channel_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "OO", &exchange, amqp_exchange_class_entry, &channel, amqp_channel_class_entry) == FAILURE) {
 		zend_throw_exception(amqp_exchange_exception_class_entry, "Parameter must be an instance of AMQPChannel.", 0 TSRMLS_CC);
+
 		RETURN_NULL();
 	}
 
-	if (!instanceof_function(Z_OBJCE_P(channelObj), amqp_channel_class_entry TSRMLS_CC)) {
-		zend_throw_exception(amqp_exchange_exception_class_entry, "The first parameter must be and instance of AMQPChannel.", 0 TSRMLS_CC);
-		return;
-	}
-
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
-
-	exchange->channel = channelObj;
+	exchange->channel = channel;
 
 	/* Increment the ref count */
-	Z_ADDREF_P(channelObj);
+	Z_ADDREF_P(channel);
 
 	/* Pull the channel out */
-	channel = AMQP_GET_CHANNEL(exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not create exchange.");
 }
 /* }}} */
@@ -173,14 +164,11 @@ PHP_METHOD(amqp_exchange_class, __construct)
 Get the exchange name */
 PHP_METHOD(amqp_exchange_class, getName)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_exchange_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &exchange, amqp_exchange_class_entry) == FAILURE) {
 		return;
 	}
-
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Check if there is a name to be had: */
 	if (exchange->name_len) {
@@ -195,17 +183,13 @@ PHP_METHOD(amqp_exchange_class, getName)
 Set the exchange name */
 PHP_METHOD(amqp_exchange_class, setName)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 	char *name = NULL;
 	int name_len = 0;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &id, amqp_exchange_class_entry, &name, &name_len) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &exchange, amqp_exchange_class_entry, &name, &name_len) == FAILURE) {
 		return;
 	}
-
-	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Verify that the name is not null and not an empty string */
 	if (name_len > 255) {
@@ -222,14 +206,11 @@ PHP_METHOD(amqp_exchange_class, setName)
 Get the exchange parameters */
 PHP_METHOD(amqp_exchange_class, getFlags)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_exchange_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &exchange, amqp_exchange_class_entry) == FAILURE) {
 		return;
 	}
-
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	RETURN_LONG(exchange->flags);
 }
@@ -239,16 +220,12 @@ PHP_METHOD(amqp_exchange_class, getFlags)
 Set the exchange parameters */
 PHP_METHOD(amqp_exchange_class, setFlags)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 	long flagBitmask;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ol", &id, amqp_exchange_class_entry, &flagBitmask) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ol", &exchange, amqp_exchange_class_entry, &flagBitmask) == FAILURE) {
 		return;
 	}
-
-	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Set the flags based on the bitmask we were given */
 	exchange->flags = flagBitmask ? flagBitmask & PHP_AMQP_EXCHANGE_FLAGS : flagBitmask;
@@ -259,14 +236,11 @@ PHP_METHOD(amqp_exchange_class, setFlags)
 Get the exchange type */
 PHP_METHOD(amqp_exchange_class, getType)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_exchange_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &exchange, amqp_exchange_class_entry) == FAILURE) {
 		return;
 	}
-
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Check if there is a type to be had: */
 	if (exchange->type_len) {
@@ -281,17 +255,13 @@ PHP_METHOD(amqp_exchange_class, getType)
 Set the exchange type */
 PHP_METHOD(amqp_exchange_class, setType)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 	char *type = NULL;
 	int type_len = 0;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &id, amqp_exchange_class_entry, &type, &type_len) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &exchange, amqp_exchange_class_entry, &type, &type_len) == FAILURE) {
 		return;
 	}
-
-	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	AMQP_SET_TYPE(exchange, type);
 }
@@ -301,17 +271,14 @@ PHP_METHOD(amqp_exchange_class, setType)
 Get the exchange argument referenced by key */
 PHP_METHOD(amqp_exchange_class, getArgument)
 {
-	zval *id;
 	zval *tmp;
 	amqp_exchange_object *exchange;
 	char *key;
 	int key_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &id, amqp_exchange_class_entry, &key, &key_len) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &exchange, amqp_exchange_class_entry, &key, &key_len) == FAILURE) {
 		return;
 	}
-
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	if ((tmp = zend_hash_str_find(Z_ARRVAL_P(exchange->arguments), key, key_len)) == NULL) {
 		RETURN_FALSE;
@@ -328,14 +295,11 @@ PHP_METHOD(amqp_exchange_class, getArgument)
 Get the exchange arguments */
 PHP_METHOD(amqp_exchange_class, getArguments)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_exchange_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &exchange, amqp_exchange_class_entry) == FAILURE) {
 		return;
 	}
-
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	zval_dtor(return_value);
 	MAKE_COPY_ZVAL(&exchange->arguments, return_value);
@@ -346,15 +310,12 @@ PHP_METHOD(amqp_exchange_class, getArguments)
 Overwrite all exchange arguments with given args */
 PHP_METHOD(amqp_exchange_class, setArguments)
 {
-	zval *id, *zvalArguments;
+	zval *zvalArguments;
 	amqp_exchange_object *exchange;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oa", &id, amqp_exchange_class_entry, &zvalArguments) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oa", &exchange, amqp_exchange_class_entry, &zvalArguments) == FAILURE) {
 		return;
 	}
-
-	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* Destroy the arguments storage */
 	if (exchange->arguments) {
@@ -374,17 +335,14 @@ PHP_METHOD(amqp_exchange_class, setArguments)
 Get the exchange name */
 PHP_METHOD(amqp_exchange_class, setArgument)
 {
-	zval *id, *value;
+	zval *value;
 	amqp_exchange_object *exchange;
 	char *key;
 	int key_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osz", &id, amqp_exchange_class_entry, &key, &key_len, &value) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osz", &exchange, amqp_exchange_class_entry, &key, &key_len, &value) == FAILURE) {
 		return;
 	}
-
-	/* Pull the exchange off the object store */
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
@@ -411,24 +369,21 @@ declare Exchange
 */
 PHP_METHOD(amqp_exchange_class, declareExchange)
 {
-	zval *id;
-
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
-
 	amqp_table_t *arguments;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_exchange_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &exchange, amqp_exchange_class_entry) == FAILURE) {
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
+	channel = exchange->channel;
 
-	AMQP_ASSIGN_CHANNEL(channel, exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not declare exchange.");
 
-	connection = AMQP_GET_CONNECTION(channel);
+	connection = channel->connection;
+
 	AMQP_VERIFY_CONNECTION(connection, "Could not declare exchange.");
 
 	/* Check that the exchange has a name */
@@ -497,8 +452,6 @@ delete Exchange
 */
 PHP_METHOD(amqp_exchange_class, delete)
 {
-	zval *id;
-
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
@@ -508,16 +461,16 @@ PHP_METHOD(amqp_exchange_class, delete)
 
 	long flags = 0;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|sl", &id, amqp_exchange_class_entry, &name, &name_len, &flags) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|sl", &exchange, amqp_exchange_class_entry, &name, &name_len, &flags) == FAILURE) {
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
+	channel = exchange->channel;
 
-	channel = AMQP_GET_CHANNEL(exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not delete exchange.");
 
-	connection = AMQP_GET_CONNECTION(channel);
+	connection = channel->connection;
+
 	AMQP_VERIFY_CONNECTION(connection, "Could not delete exchange.");
 
  	amqp_exchange_delete(
@@ -552,7 +505,6 @@ publish into Exchange
 */
 PHP_METHOD(amqp_exchange_class, publish)
 {
-	zval *id;
 	zval *ini_arr = NULL;
 	zval *pztmp;
 
@@ -575,11 +527,9 @@ PHP_METHOD(amqp_exchange_class, publish)
 
 	amqp_basic_properties_t props;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sla", &id, amqp_exchange_class_entry, &msg, &msg_len, &key_name, &key_len, &flags, &ini_arr) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sla", &exchange, amqp_exchange_class_entry, &msg, &msg_len, &key_name, &key_len, &flags, &ini_arr) == FAILURE) {
 		return;
 	}
-
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	/* By default (and for BC) content type is text/plain (may be skipped at all, then set props._flags to 0) */
 	props.content_type = amqp_cstring_bytes("text/plain");
@@ -700,10 +650,12 @@ PHP_METHOD(amqp_exchange_class, publish)
 		props.headers = *headers;
 	}
 
-	channel = AMQP_GET_CHANNEL(exchange);
+	channel = exchange->channel;
+
 	AMQP_VERIFY_CHANNEL(channel, "Could not publish to exchange.");
 
-	connection = AMQP_GET_CONNECTION(channel);
+	connection = channel->connection;
+
 	AMQP_VERIFY_CONNECTION(connection, "Could not publish to exchange.");
 
 #ifndef PHP_WIN32
@@ -758,7 +710,7 @@ bind exchange to exchange by routing key
 */
 PHP_METHOD(amqp_exchange_class, bind)
 {
-	zval *id, *zvalArguments = NULL;
+	zval *zvalArguments = NULL;
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
@@ -773,16 +725,16 @@ PHP_METHOD(amqp_exchange_class, bind)
 
 	amqp_table_t *arguments;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &id, amqp_exchange_class_entry, &src_name, &src_name_len, &keyname, &keyname_len, &zvalArguments) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &exchange, amqp_exchange_class_entry, &src_name, &src_name_len, &keyname, &keyname_len, &zvalArguments) == FAILURE) {
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
+	channel = exchange->channel;
 
-	channel = AMQP_GET_CHANNEL(exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not bind to exchange.");
 
-	connection = AMQP_GET_CONNECTION(channel);
+	connection = channel->connection;
+
 	AMQP_VERIFY_CONNECTION(connection, "Could not bind to exchanges.");
 
 	if (zvalArguments) {
@@ -827,7 +779,7 @@ remove exchange to exchange binding by routing key
 */
 PHP_METHOD(amqp_exchange_class, unbind)
 {
-	zval *id, *zvalArguments = NULL;
+	zval *zvalArguments = NULL;
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
 	amqp_connection_object *connection;
@@ -842,16 +794,16 @@ PHP_METHOD(amqp_exchange_class, unbind)
 
 	amqp_table_t *arguments;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &id, amqp_exchange_class_entry, &src_name, &src_name_len, &keyname, &keyname_len, &zvalArguments) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|sa", &exchange, amqp_exchange_class_entry, &src_name, &src_name_len, &keyname, &keyname_len, &zvalArguments) == FAILURE) {
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
+	channel = exchange->channel;
 
-	channel = AMQP_GET_CHANNEL(exchange);
 	AMQP_VERIFY_CHANNEL(channel, "Could not unbind from exchange.");
 
-	connection = AMQP_GET_CONNECTION(channel);
+	connection = channel->connection;
+
 	AMQP_VERIFY_CONNECTION(connection, "Could not unbind from exchanges.");
 
 	if (zvalArguments) {
@@ -895,14 +847,11 @@ PHP_METHOD(amqp_exchange_class, unbind)
 Get the AMQPChannel object in use */
 PHP_METHOD(amqp_exchange_class, getChannel)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_exchange_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &exchange, amqp_exchange_class_entry) == FAILURE) {
 		return;
 	}
-
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
 
 	RETURN_ZVAL(exchange->channel, 1, 0);
 }
@@ -912,16 +861,14 @@ PHP_METHOD(amqp_exchange_class, getChannel)
 Get the AMQPConnection object in use */
 PHP_METHOD(amqp_exchange_class, getConnection)
 {
-	zval *id;
 	amqp_exchange_object *exchange;
 	amqp_channel_object *channel;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_exchange_class_entry) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &exchange, amqp_exchange_class_entry) == FAILURE) {
 		return;
 	}
 
-	exchange = (amqp_exchange_object *)Z_OBJ_P(id TSRMLS_CC);
-	channel = AMQP_GET_CHANNEL(exchange);
+	channel = exchange->channel;
 
 	RETURN_ZVAL(channel->connection, 1, 0);
 }
