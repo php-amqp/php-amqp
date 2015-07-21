@@ -102,7 +102,7 @@ void amqp_queue_dtor(void *object TSRMLS_DC)
 
 	/* Destroy the connection object */
 	if (queue->channel) {
-		zval_ptr_dtor(&queue->channel);
+		zval_ptr_dtor(queue->channel);
 	}
 
 	/* Destroy the arguments storage */
@@ -502,7 +502,8 @@ PHP_METHOD(amqp_queue_class, setArgument)
 		case IS_NULL:
 			zend_hash_del_key_or_index(Z_ARRVAL_P(queue->arguments), key, key_len + 1, 0, HASH_DEL_KEY);
 			break;
-		case IS_BOOL:
+		case IS_TRUE:
+		case IS_FALSE:
 		case IS_LONG:
 		case IS_DOUBLE:
 		case IS_STRING:
@@ -540,11 +541,11 @@ PHP_METHOD(amqp_queue_class, declareQueue)
 		AMQP_SET_NAME(queue, name);
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not declare queue.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not declare queue.");
 
@@ -612,11 +613,11 @@ PHP_METHOD(amqp_queue_class, bind)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not bind queue.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not bind queue.");
 
@@ -675,11 +676,11 @@ PHP_METHOD(amqp_queue_class, get)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not get messages from queue.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not get messages from queue.");
 
@@ -778,11 +779,11 @@ PHP_METHOD(amqp_queue_class, consume)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not get channel.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not get connection.");
 
@@ -910,7 +911,7 @@ PHP_METHOD(amqp_queue_class, consume)
 		zval_ptr_dtor(&message);
 
 		/* Check if user land function wants to bail */
-		if (EG(exception) || (Z_TYPE_P(return_value) == IS_BOOL && !Z_BVAL_P(return_value))) {
+		if (EG(exception) || Z_TYPE_P(return_value) == IS_FALSE) {
 			break;
 		}
 	}
@@ -936,11 +937,11 @@ PHP_METHOD(amqp_queue_class, ack)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not ack message.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not ack message.");
 
@@ -989,11 +990,11 @@ PHP_METHOD(amqp_queue_class, nack)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not nack message.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not nack message.");
 
@@ -1043,11 +1044,11 @@ PHP_METHOD(amqp_queue_class, reject)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not reject message.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not reject message.");
 
@@ -1093,11 +1094,11 @@ PHP_METHOD(amqp_queue_class, purge)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not purge queue.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not purge queue.");
 
@@ -1146,11 +1147,11 @@ PHP_METHOD(amqp_queue_class, cancel)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not cancel queue.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not cancel queue.");
 
@@ -1210,11 +1211,11 @@ PHP_METHOD(amqp_queue_class, unbind)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not unbind queue.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not unbind queue.");
 
@@ -1272,11 +1273,11 @@ PHP_METHOD(amqp_queue_class, delete)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not delete queue.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not delete queue.");
 
@@ -1335,7 +1336,7 @@ PHP_METHOD(amqp_queue_class, getConnection)
 		return;
 	}
 
-	channel = queue->channel;
+	channel = (amqp_channel_object *)queue->channel;
 
 	RETURN_ZVAL(channel->connection, 1, 0);
 }

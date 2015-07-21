@@ -795,7 +795,8 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 		field = &table->value;
 
 		switch (Z_TYPE_P(&value)) {
-			case IS_BOOL:
+			case IS_TRUE:
+			case IS_FALSE:
 				field->kind          = AMQP_FIELD_KIND_BOOLEAN;
 				field->value.boolean = (amqp_boolean_t)Z_LVAL_P(&value);
 				break;

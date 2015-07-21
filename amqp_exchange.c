@@ -348,7 +348,8 @@ PHP_METHOD(amqp_exchange_class, setArgument)
 		case IS_NULL:
 			zend_hash_del_key_or_index(Z_ARRVAL_P(exchange->arguments), key, key_len + 1, 0, HASH_DEL_KEY);
 			break;
-		case IS_BOOL:
+		case IS_TRUE:
+		case IS_FALSE:
 		case IS_LONG:
 		case IS_DOUBLE:
 		case IS_STRING:
@@ -378,11 +379,11 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 		return;
 	}
 
-	channel = exchange->channel;
+	channel = (amqp_channel_object *)exchange->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not declare exchange.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not declare exchange.");
 
@@ -465,11 +466,11 @@ PHP_METHOD(amqp_exchange_class, delete)
 		return;
 	}
 
-	channel = exchange->channel;
+	channel = (amqp_channel_object *)exchange->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not delete exchange.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not delete exchange.");
 
@@ -650,11 +651,11 @@ PHP_METHOD(amqp_exchange_class, publish)
 		props.headers = *headers;
 	}
 
-	channel = exchange->channel;
+	channel = (amqp_channel_object *)exchange->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not publish to exchange.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not publish to exchange.");
 
@@ -729,11 +730,11 @@ PHP_METHOD(amqp_exchange_class, bind)
 		return;
 	}
 
-	channel = exchange->channel;
+	channel = (amqp_channel_object *)exchange->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not bind to exchange.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not bind to exchanges.");
 
@@ -798,11 +799,11 @@ PHP_METHOD(amqp_exchange_class, unbind)
 		return;
 	}
 
-	channel = exchange->channel;
+	channel = (amqp_channel_object *)exchange->channel;
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not unbind from exchange.");
 
-	connection = channel->connection;
+	connection = (amqp_connection_object *)channel->connection;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not unbind from exchanges.");
 
@@ -868,7 +869,7 @@ PHP_METHOD(amqp_exchange_class, getConnection)
 		return;
 	}
 
-	channel = exchange->channel;
+	channel = (amqp_channel_object *)exchange->channel;
 
 	RETURN_ZVAL(channel->connection, 1, 0);
 }
