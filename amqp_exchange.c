@@ -97,11 +97,11 @@ void amqp_exchange_dtor(void *object TSRMLS_DC)
 
 	/* Destroy the connection object */
 	if (exchange->channel) {
-		zval_ptr_dtor(&exchange->channel);
+		zval_ptr_dtor(exchange->channel);
 	}
 
 	if (exchange->arguments) {
-		zval_ptr_dtor(&exchange->arguments);
+		zval_ptr_dtor(exchange->arguments);
 	}
 
 	zend_object_std_dtor(&exchange->zo TSRMLS_CC);
@@ -319,7 +319,7 @@ PHP_METHOD(amqp_exchange_class, setArguments)
 
 	/* Destroy the arguments storage */
 	if (exchange->arguments) {
-		zval_ptr_dtor(&exchange->arguments);
+		zval_ptr_dtor(exchange->arguments);
 	}
 
 	exchange->arguments = zvalArguments;
@@ -539,7 +539,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	props.headers.entries = 0;
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "content_type", sizeof("content_type")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.content_type = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -548,7 +548,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "content_encoding", sizeof("content_encoding")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.content_encoding = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -557,7 +557,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "message_id", sizeof("message_id")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.message_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -566,7 +566,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "user_id", sizeof("user_id")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.user_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -575,7 +575,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "app_id", sizeof("app_id")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.app_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -584,28 +584,28 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "delivery_mode", sizeof("delivery_mode")-1)) != NULL) {
-		convert_to_long(&pztmp);
+		convert_to_long(pztmp);
 
 		props.delivery_mode = (uint8_t)Z_LVAL_P(pztmp);
 		props._flags |= AMQP_BASIC_DELIVERY_MODE_FLAG;
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "priority", sizeof("priority")-1)) != NULL) {
-		convert_to_long(&pztmp);
+		convert_to_long(pztmp);
 
 		props.priority = (uint8_t)Z_LVAL_P(pztmp);
 		props._flags |= AMQP_BASIC_PRIORITY_FLAG;
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "timestamp", sizeof("timestamp")-1)) != NULL) {
-		convert_to_long(&pztmp);
+		convert_to_long(pztmp);
 
 		props.timestamp = (uint64_t)Z_LVAL_P(pztmp);
 		props._flags |= AMQP_BASIC_TIMESTAMP_FLAG;
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "expiration", sizeof("expiration")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.expiration = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -614,7 +614,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "type", sizeof("type")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.type = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -623,7 +623,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "reply_to", sizeof("reply_to")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.reply_to = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -632,7 +632,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "correlation_id", sizeof("correlation_id")-1)) != NULL) {
-		convert_to_string(&pztmp);
+		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
 			props.correlation_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
@@ -643,12 +643,12 @@ PHP_METHOD(amqp_exchange_class, publish)
 	amqp_table_t *headers = NULL;
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "headers", sizeof("headers")-1)) != NULL) {
-		convert_to_array(*pztmp);
+		convert_to_array(pztmp);
 
 		headers = convert_zval_to_amqp_table(*pztmp TSRMLS_CC);
 
 		props._flags |= AMQP_BASIC_HEADERS_FLAG;
-		props.headers = *headers;
+		props.headers = headers;
 	}
 
 	channel = (amqp_channel_object *)exchange->channel;

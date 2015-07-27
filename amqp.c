@@ -798,20 +798,20 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 			case IS_TRUE:
 			case IS_FALSE:
 				field->kind          = AMQP_FIELD_KIND_BOOLEAN;
-				field->value.boolean = (amqp_boolean_t)Z_LVAL_P(&value);
+				field->value.boolean = (amqp_boolean_t)Z_LVAL(value);
 				break;
 			case IS_DOUBLE:
 				field->kind      = AMQP_FIELD_KIND_F64;
-				field->value.f64 = Z_DVAL_P(&value);
+				field->value.f64 = Z_DVAL(value);
 				break;
 			case IS_LONG:
 				field->kind      = AMQP_FIELD_KIND_I64;
-				field->value.i64 = Z_LVAL_P(&value);
+				field->value.i64 = Z_LVAL(value);
 				break;
 			case IS_STRING:
 				field->kind        = AMQP_FIELD_KIND_UTF8;
-				strValue           = estrndup(Z_STR_P(&value), Z_STRLEN_P(&value));
-				field->value.bytes = php_amqp_long_string(strValue, Z_STRLEN_P(&value));
+				strValue           = estrndup(Z_STRVAL(value), Z_STRLEN(value));
+				field->value.bytes = php_amqp_long_string(strValue, Z_STRLEN(value));
 				break;
 			case IS_ARRAY:
 				field->kind = AMQP_FIELD_KIND_TABLE;

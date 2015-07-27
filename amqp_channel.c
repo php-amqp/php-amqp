@@ -139,7 +139,7 @@ void amqp_channel_dtor(void *object TSRMLS_DC)
 
 	if (channel->connection != NULL) {
 		/* Destroy the connection storage */
-		zval_ptr_dtor(&channel->connection);
+		zval_ptr_dtor(channel->connection);
 	}
 
 	zend_object_std_dtor(&channel->zo TSRMLS_CC);

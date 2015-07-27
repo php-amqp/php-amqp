@@ -107,7 +107,7 @@ void amqp_queue_dtor(void *object TSRMLS_DC)
 
 	/* Destroy the arguments storage */
 	if (queue->arguments) {
-		zval_ptr_dtor(&queue->arguments);
+		zval_ptr_dtor(queue->arguments);
 	}
 
 	zend_object_std_dtor(&queue->zo TSRMLS_CC);
@@ -437,7 +437,7 @@ PHP_METHOD(amqp_queue_class, getArgument)
 		return;
 	}
 
-	if ((tmp = zend_hash_str_find(Z_ARRVAL_P(queue->arguments), key, key_len)) == NULL) {) {
+	if ((tmp = zend_hash_str_find(Z_ARRVAL_P(queue->arguments), key, key_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -907,8 +907,8 @@ PHP_METHOD(amqp_queue_class, consume)
 
 		/* Clean up our mess */
 		zend_fcall_info_args_clear(&fci, 1);
-		zval_ptr_dtor(&params);
-		zval_ptr_dtor(&message);
+		zval_ptr_dtor(params);
+		zval_ptr_dtor(message);
 
 		/* Check if user land function wants to bail */
 		if (EG(exception) || Z_TYPE_P(return_value) == IS_FALSE) {

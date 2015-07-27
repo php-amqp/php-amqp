@@ -299,6 +299,7 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	connection->is_connected = '\1';
 
 	if (persistent) {
+		int key_len;
 		zend_rsrc_list_entry new_le;
 
 		connection->is_persistent = persistent;
@@ -405,13 +406,13 @@ PHP_METHOD(amqp_connection_class, __construct)
 	zdata = NULL;
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "login", sizeof("login")-1)) != NULL) {
-		convert_to_string(&zdata);
+		convert_to_string(zdata);
 	}
 
 	/* Validate the given login */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
 		if (Z_STRLEN_P(zdata) < 128) {
-			connection->login = estrndup(Z_STR_P(zdata), Z_STRLEN_P(zdata));
+			connection->login = estrndup(Z_STRVAL_P(zdata), Z_STRLEN_P(zdata));
 		} else {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'login' exceeds 128 character limit.", 0 TSRMLS_CC);
 			return;
@@ -424,13 +425,13 @@ PHP_METHOD(amqp_connection_class, __construct)
 	zdata = NULL;
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "password", sizeof("password")-1)) != NULL) {
-		convert_to_string(&zdata);
+		convert_to_string(zdata);
 	}
 
 	/* Validate the given password */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
 		if (Z_STRLEN_P(zdata) < 128) {
-			connection->password = estrndup(Z_STR_P(zdata), Z_STRLEN_P(zdata));
+			connection->password = estrndup(Z_STRVAL_P(zdata), Z_STRLEN_P(zdata));
 		} else {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'password' exceeds 128 character limit.", 0 TSRMLS_CC);
 			return;
@@ -443,13 +444,13 @@ PHP_METHOD(amqp_connection_class, __construct)
 	zdata = NULL;
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "host", sizeof("host")-1)) != NULL) {
-		convert_to_string(&zdata);
+		convert_to_string(zdata);
 	}
 
 	/* Validate the given host */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
 		if (Z_STRLEN_P(zdata) < 128) {
-			connection->host = estrndup(Z_STR_P(zdata), Z_STRLEN_P(zdata));
+			connection->host = estrndup(Z_STRVAL_P(zdata), Z_STRLEN_P(zdata));
 		} else {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'host' exceeds 128 character limit.", 0 TSRMLS_CC);
 			return;
@@ -462,13 +463,13 @@ PHP_METHOD(amqp_connection_class, __construct)
 	zdata = NULL;
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "vhost", sizeof("vhost")-1)) != NULL) {
-		convert_to_string(&zdata);
+		convert_to_string(zdata);
 	}
 
 	/* Validate the given vhost */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
 		if (Z_STRLEN_P(zdata) < 128) {
-			connection->vhost = estrndup(Z_STR_P(zdata), Z_STRLEN_P(zdata));
+			connection->vhost = estrndup(Z_STRVAL_P(zdata), Z_STRLEN_P(zdata));
 		} else {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'vhost' exceeds 128 character limit.", 0 TSRMLS_CC);
 			return;
@@ -480,14 +481,14 @@ PHP_METHOD(amqp_connection_class, __construct)
 	connection->port = INI_INT("amqp.port");
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "port", sizeof("port")-1)) != NULL) {
-		convert_to_long(&zdata);
+		convert_to_long(zdata);
 		connection->port = (size_t)Z_LVAL_P(zdata);
 	}
 
 	connection->read_timeout = INI_FLT("amqp.read_timeout");
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "read_timeout", sizeof("read_timeout")-1)) != NULL) {
-		convert_to_double(&zdata);
+		convert_to_double(zdata);
 
 		if (Z_DVAL_P(zdata) < 0) {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'read_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
@@ -499,7 +500,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 	connection->write_timeout = INI_FLT("amqp.write_timeout");
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "write_timeout", sizeof("write_timeout")-1)) != NULL) {
-		convert_to_double(&zdata);
+		convert_to_double(zdata);
 
 		if (Z_DVAL_P(zdata) < 0) {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'write_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
@@ -511,7 +512,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 	connection->connect_timeout = INI_FLT("amqp.connect_timeout");
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "connect_timeout", sizeof("connect_timeout")-1)) != NULL) {
-		convert_to_double(&zdata);
+		convert_to_double(zdata);
 
 		if (Z_DVAL_P(zdata) < 0) {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'connect_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
@@ -523,7 +524,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 	connection->channel_max = (int) INI_INT("amqp.channel_max");
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "channel_max", sizeof("channel_max")-1)) != NULL) {
-		convert_to_long(&zdata);
+		convert_to_long(zdata);
 
 		if (Z_LVAL_P(zdata) < 0 || Z_LVAL_P(zdata) > PHP_AMQP_MAX_CHANNELS) {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'channel_max' is out of range.", 0 TSRMLS_CC);
@@ -539,7 +540,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 	connection->frame_max = (int) INI_INT("amqp.frame_max");
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "frame_max", sizeof("frame_max")-1)) != NULL) {
-		convert_to_long(&zdata);
+		convert_to_long(zdata);
 
 		if (Z_LVAL_P(zdata) < 0 || Z_LVAL_P(zdata) > PHP_AMQP_MAX_FRAME) {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'frame_max' is out of range.", 0 TSRMLS_CC);
@@ -555,7 +556,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 	connection->heartbeat = (int) INI_INT("amqp.heartbeat");
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "heartbeat", sizeof("heartbeat")-1)) != NULL) {
-		convert_to_long(&zdata);
+		convert_to_long(zdata);
 
 		if (Z_LVAL_P(zdata) < 0 || Z_LVAL_P(zdata) > PHP_AMQP_MAX_HEARTBEAT) {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'heartbeat' is out of range.", 0 TSRMLS_CC);
