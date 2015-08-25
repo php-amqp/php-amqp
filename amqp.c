@@ -743,7 +743,7 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 {
 	HashTable *argumentHash;
 	HashPosition pos;
-	zval **data;
+	zval* data;
 	char type[16];
 	amqp_table_t *inner_table;
 
@@ -754,10 +754,11 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 	arguments->num_entries = 0;
 
 	for (zend_hash_internal_pointer_reset_ex(argumentHash, &pos);
-		zend_hash_get_current_data_ex(argumentHash, (void**) &data, &pos) == SUCCESS;
+		data = zend_hash_get_current_data_ex(argumentHash, &pos);
 		zend_hash_move_forward_ex(argumentHash, &pos)) {
 
 		zval value;
+		zend_string *real_key;
 		char *key;
 		uint key_len;
 		ulong index;
@@ -765,29 +766,30 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 		char *strValue;
 		amqp_table_entry_t *table;
 		amqp_field_value_t *field;
+		char tmp_str[32];
 
 
 		/* Make a copy of the value: */
-		value = **data;
+		value = *data;
 		zval_copy_ctor(&value);
 
 		/* Now pull the key */
 
-		if (zend_hash_get_current_key_ex(argumentHash, &key, &key_len, &index, 0, &pos) != HASH_KEY_IS_STRING) {
+		if (zend_hash_get_current_key_ex(argumentHash, &real_key, &index, &pos) != HASH_KEY_IS_STRING) {
 
 			if (allow_int_keys) {
 				/* Convert to strings non-string keys */
-				char str[32];
-
-				key_len = sprintf(str, "%lu", index);
-				key     = str;
+				key_len = sprintf(tmp_str, "%lu", index);
+				key     = tmp_str;
 			} else {
 				/* Skip things that are not strings */
 				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string header field '%lu'", index);
 
 				continue;
 			}
-
+		} else {
+			key_len = ZSTR_LEN(real_key);
+			key = ZSTR_VAL(real_key);
 		}
 
 		/* Build the value */
