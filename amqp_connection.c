@@ -589,8 +589,7 @@ PHP_METHOD(amqp_connection_class, isConnected)
 {
 	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -608,10 +607,9 @@ PHP_METHOD(amqp_connection_class, isConnected)
 create amqp connection */
 PHP_METHOD(amqp_connection_class, connect)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -634,10 +632,9 @@ PHP_METHOD(amqp_connection_class, connect)
 create amqp connection */
 PHP_METHOD(amqp_connection_class, pconnect)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -660,10 +657,9 @@ PHP_METHOD(amqp_connection_class, pconnect)
 destroy amqp persistent connection */
 PHP_METHOD(amqp_connection_class, pdisconnect)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -689,10 +685,9 @@ PHP_METHOD(amqp_connection_class, pdisconnect)
 destroy amqp connection */
 PHP_METHOD(amqp_connection_class, disconnect)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -718,10 +713,9 @@ PHP_METHOD(amqp_connection_class, disconnect)
 recreate amqp connection */
 PHP_METHOD(amqp_connection_class, reconnect)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -745,10 +739,9 @@ PHP_METHOD(amqp_connection_class, reconnect)
 recreate amqp connection */
 PHP_METHOD(amqp_connection_class, preconnect)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -772,10 +765,9 @@ PHP_METHOD(amqp_connection_class, preconnect)
 get the login */
 PHP_METHOD(amqp_connection_class, getLogin)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Get the login from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -788,12 +780,12 @@ PHP_METHOD(amqp_connection_class, getLogin)
 set the login */
 PHP_METHOD(amqp_connection_class, setLogin)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 	char *login;
-	int login_len;
+	size_t login_len;
 
 	/* Get the login from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &connection, amqp_connection_class_entry, &login, &login_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &login, &login_len) == FAILURE) {
 		return;
 	}
 
@@ -819,10 +811,9 @@ PHP_METHOD(amqp_connection_class, setLogin)
 get the password */
 PHP_METHOD(amqp_connection_class, getPassword)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Get the password from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -835,12 +826,12 @@ PHP_METHOD(amqp_connection_class, getPassword)
 set the password */
 PHP_METHOD(amqp_connection_class, setPassword)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 	char *password;
-	int password_len;
+	size_t password_len;
 
 	/* Get the password from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &connection, amqp_connection_class_entry, &password, &password_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &password, &password_len) == FAILURE) {
 		return;
 	}
 
@@ -866,10 +857,9 @@ PHP_METHOD(amqp_connection_class, setPassword)
 get the host */
 PHP_METHOD(amqp_connection_class, getHost)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Get the host from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -882,12 +872,12 @@ PHP_METHOD(amqp_connection_class, getHost)
 set the host */
 PHP_METHOD(amqp_connection_class, setHost)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 	char *host;
-	int host_len;
+	size_t host_len;
 
 	/* Get the host from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &connection, amqp_connection_class_entry, &host, &host_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &host, &host_len) == FAILURE) {
 		return;
 	}
 
@@ -913,10 +903,9 @@ PHP_METHOD(amqp_connection_class, setHost)
 get the port */
 PHP_METHOD(amqp_connection_class, getPort)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Get the port from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -929,12 +918,12 @@ PHP_METHOD(amqp_connection_class, getPort)
 set the port */
 PHP_METHOD(amqp_connection_class, setPort)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 	zval *zvalPort;
 	int port;
 
 	/* Get the port from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oz", &connection, amqp_connection_class_entry, &zvalPort) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &zvalPort) == FAILURE) {
 		return;
 	}
 
@@ -971,10 +960,9 @@ PHP_METHOD(amqp_connection_class, setPort)
 get the vhost */
 PHP_METHOD(amqp_connection_class, getVhost)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Get the vhost from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -987,12 +975,12 @@ PHP_METHOD(amqp_connection_class, getVhost)
 set the vhost */
 PHP_METHOD(amqp_connection_class, setVhost)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 	char *vhost;
-	int vhost_len;
+	size_t vhost_len;
 
 	/* Get the vhost from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &connection, amqp_connection_class_entry, &vhost, &vhost_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &vhost, &vhost_len) == FAILURE) {
 		return;
 	}
 
@@ -1032,11 +1020,11 @@ PHP_METHOD(amqp_connection_class, getReadTimeout)
 set read timeout */
 PHP_METHOD(amqp_connection_class, setReadTimeout)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 	double read_timeout;
 
 	/* Get the timeout from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Od", &connection, amqp_connection_class_entry, &read_timeout) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &read_timeout) == FAILURE) {
 		return;
 	}
 
@@ -1065,10 +1053,9 @@ PHP_METHOD(amqp_connection_class, setReadTimeout)
 get write timeout */
 PHP_METHOD(amqp_connection_class, getWriteTimeout)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Get the timeout from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -1081,11 +1068,13 @@ PHP_METHOD(amqp_connection_class, getWriteTimeout)
 set write timeout */
 PHP_METHOD(amqp_connection_class, setWriteTimeout)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 	double write_timeout;
 
+
+
 	/* Get the timeout from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Od", &connection, amqp_connection_class_entry, &write_timeout) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &write_timeout) == FAILURE) {
 		return;
 	}
 
@@ -1114,10 +1103,9 @@ PHP_METHOD(amqp_connection_class, setWriteTimeout)
 Get max used channels number */
 PHP_METHOD(amqp_connection_class, getUsedChannels)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	/* Get the timeout from the method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -1135,9 +1123,9 @@ PHP_METHOD(amqp_connection_class, getUsedChannels)
 Get max supported channels number per connection */
 PHP_METHOD(amqp_connection_class, getMaxChannels)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -1155,9 +1143,9 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
 Get max supported frame size per connection in bytes */
 PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -1175,9 +1163,9 @@ PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 Get number of seconds between heartbeats of the connection in seconds */
 PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
@@ -1195,9 +1183,9 @@ PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 check whether amqp connection is persistent */
 PHP_METHOD(amqp_connection_class, isPersistent)
 {
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
