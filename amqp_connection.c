@@ -409,8 +409,6 @@ PHP_METHOD(amqp_connection_class, __construct)
 	zval* ini_arr = NULL;
 	zval* zdata;
 
-	//ZVAL_UNDEF(&ini_arr);
-
 	/* Parse out the method parameters */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a", &ini_arr) == FAILURE) {
 		return;
@@ -496,7 +494,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 
 	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "port", sizeof("port")-1)) != NULL) {
 		convert_to_long(zdata);
-		connection->port = (size_t)Z_LVAL_P(zdata);
+		connection->port = Z_LVAL_P(zdata);
 	}
 
 	connection->read_timeout = INI_FLT("amqp.read_timeout");
