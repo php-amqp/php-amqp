@@ -123,7 +123,7 @@ HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	return debug_info;
 }
 
-void amqp_envelope_dtor(void *object TSRMLS_DC)
+void amqp_envelope_dtor(zend_object *object TSRMLS_DC)
 {
 	amqp_envelope_object *envelope = (amqp_envelope_object*)object;
 
@@ -140,9 +140,8 @@ void amqp_envelope_dtor(void *object TSRMLS_DC)
 	efree(object);
 }
 
-zend_object amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object* amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	zend_object new_value;
 	amqp_envelope_object *envelope = (amqp_envelope_object*)emalloc(sizeof(amqp_envelope_object));
 
 	memset(envelope, 0, sizeof(amqp_envelope_object));
@@ -153,13 +152,12 @@ zend_object amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC)
 	zend_object_std_init(&envelope->zo, ce TSRMLS_CC);
 	AMQP_OBJECT_PROPERTIES_INIT(envelope->zo, ce);
 
-	new_value.handle = zend_objects_store_put(envelope, (zend_objects_store_dtor_t)zend_objects_destroy_object, (zend_objects_free_object_storage_t)amqp_envelope_dtor, NULL TSRMLS_CC);
-
 	memcpy((void *)&amqp_envelope_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_envelope_object_handlers.get_debug_info = amqp_envelope_object_get_debug_info;
-	new_value.handlers = &amqp_envelope_object_handlers;
+	envelope->zo.handlers = &amqp_envelope_object_handlers;
+	amqp_envelope_object_handlers.free_obj = amqp_envelope_dtor;
 
-	return new_value;
+	return &envelope->zo;
 }
 
 /* {{{ proto AMQPEnvelope::__construct()

@@ -21,8 +21,7 @@
   +----------------------------------------------------------------------+
 */
 
-void amqp_exchange_dtor(void *object TSRMLS_DC);
-zend_object amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC);
+zend_object* amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_exchange_class, __construct);
 PHP_METHOD(amqp_exchange_class, getName);

@@ -204,12 +204,12 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
 
 typedef struct _amqp_channel_object {
-	zend_object zo;
 	zval *connection;
 	amqp_channel_t channel_id;
 	char is_connected;
 	int prefetch_count;
 	int prefetch_size;
+	zend_object zo;
 } amqp_channel_object;
 
 typedef struct _amqp_connection_resource {
@@ -218,14 +218,12 @@ typedef struct _amqp_connection_resource {
 	amqp_channel_t max_slots;
 	amqp_channel_t used_slots;
 	amqp_channel_object **slots;
-	char *resource_key;
-	int resource_key_len;
+	zend_string* resource_key;
 	amqp_connection_state_t connection_state;
 	amqp_socket_t *socket;
 } amqp_connection_resource;
 
 typedef struct _amqp_connection_object {
-	zend_object zo;
 	char is_connected;
 	char is_persistent;
 	char *login;
@@ -240,10 +238,10 @@ typedef struct _amqp_connection_object {
 	double write_timeout;
 	double connect_timeout;
 	amqp_connection_resource *connection_resource;
+	zend_object zo;
 } amqp_connection_object;
 
 typedef struct _amqp_queue_object {
-	zend_object zo;
 	zval *channel;
 	char name[256];
 	int name_len;
@@ -251,10 +249,10 @@ typedef struct _amqp_queue_object {
 	int consumer_tag_len;
 	int flags;
 	zval *arguments;
+	zend_object zo;
 } amqp_queue_object;
 
 typedef struct _amqp_exchange_object {
-	zend_object zo;
 	zval *channel;
 	char is_connected;
 	char name[256];
@@ -263,10 +261,10 @@ typedef struct _amqp_exchange_object {
 	int type_len;
 	int flags;
 	zval *arguments;
+	zend_object zo;
 } amqp_exchange_object;
 
 typedef struct _amqp_envelope_object {
-	zend_object zo;
 	char *body;
 	size_t body_len;
 	char routing_key[256];
@@ -286,6 +284,7 @@ typedef struct _amqp_envelope_object {
 	char reply_to[256];
 	char correlation_id[256];
 	zval *headers;
+	zend_object zo;
 } amqp_envelope_object;
 
 

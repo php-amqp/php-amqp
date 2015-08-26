@@ -406,14 +406,14 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)rsrc->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)res->ptr;
 
 	connection_resource_destructor(resource, 1 TSRMLS_CC);
 }
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)rsrc->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)res->ptr;
 
 	connection_resource_destructor(resource, 0 TSRMLS_CC);
 }
@@ -422,7 +422,7 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 {
 	assert(resource != NULL);
 
-	zend_rsrc_list_entry *le;
+	zend_resource *le;
 #ifndef PHP_WIN32
 	void * old_handler;
 
@@ -447,8 +447,8 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 	signal(SIGPIPE, old_handler);
 #endif
 
-	if (resource->resource_key_len) {
-		pefree(resource->resource_key, persistent);
+	if (resource->resource_key) {
+		zend_string_release(resource->resource_key);
 	}
 
 	if (resource->slots) {

@@ -91,7 +91,7 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	return debug_info;
 }
 
-void amqp_exchange_dtor(void *object TSRMLS_DC)
+void amqp_exchange_dtor(zend_object *object TSRMLS_DC)
 {
 	amqp_exchange_object *exchange = (amqp_exchange_object*)object;
 
@@ -109,12 +109,14 @@ void amqp_exchange_dtor(void *object TSRMLS_DC)
 	efree(object);
 }
 
-zend_object amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object* amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	zend_object new_value;
+	zend_object* new_value;
 	amqp_exchange_object* exchange = (amqp_exchange_object*)emalloc(sizeof(amqp_exchange_object));
 
 	memset(exchange, 0, sizeof(amqp_exchange_object));
+
+	new_value = &exchange->zo;
 
 	/* Initialize the arguments array: */
 	MAKE_STD_ZVAL(exchange->arguments);
@@ -123,16 +125,11 @@ zend_object amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
 	zend_object_std_init(&exchange->zo, ce TSRMLS_CC);
 	AMQP_OBJECT_PROPERTIES_INIT(exchange->zo, ce);
 
-	new_value.handle = zend_objects_store_put(
-		exchange,
-		(zend_objects_store_dtor_t)zend_objects_destroy_object,
-		(zend_objects_free_object_storage_t)amqp_exchange_dtor,
-		NULL TSRMLS_CC
-	);
-
 	memcpy((void *)&amqp_exchange_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_exchange_object_handlers.get_debug_info = amqp_exchange_object_get_debug_info;
-	new_value.handlers = &amqp_exchange_object_handlers;
+	new_value->handlers = &amqp_exchange_object_handlers;
+
+	amqp_exchange_object_handlers.free_obj = amqp_exchange_dtor;
 
 	return new_value;
 }
@@ -172,7 +169,7 @@ PHP_METHOD(amqp_exchange_class, getName)
 
 	/* Check if there is a name to be had: */
 	if (exchange->name_len) {
-		RETURN_STR(exchange->name);
+		RETURN_STRING(exchange->name);
 	} else {
 		RETURN_FALSE;
 	}
@@ -244,7 +241,7 @@ PHP_METHOD(amqp_exchange_class, getType)
 
 	/* Check if there is a type to be had: */
 	if (exchange->type_len) {
-		RETURN_STR(exchange->type);
+		RETURN_STRING(exchange->type);
 	} else {
 		RETURN_FALSE;
 	}
@@ -284,10 +281,7 @@ PHP_METHOD(amqp_exchange_class, getArgument)
 		RETURN_FALSE;
 	}
 
-	*return_value = *tmp;
-
-	zval_copy_ctor(return_value);
-	INIT_PZVAL(return_value);
+	RETURN_ZVAL(tmp, 1, 0);
 }
 /* }}} */
 
@@ -302,7 +296,7 @@ PHP_METHOD(amqp_exchange_class, getArguments)
 	}
 
 	zval_dtor(return_value);
-	MAKE_COPY_ZVAL(&exchange->arguments, return_value);
+	return_value = exchange->arguments;
 }
 /* }}} */
 
@@ -346,7 +340,7 @@ PHP_METHOD(amqp_exchange_class, setArgument)
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
-			zend_hash_del_key_or_index(Z_ARRVAL_P(exchange->arguments), key, key_len + 1, 0, HASH_DEL_KEY);
+			zend_hash_str_del(Z_ARRVAL_P(exchange->arguments), key, key_len + 1);
 			break;
 		case IS_TRUE:
 		case IS_FALSE:
@@ -640,15 +634,16 @@ PHP_METHOD(amqp_exchange_class, publish)
 		}
 	}
 
-	amqp_table_t *headers = NULL;
+	amqp_table_t* headers;
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "headers", sizeof("headers")-1)) != NULL) {
 		convert_to_array(pztmp);
 
-		headers = convert_zval_to_amqp_table(*pztmp TSRMLS_CC);
+		headers = convert_zval_to_amqp_table(pztmp TSRMLS_CC);
 
 		props._flags |= AMQP_BASIC_HEADERS_FLAG;
-		props.headers = headers;
+
+		props.headers = *headers;
 	}
 
 	channel = (amqp_channel_object *)exchange->channel;

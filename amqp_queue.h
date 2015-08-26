@@ -22,7 +22,7 @@
 */
 
 void amqp_queue_dtor(void *object TSRMLS_DC);
-zend_object amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC);
+zend_object* amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_queue_class, __construct);
 PHP_METHOD(amqp_queue_class, getName);

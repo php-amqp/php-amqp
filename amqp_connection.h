@@ -21,8 +21,8 @@
   +----------------------------------------------------------------------+
 */
 
-void amqp_connection_dtor(void *object TSRMLS_DC);
-zend_object amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC);
+void amqp_connection_dtor(zend_object *object TSRMLS_DC);
+zend_object* amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC);
 
 void php_amqp_connect(amqp_connection_object *amqp_connection, int persistent TSRMLS_DC);
 void php_amqp_disconnect_force(amqp_connection_object *connection TSRMLS_DC);

@@ -935,19 +935,19 @@ PHP_MINIT_FUNCTION(amqp)
 
 	/* Class Exceptions */
 	INIT_CLASS_ENTRY(ce, "AMQPException", NULL);
-	amqp_exception_class_entry = zend_register_internal_class_ex(&ce, (zend_class_entry*)zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
+	amqp_exception_class_entry = zend_register_internal_class_ex(&ce, zend_exception_get_default(TSRMLS_C));
 
 	INIT_CLASS_ENTRY(ce, "AMQPConnectionException", NULL);
-	amqp_connection_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry, NULL TSRMLS_CC);
+	amqp_connection_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPChannelException", NULL);
-	amqp_channel_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry, NULL TSRMLS_CC);
+	amqp_channel_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPQueueException", NULL);
-	amqp_queue_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry, NULL TSRMLS_CC);
+	amqp_queue_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPExchangeException", NULL);
-	amqp_exchange_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry, NULL TSRMLS_CC);
+	amqp_exchange_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	REGISTER_INI_ENTRIES();
 

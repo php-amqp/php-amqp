@@ -116,12 +116,14 @@ void amqp_queue_dtor(void *object TSRMLS_DC)
 	efree(object);
 }
 
-zend_object amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object* amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	zend_object new_value;
+	zend_object* new_value;
 	amqp_queue_object* queue = (amqp_queue_object*)emalloc(sizeof(amqp_queue_object));
 
 	memset(queue, 0, sizeof(amqp_queue_object));
+
+	new_value = &queue->zo;
 
 	zend_object_std_init(&queue->zo, ce TSRMLS_CC);
 	AMQP_OBJECT_PROPERTIES_INIT(queue->zo, ce);
@@ -130,16 +132,11 @@ zend_object amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 	MAKE_STD_ZVAL(queue->arguments);
 	array_init(queue->arguments);
 
-	new_value.handle = zend_objects_store_put(
-		queue,
-		(zend_objects_store_dtor_t)zend_objects_destroy_object,
-		(zend_objects_free_object_storage_t)amqp_queue_dtor,
-		NULL TSRMLS_CC
-	);
-
 	memcpy((void *)&amqp_queue_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_queue_object_handlers.get_debug_info = amqp_queue_object_get_debug_info;
-	new_value.handlers = &amqp_queue_object_handlers;
+	new_value->handlers = &amqp_queue_object_handlers;
+
+	amqp_queue_object_handlers.free_obj = amqp_queue_dtor;
 
 	return new_value;
 }
@@ -204,8 +201,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result)
 								add_next_index_stringl(
 									&value,
 									entry->value.value.array.entries[j].value.bytes.bytes,
-									entry->value.value.array.entries[j].value.bytes.len,
-									1
+									entry->value.value.array.entries[j].value.bytes.len
 								);
 								break;
 							case AMQP_FIELD_KIND_TABLE:
@@ -500,7 +496,7 @@ PHP_METHOD(amqp_queue_class, setArgument)
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
-			zend_hash_del_key_or_index(Z_ARRVAL_P(queue->arguments), key, key_len + 1, 0, HASH_DEL_KEY);
+			zend_hash_str_del(Z_ARRVAL_P(queue->arguments), key, key_len + 1);
 			break;
 		case IS_TRUE:
 		case IS_FALSE:
@@ -881,7 +877,6 @@ PHP_METHOD(amqp_queue_class, consume)
 
 		/* Make the callback */
 		zval *params;
-		zval *retval_ptr = NULL;
 
 		/* Build the parameter array */
 		MAKE_STD_ZVAL(params);
@@ -892,17 +887,16 @@ PHP_METHOD(amqp_queue_class, consume)
 		Z_ADDREF_P(message);
 
 		/* Add a pointer to the queue: */
-		add_index_zval(params, 1, id);
-		Z_ADDREF_P(id);
+		/* TODO */
+		//add_index_zval(params, 1, id);
+		//Z_ADDREF_P(id);
 
 		/* Convert everything to be callable */
 		zend_fcall_info_args(&fci, params TSRMLS_CC);
-		/* Initialize the return value pointer */
-		fci.retval_ptr_ptr = &retval_ptr;
 
 		/* Call the function, and track the return value */
-		if (zend_call_function(&fci, &fci_cache TSRMLS_CC) == SUCCESS && fci.retval_ptr_ptr && *fci.retval_ptr_ptr) {
-			COPY_PZVAL_TO_ZVAL(*return_value, *fci.retval_ptr_ptr);
+		if (zend_call_function(&fci, &fci_cache TSRMLS_CC) == SUCCESS) {
+			COPY_PZVAL_TO_ZVAL(*return_value, *fci.retval);
   		}
 
 		/* Clean up our mess */

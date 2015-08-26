@@ -129,12 +129,12 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 	}
 }
 
-void amqp_channel_dtor(void *object TSRMLS_DC)
+void amqp_channel_dtor(zend_object *object TSRMLS_DC)
 {
 	zend_objects_destroy_object(object);
 }
 
-void amqp_channel_free_obj(void *object TSRMLS_DC)
+void amqp_channel_free_obj(zend_object *object TSRMLS_DC)
 {
 	amqp_channel_object *channel = (amqp_channel_object*)object;
 
@@ -152,9 +152,9 @@ void amqp_channel_free_obj(void *object TSRMLS_DC)
 	efree(object);
 }
 
-zend_object amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	amqp_channel_object *channel = ecalloc(1, sizeof(amqp_channel_object) + zend_object_properties_size(ce));
+	amqp_channel_object *channel = ecalloc(1, sizeof(amqp_channel_object));
 
 	zend_object_std_init(&channel->zo, ce TSRMLS_CC);
 	AMQP_OBJECT_PROPERTIES_INIT(channel->zo, ce);
@@ -162,13 +162,12 @@ zend_object amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 	memcpy((void *)&amqp_channel_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
 	amqp_channel_object_handlers.get_debug_info = amqp_channel_object_get_debug_info;
-	amqp_channel_object_handlers.offset = XtOffsetOf(amqp_channel_object, zo);
 	amqp_channel_object_handlers.dtor_obj = amqp_channel_dtor;
 	amqp_channel_object_handlers.free_obj = amqp_channel_free_obj;
 
-	intern->zo.handlers = &amqp_channel_object_handlers;
+	channel->zo.handlers = &amqp_channel_object_handlers;
 
-	return &intern->zo;
+	return &channel->zo;
 }
 
 /* {{{ proto AMQPChannel::__construct(AMQPConnection obj)

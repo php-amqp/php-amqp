@@ -21,8 +21,8 @@
   +----------------------------------------------------------------------+
 */
 
-void amqp_envelope_dtor(void *object TSRMLS_DC);
-zend_object amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC);
+void amqp_envelope_dtor(zend_object *object TSRMLS_DC);
+zend_object* amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_envelope_class, __construct);
 PHP_METHOD(amqp_envelope_class, getBody);

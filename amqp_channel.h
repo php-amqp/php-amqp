@@ -22,8 +22,7 @@
 */
 
 void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC);
-void amqp_channel_dtor(void *object TSRMLS_DC);
-zend_object amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC);
+zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_channel_class, __construct);
 PHP_METHOD(amqp_channel_class, isConnected);
