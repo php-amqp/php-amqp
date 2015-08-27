@@ -57,7 +57,7 @@ HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
-	amqp_channel_object *channel = (amqp_channel_object *)Z_OBJ_P(object TSRMLS_CC);
+	amqp_channel_object *channel = AMQP_CHANNEL_OBJ_P(object);
 
 	/* Let zend clean up for us: */
 	*is_temp = 1;
