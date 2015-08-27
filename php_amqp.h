@@ -204,13 +204,19 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
 
 typedef struct _amqp_channel_object {
-	zval *connection;
+	zend_object* connection;
 	amqp_channel_t channel_id;
 	char is_connected;
 	int prefetch_count;
 	int prefetch_size;
 	zend_object zo;
 } amqp_channel_object;
+
+static inline amqp_channel_object * amqp_channel_object_fetch_object(zend_object *obj) {
+	return (amqp_channel_object *)((char *)obj - XtOffsetOf(amqp_channel_object, zo));
+}
+
+#define AMQP_CHANNEL_OBJ_P(zv) amqp_channel_object_fetch_object(Z_OBJ_P(zv));
 
 typedef struct _amqp_connection_resource {
 	zend_bool is_connected;
@@ -240,6 +246,12 @@ typedef struct _amqp_connection_object {
 	amqp_connection_resource *connection_resource;
 	zend_object zo;
 } amqp_connection_object;
+
+static inline amqp_connection_object * amqp_connection_object_fetch_object(zend_object *obj) {
+	return (amqp_connection_object *)((char *)obj - XtOffsetOf(amqp_connection_object, zo));
+}
+
+#define Z_AMQP_CONNECTION_OBJ_P(zv) amqp_connection_object_fetch_object(Z_OBJ_P(zv));
 
 typedef struct _amqp_queue_object {
 	zval *channel;

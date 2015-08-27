@@ -90,7 +90,7 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 	assert(channel != NULL);
 
 	/* Pull out and verify the connection */
-	connection = channel->connection;
+	connection = amqp_connection_object_fetch_object(channel->connection);
 
 	if (connection != NULL) {
         /* First, remove it from active channels table to prevent recursion in case of connection error */
@@ -129,14 +129,9 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 	}
 }
 
-void amqp_channel_dtor(zend_object *object TSRMLS_DC)
-{
-	zend_objects_destroy_object(object);
-}
-
 void amqp_channel_free_obj(zend_object *object TSRMLS_DC)
 {
-	amqp_channel_object *channel = (amqp_channel_object*)object;
+	amqp_channel_object *channel = amqp_channel_object_fetch_object(object);
 
 	if (channel->is_connected) {
 		php_amqp_close_channel(channel TSRMLS_CC);
@@ -144,17 +139,19 @@ void amqp_channel_free_obj(zend_object *object TSRMLS_DC)
 
 	if (channel->connection != NULL) {
 		/* Destroy the connection storage */
-		zval_ptr_dtor(channel->connection);
+		zend_object_release(channel->connection);
 	}
 
 	zend_object_std_dtor(&channel->zo TSRMLS_CC);
 
-	efree(object);
+	efree(channel);
 }
 
 zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	amqp_channel_object *channel = ecalloc(1, sizeof(amqp_channel_object));
+	amqp_channel_object *channel = ecalloc(1,
+										   sizeof(amqp_channel_object)
+											+ zend_object_properties_size(ce));
 
 	zend_object_std_init(&channel->zo, ce TSRMLS_CC);
 	AMQP_OBJECT_PROPERTIES_INIT(channel->zo, ce);
@@ -162,7 +159,7 @@ zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 	memcpy((void *)&amqp_channel_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
 	amqp_channel_object_handlers.get_debug_info = amqp_channel_object_get_debug_info;
-	amqp_channel_object_handlers.dtor_obj = amqp_channel_dtor;
+	amqp_channel_object_handlers.offset = XtOffsetOf(amqp_connection_object, zo);
 	amqp_channel_object_handlers.free_obj = amqp_channel_free_obj;
 
 	channel->zo.handlers = &amqp_channel_object_handlers;
@@ -174,18 +171,19 @@ zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
  */
 PHP_METHOD(amqp_channel_class, __construct)
 {
-	amqp_channel_object *channel;
+	amqp_channel_object *channel = AMQP_CHANNEL_OBJ_P(getThis());
 	amqp_connection_object *connection;
+	zval* connection_param;
 
 	/* Parse out the method parameters */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "OO", &channel, amqp_channel_class_entry, &connection, amqp_connection_class_entry) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &connection_param, amqp_connection_class_entry) == FAILURE) {
 		zend_throw_exception(amqp_channel_exception_class_entry, "Parameter must be an instance of AMQPConnection.", 0 TSRMLS_CC);
 		RETURN_NULL();
 	}
 
-	channel->connection = connection;
+	ZVAL_COPY(&channel->connection, connection_param);
 
-	Z_ADDREF_P(connection);
+	connection = Z_AMQP_CONNECTION_OBJ_P(connection_param);
 
 	/* Set the prefetch count */
 	channel->prefetch_count = INI_INT("amqp.prefetch_count");
@@ -640,7 +638,7 @@ PHP_METHOD(amqp_channel_class, basicRecover)
 		return;
 	}
 
-	connection = (amqp_connection_object *)channel->connection;
+	connection = amqp_connection_object_fetch_object(channel->connection);
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not redeliver unacknowledged messages.");
 

@@ -58,12 +58,6 @@
 
 zend_object_handlers amqp_connection_object_handlers;
 
-static inline amqp_connection_object * amqp_connection_object_fetch_object(zend_object *obj) {
-	return (amqp_connection_object *)((char *)obj - XtOffsetOf(amqp_connection_object, zo));
-}
-
-#define Z_AMQP_CONNECTION_OBJ_P(zv) amqp_connection_object_fetch_object(Z_OBJ_P(zv));
-
 HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
 	zval value;
 	HashTable *debug_info;
@@ -378,6 +372,8 @@ void amqp_connection_dtor(zend_object *object TSRMLS_DC)
 	}
 
 	zend_object_std_dtor(&connection->zo TSRMLS_CC);
+
+	efree(connection);
 }
 
 zend_object* amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
