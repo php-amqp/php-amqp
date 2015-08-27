@@ -73,7 +73,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	*is_temp = 1;
 
 	/* Get the envelope object from which to read */
-	connection = (amqp_connection_object *)Z_OBJ_P(object TSRMLS_CC);
+	connection = Z_AMQP_CONNECTION_OBJ_P(object);
 
 	/* Keep the first number matching the number of entries in this table*/
 	ALLOC_HASHTABLE(debug_info);
@@ -111,8 +111,8 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	zend_hash_str_add(debug_info, "is_persistent", sizeof("is_persistent"), &value);
 
 	if (connection && connection->connection_resource) {
-		ZVAL_RESOURCE(&value, connection->connection_resource->resource_id);
-		zend_list_addref(connection->connection_resource->resource_id);
+		ZVAL_RES(&value, connection->connection_resource->resource);
+		GC_REFCOUNT(connection->connection_resource->resource)++;
 	} else {
 		ZVAL_NULL(&value);
 	}
@@ -166,7 +166,7 @@ static void php_amqp_prepare_for_disconnect(amqp_connection_object *connection T
 		return;
 	}
 
-	resource->resource_id = 0;
+	resource->resource = NULL;
 
 	assert(resource->slots != NULL);
 
@@ -197,8 +197,8 @@ void php_amqp_disconnect_safe(amqp_connection_object *connection TSRMLS_DC)
 {
 	php_amqp_prepare_for_disconnect(connection TSRMLS_CC);
 
-	if(!connection->is_persistent && connection->connection_resource && connection->connection_resource->resource_id > 0) {
-		zend_list_delete(connection->connection_resource->resource_id);
+	if(!connection->is_persistent && connection->connection_resource && connection->connection_resource->resource > 0) {
+		zend_list_close(connection->connection_resource->resource);
 	}
 
 	/* Mark connection as closed */
@@ -213,16 +213,16 @@ void php_amqp_disconnect_force(amqp_connection_object *connection TSRMLS_DC)
 
 	if(connection->connection_resource) {
 
-		if (connection->connection_resource->resource_id > 0) {
-			zend_list_delete(connection->connection_resource->resource_id);
+		if (connection->connection_resource->resource) {
+			zend_list_close(connection->connection_resource->resource);
 		}
 
 		if (connection->is_persistent) {
 			zval *le;
 
-			if ((le = zend_hash_find(&EG(persistent_list), &connection->connection_resource->resource_key)) != NULL) {
+			if ((le = zend_hash_find(&EG(persistent_list), connection->connection_resource->resource_key)) != NULL) {
 				if (Z_TYPE_P(le) == le_amqp_connection_resource_persistent) {
-					zend_hash_del(&EG(persistent_list), &connection->connection_resource->resource_key);
+					zend_hash_del(&EG(persistent_list), connection->connection_resource->resource_key);
 				}
 			}
 		}
@@ -312,7 +312,7 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 		return 0;
 	}
 
-	connection->connection_resource->resource_id = ZEND_REGISTER_RESOURCE(NULL, connection->connection_resource, persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource);
+	connection->connection_resource->resource = zend_register_resource(connection->connection_resource, persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource);
 
 	/* Set connection status to connected */
 	connection->is_connected = '\1';

@@ -284,7 +284,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	resource->is_connected  = 0;
 	resource->max_slots     = 0;
 	resource->used_slots    = 0;
-	resource->resource_id   = 0;
+	resource->resource      = NULL;
 
 	/* Create the connection */
 	resource->connection_state = amqp_new_connection();
