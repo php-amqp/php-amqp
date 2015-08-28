@@ -355,7 +355,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 {
 	amqp_exchange_object *exchange = AMQP_EXCHANGE_OBJ_P(getThis());
 	amqp_channel_object *channel = AMQP_CHANNEL_OBJ(exchange->channel);
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 	amqp_table_t *arguments;
 
 	if (zend_parse_parameters_none() == FAILURE) {
@@ -363,9 +363,6 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 	}
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not declare exchange.");
-
-	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
-
 	AMQP_VERIFY_CONNECTION(connection, "Could not declare exchange.");
 
 	/* Check that the exchange has a name */
@@ -436,21 +433,18 @@ PHP_METHOD(amqp_exchange_class, delete)
 {
 	amqp_exchange_object *exchange = AMQP_EXCHANGE_OBJ_P(getThis());
 	amqp_channel_object *channel = AMQP_CHANNEL_OBJ(exchange->channel);
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ(channel->connection);;
 
 	char *name = 0;
 	size_t   name_len = 0;
 
-	long flags = 0;
+	zend_long flags = 0;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl", &name, &name_len, &flags) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|sl", &name, &name_len, &flags) == FAILURE) {
 		return;
 	}
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not delete exchange.");
-
-	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
-
 	AMQP_VERIFY_CONNECTION(connection, "Could not delete exchange.");
 
  	amqp_exchange_delete(
