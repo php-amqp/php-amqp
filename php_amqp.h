@@ -217,6 +217,7 @@ static inline amqp_channel_object * amqp_channel_object_fetch_object(zend_object
 }
 
 #define AMQP_CHANNEL_OBJ_P(zv) amqp_channel_object_fetch_object(Z_OBJ_P(zv));
+#define AMQP_CHANNEL_OBJ(zv) amqp_channel_object_fetch_object(Z_OBJ(zv));
 
 typedef struct _amqp_connection_resource {
 	zend_bool is_connected;
@@ -265,16 +266,22 @@ typedef struct _amqp_queue_object {
 } amqp_queue_object;
 
 typedef struct _amqp_exchange_object {
-	zval *channel;
+	zval channel;
 	char is_connected;
 	char name[256];
 	int name_len;
 	char type[256];
 	int type_len;
 	int flags;
-	zval *arguments;
+	zval arguments;
 	zend_object zo;
 } amqp_exchange_object;
+
+static inline amqp_exchange_object * amqp_exchange_object_fetch_object(zend_object *obj) {
+	return (amqp_exchange_object *)((char *)obj - XtOffsetOf(amqp_exchange_object, zo));
+}
+
+#define AMQP_EXCHANGE_OBJ_P(zv) amqp_exchange_object_fetch_object(Z_OBJ_P(zv));
 
 typedef struct _amqp_envelope_object {
 	char *body;
