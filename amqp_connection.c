@@ -106,6 +106,8 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 
 	if (connection && connection->connection_resource) {
 		ZVAL_RES(&value, connection->connection_resource->resource);
+		// We need to increase the refcount, otherwise we miss a ref by passing it out
+		GC_REFCOUNT(connection->connection_resource->resource)++;
 	} else {
 		ZVAL_NULL(&value);
 	}
