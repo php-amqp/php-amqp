@@ -644,7 +644,7 @@ PHP_METHOD(amqp_queue_class, get)
 	amqp_queue_object *queue = AMQP_QUEUE_OBJ_P(getThis());
 	amqp_channel_object *channel = AMQP_CHANNEL_OBJ(queue->channel);
 	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
-	zval *message;
+	zval message;
 
 	zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
 
@@ -716,13 +716,12 @@ PHP_METHOD(amqp_queue_class, get)
 		return;
 	}
 
-	MAKE_STD_ZVAL(message);
-	convert_amqp_envelope_to_zval(&envelope, message TSRMLS_CC);
+	convert_amqp_envelope_to_zval(&envelope, &message TSRMLS_CC);
 
 	php_amqp_maybe_release_buffers_on_channel(connection, channel);
 	amqp_destroy_envelope(&envelope);
 
-	COPY_PZVAL_TO_ZVAL(*return_value, message);
+	RETURN_ZVAL(&message, 1, 1);
 }
 /* }}} */
 
@@ -743,7 +742,7 @@ PHP_METHOD(amqp_queue_class, consume)
 	char *consumer_tag;
 	size_t consumer_tag_len = 0;
 
-	long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
+	zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
 
 	int call_result;
 
@@ -753,7 +752,6 @@ PHP_METHOD(amqp_queue_class, consume)
 	}
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not get channel.");
-
 	AMQP_VERIFY_CONNECTION(connection, "Could not get connection.");
 
 	if (!(AMQP_JUST_CONSUME & flags)) {
@@ -809,7 +807,7 @@ PHP_METHOD(amqp_queue_class, consume)
 
 	while (1) {
 		/* Initialize the message */
-		zval *message;
+		zval message;
 
 		amqp_envelope_t envelope;
 
@@ -843,21 +841,19 @@ PHP_METHOD(amqp_queue_class, consume)
 			return;
 		}
 
-		MAKE_STD_ZVAL(message);
-		convert_amqp_envelope_to_zval(&envelope, message TSRMLS_CC);
+		convert_amqp_envelope_to_zval(&envelope, &message TSRMLS_CC);
 
 		amqp_destroy_envelope(&envelope);
 
 		/* Make the callback */
-		zval *params;
+		zval params;
 
 		/* Build the parameter array */
-		MAKE_STD_ZVAL(params);
-		array_init(params);
+		array_init(&params);
 
 		/* Dump it into the params array */
-		add_index_zval(params, 0, message);
-		Z_ADDREF_P(message);
+		add_index_zval(&params, 0, &message);
+		Z_ADDREF(message);
 
 		/* Add a pointer to the queue: */
 		/* TODO */
@@ -865,17 +861,15 @@ PHP_METHOD(amqp_queue_class, consume)
 		//Z_ADDREF_P(id);
 
 		/* Convert everything to be callable */
-		zend_fcall_info_args(&fci, params TSRMLS_CC);
+		zend_fcall_info_args(&fci, &params TSRMLS_CC);
 
 		/* Call the function, and track the return value */
 		if (zend_call_function(&fci, &fci_cache TSRMLS_CC) == SUCCESS) {
-			COPY_PZVAL_TO_ZVAL(*return_value, *fci.retval);
+			RETVAL_ZVAL(fci.retval, 1, 1);
   		}
 
 		/* Clean up our mess */
 		zend_fcall_info_args_clear(&fci, 1);
-		zval_ptr_dtor(params);
-		zval_ptr_dtor(message);
 
 		/* Check if user land function wants to bail */
 		if (EG(exception) || Z_TYPE_P(return_value) == IS_FALSE) {
