@@ -156,7 +156,7 @@ zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 											+ zend_object_properties_size(ce));
 
 	zend_object_std_init(&channel->zo, ce TSRMLS_CC);
-	AMQP_OBJECT_PROPERTIES_INIT(channel->zo, ce);
+	object_properties_init(&channel->zo, ce);
 
 	memcpy((void *)&amqp_channel_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 

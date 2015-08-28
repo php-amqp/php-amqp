@@ -115,12 +115,12 @@ void amqp_queue_dtor(zend_object *object TSRMLS_DC)
 
 zend_object* amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	amqp_queue_object* queue = (amqp_queue_object*)ecalloc(0,
+	amqp_queue_object* queue = (amqp_queue_object*)ecalloc(1,
 			sizeof(amqp_queue_object)
 			+ zend_object_properties_size(ce));
 
 	zend_object_std_init(&queue->zo, ce TSRMLS_CC);
-	AMQP_OBJECT_PROPERTIES_INIT(queue->zo, ce);
+	object_properties_init(&queue->zo, ce);
 
 	/* Initialize the arguments array: */
 	array_init(&queue->arguments);

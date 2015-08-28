@@ -142,12 +142,12 @@ void amqp_envelope_dtor(zend_object *object TSRMLS_DC)
 
 zend_object* amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	amqp_envelope_object *envelope = (amqp_envelope_object*)ecalloc(0,
+	amqp_envelope_object *envelope = (amqp_envelope_object*)ecalloc(1,
 			sizeof(amqp_envelope_object)
 			+ zend_object_properties_size(ce));
 
 	zend_object_std_init(&envelope->zo, ce TSRMLS_CC);
-	AMQP_OBJECT_PROPERTIES_INIT(envelope->zo, ce);
+	object_properties_init(&envelope->zo, ce);
 
 	array_init(&envelope->headers);
 

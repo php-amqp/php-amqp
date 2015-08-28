@@ -106,17 +106,17 @@ void amqp_exchange_dtor(zend_object *object TSRMLS_DC)
 	efree(object);
 }
 
-zend_object* amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object* amqp_exchange_ctor(zend_class_entry *ce)
 {
-	amqp_exchange_object* exchange = (amqp_exchange_object*)ecalloc(0,
+	amqp_exchange_object* exchange = (amqp_exchange_object*)ecalloc(1,
 			sizeof(amqp_exchange_object)
 			+ zend_object_properties_size(ce));
 
 	/* Initialize the arguments array: */
 	array_init(&exchange->arguments);
 
-	zend_object_std_init(&exchange->zo, ce TSRMLS_CC);
-	AMQP_OBJECT_PROPERTIES_INIT(exchange->zo, ce);
+	zend_object_std_init(&exchange->zo, ce);
+	object_properties_init(&exchange->zo, ce);
 
 	memcpy((void *)&amqp_exchange_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_exchange_object_handlers.get_debug_info = amqp_exchange_object_get_debug_info;
