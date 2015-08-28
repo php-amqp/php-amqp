@@ -305,7 +305,7 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
 	}
 
 	if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
-		parse_amqp_table(&(p->headers), envelope->headers);
+		parse_amqp_table(&(p->headers), &envelope->headers);
 	}
 
 	envelope->body     = estrndup(message->body.bytes, message->body.len);
@@ -350,7 +350,7 @@ PHP_METHOD(amqp_queue_class, getName)
 
 	/* Check if there is a name to be had: */
 	if (queue->name_len) {
-		RETURN_STR(queue->name);
+		RETURN_STRING(queue->name);
 	} else {
 		RETURN_FALSE;
 	}

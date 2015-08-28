@@ -311,10 +311,16 @@ typedef struct _amqp_envelope_object {
 	char message_id[256];
 	char reply_to[256];
 	char correlation_id[256];
-	zval *headers;
+	zval headers;
 	zend_object zo;
 } amqp_envelope_object;
 
+static inline amqp_envelope_object * amqp_envelope_object_fetch_object(zend_object *obj) {
+	return (amqp_envelope_object *)((char *)obj - XtOffsetOf(amqp_envelope_object, zo));
+}
+
+#define AMQP_ENVELOPE_OBJ_P(zv) amqp_envelope_object_fetch_object(Z_OBJ_P(zv));
+#define AMQP_ENVELOPE_OBJ(zv) amqp_envelope_object_fetch_object(Z_OBJ(zv));
 
 #define AMQP_ERROR_CATEGORY_MASK (1 << 29)
 
