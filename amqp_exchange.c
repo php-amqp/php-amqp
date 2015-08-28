@@ -175,7 +175,7 @@ PHP_METHOD(amqp_exchange_class, setName)
 {
 	amqp_exchange_object *exchange = AMQP_EXCHANGE_OBJ_P(getThis());
 	char *name = NULL;
-	int name_len = 0;
+	size_t name_len = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
 		return;
@@ -247,7 +247,7 @@ PHP_METHOD(amqp_exchange_class, setType)
 {
 	amqp_exchange_object *exchange = AMQP_EXCHANGE_OBJ_P(getThis());
 	char *type = NULL;
-	int type_len = 0;
+	size_t type_len = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,"s", &type, &type_len) == FAILURE) {
 		return;
