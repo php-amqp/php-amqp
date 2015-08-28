@@ -704,7 +704,7 @@ void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connectio
 	}
 }
 
-amqp_bytes_t php_amqp_long_string(char const *cstr, int len)
+amqp_bytes_t php_amqp_long_string(char const *cstr, size_t len)
 {
 	if (len < 1) {
 		return amqp_empty_bytes;
@@ -760,7 +760,7 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 		zval value;
 		zend_string *real_key;
 		char *key;
-		uint key_len;
+		size_t key_len;
 		ulong index;
 		char *strKey;
 		char *strValue;

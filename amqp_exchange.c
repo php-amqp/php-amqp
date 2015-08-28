@@ -177,7 +177,7 @@ PHP_METHOD(amqp_exchange_class, setName)
 	char *name = NULL;
 	int name_len = 0;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &exchange, amqp_exchange_class_entry, &name, &name_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
 		return;
 	}
 
@@ -213,7 +213,7 @@ PHP_METHOD(amqp_exchange_class, setFlags)
 	amqp_exchange_object *exchange = AMQP_EXCHANGE_OBJ_P(getThis());
 	long flagBitmask;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ol", &exchange, amqp_exchange_class_entry, &flagBitmask) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flagBitmask) == FAILURE) {
 		return;
 	}
 
@@ -249,7 +249,7 @@ PHP_METHOD(amqp_exchange_class, setType)
 	char *type = NULL;
 	int type_len = 0;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &exchange, amqp_exchange_class_entry, &type, &type_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,"s", &type, &type_len) == FAILURE) {
 		return;
 	}
 
@@ -266,7 +266,7 @@ PHP_METHOD(amqp_exchange_class, getArgument)
 	char *key;
 	size_t key_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &exchange, amqp_exchange_class_entry, &key, &key_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
 		return;
 	}
 
@@ -617,7 +617,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		}
 	}
 
-	amqp_table_t* headers;
+	amqp_table_t* headers = NULL;
 
 	if (ini_arr && (pztmp = zend_hash_str_find(HASH_OF(ini_arr), "headers", sizeof("headers")-1)) != NULL) {
 		convert_to_array(pztmp);
@@ -700,7 +700,7 @@ PHP_METHOD(amqp_exchange_class, bind)
 
 	int flags;
 
-	amqp_table_t *arguments;
+	amqp_table_t *arguments = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|sa", &src_name, &src_name_len, &keyname, &keyname_len, &zvalArguments) == FAILURE) {
 		return;
@@ -841,7 +841,7 @@ PHP_METHOD(amqp_exchange_class, getConnection)
 		return;
 	}
 
-	RETURN_ZVAL(channel->connection, 1, 0);
+	RETURN_OBJ(channel->connection);
 }
 /* }}} */
 
