@@ -304,7 +304,9 @@ PHP_METHOD(amqp_exchange_class, setArguments)
 	}
 
 	/* Destroy the arguments storage */
-	Z_DELREF(exchange->arguments);
+	if (Z_DELREF(exchange->arguments) == 0) {
+		zval_dtor(&exchange->arguments);
+	}
 
 	ZVAL_COPY(&exchange->arguments, zvalArguments);
 
