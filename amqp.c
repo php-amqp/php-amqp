@@ -741,45 +741,30 @@ char *stringify_bytes(amqp_bytes_t bytes)
 
 void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *arguments, char allow_int_keys TSRMLS_DC)
 {
-	HashTable *argumentHash;
-	HashPosition pos;
-	zval* data;
-	char type[16];
-	amqp_table_t *inner_table;
+	HashTable *argumentHash = Z_ARRVAL_P(zvalArguments);
 
-	argumentHash = Z_ARRVAL_P(zvalArguments);
+	// HashTable iteration
+	zend_ulong index;
+	zend_string* real_key;
+	zval *value;
 
-	/* Allocate all the memory necessary for storing the arguments */
-	arguments->entries = (amqp_table_entry_t *)ecalloc(zend_hash_num_elements(argumentHash), sizeof(amqp_table_entry_t));
+	/* Allocate all the memory necessary for storing the arguments. This might be more than we need */
+	arguments->entries = (amqp_table_entry_t *)ecalloc(0, zend_hash_num_elements(argumentHash) * sizeof(amqp_table_entry_t));
 	arguments->num_entries = 0;
 
-	for (zend_hash_internal_pointer_reset_ex(argumentHash, &pos);
-		data = zend_hash_get_current_data_ex(argumentHash, &pos);
-		zend_hash_move_forward_ex(argumentHash, &pos)) {
-
-		zval value;
-		zend_string *real_key;
+	ZEND_HASH_FOREACH_KEY_VAL(argumentHash, index, real_key, value) {
+		char tmp_str[32];
+		char type[16];
+		char *strValue;
 		char *key;
 		size_t key_len;
-		ulong index;
-		char *strKey;
-		char *strValue;
 		amqp_table_entry_t *table;
 		amqp_field_value_t *field;
-		char tmp_str[32];
 
-
-		/* Make a copy of the value: */
-		value = *data;
-		zval_copy_ctor(&value);
-
-		/* Now pull the key */
-
-		if (zend_hash_get_current_key_ex(argumentHash, &real_key, &index, &pos) != HASH_KEY_IS_STRING) {
-
+		if (real_key  == NULL) {
 			if (allow_int_keys) {
 				/* Convert to strings non-string keys */
-				key_len = sprintf(tmp_str, "%lu", index);
+				key_len = (size_t)sprintf(tmp_str, "%lu", index);
 				key     = tmp_str;
 			} else {
 				/* Skip things that are not strings */
@@ -796,31 +781,31 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 		table = &arguments->entries[arguments->num_entries++];
 		field = &table->value;
 
-		switch (Z_TYPE_P(&value)) {
+		switch (Z_TYPE_P(value)) {
 			case IS_TRUE:
 			case IS_FALSE:
 				field->kind          = AMQP_FIELD_KIND_BOOLEAN;
-				field->value.boolean = (amqp_boolean_t)Z_LVAL(value);
+				field->value.boolean = (amqp_boolean_t)Z_LVAL_P(value);
 				break;
 			case IS_DOUBLE:
 				field->kind      = AMQP_FIELD_KIND_F64;
-				field->value.f64 = Z_DVAL(value);
+				field->value.f64 = Z_DVAL_P(value);
 				break;
 			case IS_LONG:
 				field->kind      = AMQP_FIELD_KIND_I64;
-				field->value.i64 = Z_LVAL(value);
+				field->value.i64 = Z_LVAL_P(value);
 				break;
 			case IS_STRING:
 				field->kind        = AMQP_FIELD_KIND_UTF8;
-				strValue           = estrndup(Z_STRVAL(value), Z_STRLEN(value));
-				field->value.bytes = php_amqp_long_string(strValue, Z_STRLEN(value));
+				strValue           = estrndup(Z_STRVAL_P(value), Z_STRLEN_P(value));
+				field->value.bytes = php_amqp_long_string(strValue, Z_STRLEN_P(value));
 				break;
 			case IS_ARRAY:
 				field->kind = AMQP_FIELD_KIND_TABLE;
-				internal_convert_zval_to_amqp_table(&value, &field->value.table, 1 TSRMLS_CC);
+				internal_convert_zval_to_amqp_table(value, &field->value.table, 1 TSRMLS_CC);
 				break;
 			default:
-				switch(Z_TYPE_P(&value)) {
+				switch(Z_TYPE_P(value)) {
 					case IS_NULL:     strcpy(type, "null"); break;
 					case IS_OBJECT:   strcpy(type, "object"); break;
 					case IS_RESOURCE: strcpy(type, "resource"); break;
@@ -834,12 +819,8 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				continue;
 		}
 
-		strKey     = estrndup(key, key_len);
-		table->key = amqp_cstring_bytes(strKey);
-
-		/* Clean up the zval */
-		zval_dtor(&value);
-	}
+		table->key = amqp_cstring_bytes(estrndup(key, key_len));
+	} ZEND_HASH_FOREACH_END();
 }
 
 inline amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC)
