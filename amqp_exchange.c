@@ -765,9 +765,7 @@ PHP_METHOD(amqp_exchange_class, unbind)
 	char *keyname;
 	size_t   keyname_len = 0;
 
-	int flags;
-
-	amqp_table_t *arguments;
+	amqp_table_t *arguments = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|sa", &src_name, &src_name_len, &keyname, &keyname_len, &zvalArguments) == FAILURE) {
 		return;
