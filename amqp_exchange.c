@@ -98,7 +98,7 @@ void amqp_exchange_dtor(zend_object *object TSRMLS_DC)
 	zend_object_release(Z_OBJ(exchange->channel));
 
 	if (Z_DELREF(exchange->arguments) == 0) {
-		val_dtor(&exchange->arguments);
+		zval_dtor(&exchange->arguments);
 	}
 
 	zend_object_std_dtor(&exchange->zo TSRMLS_CC);
