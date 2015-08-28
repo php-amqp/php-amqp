@@ -824,7 +824,7 @@ PHP_METHOD(amqp_exchange_class, getChannel)
 		return;
 	}
 
-	RETURN_ZVAL(&exchange->channel, 1, 0);
+	RETURN_ZVAL(&exchange->channel, 0, 0);
 }
 /* }}} */
 

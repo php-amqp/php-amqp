@@ -162,7 +162,7 @@ zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 	memcpy((void *)&amqp_channel_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
 	amqp_channel_object_handlers.get_debug_info = amqp_channel_object_get_debug_info;
-	amqp_channel_object_handlers.offset = XtOffsetOf(amqp_connection_object, zo);
+	amqp_channel_object_handlers.offset = XtOffsetOf(amqp_channel_object, zo);
 	amqp_channel_object_handlers.free_obj = amqp_channel_free_obj;
 
 	channel->zo.handlers = &amqp_channel_object_handlers;
@@ -371,7 +371,7 @@ PHP_METHOD(amqp_channel_class, setPrefetchSize)
 {
 	amqp_channel_object *channel = AMQP_CHANNEL_OBJ_P(getThis());
 	amqp_connection_object *connection;
-	long prefetch_size;
+	zend_long prefetch_size;
 
 	/* Parse out the method parameters */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &prefetch_size) == FAILURE) {
