@@ -184,8 +184,9 @@ extern zend_class_entry *amqp_exception_class_entry,
 		zend_throw_exception(amqp_connection_exception_class_entry, verify_connection_error_tmp, 0 TSRMLS_CC); \
 		return; \
 
+// Adjust for offset
 #define AMQP_VERIFY_CONNECTION(connection, error) \
-	if (!connection) { \
+	if (!connection || connection > -1000) { \
 		AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
 	} \
 	if ((connection)->is_connected != '\1') { \
@@ -204,7 +205,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&obj, ce);
 
 typedef struct _amqp_channel_object {
-	zend_object* connection;
+	zval connection;
 	amqp_channel_t channel_id;
 	char is_connected;
 	int prefetch_count;
@@ -253,6 +254,7 @@ static inline amqp_connection_object * amqp_connection_object_fetch_object(zend_
 }
 
 #define Z_AMQP_CONNECTION_OBJ_P(zv) amqp_connection_object_fetch_object(Z_OBJ_P(zv));
+#define Z_AMQP_CONNECTION_OBJ(zv) amqp_connection_object_fetch_object(Z_OBJ(zv));
 
 typedef struct _amqp_queue_object {
 	zval *channel;

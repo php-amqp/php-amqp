@@ -288,7 +288,7 @@ PHP_METHOD(amqp_exchange_class, getArguments)
 		return;
 	}
 
-	RETURN_ZVAL(&exchange->arguments, 0, 0);
+	RETURN_ZVAL(&exchange->arguments, 1, 0);
 }
 /* }}} */
 
@@ -362,7 +362,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not declare exchange.");
 
-	connection = (amqp_connection_object *)channel->connection;
+	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not declare exchange.");
 
@@ -447,7 +447,7 @@ PHP_METHOD(amqp_exchange_class, delete)
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not delete exchange.");
 
-	connection = (amqp_connection_object *)channel->connection;
+	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not delete exchange.");
 
@@ -631,7 +631,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not publish to exchange.");
 
-	connection = (amqp_connection_object *)channel->connection;
+	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not publish to exchange.");
 
@@ -708,7 +708,7 @@ PHP_METHOD(amqp_exchange_class, bind)
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not bind to exchange.");
 
-	connection = (amqp_connection_object *)channel->connection;
+	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not bind to exchanges.");
 
@@ -773,7 +773,7 @@ PHP_METHOD(amqp_exchange_class, unbind)
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not unbind from exchange.");
 
-	connection = (amqp_connection_object *)channel->connection;
+	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not unbind from exchanges.");
 
@@ -824,7 +824,7 @@ PHP_METHOD(amqp_exchange_class, getChannel)
 		return;
 	}
 
-	RETURN_ZVAL(&exchange->channel, 0, 0);
+	RETURN_ZVAL(&exchange->channel, 1, 0);
 }
 /* }}} */
 
@@ -839,7 +839,7 @@ PHP_METHOD(amqp_exchange_class, getConnection)
 		return;
 	}
 
-	RETURN_OBJ(channel->connection);
+	RETURN_ZVAL(&channel->connection, 1, 0);
 }
 /* }}} */
 
