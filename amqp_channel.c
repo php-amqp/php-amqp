@@ -79,6 +79,9 @@ HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_
 	ZVAL_BOOL(&value, channel->is_connected);
 	zend_hash_str_add(debug_info, "is_connected", sizeof("is_connected"), &value);
 
+	ZVAL_OBJ(&value, channel->connection);
+	zend_hash_str_add(debug_info, "connection", sizeof("connection"), &value);
+
 	/* Start adding values */
 	return debug_info;
 }
@@ -92,7 +95,7 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 	/* Pull out and verify the connection */
 	connection = amqp_connection_object_fetch_object(channel->connection);
 
-	if (connection != NULL) {
+	if (channel->connection != NULL) {
         /* First, remove it from active channels table to prevent recursion in case of connection error */
         php_amqp_connection_resource_unregister_channel(connection->connection_resource, channel->channel_id);
 	} else {
