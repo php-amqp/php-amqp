@@ -749,13 +749,12 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 	zval *value;
 
 	/* Allocate all the memory necessary for storing the arguments. This might be more than we need */
-	arguments->entries = (amqp_table_entry_t *)ecalloc(0, zend_hash_num_elements(argumentHash) * sizeof(amqp_table_entry_t));
+	arguments->entries = (amqp_table_entry_t *)ecalloc(zend_hash_num_elements(argumentHash), sizeof(amqp_table_entry_t));
 	arguments->num_entries = 0;
 
 	ZEND_HASH_FOREACH_KEY_VAL(argumentHash, index, real_key, value) {
 		char tmp_str[32];
 		char type[16];
-		char *strValue;
 		char *key;
 		size_t key_len;
 		amqp_table_entry_t *table = &arguments->entries[arguments->num_entries++];
@@ -793,8 +792,7 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				break;
 			case IS_STRING:
 				field->kind        = AMQP_FIELD_KIND_UTF8;
-				strValue           = estrndup(Z_STRVAL_P(value), Z_STRLEN_P(value));
-				field->value.bytes = php_amqp_long_string(strValue, Z_STRLEN_P(value));
+				field->value.bytes = php_amqp_long_string(estrndup(Z_STRVAL_P(value), Z_STRLEN_P(value)), Z_STRLEN_P(value));
 				break;
 			case IS_ARRAY:
 				field->kind = AMQP_FIELD_KIND_TABLE;
@@ -815,7 +813,7 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				continue;
 		}
 
-		table->key = amqp_cstring_bytes(estrndup(key, key_len));
+		table->key = php_amqp_long_string(estrndup(key, key_len), key_len);
 	} ZEND_HASH_FOREACH_END();
 }
 
@@ -836,13 +834,11 @@ void internal_php_amqp_free_amqp_table(amqp_table_t *object, char clear_root)
 		return;
 	}
 
-	if ((object)->entries) {
-		for (int macroEntryCounter = 0; macroEntryCounter < (object)->num_entries; macroEntryCounter++) {
+	if (object->entries) {
+		for (int macroEntryCounter = 0; macroEntryCounter < object->num_entries; macroEntryCounter++) {
 			amqp_table_entry_t *entry = &object->entries[macroEntryCounter];
 
 			efree(entry->key.bytes);
-
-			efree(&entry->key);
 
 			switch (entry->value.kind) {
 				case AMQP_FIELD_KIND_TABLE:
