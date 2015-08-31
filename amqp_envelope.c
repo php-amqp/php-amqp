@@ -438,18 +438,17 @@ PHP_METHOD(amqp_envelope_class, getCorrelationId)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getHeader)
 {
-	zval *tmp = 0;
 	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
-	char *key;
-	size_t key_len;
+	zval *tmp = 0;
+	zend_string* key;
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &key) == FAILURE) {
 		return;
 	}
 
 	/* Look for the hash key */
-	if ((tmp = zend_hash_str_find(HASH_OF(&envelope->headers), key, key_len)) == NULL) {
+	if ((tmp = zend_hash_find(HASH_OF(&envelope->headers), key)) == NULL) {
 		RETURN_FALSE;
 	}
 
