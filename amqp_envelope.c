@@ -185,7 +185,7 @@ PHP_METHOD(amqp_envelope_class, getBody)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(envelope->body);
+	RETURN_STRINGL(envelope->body, envelope->body_len);
 }
 /* }}} */
 
