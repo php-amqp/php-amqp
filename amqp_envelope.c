@@ -67,58 +67,58 @@ HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS
 
 	/* Start adding values */
 	ZVAL_STRINGL(&value, envelope->body, envelope->body_len);
-	zend_hash_str_add(debug_info, "body", sizeof("body"), &value);
+	zend_hash_str_add(debug_info, "body", sizeof("body")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->content_type, strlen(envelope->content_type));
-	zend_hash_str_add(debug_info, "content_type", sizeof("content_type"), &value);
+	zend_hash_str_add(debug_info, "content_type", sizeof("content_type")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->routing_key, strlen(envelope->routing_key));
-	zend_hash_str_add(debug_info, "routing_key", sizeof("routing_key"), &value);
+	zend_hash_str_add(debug_info, "routing_key", sizeof("routing_key")-1, &value);
 
 	ZVAL_LONG(&value, envelope->delivery_tag);
-	zend_hash_str_add(debug_info, "delivery_tag", sizeof("delivery_tag"), &value);
+	zend_hash_str_add(debug_info, "delivery_tag", sizeof("delivery_tag")-1, &value);
 
 	ZVAL_LONG(&value, envelope->delivery_mode);
-	zend_hash_str_add(debug_info, "delivery_mode", sizeof("delivery_mode"), &value);
+	zend_hash_str_add(debug_info, "delivery_mode", sizeof("delivery_mode")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->exchange_name, strlen(envelope->exchange_name));
-	zend_hash_str_add(debug_info, "exchange_name", sizeof("exchange_name"), &value);
+	zend_hash_str_add(debug_info, "exchange_name", sizeof("exchange_name")-1, &value);
 
 	ZVAL_LONG(&value, envelope->is_redelivery);
-	zend_hash_str_add(debug_info, "is_redelivery", sizeof("is_redelivery"), &value);
+	zend_hash_str_add(debug_info, "is_redelivery", sizeof("is_redelivery")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->content_encoding, strlen(envelope->content_encoding));
-	zend_hash_str_add(debug_info, "content_encoding", sizeof("content_encoding"), &value);
+	zend_hash_str_add(debug_info, "content_encoding", sizeof("content_encoding")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->type, strlen(envelope->type));
-	zend_hash_str_add(debug_info, "type", sizeof("type"), &value);
+	zend_hash_str_add(debug_info, "type", sizeof("type")-1, &value);
 
 	ZVAL_LONG(&value, envelope->timestamp);
-	zend_hash_str_add(debug_info, "timestamp", sizeof("timestamp"), &value);
+	zend_hash_str_add(debug_info, "timestamp", sizeof("timestamp")-1, &value);
 
 	ZVAL_LONG(&value, envelope->priority);
-	zend_hash_str_add(debug_info, "priority", sizeof("priority"), &value);
+	zend_hash_str_add(debug_info, "priority", sizeof("priority")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->expiration, strlen(envelope->expiration));
-	zend_hash_str_add(debug_info, "expiration", sizeof("expiration"), &value);
+	zend_hash_str_add(debug_info, "expiration", sizeof("expiration")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->user_id, strlen(envelope->user_id));
-	zend_hash_str_add(debug_info, "user_id", sizeof("user_id"), &value);
+	zend_hash_str_add(debug_info, "user_id", sizeof("user_id")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->app_id, strlen(envelope->app_id));
-	zend_hash_str_add(debug_info, "app_id", sizeof("app_id"), &value);
+	zend_hash_str_add(debug_info, "app_id", sizeof("app_id")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->message_id, strlen(envelope->message_id));
-	zend_hash_str_add(debug_info, "message_id", sizeof("message_id"), &value);
+	zend_hash_str_add(debug_info, "message_id", sizeof("message_id")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->reply_to, strlen(envelope->reply_to));
-	zend_hash_str_add(debug_info, "reply_to", sizeof("reply_to"), &value);
+	zend_hash_str_add(debug_info, "reply_to", sizeof("reply_to")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->correlation_id, strlen(envelope->correlation_id));
-	zend_hash_str_add(debug_info, "correlation_id", sizeof("correlation_id"), &value);
+	zend_hash_str_add(debug_info, "correlation_id", sizeof("correlation_id")-1, &value);
 
 	Z_ADDREF(envelope->headers);
-	zend_hash_str_add(debug_info, "headers", sizeof("headers"), &envelope->headers);
+	zend_hash_str_add(debug_info, "headers", sizeof("headers")-1, &envelope->headers);
 
 	return debug_info;
 }

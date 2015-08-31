@@ -68,19 +68,19 @@ HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_
 
 	/* Start adding values */
 	ZVAL_LONG(&value, channel->channel_id);
-	zend_hash_str_add(debug_info, "channel_id", sizeof("channel_id"), &value);
+	zend_hash_str_add(debug_info, "channel_id", sizeof("channel_id")-1, &value);
 
 	ZVAL_LONG(&value, channel->prefetch_count);
-	zend_hash_str_add(debug_info, "prefetch_count", sizeof("prefetch_count"), &value);
+	zend_hash_str_add(debug_info, "prefetch_count", sizeof("prefetch_count")-1, &value);
 
 	ZVAL_LONG(&value, channel->prefetch_size);
-	zend_hash_str_add(debug_info, "prefetch_size", sizeof("prefetch_size"), &value);
+	zend_hash_str_add(debug_info, "prefetch_size", sizeof("prefetch_size")-1, &value);
 
 	ZVAL_BOOL(&value, channel->is_connected);
-	zend_hash_str_add(debug_info, "is_connected", sizeof("is_connected"), &value);
+	zend_hash_str_add(debug_info, "is_connected", sizeof("is_connected")-1, &value);
 
 	ZVAL_COPY(&value, &channel->connection);
-	zend_hash_str_add(debug_info, "connection", sizeof("connection"), &value);
+	zend_hash_str_add(debug_info, "connection", sizeof("connection")-1, &value);
 
 	/* Start adding values */
 	return debug_info;

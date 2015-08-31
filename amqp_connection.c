@@ -75,34 +75,34 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp) {
 
 	/* Start adding values */
 	ZVAL_STRINGL(&value, connection->login, strlen(connection->login));
-	zend_hash_str_add(debug_info, "login", sizeof("login"), &value);
+	zend_hash_str_add(debug_info, "login", sizeof("login")-1, &value);
 
 	ZVAL_STRINGL(&value, connection->password, strlen(connection->password));
-	zend_hash_str_add(debug_info, "password", sizeof("password"), &value);
+	zend_hash_str_add(debug_info, "password", sizeof("password")-1, &value);
 
 	ZVAL_STRINGL(&value, connection->host, strlen(connection->host));
-	zend_hash_str_add(debug_info, "host", sizeof("host"), &value);
+	zend_hash_str_add(debug_info, "host", sizeof("host")-1, &value);
 
 	ZVAL_STRINGL(&value, connection->vhost, strlen(connection->vhost));
-	zend_hash_str_add(debug_info, "vhost", sizeof("vhost"), &value);
+	zend_hash_str_add(debug_info, "vhost", sizeof("vhost")-1, &value);
 
 	ZVAL_LONG(&value, connection->port);
-	zend_hash_str_add(debug_info, "port", sizeof("port"), &value);
+	zend_hash_str_add(debug_info, "port", sizeof("port")-1, &value);
 
 	ZVAL_DOUBLE(&value, connection->read_timeout);
-	zend_hash_str_add(debug_info, "read_timeout", sizeof("read_timeout"), &value);
+	zend_hash_str_add(debug_info, "read_timeout", sizeof("read_timeout")-1, &value);
 
 	ZVAL_DOUBLE(&value, connection->write_timeout);
-	zend_hash_str_add(debug_info, "write_timeout", sizeof("write_timeout"), &value);
+	zend_hash_str_add(debug_info, "write_timeout", sizeof("write_timeout")-1, &value);
 
 	ZVAL_DOUBLE(&value, connection->connect_timeout);
-	zend_hash_str_add(debug_info, "connect_timeout", sizeof("connect_timeout"), &value);
+	zend_hash_str_add(debug_info, "connect_timeout", sizeof("connect_timeout")-1, &value);
 
 	ZVAL_BOOL(&value, connection->is_connected);
-	zend_hash_str_add(debug_info, "is_connected", sizeof("is_connected"), &value);
+	zend_hash_str_add(debug_info, "is_connected", sizeof("is_connected")-1, &value);
 
 	ZVAL_BOOL(&value, connection->is_persistent);
-	zend_hash_str_add(debug_info, "is_persistent", sizeof("is_persistent"), &value);
+	zend_hash_str_add(debug_info, "is_persistent", sizeof("is_persistent")-1, &value);
 
 	if (connection->connection_resource) {
 		ZVAL_RES(&value, connection->connection_resource->resource);
