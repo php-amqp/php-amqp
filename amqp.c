@@ -758,8 +758,8 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 		char *strValue;
 		char *key;
 		size_t key_len;
-		amqp_table_entry_t *table;
-		amqp_field_value_t *field;
+		amqp_table_entry_t *table = &arguments->entries[arguments->num_entries++];
+		amqp_field_value_t *field = &table->value;
 
 		if (real_key  == NULL) {
 			if (allow_int_keys) {
@@ -776,10 +776,6 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 			key_len = ZSTR_LEN(real_key);
 			key = ZSTR_VAL(real_key);
 		}
-
-		/* Build the value */
-		table = &arguments->entries[arguments->num_entries++];
-		field = &table->value;
 
 		switch (Z_TYPE_P(value)) {
 			case IS_TRUE:
@@ -841,20 +837,23 @@ void internal_php_amqp_free_amqp_table(amqp_table_t *object, char clear_root)
 	}
 
 	if ((object)->entries) {
-		int macroEntryCounter;
-		for (macroEntryCounter = 0; macroEntryCounter < (object)->num_entries; macroEntryCounter++) {
-			efree((object)->entries[macroEntryCounter].key.bytes);
+		for (int macroEntryCounter = 0; macroEntryCounter < (object)->num_entries; macroEntryCounter++) {
+			amqp_table_entry_t *entry = &object->entries[macroEntryCounter];
 
-			switch ((object)->entries[macroEntryCounter].value.kind) {
+			efree(entry->key.bytes);
+
+			efree(&entry->key);
+
+			switch (entry->value.kind) {
 				case AMQP_FIELD_KIND_TABLE:
-					internal_php_amqp_free_amqp_table(&(object)->entries[macroEntryCounter].value.value.table, 0);
+					internal_php_amqp_free_amqp_table(&entry->value.value.table, 0);
 					break;
 				case AMQP_FIELD_KIND_UTF8:
-					efree((object)->entries[macroEntryCounter].value.value.bytes.bytes);
+					efree(entry->value.value.bytes.bytes);
 					break;
 			}
 		}
-		efree((object)->entries);
+		efree(object->entries);
 	}
 
 	if (clear_root) {
