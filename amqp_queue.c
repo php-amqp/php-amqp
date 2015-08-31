@@ -242,11 +242,9 @@ void parse_amqp_table(amqp_table_t *table, zval *result)
 
 void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelopeZval TSRMLS_DC)
 {
-	amqp_envelope_object *envelope;
-
 	/* Build the envelope */
 	object_init_ex(envelopeZval, amqp_envelope_class_entry);
-	envelope = (amqp_envelope_object *)Z_OBJ_P(envelopeZval TSRMLS_CC);
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(envelopeZval);
 
 	AMQP_SET_STR_PROPERTY(envelope->routing_key,	amqp_envelope->routing_key.bytes, amqp_envelope->routing_key.len);
 	AMQP_SET_STR_PROPERTY(envelope->exchange_name,	amqp_envelope->exchange.bytes, amqp_envelope->exchange.len);
@@ -847,6 +845,7 @@ PHP_METHOD(amqp_queue_class, consume)
 
 		/* Make the callback */
 		zval params;
+		zval retval;
 
 		/* Build the parameter array */
 		array_init(&params);
@@ -856,9 +855,10 @@ PHP_METHOD(amqp_queue_class, consume)
 		Z_ADDREF(message);
 
 		/* Add a pointer to the queue: */
-		/* TODO */
-		//add_index_zval(params, 1, id);
-		//Z_ADDREF_P(id);
+		add_index_zval(&params, 1, getThis());
+		Z_ADDREF_P(getThis());
+
+		fci.retval = &retval;
 
 		/* Convert everything to be callable */
 		zend_fcall_info_args(&fci, &params TSRMLS_CC);
@@ -872,7 +872,7 @@ PHP_METHOD(amqp_queue_class, consume)
 		zend_fcall_info_args_clear(&fci, 1);
 
 		/* Check if user land function wants to bail */
-		if (EG(exception) || Z_TYPE_P(return_value) == IS_FALSE) {
+		if (EG(exception) || Z_TYPE(retval) == IS_FALSE) {
 			break;
 		}
 	}
