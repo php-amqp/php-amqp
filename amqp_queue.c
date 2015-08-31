@@ -96,21 +96,22 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 }
 
 /* Used in ctor, so must be declated first */
-void amqp_queue_dtor(zend_object *object TSRMLS_DC)
+void amqp_queue_free_obj(zend_object *object TSRMLS_DC)
 {
 	amqp_queue_object *queue = amqp_queue_object_fetch_object(object);
-
-	/* Destroy the connection object */
-	zend_object_release(Z_OBJ(queue->channel));
-
-	if (Z_DELREF(queue->arguments) == 0) {
-		zval_dtor(&queue->arguments);
-	}
 
 	zend_object_std_dtor(&queue->zo TSRMLS_CC);
 
 	/* Destroy this object */
-	efree(object);
+	efree(queue);
+}
+
+void amqp_queue_dtor_obj(zend_object *object TSRMLS_DC)
+{
+	amqp_queue_object *queue = amqp_queue_object_fetch_object(object);
+
+	zval_ptr_dtor(&queue->channel);
+	zval_ptr_dtor(&queue->arguments);
 }
 
 zend_object* amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
@@ -127,7 +128,8 @@ zend_object* amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
 
 	memcpy((void *)&amqp_queue_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_queue_object_handlers.get_debug_info = amqp_queue_object_get_debug_info;
-	amqp_queue_object_handlers.free_obj = amqp_queue_dtor;
+	amqp_queue_object_handlers.free_obj = amqp_queue_free_obj;
+	amqp_queue_object_handlers.dtor_obj = amqp_queue_dtor_obj;
 	amqp_queue_object_handlers.offset = XtOffsetOf(amqp_queue_object, zo);
 	queue->zo.handlers = &amqp_queue_object_handlers;
 
@@ -853,11 +855,9 @@ PHP_METHOD(amqp_queue_class, consume)
 
 		/* Dump it into the params array */
 		add_index_zval(&params, 0, &message);
-		Z_ADDREF(message);
 
 		/* Add a pointer to the queue: */
 		add_index_zval(&params, 1, getThis());
-		Z_ADDREF_P(getThis());
 
 		fci.retval = &retval;
 
@@ -868,6 +868,8 @@ PHP_METHOD(amqp_queue_class, consume)
 		if (zend_call_function(&fci, &fci_cache TSRMLS_CC) == SUCCESS) {
 			RETVAL_ZVAL(fci.retval, 1, 1);
   		}
+
+		zval_ptr_dtor(&params);
 
 		/* Clean up our mess */
 		zend_fcall_info_args_clear(&fci, 1);

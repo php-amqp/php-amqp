@@ -91,19 +91,20 @@ HashTable *amqp_exchange_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	return debug_info;
 }
 
-void amqp_exchange_dtor(zend_object *object TSRMLS_DC)
+void amqp_exchange_free_obj(zend_object *object TSRMLS_DC)
+{
+	amqp_exchange_object *exchange = amqp_exchange_object_fetch_object(object);
+
+	zend_object_std_dtor(&exchange->zo TSRMLS_CC);
+	efree(exchange);
+}
+
+void amqp_exchange_dtor_obj(zend_object *object TSRMLS_DC)
 {
 	amqp_exchange_object *exchange = amqp_exchange_object_fetch_object(object);
 
 	zend_object_release(Z_OBJ(exchange->channel));
-
-	if (Z_DELREF(exchange->arguments) == 0) {
-		zval_dtor(&exchange->arguments);
-	}
-
-	zend_object_std_dtor(&exchange->zo TSRMLS_CC);
-
-	efree(object);
+	zval_ptr_dtor(&exchange->arguments);
 }
 
 zend_object* amqp_exchange_ctor(zend_class_entry *ce)
@@ -121,7 +122,8 @@ zend_object* amqp_exchange_ctor(zend_class_entry *ce)
 	memcpy((void *)&amqp_exchange_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_exchange_object_handlers.get_debug_info = amqp_exchange_object_get_debug_info;
 	amqp_exchange_object_handlers.offset = XtOffsetOf(amqp_exchange_object, zo);
-	amqp_exchange_object_handlers.free_obj = amqp_exchange_dtor;
+	amqp_exchange_object_handlers.free_obj = amqp_exchange_free_obj;
+	amqp_exchange_object_handlers.dtor_obj = amqp_exchange_dtor_obj;
 
 	exchange->zo.handlers = &amqp_exchange_object_handlers;
 

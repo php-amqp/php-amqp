@@ -253,8 +253,8 @@ static inline amqp_connection_object * amqp_connection_object_fetch_object(zend_
 	return (amqp_connection_object *)((char *)obj - XtOffsetOf(amqp_connection_object, zo));
 }
 
-#define Z_AMQP_CONNECTION_OBJ_P(zv) amqp_connection_object_fetch_object(Z_OBJ_P(zv));
-#define Z_AMQP_CONNECTION_OBJ(zv) amqp_connection_object_fetch_object(Z_OBJ(zv));
+#define Z_AMQP_CONNECTION_OBJ_P(zv) amqp_connection_object_fetch_object(Z_OBJ_P(zv))
+#define Z_AMQP_CONNECTION_OBJ(zv) amqp_connection_object_fetch_object(Z_OBJ(zv))
 
 typedef struct _amqp_queue_object {
 	zval channel;

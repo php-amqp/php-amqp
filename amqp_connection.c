@@ -58,7 +58,7 @@
 
 zend_object_handlers amqp_connection_object_handlers;
 
-HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
+HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp) {
 	zval value;
 	HashTable *debug_info;
 	amqp_connection_object *connection;
@@ -299,13 +299,15 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 //		efree(key);
 	}
 
-	connection->connection_resource = connection_resource_constructor(connection, persistent TSRMLS_CC);
+	connection->connection_resource = connection_resource_constructor(connection, persistent);
 
 	if (!connection->connection_resource) {
 		return 0;
 	}
 
 	connection->connection_resource->resource = zend_register_resource(connection->connection_resource, persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource);
+
+	GC_REFCOUNT(connection->connection_resource->resource)++;
 
 	/* Set connection status to connected */
 	connection->is_connected = '\1';
@@ -345,13 +347,9 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	return 1;
 }
 
-void amqp_connection_dtor(zend_object *object TSRMLS_DC)
+void amqp_connection_free_obj(zend_object *object TSRMLS_DC)
 {
 	amqp_connection_object *connection = amqp_connection_object_fetch_object(object);
-
-	php_amqp_disconnect_safe(connection TSRMLS_CC);
-
-	assert(connection->connection_resource == NULL);
 
 	if (connection->host) {
 		efree(connection->host);
@@ -374,6 +372,15 @@ void amqp_connection_dtor(zend_object *object TSRMLS_DC)
 	efree(connection);
 }
 
+void amqp_connection_dtor_obj(zend_object *object TSRMLS_DC)
+{
+	amqp_connection_object *connection = amqp_connection_object_fetch_object(object);
+
+	php_amqp_disconnect_safe(connection TSRMLS_CC);
+
+	assert(connection->connection_resource == NULL);
+}
+
 zend_object* amqp_connection_ctor(zend_class_entry *ce)
 {
 	amqp_connection_object* connection = (amqp_connection_object*)ecalloc(1,
@@ -386,7 +393,8 @@ zend_object* amqp_connection_ctor(zend_class_entry *ce)
 	memcpy(&amqp_connection_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_connection_object_handlers.get_debug_info = amqp_connection_object_get_debug_info;
 	amqp_connection_object_handlers.offset = XtOffsetOf(amqp_connection_object, zo);
-	amqp_connection_object_handlers.free_obj = amqp_connection_dtor;
+	amqp_connection_object_handlers.free_obj = amqp_connection_free_obj;
+	amqp_connection_object_handlers.dtor_obj = amqp_connection_dtor_obj;
 
 	connection->zo.handlers = &amqp_connection_object_handlers;
 

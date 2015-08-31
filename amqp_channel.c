@@ -95,8 +95,7 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 	/* Pull out and verify the connection */
 	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 
-	// TODO
-	if (connection) {
+	if (Z_OBJ(channel->connection)) {
         /* First, remove it from active channels table to prevent recursion in case of connection error */
         php_amqp_connection_resource_unregister_channel(connection->connection_resource, channel->channel_id);
 	} else {
@@ -137,16 +136,22 @@ void amqp_channel_free_obj(zend_object *object TSRMLS_DC)
 {
 	amqp_channel_object *channel = amqp_channel_object_fetch_object(object);
 
+	zend_object_std_dtor(&channel->zo TSRMLS_CC);
+
+	efree(channel);
+}
+
+void amqp_channel_dtor_obj(zend_object *object TSRMLS_DC)
+{
+	amqp_channel_object *channel = amqp_channel_object_fetch_object(object);
+
 	if (channel->is_connected) {
 		php_amqp_close_channel(channel TSRMLS_CC);
 	}
 
 	/* Destroy the connection storage */
-	zend_object_release(Z_OBJ(channel->connection));
+	zval_ptr_dtor(&channel->connection);
 
-	zend_object_std_dtor(&channel->zo TSRMLS_CC);
-
-	efree(channel);
 }
 
 zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
@@ -163,6 +168,7 @@ zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 	amqp_channel_object_handlers.get_debug_info = amqp_channel_object_get_debug_info;
 	amqp_channel_object_handlers.offset = XtOffsetOf(amqp_channel_object, zo);
 	amqp_channel_object_handlers.free_obj = amqp_channel_free_obj;
+	amqp_channel_object_handlers.dtor_obj = amqp_channel_dtor_obj;
 
 	channel->zo.handlers = &amqp_channel_object_handlers;
 
