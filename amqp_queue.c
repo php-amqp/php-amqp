@@ -240,7 +240,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result)
 	return;
 }
 
-void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelopeZval TSRMLS_DC)
+void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelopeZval)
 {
 	/* Build the envelope */
 	object_init_ex(envelopeZval, amqp_envelope_class_entry);
@@ -306,7 +306,8 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
 		parse_amqp_table(&(p->headers), &envelope->headers);
 	}
 
-	envelope->body     = estrndup(message->body.bytes, message->body.len);
+	envelope->body = emalloc(message->body.len);
+	memcpy(envelope->body, message->body.bytes, message->body.len);
 	envelope->body_len = message->body.len;
 }
 

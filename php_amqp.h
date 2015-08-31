@@ -359,7 +359,7 @@ static inline amqp_envelope_object * amqp_envelope_object_fetch_object(zend_obje
 void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_object *connection, amqp_channel_object *channel TSRMLS_DC);
 void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, long code TSRMLS_DC);
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connection, amqp_channel_object *channel);
-amqp_bytes_t php_amqp_long_string(char const *cstr, size_t len);
+amqp_bytes_t php_amqp_long_string(const char *cstr, size_t len);
 
 #endif	/* PHP_AMQP_H */
 

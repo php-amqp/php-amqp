@@ -484,12 +484,12 @@ PHP_METHOD(amqp_exchange_class, publish)
 
 	amqp_exchange_object *exchange = AMQP_EXCHANGE_OBJ_P(getThis());
 	amqp_channel_object *channel = AMQP_CHANNEL_OBJ(exchange->channel);
-	amqp_connection_object *connection;
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ(channel->connection);;
 
 	char *key_name = NULL;
 	size_t   key_len  = 0;
 
-	char *msg;
+	char *msg = NULL;
 	size_t   msg_len= 0;
 
 	long flags = AMQP_NOPARAM;
@@ -626,9 +626,6 @@ PHP_METHOD(amqp_exchange_class, publish)
 	}
 
 	AMQP_VERIFY_CHANNEL(channel, "Could not publish to exchange.");
-
-	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
-
 	AMQP_VERIFY_CONNECTION(connection, "Could not publish to exchange.");
 
 #ifndef PHP_WIN32

@@ -704,7 +704,7 @@ void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connectio
 	}
 }
 
-amqp_bytes_t php_amqp_long_string(char const *cstr, size_t len)
+amqp_bytes_t php_amqp_long_string(const char *cstr, size_t len)
 {
 	if (len < 1) {
 		return amqp_empty_bytes;
