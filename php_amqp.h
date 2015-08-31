@@ -361,6 +361,13 @@ void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exc
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connection, amqp_channel_object *channel);
 amqp_bytes_t php_amqp_long_string(const char *cstr, size_t len);
 
+static inline amqp_bytes_t php_amqp_zend_string(zend_string* str) {
+	amqp_bytes_t bytes_t;
+	bytes_t.len = str->len;
+	bytes_t.bytes = str->val;
+	return bytes_t;
+}
+
 #endif	/* PHP_AMQP_H */
 
 /*

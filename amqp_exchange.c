@@ -517,7 +517,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.content_type = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.content_type = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_CONTENT_TYPE_FLAG;
 		}
 	}
@@ -526,7 +526,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.content_encoding = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.content_encoding = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_CONTENT_ENCODING_FLAG;
 		}
 	}
@@ -535,7 +535,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.message_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.message_id = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_MESSAGE_ID_FLAG;
 		}
 	}
@@ -544,7 +544,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.user_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.user_id = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_USER_ID_FLAG;
 		}
 	}
@@ -553,7 +553,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.app_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.app_id = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_APP_ID_FLAG;
 		}
 	}
@@ -583,7 +583,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.expiration = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.expiration = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_EXPIRATION_FLAG;
 		}
 	}
@@ -592,7 +592,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.type = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.type = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_TYPE_FLAG;
 		}
 	}
@@ -601,7 +601,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.reply_to = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.reply_to = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_REPLY_TO_FLAG;
 		}
 	}
@@ -610,7 +610,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 		convert_to_string(pztmp);
 
 		if (Z_STRLEN_P(pztmp) > 0) {
-			props.correlation_id = amqp_cstring_bytes((char *)Z_STR_P(pztmp));
+			props.correlation_id = php_amqp_zend_string(Z_STR_P(pztmp));
 			props._flags |= AMQP_BASIC_CORRELATION_ID_FLAG;
 		}
 	}
