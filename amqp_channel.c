@@ -151,7 +151,6 @@ void amqp_channel_dtor_obj(zend_object *object TSRMLS_DC)
 
 	/* Destroy the connection storage */
 	zval_ptr_dtor(&channel->connection);
-
 }
 
 zend_object* amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)

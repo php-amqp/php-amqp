@@ -100,6 +100,8 @@ void amqp_queue_free_obj(zend_object *object TSRMLS_DC)
 {
 	amqp_queue_object *queue = amqp_queue_object_fetch_object(object);
 
+	zval_ptr_dtor(&queue->arguments);
+
 	zend_object_std_dtor(&queue->zo TSRMLS_CC);
 
 	/* Destroy this object */
@@ -111,7 +113,6 @@ void amqp_queue_dtor_obj(zend_object *object TSRMLS_DC)
 	amqp_queue_object *queue = amqp_queue_object_fetch_object(object);
 
 	zval_ptr_dtor(&queue->channel);
-	zval_ptr_dtor(&queue->arguments);
 }
 
 zend_object* amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC)
