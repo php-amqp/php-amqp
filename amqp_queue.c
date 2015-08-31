@@ -295,6 +295,8 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
 
 	if (p->_flags & AMQP_BASIC_DELIVERY_MODE_FLAG) {
 		AMQP_SET_LONG_PROPERTY(envelope->delivery_mode, p->delivery_mode);
+	} else {
+		AMQP_SET_LONG_PROPERTY(envelope->delivery_mode, AMQP_DELIVERY_NONPERSISTENT);
 	}
 
 	if (p->_flags & AMQP_BASIC_PRIORITY_FLAG) {

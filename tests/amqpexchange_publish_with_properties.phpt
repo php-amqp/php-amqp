@@ -4,6 +4,8 @@ AMQPExchange publish with properties
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
 <?php
+require '_test_helpers.php';
+
 $cnn = new AMQPConnection();
 $cnn->connect();
 
@@ -58,50 +60,6 @@ echo 'Message attributes are ', $attrs == $attrs_control ? 'the same' : 'not the
 
 $msg = $q->get(AMQP_AUTOACK);
 
-function dump_message($msg) {
-    if (!$msg) {
-        var_dump($msg);
-        return;
-    }
-
-    echo get_class($msg), PHP_EOL;
-    echo "    getBody:", PHP_EOL, "        ";
-    var_dump($msg->getBody());
-    echo "    getContentType:", PHP_EOL, "        ";
-    var_dump($msg->getContentType());
-    echo "    getRoutingKey:", PHP_EOL, "        ";
-    var_dump($msg->getRoutingKey());
-    echo "    getDeliveryTag:", PHP_EOL, "        ";
-    var_dump($msg->getDeliveryTag());
-    echo "    getDeliveryMode:", PHP_EOL, "        ";
-    var_dump($msg->getDeliveryMode());
-    echo "    getExchangeName:", PHP_EOL, "        ";
-    var_dump($msg->getExchangeName());
-    echo "    isRedelivery:", PHP_EOL, "        ";
-    var_dump($msg->isRedelivery());
-    echo "    getContentEncoding:", PHP_EOL, "        ";
-    var_dump($msg->getContentEncoding());
-    echo "    getType:", PHP_EOL, "        ";
-    var_dump($msg->getType());
-    echo "    getTimeStamp:", PHP_EOL, "        ";
-    var_dump($msg->getTimeStamp());
-    echo "    getPriority:", PHP_EOL, "        ";
-    var_dump($msg->getPriority());
-    echo "    getExpiration:", PHP_EOL, "        ";
-    var_dump($msg->getExpiration());
-    echo "    getUserId:", PHP_EOL, "        ";
-    var_dump($msg->getUserId());
-    echo "    getAppId:", PHP_EOL, "        ";
-    var_dump($msg->getAppId());
-    echo "    getMessageId:", PHP_EOL, "        ";
-    var_dump($msg->getMessageId());
-    echo "    getReplyTo:", PHP_EOL, "        ";
-    var_dump($msg->getReplyTo());
-    echo "    getCorrelationId:", PHP_EOL, "        ";
-    var_dump($msg->getCorrelationId());
-    echo "    getHeaders:", PHP_EOL, "        ";
-    var_dump($msg->getHeaders());
-}
 
 dump_message($msg);
 

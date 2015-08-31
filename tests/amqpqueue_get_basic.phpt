@@ -4,6 +4,8 @@ AMQPQueue::get basic
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
 <?php
+require '_test_helpers.php';
+
 $cnn = new AMQPConnection();
 $cnn->connect();
 
@@ -27,51 +29,6 @@ $ex->publish('message1', 'routing.1', AMQP_NOPARAM, array('content_type' => 'pla
 $ex->publish('message2', 'routing.2', AMQP_DURABLE);
 $ex->publish('message3', 'routing.3');
 
-function dump_message($msg) {
-    if (!$msg) {
-        var_dump($msg);
-        return;
-    }
-
-    echo get_class($msg), PHP_EOL;
-    echo "    getBody:", PHP_EOL, "        ";
-    var_dump($msg->getBody());
-    echo "    getContentType:", PHP_EOL, "        ";
-    var_dump($msg->getContentType());
-    echo "    getRoutingKey:", PHP_EOL, "        ";
-    var_dump($msg->getRoutingKey());
-    echo "    getDeliveryTag:", PHP_EOL, "        ";
-    var_dump($msg->getDeliveryTag());
-    echo "    getDeliveryMode:", PHP_EOL, "        ";
-    var_dump($msg->getDeliveryMode());
-    echo "    getExchangeName:", PHP_EOL, "        ";
-    var_dump($msg->getExchangeName());
-    echo "    isRedelivery:", PHP_EOL, "        ";
-    var_dump($msg->isRedelivery());
-    echo "    getContentEncoding:", PHP_EOL, "        ";
-    var_dump($msg->getContentEncoding());
-    echo "    getType:", PHP_EOL, "        ";
-    var_dump($msg->getType());
-    echo "    getTimeStamp:", PHP_EOL, "        ";
-    var_dump($msg->getTimeStamp());
-    echo "    getPriority:", PHP_EOL, "        ";
-    var_dump($msg->getPriority());
-    echo "    getExpiration:", PHP_EOL, "        ";
-    var_dump($msg->getExpiration());
-    echo "    getUserId:", PHP_EOL, "        ";
-    var_dump($msg->getUserId());
-    echo "    getAppId:", PHP_EOL, "        ";
-    var_dump($msg->getAppId());
-    echo "    getMessageId:", PHP_EOL, "        ";
-    var_dump($msg->getMessageId());
-    echo "    getReplyTo:", PHP_EOL, "        ";
-    var_dump($msg->getReplyTo());
-    echo "    getCorrelationId:", PHP_EOL, "        ";
-    var_dump($msg->getCorrelationId());
-    echo "    getHeaders:", PHP_EOL, "        ";
-    var_dump($msg->getHeaders());
-}
-
 for ($i = 0; $i < 4; $i++) {
     echo "call #$i", PHP_EOL;
 	// Read from the queue
@@ -93,7 +50,7 @@ AMQPEnvelope
     getDeliveryTag:
         int(1)
     getDeliveryMode:
-        int(0)
+        int(1)
     getExchangeName:
         string(%d) "exchange-%f"
     isRedelivery:
@@ -135,7 +92,7 @@ AMQPEnvelope
     getDeliveryTag:
         int(2)
     getDeliveryMode:
-        int(0)
+        int(1)
     getExchangeName:
         string(%d) "exchange-%f"
     isRedelivery:
@@ -175,7 +132,7 @@ AMQPEnvelope
     getDeliveryTag:
         int(3)
     getDeliveryMode:
-        int(0)
+        int(1)
     getExchangeName:
         string(%d) "exchange-%f"
     isRedelivery:
