@@ -453,7 +453,7 @@ PHP_METHOD(amqp_envelope_class, getHeader)
 		RETURN_FALSE;
 	}
 
-	RETURN_ZVAL(tmp, 1, 1);
+	RETURN_ZVAL(tmp, 1, 0);
 }
 /* }}} */
 
