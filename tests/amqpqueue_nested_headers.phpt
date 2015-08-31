@@ -51,7 +51,13 @@ sleep(1);
 // Now read from the error queue:
 $msg = $errorQ->get(AMQP_AUTOACK);
 
-var_dump($msg->getHeader('x-death'));
+$header = $msg->getHeader('x-death');
+
+echo isset($header['count']) ? 'with' : 'without', ' count ', PHP_EOL;
+
+unset($header['count']);
+
+var_dump($header);
 
 $ex->delete();
 $q->delete();
@@ -59,11 +65,10 @@ $errorXchange->delete();
 $errorQ->delete();
 ?>
 --EXPECTF--
+%s
 array(1) {
   [0]=>
-  array(6) {
-    ["count"]=>
-    int(1)
+  array(5) {
     ["reason"]=>
     string(8) "rejected"
     ["queue"]=>
