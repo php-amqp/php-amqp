@@ -95,6 +95,8 @@ void amqp_exchange_free_obj(zend_object *object TSRMLS_DC)
 {
 	amqp_exchange_object *exchange = amqp_exchange_object_fetch_object(object);
 
+	zval_ptr_dtor(&exchange->arguments);
+
 	zend_object_std_dtor(&exchange->zo TSRMLS_CC);
 	efree(exchange);
 }
@@ -103,8 +105,7 @@ void amqp_exchange_dtor_obj(zend_object *object TSRMLS_DC)
 {
 	amqp_exchange_object *exchange = amqp_exchange_object_fetch_object(object);
 
-	zend_object_release(Z_OBJ(exchange->channel));
-	zval_ptr_dtor(&exchange->arguments);
+	zval_ptr_dtor(&exchange->channel);
 }
 
 zend_object* amqp_exchange_ctor(zend_class_entry *ce)
