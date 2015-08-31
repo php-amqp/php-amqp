@@ -769,6 +769,8 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				/* Skip things that are not strings */
 				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string header field '%lu'", index);
 
+				/* Reset entries counter back */
+				arguments->num_entries --;
 				continue;
 			}
 		} else {

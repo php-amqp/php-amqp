@@ -494,7 +494,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 	char *msg = NULL;
 	size_t   msg_len= 0;
 
-	long flags = AMQP_NOPARAM;
+	zend_long flags = AMQP_NOPARAM;
 
 #ifndef PHP_WIN32
 	/* Storage for previous signal handler during SIGPIPE override */
