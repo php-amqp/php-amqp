@@ -856,9 +856,11 @@ PHP_METHOD(amqp_queue_class, consume)
 
 		/* Dump it into the params array */
 		add_index_zval(&params, 0, &message);
+		// We don't care a bout the message so let it "leave"
 
 		/* Add a pointer to the queue: */
 		add_index_zval(&params, 1, getThis());
+		Z_ADDREF_P(getThis());
 
 		fci.retval = &retval;
 
