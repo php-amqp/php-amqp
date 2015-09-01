@@ -137,8 +137,6 @@ void amqp_channel_free_obj(zend_object *object TSRMLS_DC)
 	amqp_channel_object *channel = amqp_channel_object_fetch_object(object);
 
 	zend_object_std_dtor(&channel->zo TSRMLS_CC);
-
-	efree(channel);
 }
 
 void amqp_channel_dtor_obj(zend_object *object TSRMLS_DC)

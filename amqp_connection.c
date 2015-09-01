@@ -370,8 +370,6 @@ void amqp_connection_free_obj(zend_object *object TSRMLS_DC)
 	}
 
 	zend_object_std_dtor(&connection->zo TSRMLS_CC);
-
-	efree(connection);
 }
 
 void amqp_connection_dtor_obj(zend_object *object TSRMLS_DC)

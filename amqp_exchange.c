@@ -98,7 +98,6 @@ void amqp_exchange_free_obj(zend_object *object TSRMLS_DC)
 	zval_ptr_dtor(&exchange->arguments);
 
 	zend_object_std_dtor(&exchange->zo TSRMLS_CC);
-	efree(exchange);
 }
 
 void amqp_exchange_dtor_obj(zend_object *object TSRMLS_DC)

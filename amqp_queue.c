@@ -103,9 +103,6 @@ void amqp_queue_free_obj(zend_object *object TSRMLS_DC)
 	zval_ptr_dtor(&queue->arguments);
 
 	zend_object_std_dtor(&queue->zo TSRMLS_CC);
-
-	/* Destroy this object */
-	efree(queue);
 }
 
 void amqp_queue_dtor_obj(zend_object *object TSRMLS_DC)
