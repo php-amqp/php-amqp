@@ -478,23 +478,22 @@ PHP_METHOD(amqp_queue_class, setArgument)
 {
 	zval *value;
 	amqp_queue_object *queue = AMQP_QUEUE_OBJ_P(getThis());
-	char *key;
-	size_t key_len;
+	zend_string *key;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sz", &key, &key_len, &value) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Sz", &key, &value) == FAILURE) {
 		return;
 	}
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
-			zend_hash_str_del(Z_ARRVAL(queue->arguments), key, key_len + 1);
+			zend_hash_del(Z_ARRVAL(queue->arguments), key);
 			break;
 		case IS_TRUE:
 		case IS_FALSE:
 		case IS_LONG:
 		case IS_DOUBLE:
 		case IS_STRING:
-			add_assoc_zval(&queue->arguments, key, value);
+			zend_hash_add(Z_ARRVAL(queue->arguments), key, value);
 			Z_TRY_ADDREF_P(value);
 			break;
 		default:
