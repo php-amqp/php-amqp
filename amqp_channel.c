@@ -79,8 +79,8 @@ HashTable *amqp_channel_object_get_debug_info(zval *object, int *is_temp TSRMLS_
 	ZVAL_BOOL(&value, channel->is_connected);
 	zend_hash_str_add(debug_info, "is_connected", sizeof("is_connected")-1, &value);
 
-	ZVAL_COPY(&value, &channel->connection);
-	zend_hash_str_add(debug_info, "connection", sizeof("connection")-1, &value);
+	//ZVAL_COPY(&value, &channel->connection);
+	//zend_hash_str_add(debug_info, "connection", sizeof("connection")-1, &value);
 
 	/* Start adding values */
 	return debug_info;
