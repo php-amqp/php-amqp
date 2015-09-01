@@ -107,12 +107,12 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp) {
 	if (connection->connection_resource) {
 		ZVAL_RES(&value, connection->connection_resource->resource);
 		// We need to increase the refcount, otherwise we miss a ref by passing it out
-		GC_REFCOUNT(connection->connection_resource->resource)++;
+		Z_ADDREF(value);
 	} else {
 		ZVAL_NULL(&value);
 	}
 
-	zend_hash_str_add(debug_info, "connection_resource", sizeof("connection_resource"), &value);
+	zend_hash_str_add(debug_info, "connection_resource", sizeof("connection_resource")-1, &value);
 
 	if (connection->connection_resource) {
 		ZVAL_LONG(&value, connection->connection_resource->used_slots);
@@ -120,7 +120,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp) {
 		ZVAL_NULL(&value);
 	}
 
-	zend_hash_str_add(debug_info, "used_channels", sizeof("used_channels"), &value);
+	zend_hash_str_add(debug_info, "used_channels", sizeof("used_channels")-1, &value);
 
 	if (connection->connection_resource) {
 		ZVAL_LONG(&value, amqp_get_channel_max(connection->connection_resource->connection_state));
@@ -128,7 +128,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp) {
 		ZVAL_NULL(&value);
 	}
 
-	zend_hash_str_add(debug_info, "max_channel_id", sizeof("max_channel_id"), &value);
+	zend_hash_str_add(debug_info, "max_channel_id", sizeof("max_channel_id")-1, &value);
 
 	if (connection->connection_resource) {
 		ZVAL_LONG(&value, amqp_get_frame_max(connection->connection_resource->connection_state));
@@ -136,7 +136,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp) {
 		ZVAL_NULL(&value);
 	}
 
-	zend_hash_str_add(debug_info, "max_frame_size", sizeof("max_frame_size"), &value);
+	zend_hash_str_add(debug_info, "max_frame_size", sizeof("max_frame_size")-1, &value);
 
 	if (connection->connection_resource) {
 		ZVAL_LONG(&value, amqp_get_heartbeat(connection->connection_resource->connection_state));
@@ -144,7 +144,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp) {
 		ZVAL_NULL(&value);
 	}
 
-	zend_hash_str_add(debug_info, "heartbeat_interval", sizeof("heartbeat_interval"), &value);
+	zend_hash_str_add(debug_info, "heartbeat_interval", sizeof("heartbeat_interval")-1, &value);
 
 	/* Start adding values */
 	return debug_info;
