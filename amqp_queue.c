@@ -56,7 +56,7 @@ HashTable *amqp_queue_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
-	amqp_queue_object *queue = (amqp_queue_object *)Z_OBJ_P(object TSRMLS_CC);
+	amqp_queue_object *queue = AMQP_QUEUE_OBJ_P(object);
 
 	/* Let zend clean up for us: */
 	*is_temp = 1;
