@@ -837,7 +837,8 @@ void internal_php_amqp_free_amqp_table(amqp_table_t *object, char clear_root)
 	}
 
 	if (object->entries) {
-		for (int macroEntryCounter = 0; macroEntryCounter < object->num_entries; macroEntryCounter++) {
+		int macroEntryCounter;
+		for (macroEntryCounter = 0; macroEntryCounter < object->num_entries; macroEntryCounter++) {
 			amqp_table_entry_t *entry = &object->entries[macroEntryCounter];
 
 			efree(entry->key.bytes);
