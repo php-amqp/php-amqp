@@ -263,7 +263,7 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 }
 
 /* Creating and destroying resource */
-amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, zend_bool persistent TSRMLS_DC)
+amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, char persistent TSRMLS_DC)
 {
 	struct timeval tv = {0};
 	struct timeval *tv_ptr = &tv;

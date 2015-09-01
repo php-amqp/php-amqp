@@ -232,71 +232,72 @@ void php_amqp_disconnect_force(amqp_connection_object *connection TSRMLS_DC)
  *	handles connecting to amqp
  *	called by connect(), pconnect(), reconnect(), preconnect()
  */
-int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_DC)
+int php_amqp_connect(amqp_connection_object *connection, char persistent TSRMLS_DC)
 {
 	char *key;
-	int key_len;
+	size_t key_len;
 
 	/* Clean up old memory allocations which are now invalid (new connection) */
 	assert(connection->connection_resource == NULL);
 	assert(!connection->is_connected);
 
 	if (persistent) {
-//		zend_resource *le;
-//		// Look for an established resource
-//		key_len = spprintf(&key, 0,
-//						   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
-//						   connection->host,
-//						   connection->port,
-//						   connection->vhost,
-//						   connection->login,
-//						   connection->password,
-//						   connection->frame_max,
-//						   connection->channel_max,
-//						   connection->heartbeat
-//		);
-//
-//		if ((le = zend_hash_str_find(&EG(persistent_list), key, key_len)) != NULL) {
-//			efree(key);
-//
-//			if (Z_TYPE_P(le) != le_amqp_connection_resource_persistent) {
-//				/* hash conflict, given name associate with non-amqp persistent connection resource */
-//				return 0;
-//			}
-//
-//			/* An entry for this connection resource already exists */
-//			/* Stash the connection resource in the connection */
-//			connection->connection_resource = le->ptr;
-//
-//			if (connection->connection_resource->resource_id > 0) {
-//				/*  resource in use! */
-//				connection->connection_resource = NULL;
-//
-//				zend_throw_exception(amqp_connection_exception_class_entry, "There are already established persistent connection to the same resource.", 0 TSRMLS_CC);
-//				return 0;
-//			}
-//
-//			connection->connection_resource->resource_id = zend_register_resource(connection->connection_resource, persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource);
-//
-//			/* Set desired timeouts */
-//			if (php_amqp_set_resource_read_timeout(connection->connection_resource, connection->read_timeout TSRMLS_CC) == 0
-//			    || php_amqp_set_resource_write_timeout(connection->connection_resource, connection->write_timeout TSRMLS_CC) == 0) {
-//
-//			   php_amqp_disconnect_force(connection TSRMLS_CC);
-//
-//			   connection->connection_resource = NULL;
-//			   return 0;
-//			}
-//
-//
-//			/* Set connection status to connected */
-//			connection->is_connected = '\1';
-//			connection->is_persistent = persistent;
-//
-//			return 1;
-//		}
-//
-//		efree(key);
+		zend_resource *le;
+		// Look for an established resource
+		key_len = spprintf(&key, 0,
+						   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
+						   connection->host,
+						   connection->port,
+						   connection->vhost,
+						   connection->login,
+						   connection->password,
+						   connection->frame_max,
+						   connection->channel_max,
+						   connection->heartbeat
+		);
+
+		le = zend_hash_str_find_ptr(&EG(persistent_list), key, key_len);
+
+		efree(key);
+
+		if (le != NULL) {
+			if (le->type != le_amqp_connection_resource_persistent) {
+				// TODO throw error
+				/* hash conflict, given name associate with non-amqp persistent connection resource */
+				return 0;
+			}
+
+			/* An entry for this connection resource already exists */
+			/* Stash the connection resource in the connection */
+			connection->connection_resource = le->ptr;
+
+			if (connection->connection_resource->resource != NULL) {
+				/*  resource in use! */
+				connection->connection_resource = NULL;
+
+				zend_throw_exception(amqp_connection_exception_class_entry, "There are already established persistent connection to the same resource.", 0 TSRMLS_CC);
+				return 0;
+			}
+
+			connection->connection_resource->resource = zend_register_resource(connection->connection_resource, persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource);
+
+			/* Set desired timeouts */
+			if (php_amqp_set_resource_read_timeout(connection->connection_resource, connection->read_timeout TSRMLS_CC) == 0
+			    || php_amqp_set_resource_write_timeout(connection->connection_resource, connection->write_timeout TSRMLS_CC) == 0) {
+
+			   php_amqp_disconnect_force(connection TSRMLS_CC);
+
+			   connection->connection_resource = NULL;
+			   return 0;
+			}
+
+
+			/* Set connection status to connected */
+			connection->is_connected = '\1';
+			connection->is_persistent = persistent;
+
+			return 1;
+		}
 	}
 
 	connection->connection_resource = connection_resource_constructor(connection, persistent);
@@ -313,35 +314,36 @@ int php_amqp_connect(amqp_connection_object *connection, int persistent TSRMLS_D
 	connection->is_connected = '\1';
 
 	if (persistent) {
-//		zend_resource new_le;
-//
-//		connection->is_persistent = persistent;
-//
-//		key_len = spprintf(&key, 0,
-//		   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
-//		   connection->host,
-//		   connection->port,
-//		   connection->vhost,
-//		   connection->login,
-//		   connection->password,
-//		   connection->frame_max,
-//		   connection->channel_max,
-//		   connection->heartbeat
-//		);
-//
-//
-//		ZSTR_ALLOCA_INIT(&connection->connection_resource->resource_key, key, key_len, persistent)
-//
-//		efree(key);
-//
-//		/* Store a reference in the persistence list */
-//		new_le.ptr  = connection->connection_resource;
-//		new_le.type = persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource;
-//
-//		if (zend_hash_add(&EG(persistent_list), &connection->connection_resource->resource_key, &new_le) != NULL) {
-//			php_amqp_disconnect_force(connection TSRMLS_CC);
-//			return 0;f
-//		}
+		connection->is_persistent = persistent;
+
+		key_len = spprintf(&key, 0,
+		   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
+		   connection->host,
+		   connection->port,
+		   connection->vhost,
+		   connection->login,
+		   connection->password,
+		   connection->frame_max,
+		   connection->channel_max,
+		   connection->heartbeat
+		);
+
+
+		connection->connection_resource->resource_key = zend_string_alloc(key_len, persistent);
+
+		memcpy(connection->connection_resource->resource_key->val, key, key_len);
+
+		efree(key);
+
+		zend_resource new_le;
+		/* Store a reference in the persistence list */
+		new_le.ptr = connection->connection_resource;
+		new_le.type = persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource;
+
+		if (zend_hash_update_mem(&EG(persistent_list), connection->connection_resource->resource_key, &new_le, sizeof(new_le)) == NULL) {
+			php_amqp_disconnect_force(connection TSRMLS_CC);
+			return 0;
+		}
 	}
 
 	return 1;
