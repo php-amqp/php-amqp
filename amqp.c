@@ -794,7 +794,7 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				break;
 			case IS_STRING:
 				field->kind        = AMQP_FIELD_KIND_UTF8;
-				field->value.bytes = php_amqp_long_string(estrndup(Z_STRVAL_P(value), Z_STRLEN_P(value)), Z_STRLEN_P(value));
+				field->value.bytes = php_amqp_zend_string_copy(Z_STR_P(value));
 				break;
 			case IS_ARRAY:
 				field->kind = AMQP_FIELD_KIND_TABLE;
@@ -847,7 +847,7 @@ void internal_php_amqp_free_amqp_table(amqp_table_t *object, char clear_root)
 					internal_php_amqp_free_amqp_table(&entry->value.value.table, 0);
 					break;
 				case AMQP_FIELD_KIND_UTF8:
-					efree(entry->value.value.bytes.bytes);
+					php_amqp_safe_free_bytes(&entry->value.value.bytes);
 					break;
 			}
 		}

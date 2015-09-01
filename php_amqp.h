@@ -368,6 +368,24 @@ static inline amqp_bytes_t php_amqp_zend_string(zend_string* str) {
 	return bytes_t;
 }
 
+static inline amqp_bytes_t php_amqp_zend_string_copy(zend_string* str) {
+	if (str->len < 1) {
+		return amqp_empty_bytes;
+	}
+
+	amqp_bytes_t bytes_t;
+	bytes_t.len = str->len;
+	bytes_t.bytes = estrndup(str->val, str->len);
+	return bytes_t;
+}
+
+static inline void php_amqp_safe_free_bytes(amqp_bytes_t* bytes) {
+	if(bytes->bytes != NULL) {
+		efree(bytes->bytes);
+		bytes->bytes = NULL;
+	}
+}
+
 #endif	/* PHP_AMQP_H */
 
 /*
