@@ -495,7 +495,7 @@ PHP_METHOD(amqp_queue_class, setArgument)
 		case IS_DOUBLE:
 		case IS_STRING:
 			add_assoc_zval(&queue->arguments, key, value);
-			Z_ADDREF_P(value);
+			Z_TRY_ADDREF_P(value);
 			break;
 		default:
 			zend_throw_exception(amqp_queue_exception_class_entry, "The value parameter must be of type NULL, int, double or string.", 0 TSRMLS_CC);
