@@ -237,10 +237,10 @@ typedef struct _amqp_connection_resource {
 typedef struct _amqp_connection_object {
 	char is_connected;
 	char is_persistent;
-	char *login;
-	char *password;
-	char *host;
-	char *vhost;
+	zend_string *login;
+	zend_string *password;
+	zend_string *host;
+	zend_string *vhost;
 	int port;
 	int channel_max;
 	int frame_max;

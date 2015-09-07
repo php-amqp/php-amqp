@@ -52,13 +52,13 @@ echo 'Done', PHP_EOL
 --EXPECTF--
 object(AMQPConnection)#1 (15) refcount(2){
   ["login"]=>
-  string(5) "guest" refcount(1)
+  string(5) "guest" refcount(2)
   ["password"]=>
-  string(5) "guest" refcount(1)
+  string(5) "guest" refcount(2)
   ["host"]=>
-  string(9) "localhost" refcount(1)
+  string(9) "localhost" refcount(2)
   ["vhost"]=>
-  string(1) "/" refcount(1)
+  string(1) "/" refcount(2)
   ["port"]=>
   int(5672)
   ["read_timeout"]=>

@@ -74,16 +74,16 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp) {
 	ZEND_INIT_SYMTABLE_EX(debug_info, 15 + 1, 0);
 
 	/* Start adding values */
-	ZVAL_STRINGL(&value, connection->login, strlen(connection->login));
+	ZVAL_STR(&value, zend_string_copy(connection->login));
 	zend_hash_str_add(debug_info, "login", sizeof("login")-1, &value);
 
-	ZVAL_STRINGL(&value, connection->password, strlen(connection->password));
+	ZVAL_STR(&value, zend_string_copy(connection->password));
 	zend_hash_str_add(debug_info, "password", sizeof("password")-1, &value);
 
-	ZVAL_STRINGL(&value, connection->host, strlen(connection->host));
+	ZVAL_STR(&value, zend_string_copy(connection->host));
 	zend_hash_str_add(debug_info, "host", sizeof("host")-1, &value);
 
-	ZVAL_STRINGL(&value, connection->vhost, strlen(connection->vhost));
+	ZVAL_STR(&value, zend_string_copy(connection->vhost));
 	zend_hash_str_add(debug_info, "vhost", sizeof("vhost")-1, &value);
 
 	ZVAL_LONG(&value, connection->port);
@@ -246,11 +246,11 @@ int php_amqp_connect(amqp_connection_object *connection, char persistent TSRMLS_
 		// Look for an established resource
 		key_len = spprintf(&key, 0,
 						   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
-						   connection->host,
+						   ZSTR_VAL(connection->host),
 						   connection->port,
-						   connection->vhost,
-						   connection->login,
-						   connection->password,
+						   ZSTR_VAL(connection->vhost),
+						   ZSTR_VAL(connection->login),
+						   ZSTR_VAL(connection->password),
 						   connection->frame_max,
 						   connection->channel_max,
 						   connection->heartbeat
@@ -318,11 +318,11 @@ int php_amqp_connect(amqp_connection_object *connection, char persistent TSRMLS_
 
 		key_len = spprintf(&key, 0,
 		   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
-		   connection->host,
+		   ZSTR_VAL(connection->host),
 		   connection->port,
-		   connection->vhost,
-		   connection->login,
-		   connection->password,
+		   ZSTR_VAL(connection->vhost),
+		   ZSTR_VAL(connection->login),
+		   ZSTR_VAL(connection->password),
 		   connection->frame_max,
 		   connection->channel_max,
 		   connection->heartbeat
@@ -354,19 +354,19 @@ void amqp_connection_free_obj(zend_object *object TSRMLS_DC)
 	amqp_connection_object *connection = amqp_connection_object_fetch_object(object);
 
 	if (connection->host) {
-		efree(connection->host);
+		zend_string_release(connection->host);
 	}
 
 	if (connection->vhost) {
-		efree(connection->vhost);
+		zend_string_release(connection->vhost);
 	}
 
 	if (connection->login) {
-		efree(connection->login);
+		zend_string_release(connection->login);
 	}
 
 	if (connection->password) {
-		efree(connection->password);
+		zend_string_release(connection->password);
 	}
 
 	zend_object_std_dtor(&connection->zo TSRMLS_CC);
@@ -425,13 +425,13 @@ PHP_METHOD(amqp_connection_class, __construct)
 	/* Validate the given login */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
 		if (Z_STRLEN_P(zdata) < 128) {
-			connection->login = estrndup(Z_STRVAL_P(zdata), Z_STRLEN_P(zdata));
+			connection->login = zend_string_copy(Z_STR_P(zdata));
 		} else {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'login' exceeds 128 character limit.", 0 TSRMLS_CC);
 			return;
 		}
 	} else {
-		connection->login = estrndup(INI_STR("amqp.login"), strlen(INI_STR("amqp.login")) > 128 ? 128 : strlen(INI_STR("amqp.login")));
+		connection->login = zend_string_init(INI_STR("amqp.login"), strlen(INI_STR("amqp.login")) > 128 ? 128 : strlen(INI_STR("amqp.login")), 0);
 	}
 
 	/* Pull the password out of the $params array */
@@ -444,13 +444,13 @@ PHP_METHOD(amqp_connection_class, __construct)
 	/* Validate the given password */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
 		if (Z_STRLEN_P(zdata) < 128) {
-			connection->password = estrndup(Z_STRVAL_P(zdata), Z_STRLEN_P(zdata));
+			connection->password = zend_string_copy(Z_STR_P(zdata));
 		} else {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'password' exceeds 128 character limit.", 0 TSRMLS_CC);
 			return;
 		}
 	} else {
-		connection->password = estrndup(INI_STR("amqp.password"), strlen(INI_STR("amqp.password")) > 128 ? 128 : strlen(INI_STR("amqp.password")));
+		connection->password = zend_string_init(INI_STR("amqp.password"), strlen(INI_STR("amqp.password")) > 128 ? 128 : strlen(INI_STR("amqp.password")), 0);
 	}
 
 	/* Pull the host out of the $params array */
@@ -463,13 +463,13 @@ PHP_METHOD(amqp_connection_class, __construct)
 	/* Validate the given host */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
 		if (Z_STRLEN_P(zdata) < 128) {
-			connection->host = estrndup(Z_STRVAL_P(zdata), Z_STRLEN_P(zdata));
+			connection->host = zend_string_copy(Z_STR_P(zdata));
 		} else {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'host' exceeds 128 character limit.", 0 TSRMLS_CC);
 			return;
 		}
 	} else {
-		connection->host = estrndup(INI_STR("amqp.host"), strlen(INI_STR("amqp.host")) > 128 ? 128 : strlen(INI_STR("amqp.host")));
+		connection->host = zend_string_init(INI_STR("amqp.host"), strlen(INI_STR("amqp.host")) > 128 ? 128 : strlen(INI_STR("amqp.host")), 0);
 	}
 
 	/* Pull the vhost out of the $params array */
@@ -482,13 +482,13 @@ PHP_METHOD(amqp_connection_class, __construct)
 	/* Validate the given vhost */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
 		if (Z_STRLEN_P(zdata) < 128) {
-			connection->vhost = estrndup(Z_STRVAL_P(zdata), Z_STRLEN_P(zdata));
+			connection->vhost = zend_string_copy(Z_STR_P(zdata));
 		} else {
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'vhost' exceeds 128 character limit.", 0 TSRMLS_CC);
 			return;
 		}
 	} else {
-		connection->vhost = estrndup(INI_STR("amqp.vhost"), strlen(INI_STR("amqp.vhost")) > 128 ? 128 : strlen(INI_STR("amqp.vhost")));
+		connection->vhost = zend_string_init(INI_STR("amqp.vhost"), strlen(INI_STR("amqp.vhost")) > 128 ? 128 : strlen(INI_STR("amqp.vhost")), 0);
 	}
 
 	connection->port = INI_INT("amqp.port");
@@ -800,7 +800,7 @@ PHP_METHOD(amqp_connection_class, getLogin)
 	}
 
 	/* Copy the login to the amqp object */
-	RETURN_STRING(connection->login);
+	RETURN_STR(zend_string_copy(connection->login));
 }
 /* }}} */
 
@@ -809,27 +809,23 @@ set the login */
 PHP_METHOD(amqp_connection_class, setLogin)
 {
 	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
-	char *login;
-	size_t login_len;
+	zend_string *login;
 
 	/* Get the login from the method params */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &login, &login_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &login) == FAILURE) {
 		return;
 	}
 
 	/* Validate login length */
-	if (login_len > 128) {
+	if (ZSTR_LEN(login) > 128) {
 		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid 'login' given, exceeds 128 characters limit.", 0 TSRMLS_CC);
 		return;
 	}
 
-	/* Free previously existing login, in cases where setLogin() is called multiple times */
-	if (connection->login) {
-		efree(connection->login);
-	}
+	zend_string_release(connection->login);
 
 	/* Copy the login to the amqp object */
-	connection->login = estrndup(login, login_len);
+	connection->login = zend_string_copy(login);
 
 	RETURN_TRUE;
 }
@@ -846,7 +842,7 @@ PHP_METHOD(amqp_connection_class, getPassword)
 	}
 
 	/* Copy the password to the amqp object */
-	RETURN_STRING(connection->password);
+	RETURN_STR(zend_string_copy(connection->password));
 }
 /* }}} */
 
@@ -855,27 +851,23 @@ set the password */
 PHP_METHOD(amqp_connection_class, setPassword)
 {
 	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
-	char *password;
-	size_t password_len;
+	zend_string *password;
 
 	/* Get the password from the method params */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &password, &password_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &password) == FAILURE) {
 		return;
 	}
 
 	/* Validate password length */
-	if (password_len > 128) {
+	if (ZSTR_LEN(password) > 128) {
 		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid 'password' given, exceeds 128 characters limit.", 0 TSRMLS_CC);
 		return;
 	}
 
-	/* Free previously existing password, in cases where setPassword() is called multiple times */
-	if (connection->password) {
-		efree(connection->password);
-	}
+	zend_string_release(connection->password);
 
 	/* Copy the password to the amqp object */
-	connection->password = estrndup(password, password_len);
+	connection->password = zend_string_copy(password);
 
 	RETURN_TRUE;
 }
@@ -892,7 +884,7 @@ PHP_METHOD(amqp_connection_class, getHost)
 	}
 
 	/* Copy the host to the amqp object */
-	RETURN_STRING(connection->host);
+	RETURN_STR(zend_string_copy(connection->host));
 }
 /* }}} */
 
@@ -901,27 +893,23 @@ set the host */
 PHP_METHOD(amqp_connection_class, setHost)
 {
 	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
-	char *host;
-	size_t host_len;
+	zend_string *host;
 
 	/* Get the host from the method params */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &host, &host_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &host) == FAILURE) {
 		return;
 	}
 
 	/* Validate host length */
-	if (host_len > 1024) {
+	if (ZSTR_LEN(host) > 1024) {
 		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid 'host' given, exceeds 1024 character limit.", 0 TSRMLS_CC);
 		return;
 	}
 
-	/* Free previously existing host, in cases where setHost() is called multiple times */
-	if (connection->host) {
-		efree(connection->host);
-	}
+	zend_string_release(connection->host);
 
 	/* Copy the host to the amqp object */
-	connection->host = estrndup(host, host_len);
+	connection->host = zend_string_copy(host);
 
 	RETURN_TRUE;
 }
@@ -995,7 +983,7 @@ PHP_METHOD(amqp_connection_class, getVhost)
 	}
 
 	/* Copy the vhost to the amqp object */
-	RETURN_STRING(connection->vhost);
+	RETURN_STR(zend_string_copy(connection->vhost));
 }
 /* }}} */
 
@@ -1004,27 +992,23 @@ set the vhost */
 PHP_METHOD(amqp_connection_class, setVhost)
 {
 	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
-	char *vhost;
-	size_t vhost_len;
+	zend_string *vhost;
 
 	/* Get the vhost from the method params */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &vhost, &vhost_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &vhost) == FAILURE) {
 		return;
 	}
 
 	/* Validate vhost length */
-	if (vhost_len > 128) {
+	if (ZSTR_LEN(vhost) > 128) {
 		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'vhost' exceeds 128 characters limit.", 0 TSRMLS_CC);
 		return;
 	}
 
-	/* Free previously existing vhost, in cases where setVhost() is called multiple times */
-	if (connection->vhost) {
-		efree(connection->vhost);
-	}
+	zend_string_release(connection->vhost);
 
 	/* Copy the vhost to the amqp object */
-	connection->vhost = estrndup(vhost, vhost_len);
+	connection->vhost = zend_string_copy(vhost);
 
 	RETURN_TRUE;
 }

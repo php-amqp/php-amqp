@@ -300,7 +300,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	}
 
 	/* Try to connect and verify that no error occurred */
-	if (amqp_socket_open_noblock(resource->socket, connection->host, connection->port, tv_ptr)) {
+	if (amqp_socket_open_noblock(resource->socket, ZSTR_VAL(connection->host), connection->port, tv_ptr)) {
 
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not connect to host.", 0 TSRMLS_CC);
 
@@ -356,14 +356,14 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 
 	amqp_rpc_reply_t res = amqp_login_with_properties(
 		resource->connection_state,
-		connection->vhost,
+		ZSTR_VAL(connection->vhost),
 		connection->channel_max,
 		connection->frame_max,
 		connection->heartbeat,
 		&custom_properties_table,
 		AMQP_SASL_METHOD_PLAIN,
-		connection->login,
-		connection->password
+		ZSTR_VAL(connection->login),
+		ZSTR_VAL(connection->password)
 	);
 
 	efree(std_datetime);
