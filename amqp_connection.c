@@ -508,6 +508,36 @@ PHP_METHOD(amqp_connection_class, __construct)
 		} else {
 			connection->read_timeout = Z_DVAL_P(zdata);
 		}
+
+		if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "timeout", sizeof("timeout")-1)) != NULL) {
+			/* 'read_timeout' takes precedence on 'timeout' but users have to know this */
+			php_error_docref(NULL TSRMLS_CC, E_NOTICE, "Parameter 'timeout' is deprecated, 'read_timeout' used instead");
+		}
+
+	} else if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "timeout", sizeof("timeout")-1)) != NULL) {
+
+		php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "Parameter 'timeout' is deprecated; use 'read_timeout' instead");
+
+		convert_to_double(zdata);
+		if (Z_DVAL_P(zdata) < 0) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		} else {
+			connection->read_timeout = Z_DVAL_P(zdata);
+		}
+	} else {
+		assert(DEFAULT_TIMEOUT != NULL);
+		if (strcmp(DEFAULT_TIMEOUT, INI_STR("amqp.timeout")) != 0) {
+			php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "INI setting 'amqp.timeout' is deprecated; use 'amqp.read_timeout' instead");
+
+			if (strcmp(DEFAULT_READ_TIMEOUT, INI_STR("amqp.read_timeout")) == 0) {
+				connection->read_timeout = INI_FLT("amqp.timeout");
+			} else {
+				php_error_docref(NULL TSRMLS_CC, E_NOTICE, "INI setting 'amqp.read_timeout' will be used instead of 'amqp.timeout'");
+				connection->read_timeout = INI_FLT("amqp.read_timeout");
+			}
+		} else {
+			connection->read_timeout = INI_FLT("amqp.read_timeout");
+		}
 	}
 
 	connection->write_timeout = INI_FLT("amqp.write_timeout");
@@ -995,6 +1025,60 @@ PHP_METHOD(amqp_connection_class, setVhost)
 
 	/* Copy the vhost to the amqp object */
 	connection->vhost = estrndup(vhost, vhost_len);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
+/* {{{ proto amqp::getTimeout()
+@deprecated
+get the timeout */
+PHP_METHOD(amqp_connection_class, getTimeout)
+{
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
+
+	php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "AMQPConnection::getTimeout() method is deprecated; use AMQPConnection::getReadTimeout() instead");
+
+	if (zend_parse_parameters_none() == FAILURE) {
+		return;
+	}
+
+	/* Copy the timeout to the amqp object */
+	RETURN_DOUBLE(connection->read_timeout);
+}
+/* }}} */
+
+/* {{{ proto amqp::setTimeout(double timeout)
+@deprecated
+set the timeout */
+PHP_METHOD(amqp_connection_class, setTimeout)
+{
+	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ_P(getThis());
+	double read_timeout;
+
+	php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "AMQPConnection::setTimeout($timeout) method is deprecated; use AMQPConnection::setReadTimeout($timeout) instead");
+
+	/* Get the timeout from the method params */
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &read_timeout) == FAILURE) {
+		return;
+	}
+
+	/* Validate timeout */
+	if (read_timeout < 0) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		return;
+	}
+
+	/* Copy the timeout to the amqp object */
+	connection->read_timeout = read_timeout;
+
+	if (connection->is_connected == '\1') {
+		if (php_amqp_set_resource_read_timeout(connection->connection_resource, connection->read_timeout TSRMLS_CC) == 0) {
+
+			php_amqp_disconnect_force(connection TSRMLS_CC);
+			RETURN_FALSE;
+		}
+	}
 
 	RETURN_TRUE;
 }
