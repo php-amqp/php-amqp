@@ -25,25 +25,25 @@ object(AMQPConnection)#1 (15) refcount(2){
   ["vhost"]=>
   string(1) "/" refcount(1)
   ["port"]=>
-  long(5672) refcount(1)
+  int(5672)
   ["read_timeout"]=>
-  double(0) refcount(1)
+  float(0)
   ["write_timeout"]=>
-  double(0) refcount(1)
+  float(0)
   ["connect_timeout"]=>
-  double(0) refcount(1)
+  float(0)
   ["is_connected"]=>
-  bool(true) refcount(1)
+  bool(true)
   ["is_persistent"]=>
-  bool(false) refcount(1)
+  bool(false)
   ["connection_resource"]=>
-  resource(4) of type (AMQP Connection Resource) refcount(1)
+  resource(4) of type (AMQP Connection Resource) refcount(3)
   ["used_channels"]=>
-  long(0) refcount(1)
+  int(0)
   ["max_channel_id"]=>
-  long(10) refcount(1)
+  int(10)
   ["max_frame_size"]=>
-  long(10240) refcount(1)
+  int(10240)
   ["heartbeat_interval"]=>
-  long(5) refcount(1)
+  int(5)
 }
