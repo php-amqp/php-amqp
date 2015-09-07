@@ -25,7 +25,6 @@
 #define PHP_AMQP_H
 
 #include "amqp.h"
-#include "amqp_object_store.h"
 
 extern zend_module_entry amqp_module_entry;
 
@@ -184,9 +183,8 @@ extern zend_class_entry *amqp_exception_class_entry,
 		zend_throw_exception(amqp_connection_exception_class_entry, verify_connection_error_tmp, 0 TSRMLS_CC); \
 		return; \
 
-// Adjust for offset
 #define AMQP_VERIFY_CONNECTION(connection, error) \
-	if (!connection || connection > -1000) { \
+	if (!connection) { \
 		AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
 	} \
 	if ((connection)->is_connected != '\1') { \
