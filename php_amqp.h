@@ -153,6 +153,11 @@ extern zend_class_entry *amqp_exception_class_entry,
 	strncpy((object)->type, type, (object)->type_len); \
 	(object)->type[(object)->type_len] = '\0';
 
+#define AMQP_CHECK_BOUNDS(val, min, max, msg) \
+	if((val) < (min) || (val) > (max)) { \
+		zend_throw_exception_ex(spl_ce_InvalidArgumentException, 0, (msg), (val), (min), (max)); \
+	return; }
+
 #define AMQP_SET_LONG_PROPERTY(object, value) \
 	(object) = (value);
 
@@ -206,8 +211,8 @@ typedef struct _amqp_channel_object {
 	zval connection;
 	amqp_channel_t channel_id;
 	char is_connected;
-	int prefetch_count;
-	int prefetch_size;
+	uint16_t prefetch_count;
+	uint32_t prefetch_size;
 	zend_object zo;
 } amqp_channel_object;
 

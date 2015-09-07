@@ -29,6 +29,7 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "zend_exceptions.h"
+#include "spl/spl_exceptions.h"
 
 #ifdef PHP_WIN32
 # include "win32/php_stdint.h"
@@ -307,12 +308,17 @@ PHP_METHOD(amqp_channel_class, setPrefetchCount)
 {
 	amqp_channel_object *channel = AMQP_CHANNEL_OBJ_P(getThis());
 	amqp_connection_object *connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
-	zend_long prefetch_count;
+	zend_long prefetch_count_val;
+	uint16_t prefetch_count;
 
 	/* Parse out the method parameters */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &prefetch_count) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &prefetch_count_val) == FAILURE) {
 		return;
 	}
+
+	AMQP_CHECK_BOUNDS(prefetch_count_val, 0, UINT16_MAX, "prefetchCount=%li out of bounds %i-%i");
+
+	prefetch_count = (uint16_t) prefetch_count_val;
 
 	AMQP_VERIFY_CONNECTION(connection, "Could not set prefetch count.");
 
@@ -372,12 +378,17 @@ PHP_METHOD(amqp_channel_class, setPrefetchSize)
 {
 	amqp_channel_object *channel = AMQP_CHANNEL_OBJ_P(getThis());
 	amqp_connection_object *connection;
-	zend_long prefetch_size;
+	zend_long prefetch_size_val;
+	uint32_t prefetch_size;
 
 	/* Parse out the method parameters */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &prefetch_size) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &prefetch_size_val) == FAILURE) {
 		return;
 	}
+
+	AMQP_CHECK_BOUNDS(prefetch_size_val, 0, UINT32_MAX, "prefetchSize=%li out of bounds %i-%u");
+
+	prefetch_size = (uint32_t) prefetch_size_val;
 
 	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 
@@ -439,17 +450,19 @@ PHP_METHOD(amqp_channel_class, qos)
 {
 	amqp_channel_object *channel = AMQP_CHANNEL_OBJ_P(getThis());
 	amqp_connection_object *connection;
-	zend_long prefetch_size;
-	zend_long prefetch_count;
+	zend_long prefetch_size_val, prefetch_count_val;
 
 	/* Parse out the method parameters */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &prefetch_size, &prefetch_count) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &prefetch_size_val, &prefetch_count_val) == FAILURE) {
 		return;
 	}
 
+	AMQP_CHECK_BOUNDS(prefetch_size_val, 0, UINT32_MAX, "prefetchSize=%li out of bounds %i-%u");
+	AMQP_CHECK_BOUNDS(prefetch_count_val, 0, UINT16_MAX, "prefetchCount=%li out of bounds %i-%i");
+
 	/* Set the prefetch size - the implication is to disable the count */
-	channel->prefetch_size = prefetch_size;
-	channel->prefetch_count = prefetch_count;
+	channel->prefetch_size = (uint32_t) prefetch_size_val;
+	channel->prefetch_count = (uint16_t) prefetch_count_val;
 
 	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
 
