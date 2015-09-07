@@ -296,8 +296,7 @@ static inline amqp_exchange_object * amqp_exchange_object_fetch_object(zend_obje
 #define AMQP_EXCHANGE_OBJ_P(zv) amqp_exchange_object_fetch_object(Z_OBJ_P(zv));
 
 typedef struct _amqp_envelope_object {
-	char *body;
-	size_t body_len;
+	zend_string *body;
 	char routing_key[256];
 	uint delivery_tag;
 	int delivery_mode;

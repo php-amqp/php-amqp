@@ -66,7 +66,7 @@ HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	ZEND_INIT_SYMTABLE_EX(debug_info, 18 + 1, 0);
 
 	/* Start adding values */
-	ZVAL_STRINGL(&value, envelope->body, envelope->body_len);
+	ZVAL_STR(&value, envelope->body);
 	zend_hash_str_add(debug_info, "body", sizeof("body")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->content_type, strlen(envelope->content_type));
@@ -128,7 +128,7 @@ void amqp_envelope_free_obj(zend_object *object TSRMLS_DC)
 	amqp_envelope_object *envelope = amqp_envelope_object_fetch_object(object);
 
 	if (envelope->body) {
-		efree(envelope->body);
+		zend_string_release(envelope->body);
 	}
 
 	zend_object_std_dtor(&envelope->zo TSRMLS_CC);
@@ -183,11 +183,11 @@ PHP_METHOD(amqp_envelope_class, getBody)
 		return;
 	}
 
-	if (envelope->body == 0) {
+	if (ZSTR_LEN(envelope->body) == 0) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRINGL(envelope->body, envelope->body_len);
+	RETURN_STR(zend_string_copy(envelope->body));
 }
 /* }}} */
 

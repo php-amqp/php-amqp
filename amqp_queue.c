@@ -306,9 +306,7 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
 		parse_amqp_table(&(p->headers), &envelope->headers);
 	}
 
-	envelope->body = emalloc(message->body.len);
-	memcpy(envelope->body, message->body.bytes, message->body.len);
-	envelope->body_len = message->body.len;
+	envelope->body = zend_string_init(message->body.bytes, message->body.len, 0);
 }
 
 /* {{{ proto AMQPQueue::__construct(AMQPChannel channel)
