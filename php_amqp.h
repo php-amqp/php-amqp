@@ -261,10 +261,8 @@ static inline amqp_connection_object * amqp_connection_object_fetch_object(zend_
 
 typedef struct _amqp_queue_object {
 	zval channel;
-	char name[256];
-	int name_len;
-	char consumer_tag[256];
-	int consumer_tag_len;
+	zend_string *name;
+	zend_string *consumer_tag;
 	int flags;
 	zval arguments;
 	zend_object zo;
@@ -364,13 +362,19 @@ void php_amqp_maybe_release_buffers_on_channel(amqp_connection_object *connectio
 amqp_bytes_t php_amqp_long_string(const char *cstr, size_t len);
 
 static inline amqp_bytes_t php_amqp_zend_string(zend_string* str) {
+	assert(str);
 	amqp_bytes_t bytes_t;
 	bytes_t.len = str->len;
 	bytes_t.bytes = str->val;
 	return bytes_t;
 }
 
+static inline zend_string* php_amqp_bytes_t(amqp_bytes_t bytes) {
+	return zend_string_init(bytes.bytes, bytes.len, 0);
+}
+
 static inline amqp_bytes_t php_amqp_zend_string_copy(zend_string* str) {
+	assert(str);
 	if (str->len < 1) {
 		return amqp_empty_bytes;
 	}
