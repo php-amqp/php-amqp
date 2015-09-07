@@ -143,12 +143,13 @@ PHP_METHOD(amqp_exchange_class, __construct)
 		RETURN_NULL();
 	}
 
-	ZVAL_COPY(&exchange->channel, channel_param);
-
-	channel = AMQP_CHANNEL_OBJ(exchange->channel);
+	channel = AMQP_CHANNEL_OBJ_P(channel_param);
 
 	/* Pull the channel out */
 	AMQP_VERIFY_CHANNEL(channel, "Could not create exchange.");
+
+	// Only copy the channel after we created the exchange successfully
+	ZVAL_COPY(&exchange->channel, channel_param);
 }
 /* }}} */
 
