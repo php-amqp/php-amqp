@@ -186,9 +186,7 @@ PHP_METHOD(amqp_channel_class, __construct)
 		RETURN_NULL();
 	}
 
-	ZVAL_COPY(&channel->connection, connection_param);
-
-	connection = Z_AMQP_CONNECTION_OBJ(channel->connection);
+	connection = Z_AMQP_CONNECTION_OBJ_P(connection_param);
 
 	/* Set the prefetch count */
 	channel->prefetch_count = INI_INT("amqp.prefetch_count");
@@ -258,6 +256,9 @@ PHP_METHOD(amqp_channel_class, __construct)
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
+
+	// only copy the connection when there was no error
+	ZVAL_COPY(&channel->connection, connection_param);
 
 	php_amqp_maybe_release_buffers_on_channel(connection, channel);
 }
