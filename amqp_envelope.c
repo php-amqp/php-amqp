@@ -66,7 +66,7 @@ HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	ZEND_INIT_SYMTABLE_EX(debug_info, 18 + 1, 0);
 
 	/* Start adding values */
-	ZVAL_STR(&value, envelope->body);
+	ZVAL_STR(&value, zend_string_copy(envelope->body));
 	zend_hash_str_add(debug_info, "body", sizeof("body")-1, &value);
 
 	ZVAL_STRINGL(&value, envelope->content_type, strlen(envelope->content_type));
