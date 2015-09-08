@@ -278,10 +278,8 @@ static inline amqp_queue_object * amqp_queue_object_fetch_object(zend_object *ob
 typedef struct _amqp_exchange_object {
 	zval channel;
 	char is_connected;
-	char name[256];
-	int name_len;
-	char type[256];
-	int type_len;
+	zend_string* name;
+	zend_string* type;
 	int flags;
 	zval arguments;
 	zend_object zo;
@@ -389,6 +387,16 @@ static inline void php_amqp_safe_free_bytes(amqp_bytes_t* bytes) {
 	if(bytes->bytes != NULL) {
 		efree(bytes->bytes);
 		bytes->bytes = NULL;
+	}
+}
+
+static inline void php_amqp_add_assoc(HashTable *arr, zend_string* key, zval *value) {
+	zend_ulong idx;
+	// We need integer indices, if the key is numeric
+	if (ZEND_HANDLE_NUMERIC(key, idx)) {
+		zend_hash_index_add(arr, idx, value);
+	} else {
+		zend_hash_add(arr, key, value);
 	}
 }
 

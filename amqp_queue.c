@@ -234,13 +234,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result)
 
 		if (Z_TYPE(value) != IS_NULL) {
 			zend_string *key = php_amqp_bytes_t(entry->key);
-			zend_ulong idx;
-			// We need integer indices, if the key is numeric
-			if (ZEND_HANDLE_NUMERIC(key, idx)) {
-				zend_hash_index_add(Z_ARR_P(result), idx, &value);
-			} else {
-				zend_hash_add(Z_ARR_P(result), key, &value);
-			}
+			php_amqp_add_assoc(Z_ARR_P(result), key, &value);
 			zend_string_release(key);
 		} else {
 			zval_dtor(&value);
