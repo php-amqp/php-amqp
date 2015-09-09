@@ -21,7 +21,7 @@ class TutorialServer {
     }
     
     private function verifyRequest($req) {
-        foreach(['reply_to', 'func', 'a', 'b', 'correlation_id'] as $key) {
+        foreach(['func', 'a', 'b'] as $key) {
             if(!array_key_exists($key, $req)) {
                 return false;
             }
@@ -50,16 +50,17 @@ class TutorialServer {
                     default: $result = 'NaN';
                 }
                 $reply_queue = new \AMQPQueue($this->_chan);
-                $reply_queue->setName($req['reply_to']);
+                $replyTo = $message->getReplyTo();
+                $reply_queue->setName($message->getReplyTo());
                 $reply_exch = new \AMQPExchange($this->_chan);
-                $reply_exch->setName('temp-exch-' . $req['reply_to']);
+                $reply_exch->setName('temp-exch-' . $message->getReplyTo());
                 $reply_exch->setType(AMQP_EX_TYPE_FANOUT);
                 $reply_exch->declareExchange();
                 $reply_queue->bind($reply_exch->getName());
-                $reply_exch->publish(json_encode([
-                    'correlation_id' => $req['correlation_id'],
-                    'result' => $result
-                ]));
+                $pkt = json_encode(['result' => $result]);
+                $reply_exch->publish($pkt, null, AMQP_NOPARAM, [
+                    'correlation_id' => $message->getCorrelationId()
+                ]);
                 $reply_exch->delete();
             }
         );
@@ -89,7 +90,10 @@ class TutorialClient {
         $request_exch->setType(AMQP_EX_TYPE_FANOUT);
         $request_exch->declareExchange();    
         $request_queue->bind($request_exch->getName());
-        $request_exch->publish($msg);
+        $request_exch->publish($msg, null, AMQP_NOPARAM, [
+            'correlation_id' => $this->_correlation_id,
+            'reply_to' => $this->_reply_queue->getName()
+        ]);
         $request_exch->delete();
     }
     
@@ -109,22 +113,19 @@ class TutorialClient {
         $this->send(json_encode([
             'func' => $func,
             'a' => $a,
-            'b' => $b,
-            'reply_to' => $this->_reply_queue->getName(),
-            'correlation_id' => $this->_correlation_id 
+            'b' => $b
         ]));
         
         $this->_reply_queue->consume(
             function(\AMQPEnvelope $message, \AMQPQueue $queue) {
                 $req = json_decode($message->getBody(), true);
-                if(is_array($req) && isset($req['correlation_id'])) {
-                    if($req['correlation_id'] == $this->_correlation_id) {
-                        $queue->ack($message->getDeliveryTag());
-                        $this->_request = $req;
-                        return false; // Break consumer loop
-                    }
+                if($message->getCorrelationId() == $this->_correlation_id) {
+                    $queue->ack($message->getDeliveryTag());
+                    $this->_request = $req;
+                    return false; // Break consumer loop
+                }
             }
-        });
+        );
         
         return $this->_request['result'];
     }
