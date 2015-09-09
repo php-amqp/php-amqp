@@ -20,44 +20,47 @@ class TutorialServer {
         $this->_queue->declareQueue();
         $this->_exch = new \AMQPExchange($this->_chan);
         $this->_exch->setName("exchange-well-known-rpc-name");
+        $this->_exch->setType(AMQP_EX_TYPE_FANOUT);
+        $this->_exch->declareExchange();
         $this->_queue->bind($this->_exch->getName());        
     }
     
     public function consume() {
-        $this->_queue->consume(array($this, "onCall"));
-    }
-    
-    public function onCall(\AMQPEnvelope $message, \AMQPQueue $queue) {
-        $queue->ack($message->getDeliveryTag());
-        if($message->getBody() == "QUIT") { 
-            exit(0);
-        }
-        $req = json_decode($message->getBody(), true);
-        $reply_queue = new \AMQPQueue($this->_chan);
-        $reply_queue->setName($req['reply_to']);
-        $reply_exch = new \AMQPExchange($this->_chan);
-        $reply_exch->setName($req['reply_to']);
-        $reply_exch->setType(AMQP_EX_TYPE_FANOUT);
-        $reply_exch->declareExchange();
-        $reply_queue->bind($reply_exch->getName());
-        $result = 0;
-        switch($req['func']) {
-            case 'add': $result = $req['a'] + $req['b']; break;
-            case 'sub': $result = $req['a'] - $req['b']; break;
-            case 'mul': $result = $req['a'] * $req['b']; break;
-            case 'div': $result = $req['a'] / $req['b']; break;
-        }
-        $reply_exch->publish(json_encode([
-            'correlation_id' => $req['correlation_id'],
-            'result' => $result
-        ]));
-    }
+        $this->_queue->consume(
+            function(\AMQPEnvelope $message, \AMQPQueue $queue) {
+                $queue->ack($message->getDeliveryTag());
+                if($message->getBody() == "QUIT") { 
+                    $this->_queue->delete();
+                    $this->_exch->delete();
+                    exit(0);
+                }
+                $req = json_decode($message->getBody(), true);
+                $reply_queue = new \AMQPQueue($this->_chan);
+                $reply_queue->setName($req['reply_to']);
+                $reply_exch = new \AMQPExchange($this->_chan);
+                $reply_exch->setName($req['reply_to']);
+                $reply_exch->setType(AMQP_EX_TYPE_FANOUT);
+                $reply_exch->declareExchange();
+                $reply_queue->bind($reply_exch->getName());
+                $result = 0;
+                switch($req['func']) {
+                    case 'add': $result = $req['a'] + $req['b']; break;
+                    case 'sub': $result = $req['a'] - $req['b']; break;
+                    case 'mul': $result = $req['a'] * $req['b']; break;
+                    case 'div': $result = $req['a'] / $req['b']; break;
+                }
+                $reply_exch->publish(json_encode([
+                    'correlation_id' => $req['correlation_id'],
+                    'result' => $result
+                ]));
+            }
+        );
+    }    
 }
 
 class TutorialClient {
     private $_conn;
     private $_chan;
-    private $_exch;
     private $_request;
     private $_reply_queue;
     private $_correlation_id;
@@ -86,16 +89,12 @@ class TutorialClient {
     }
     
     private function call($func, $a, $b) {
-        // Create a reply queue the server should send to.
+        // Create a reply queue the server should send response to.
         $this->_correlation_id = md5(uniqid(__METHOD__, true));
         $this->_reply_queue = new \AMQPQueue($this->_chan);
-        $this->_reply_queue->setName('queue-' . $this->_correlation_id);
+        $this->_reply_queue->setName('reply-queue-' . $this->_correlation_id);
+        $this->_reply_queue->setFlags(AMQP_AUTODELETE);
         $this->_reply_queue->declareQueue();
-        $this->_exch = new \AMQPExchange($this->_chan);
-        $this->_exch->setName('exchange-' . $this->_correlation_id);
-        $this->_exch->setType(AMQP_EX_TYPE_FANOUT);
-        $this->_exch->declareExchange();
-        $this->_reply_queue->bind($this->_exch->getName()); 
         
         // Send request as JSON packet.
         $this->send(json_encode([
@@ -118,11 +117,6 @@ class TutorialClient {
             }
         });
         
-        // ... then delete temp queue and return result.
-        $this->_reply_queue->delete();
-        $this->_exch->delete();
-        $this->_reply_queue = null;
-
         return $this->_request['result'];
     }
     
