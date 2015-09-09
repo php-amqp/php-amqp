@@ -59,6 +59,7 @@ class TutorialConsumer {
             function(\AMQPEnvelope $message, \AMQPQueue $queue) {
                 $queue->ack($message->getDeliveryTag());
                 if($message->getBody() == "QUIT") { 
+                    $this->_queue->delete();
                     echo "Log consumer '{$this->_routing_key}'  received exit.\n";
                     exit(0); 
                 }
@@ -67,18 +68,7 @@ class TutorialConsumer {
                     "': " . $message->getBody() . "\n";
             }
         );
-    }
-    
-    public function onLog(\AMQPEnvelope $message, \AMQPQueue $queue) {
-        $queue->ack($message->getDeliveryTag());
-        if($message->getBody() == "QUIT") { 
-            echo "Log consumer '{$this->_routing_key}'  received exit.\n";
-            exit(0); 
-        }
-        echo "Log consumer '{$this->_routing_key}' " . 
-                " got from queue '". $queue->getName() . 
-                "': " . $message->getBody() . "\n";
-    }
+    }    
 }
 
 // We use PCNTL to create new processes to handle

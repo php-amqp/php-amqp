@@ -19,7 +19,7 @@ class TutorialPublisher {
         echo "Publisher " . getmypid() . " starting up using exchange ". 
                 $this->_exch->getName() . "\n";
     }
-    public function sendLog($log, $level = 0) {
+    public function sendLog($log) {
         $this->_exch->publish($log);
     }
 }
@@ -45,18 +45,18 @@ class TutorialSubscriber {
                 $this->_queue->getName() . "\n";
     }
     public function consume() {
-        while(true) {
-            $this->_queue->consume(array($this, "onLog"));
-        }
-    }
-    public function onLog(\AMQPEnvelope $message, \AMQPQueue $queue) {
-        $queue->ack($message->getDeliveryTag());
-        if($message->getBody() == "QUIT") { 
-            echo "Subscriber " . getmypid() . " received exit.\n";
-            exit(0); 
-        }
-        echo "Logger " . getmypid() . " got from '". $queue->getName() . 
-                "': " . $message->getBody() . "\n";
+        $this->_queue->consume(
+             function(\AMQPEnvelope $message, \AMQPQueue $queue) {
+                $queue->ack($message->getDeliveryTag());
+                if($message->getBody() == "QUIT") { 
+                    $this->_queue->delete();
+                    echo "Subscriber " . getmypid() . " received exit.\n";
+                    exit(0); 
+                }
+                echo "Logger " . getmypid() . " got from '". $queue->getName() . 
+                        "': " . $message->getBody() . "\n";
+            }   
+        );
     }
 }
 
@@ -80,6 +80,8 @@ else if($pid) {
     
     // Only one required, all subscribers get the same message.
     $logger->sendLog("QUIT");
+    
+    sleep(1);
 }
 else {
     // Another fork to produce two subscribers

@@ -42,19 +42,19 @@ class TutorialWorker {
         echo "Worker " . getmypid() . " starting up...\n";
     }
     public function consume() {
-        while(true) {
-            $this->_queue->consume(array($this, "onTask"));
-        }
-    }
-    public function onTask(\AMQPEnvelope $message, \AMQPQueue $queue) {
-        $queue->ack($message->getDeliveryTag());
-        if($message->getBody() == "QUIT") { 
-            echo "Worker " . getmypid() . " received exit.\n";
-            exit(0); 
-        }
-        echo "Worker " . getmypid() . " got from '". $queue->getName() . 
-                "': " . $message->getBody() . "\n";
-    }
+        $this->_queue->consume(
+            function(\AMQPEnvelope $message, \AMQPQueue $queue) {
+                $queue->ack($message->getDeliveryTag());
+                if($message->getBody() == "QUIT") { 
+                    $this->_queue->delete();
+                    echo "Worker " . getmypid() . " received exit.\n";
+                    exit(0); 
+                }
+                echo "Worker " . getmypid() . " got from '". $queue->getName() . 
+                        "': " . $message->getBody() . "\n";
+            }
+        );
+    }                
 }
 
 // We use PCNTL to create new processes to handle
@@ -84,6 +84,8 @@ else if($pid) {
     // queue.
     $task->sendTask("QUIT");
     $task->sendTask("QUIT");
+    
+    sleep(1);
 }
 else {
     // Another fork to produce two workers

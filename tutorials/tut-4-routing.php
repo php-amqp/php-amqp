@@ -50,22 +50,12 @@ class TutorialConsumer {
                 $this->_queue->getName() . "\n";
     }
 
-    public function onLog(\AMQPEnvelope $message, \AMQPQueue $queue) {
-        $queue->ack($message->getDeliveryTag());
-        if($message->getBody() == "QUIT") { 
-            echo "Log consumer '{$this->_routing_key}'  received exit.\n";
-            exit(0); 
-        }
-        echo "Log consumer '{$this->_routing_key}' " . 
-                " got from queue '". $queue->getName() . 
-                "': " . $message->getBody() . "\n";
-    }
-    
     public function consume() {
         $this->_queue->consume(
             function (\AMQPEnvelope $message, \AMQPQueue $queue) {
                 $queue->ack($message->getDeliveryTag());
-                if($message->getBody() == "QUIT") { 
+                if($message->getBody() == "QUIT") {
+                    $this->_queue->delete();
                     echo "Log consumer '{$this->_routing_key}'  received exit.\n";
                     exit(0); 
                 }

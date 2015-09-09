@@ -17,13 +17,18 @@ class TutorialConsumer {
         $this->_queue->setName("queue-hello-world");
         $this->_queue->declareQueue();
     }
+    
     public function consume() {
-        $this->_queue->consume(array($this, "onMessage"));
-    }
-    public function onMessage(\AMQPEnvelope $message, \AMQPQueue $queue) {
-        $queue->ack($message->getDeliveryTag());
-        if($message->getBody() == "QUIT") { exit(0); }
-        echo "From '". $queue->getName() . "': " . $message->getBody() . "\n";
+        $this->_queue->consume(
+            function(\AMQPEnvelope $message, \AMQPQueue $queue) {
+                $queue->ack($message->getDeliveryTag());
+                if($message->getBody() == "QUIT") { 
+                    $this->_queue->delete();
+                    exit(0);                 
+                }
+                echo "From '". $queue->getName() . "': " . $message->getBody() . "\n";
+            }
+        );
     }
 }
 
@@ -41,7 +46,7 @@ class TutorialProducer {
         $this->_queue->declareQueue();
         $this->_exch = new \AMQPExchange($this->_chan);
         $this->_exch->setName("exchange-hello-world");
-        $this->_exch->setType(AMQP_EX_TYPE_FANOUT);
+        $this->_exch->setType(AMQP_EX_TYPE_FANOUT);        
         $this->_exch->declareExchange();    
         $this->_queue->bind($this->_exch->getName()); 
         $this->_exch->publish('Hello World!');
