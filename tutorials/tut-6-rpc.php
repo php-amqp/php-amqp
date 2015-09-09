@@ -7,10 +7,10 @@ if(!extension_loaded("amqp")) {
 class TutorialServer {
     private $_conn;
     private $_chan;
-    private $_exch;
     private $_queue;
     
     public function __construct() {
+        // Create a "well known" named queue to receive requests on.
         $this->_conn = new \AMQPConnection(['localhost', 5672, 'guest', 'guest']);
         $this->_conn->connect();
         $this->_chan = new \AMQPChannel($this->_conn);
@@ -18,41 +18,49 @@ class TutorialServer {
         $this->_queue = new \AMQPQueue($this->_chan);
         $this->_queue->setName("queue-well-known-rpc-name");
         $this->_queue->declareQueue();
-        $this->_exch = new \AMQPExchange($this->_chan);
-        $this->_exch->setName("exchange-well-known-rpc-name");
-        $this->_exch->setType(AMQP_EX_TYPE_FANOUT);
-        $this->_exch->declareExchange();
-        $this->_queue->bind($this->_exch->getName());        
     }
     
+    private function verifyRequest($req) {
+        foreach(['reply_to', 'func', 'a', 'b', 'correlation_id'] as $key) {
+            if(!array_key_exists($key, $req)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function consume() {
         $this->_queue->consume(
             function(\AMQPEnvelope $message, \AMQPQueue $queue) {
                 $queue->ack($message->getDeliveryTag());
                 if($message->getBody() == "QUIT") { 
                     $this->_queue->delete();
-                    $this->_exch->delete();
                     exit(0);
                 }
                 $req = json_decode($message->getBody(), true);
-                $reply_queue = new \AMQPQueue($this->_chan);
-                $reply_queue->setName($req['reply_to']);
-                $reply_exch = new \AMQPExchange($this->_chan);
-                $reply_exch->setName($req['reply_to']);
-                $reply_exch->setType(AMQP_EX_TYPE_FANOUT);
-                $reply_exch->declareExchange();
-                $reply_queue->bind($reply_exch->getName());
+                if(!is_array($req) || !$this->verifyRequest($req)) {
+                    return;
+                }
                 $result = 0;
                 switch($req['func']) {
                     case 'add': $result = $req['a'] + $req['b']; break;
                     case 'sub': $result = $req['a'] - $req['b']; break;
                     case 'mul': $result = $req['a'] * $req['b']; break;
                     case 'div': $result = $req['a'] / $req['b']; break;
+                    default: $result = 'NaN';
                 }
+                $reply_queue = new \AMQPQueue($this->_chan);
+                $reply_queue->setName($req['reply_to']);
+                $reply_exch = new \AMQPExchange($this->_chan);
+                $reply_exch->setName('temp-exch-' . $req['reply_to']);
+                $reply_exch->setType(AMQP_EX_TYPE_FANOUT);
+                $reply_exch->declareExchange();
+                $reply_queue->bind($reply_exch->getName());
                 $reply_exch->publish(json_encode([
                     'correlation_id' => $req['correlation_id'],
                     'result' => $result
                 ]));
+                $reply_exch->delete();
             }
         );
     }    
@@ -82,6 +90,7 @@ class TutorialClient {
         $request_exch->declareExchange();    
         $request_queue->bind($request_exch->getName());
         $request_exch->publish($msg);
+        $request_exch->delete();
     }
     
     public function killServer() {
