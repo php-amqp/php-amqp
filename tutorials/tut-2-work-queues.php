@@ -1,52 +1,62 @@
 <?php
 
-if(!extension_loaded("amqp")) {
+if(!extension_loaded("amqp")) 
+{
     die("AMQP module not installed");
 }
 
 class TutorialNewTask {
-    private $_conn;
-    private $_chan;
-    private $_exch;
-    private $_queue;
-    public function __construct() {
-        $this->_conn = new \AMQPConnection(['localhost', 5672, 'guest', 'guest']);
-        $this->_conn->connect();
-        $this->_chan = new \AMQPChannel($this->_conn);
-        $this->_queue = new \AMQPQueue($this->_chan);
-        $this->_queue->setName("queue-task");
-        $this->_queue->declareQueue();
-        $this->_exch = new \AMQPExchange($this->_chan);
-        $this->_exch->setName("exchange-task");
-        $this->_exch->setType(AMQP_EX_TYPE_FANOUT);
-        $this->_exch->declareExchange();    
-        $this->_queue->bind($this->_exch->getName()); 
+    private $conn;
+    private $chan;
+    private $exch;
+    private $queue;
+    
+    public function __construct() 
+    {
+        $this->conn = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->conn->connect();
+        $this->chan = new AMQPChannel($this->conn);
+        $this->queue = new AMQPQueue($this->chan);
+        $this->queue->setName("queue-task");
+        $this->queue->declareQueue();
+        $this->exch = new AMQPExchange($this->chan);
+        $this->exch->setName("exchange-task");
+        $this->exch->setType(AMQP_EX_TYPE_FANOUT);
+        $this->exch->declareExchange();    
+        $this->queue->bind($this->exch->getName()); 
     }
-    public function sendTask($task) {
-        $this->_exch->publish($task);
+    
+    public function sendTask($task)
+    {
+        $this->exch->publish($task);
     }
 }
 
-class TutorialWorker {
-    private $_conn;
-    private $_chan;
-    private $_queue;
-    public function __construct() {
-        $this->_conn = new \AMQPConnection(['localhost', 5672, 'guest', 'guest']);
-        $this->_conn->connect();
-        $this->_chan = new \AMQPChannel($this->_conn);
-        $this->_chan->setPrefetchCount(1);
-        $this->_queue = new \AMQPQueue($this->_chan);
-        $this->_queue->setName("queue-task");
-        $this->_queue->declareQueue();
+class TutorialWorker 
+{
+    private $conn;
+    private $chan;
+    private $queue;
+    
+    public function __construct() 
+    {
+        $this->conn = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->conn->connect();
+        $this->chan = new AMQPChannel($this->conn);
+        $this->chan->setPrefetchCount(1);
+        $this->queue = new AMQPQueue($this->chan);
+        $this->queue->setName("queue-task");
+        $this->queue->declareQueue();
         echo "Worker " . getmypid() . " starting up...\n";
     }
-    public function consume() {
-        $this->_queue->consume(
-            function(\AMQPEnvelope $message, \AMQPQueue $queue) {
+    
+    public function consume() 
+    {
+        $this->queue->consume(
+            function(AMQPEnvelope $message, AMQPQueue $queue) {
                 $queue->ack($message->getDeliveryTag());
                 if($message->getBody() == "QUIT") { 
-                    $this->_queue->delete();
+                    $this->queue->delete();
                     echo "Worker " . getmypid() . " received exit.\n";
                     exit(0); 
                 }
@@ -54,20 +64,23 @@ class TutorialWorker {
                         "': " . $message->getBody() . "\n";
             }
         );
-    }                
+    }
 }
 
 // We use PCNTL to create new processes to handle
 // different ends of the queuing systems.
-if(!extension_loaded("pcntl")) {
+if(!extension_loaded("pcntl")) 
+{
     die("PCNTL module not installed");
 }
 
 $pid = pcntl_fork();
-if($pid == -1) {
+if($pid == -1)
+{
     die("Fork failed\n.");
 }
-else if($pid) {
+else if($pid) 
+{
     $task = new TutorialNewTask;
     
     sleep(1); // Wait for workers to start up and attach to queue.
@@ -87,7 +100,8 @@ else if($pid) {
     
     sleep(1);
 }
-else {
+else 
+{
     // Another fork to produce two workers
     $pid = pcntl_fork(); 
     $worker = new TutorialWorker;
