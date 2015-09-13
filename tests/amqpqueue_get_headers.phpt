@@ -40,8 +40,8 @@ var_dump($msg->hasHeader("first"));
 echo $msg->getHeader("first") . "\n";
 echo $msg->getHeader("second") . "\n";
 
-var_dump($msg->hasHeader("nonexistent"));
-var_dump($msg->getHeader("nonexistent"));
+echo 'Has nonexistent header: ', var_export($msg->hasHeader("nonexistent"), true), PHP_EOL;
+echo 'Get nonexistent header: ', var_export($msg->getHeader("nonexistent"), true), PHP_EOL;
 
 $ex->delete();
 $q->delete();
@@ -58,8 +58,5 @@ text/plain
 bool(true)
 one
 2
-bool(false)
-bool(false)
-
-
-
+Has nonexistent header: false
+Get nonexistent header: false

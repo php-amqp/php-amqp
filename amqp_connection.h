@@ -25,9 +25,6 @@
 
 extern zend_class_entry *amqp_connection_class_entry;
 
-void amqp_connection_free(void *object TSRMLS_DC);
-zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC);
-
 int php_amqp_connect(amqp_connection_object *amqp_connection, zend_bool persistent, INTERNAL_FUNCTION_PARAMETERS);
 
 PHP_METHOD(amqp_connection_class, __construct);

@@ -48,7 +48,6 @@ env:
 
 
 before_install:
-#  - sh -c "php -i"
   - sh provision/install_rabbitmq-c.sh ${LIBRABBITMQ_VERSION}
   - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then phpize && ./configure  --with-librabbitmq-dir=$HOME/rabbitmq-c && make ; fi
 
@@ -57,6 +56,7 @@ install:
 
 script:
   - sh -c "make test | tee result.txt"
+  - php -n -c './tmp-php.ini' -d "extension_dir=./modules/" -d "extension=amqp.so" benchmark.php
   - sh test-report.sh
 
 addons:

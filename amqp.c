@@ -85,9 +85,7 @@ zend_function_entry amqp_functions[] = {
 /* {{{ amqp_module_entry
 */
 zend_module_entry amqp_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
-#endif
 	"amqp",
 	amqp_functions,
 	PHP_MINIT(amqp),
@@ -95,9 +93,7 @@ zend_module_entry amqp_module_entry = {
 	NULL,
 	NULL,
 	PHP_MINFO(amqp),
-#if ZEND_MODULE_API_NO >= 20010901
 	PHP_AMQP_VERSION,
-#endif
 	STANDARD_MODULE_PROPERTIES
 };
 /* }}} */
@@ -143,7 +139,7 @@ void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_reso
 	}
 }
 
-void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, long code TSRMLS_DC)
+void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, PHP5to7_param_long_type_t code TSRMLS_DC)
 {
 	switch (reply.reply_type) {
 		case AMQP_RESPONSE_NORMAL:
@@ -178,7 +174,6 @@ void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exc
 
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_resource *connection_resource, amqp_channel_resource *channel_resource)
 {
-	assert(connection_resource != NULL);
 	assert(channel_resource != NULL);
 	assert(channel_resource->channel_id > 0);
 
@@ -187,7 +182,7 @@ void php_amqp_maybe_release_buffers_on_channel(amqp_connection_resource *connect
 	}
 }
 
-amqp_bytes_t php_amqp_long_string(char const *cstr, int len)
+amqp_bytes_t php_amqp_long_string(char const *cstr, PHP5to7_param_str_len_type_t len)
 {
 	if (len < 1) {
 		return amqp_empty_bytes;
@@ -196,6 +191,7 @@ amqp_bytes_t php_amqp_long_string(char const *cstr, int len)
 	amqp_bytes_t result;
 	result.len   = (size_t)len;
 	result.bytes = (void *) cstr;
+
 	return result;
 }
 
@@ -224,40 +220,38 @@ char *stringify_bytes(amqp_bytes_t bytes)
 
 void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *arguments, char allow_int_keys TSRMLS_DC)
 {
-	HashTable *argumentHash;
+	HashTable *ht;
 	HashPosition pos;
+
+	zval *value;
 	zval **data;
+
+	PHP5to7_ZEND_REAL_HASH_KEY_T *real_key;
+
+	char *key;
+	uint key_len;
+
+	ulong index;
+
 	char type[16];
 	amqp_table_t *inner_table;
 
-	argumentHash = Z_ARRVAL_P(zvalArguments);
+	ht = Z_ARRVAL_P(zvalArguments);
 
 	/* Allocate all the memory necessary for storing the arguments */
-	arguments->entries = (amqp_table_entry_t *)ecalloc(zend_hash_num_elements(argumentHash), sizeof(amqp_table_entry_t));
+	arguments->entries = (amqp_table_entry_t *)ecalloc((size_t)zend_hash_num_elements(ht), sizeof(amqp_table_entry_t));
 	arguments->num_entries = 0;
 
-	for (zend_hash_internal_pointer_reset_ex(argumentHash, &pos);
-		zend_hash_get_current_data_ex(argumentHash, (void**) &data, &pos) == SUCCESS;
-		zend_hash_move_forward_ex(argumentHash, &pos)) {
-
-		zval value;
-		char *key;
-		uint key_len;
-		ulong index;
+	PHP5to7_ZEND_HASH_FOREACH_KEY_VAL(ht, index, real_key, key, key_len, data, value, pos) {
 		char *strKey;
 		char *strValue;
 		amqp_table_entry_t *table;
 		amqp_field_value_t *field;
 
 
-		/* Make a copy of the value: */
-		value = **data;
-		zval_copy_ctor(&value);
-
 		/* Now pull the key */
 
-		if (zend_hash_get_current_key_ex(argumentHash, &key, &key_len, &index, 0, &pos) != HASH_KEY_IS_STRING) {
-
+		if (!PHP5to7_ZEND_HASH_KEY_IS_STRING(ht, real_key, key, key_len, index, pos)) {
 			if (allow_int_keys) {
 				/* Convert to strings non-string keys */
 				char str[32];
@@ -268,35 +262,38 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				/* Skip things that are not strings */
 				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string header field '%lu'", index);
 
-				continue;
-			}
 
+
+				PHP5to7_ZEND_HASH_FOREACH_CONTINUE;
+			}
+		} else {
+			PHP5to7_ZEND_HASH_KEY_MAYBE_UNPACK(real_key, key, key_len);
 		}
 
 		/* Build the value */
 		table = &arguments->entries[arguments->num_entries++];
 		field = &table->value;
 
-		switch (Z_TYPE_P(&value)) {
-			case IS_BOOL:
+		switch (Z_TYPE_P(value)) {
+			PHP5to7_CASE_IS_BOOL:
 				field->kind          = AMQP_FIELD_KIND_BOOLEAN;
-				field->value.boolean = (amqp_boolean_t)Z_LVAL_P(&value);
+				field->value.boolean = (amqp_boolean_t)Z_LVAL_P(value);
 				break;
 			case IS_DOUBLE:
 				field->kind      = AMQP_FIELD_KIND_F64;
-				field->value.f64 = Z_DVAL_P(&value);
+				field->value.f64 = Z_DVAL_P(value);
 				break;
 			case IS_LONG:
 				field->kind      = AMQP_FIELD_KIND_I64;
-				field->value.i64 = Z_LVAL_P(&value);
+				field->value.i64 = Z_LVAL_P(value);
 				break;
 			case IS_STRING:
 				field->kind        = AMQP_FIELD_KIND_UTF8;
 
-				if (Z_STRLEN_P(&value)) {
+				if (Z_STRLEN_P(value)) {
 					amqp_bytes_t bytes;
-					bytes.len = (size_t) Z_STRLEN_P(&value);
-					bytes.bytes = estrndup(Z_STRVAL_P(&value), (uint)Z_STRLEN_P(&value));
+					bytes.len = (size_t) Z_STRLEN_P(value);
+					bytes.bytes = estrndup(Z_STRVAL_P(value), (uint)Z_STRLEN_P(value));
 
 					field->value.bytes = bytes;
 				} else {
@@ -306,11 +303,11 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				break;
 			case IS_ARRAY:
 				field->kind = AMQP_FIELD_KIND_TABLE;
-				internal_convert_zval_to_amqp_table(&value, &field->value.table, 1 TSRMLS_CC);
+				internal_convert_zval_to_amqp_table(value, &field->value.table, 1 TSRMLS_CC);
 
 				break;
 			default:
-				switch(Z_TYPE_P(&value)) {
+				switch(Z_TYPE_P(value)) {
 					case IS_NULL:     strcpy(type, "null"); break;
 					case IS_OBJECT:   strcpy(type, "object"); break;
 					case IS_RESOURCE: strcpy(type, "resource"); break;
@@ -321,16 +318,15 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 
 				/* Reset entries counter back */
 				arguments->num_entries --;
-				continue;
+
+				PHP5to7_ZEND_HASH_FOREACH_CONTINUE;
 		}
 
 		strKey     = estrndup(key, key_len);
 		table->key = amqp_cstring_bytes(strKey);
 
-		/* Clean up the zval */
-		zval_dtor(&value);
-	}
-}
+	} PHP5to7_ZEND_HASH_FOREACH_END();
+};
 
 inline amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC)
 {
@@ -421,19 +417,19 @@ PHP_MINIT_FUNCTION(amqp)
 
 	/* Class Exceptions */
 	INIT_CLASS_ENTRY(ce, "AMQPException", NULL);
-	amqp_exception_class_entry = zend_register_internal_class_ex(&ce, zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
+	amqp_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, zend_exception_get_default(TSRMLS_C));
 
 	INIT_CLASS_ENTRY(ce, "AMQPConnectionException", NULL);
-	amqp_connection_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry, NULL TSRMLS_CC);
+	amqp_connection_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPChannelException", NULL);
-	amqp_channel_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry, NULL TSRMLS_CC);
+	amqp_channel_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPQueueException", NULL);
-	amqp_queue_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry, NULL TSRMLS_CC);
+	amqp_queue_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPExchangeException", NULL);
-	amqp_exchange_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry, NULL TSRMLS_CC);
+	amqp_exchange_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	REGISTER_INI_ENTRIES();
 

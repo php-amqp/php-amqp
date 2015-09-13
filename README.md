@@ -95,6 +95,7 @@ IDE for code completion, navigation and documentation in-place.
  from [official RabbitmMQ repo](https://github.com/rabbitmq/rabbitmq-server), so it may looks like 
  `sudo curl https://raw.githubusercontent.com/rabbitmq/rabbitmq-server/master/docs/rabbitmq.config.example /etc/rabbitmq/rabbitmq.config`
  
+To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_app && rabbitmqctl reset && rabbitmqctl start_app`.
 
 ##### Keeping track of the workers
  It is a good practice to keep php processes (i.e workers/consumers) under control. Usually, system administrators write their own scripts which ask services about current status or performs some desired actions. Usually request is sent via UNIX signals.<br />

@@ -89,7 +89,7 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 
 					spprintf(message, 0, "Server connection error: %d, message: %.*s",
 						m->reply_code,
-						(int) m->reply_text.len,
+						(PHP5to7_param_str_len_type_t) m->reply_text.len,
 						(char *) m->reply_text.bytes
 					);
 
@@ -121,7 +121,7 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 
 					spprintf(message, 0, "Server channel error: %d, message: %.*s",
 						m->reply_code,
-						(int) m->reply_text.len,
+						(PHP5to7_param_str_len_type_t) m->reply_text.len,
 						(char *)m->reply_text.bytes
 					);
 
@@ -359,7 +359,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
 	/* We can assume that connection established here but it is not true, real handshake goes during login */
 
-	assert(connection->frame_max > 0);
+	assert(params->frame_max > 0);
 
 	amqp_rpc_reply_t res = amqp_login_with_properties(
 		resource->connection_state,
@@ -413,19 +413,17 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)rsrc->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)PHP5to7_ZEND_RESOURCE_DTOR_ARG->ptr;
 
 	connection_resource_destructor(resource, 1 TSRMLS_CC);
 }
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)rsrc->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)PHP5to7_ZEND_RESOURCE_DTOR_ARG->ptr;
 
 	connection_resource_destructor(resource, 0 TSRMLS_CC);
 }
-
-
 
 static void connection_resource_destructor(amqp_connection_resource *resource, int persistent TSRMLS_DC)
 {
@@ -442,6 +440,10 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 	/* Start ignoring SIGPIPE */
 	old_handler = signal(SIGPIPE, SIG_IGN);
 #endif
+
+	if (resource->parent) {
+		resource->parent->connection_resource = NULL;
+	}
 
 	if (resource->slots) {
 		php_amqp_prepare_for_disconnect(resource TSRMLS_CC);
@@ -471,7 +473,7 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 
 void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_DC)
 {
-	if (!resource) {
+	if (resource == NULL) {
 		return;
 	}
 
@@ -499,3 +501,4 @@ void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_D
 
 	return;
 }
+

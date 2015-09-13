@@ -26,8 +26,6 @@
 extern zend_class_entry *amqp_channel_class_entry;
 
 void php_amqp_close_channel(amqp_channel_resource *channel_resource TSRMLS_DC);
-void amqp_channel_free(void *object TSRMLS_DC);
-zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_channel_class, __construct);
 PHP_METHOD(amqp_channel_class, isConnected);

@@ -9,15 +9,20 @@ if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
 --FILE--
 <?php
 $cnn = new AMQPConnection();
+var_dump($cnn->isConnected());
 var_dump($cnn);
 $cnn->connect();
+var_dump($cnn->isConnected());
 $cnn->connect();
+var_dump($cnn->isConnected());
 var_dump($cnn);
 
 $cnn->disconnect();
+var_dump($cnn->isConnected());
 var_dump($cnn);
 ?>
 --EXPECT--
+bool(false)
 object(AMQPConnection)#1 (11) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
@@ -42,6 +47,8 @@ object(AMQPConnection)#1 (11) {
   ["heartbeat":"AMQPConnection":private]=>
   int(0)
 }
+bool(true)
+bool(true)
 object(AMQPConnection)#1 (11) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
@@ -66,6 +73,7 @@ object(AMQPConnection)#1 (11) {
   ["heartbeat":"AMQPConnection":private]=>
   int(0)
 }
+bool(false)
 object(AMQPConnection)#1 (11) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"

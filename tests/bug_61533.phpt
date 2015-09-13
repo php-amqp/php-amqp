@@ -7,13 +7,18 @@ Constructing AMQPQueue with AMQPConnection segfaults
 $conn = new AMQPConnection();
 $conn->connect();
 $chan = new AMQPChannel($conn);
+
+if (!class_exists('TypeError')) {
+    class TypeError extends Exception {}
+}
+
 try {
     error_reporting(error_reporting() & ~E_WARNING);
     $queue = new AMQPQueue($conn);
-} catch (AMQPQueueException $e) {
-    echo $e->getMessage();
+} catch (TypeError $e) {
+    echo get_class($e), ': ', $e->getMessage(), '.', PHP_EOL; // we pad exception message with dot to make EXPETF be the same on PHP 5 and PHP 7
 }
 
 ?>
 --EXPECTF--
-Catchable fatal error: Argument 1 passed to AMQPQueue::__construct() must be an instance of AMQPChannel, instance of AMQPConnection given in %s/bug_61533.php on line 7
+%s: Argument 1 passed to AMQPQueue::__construct() must be an instance of AMQPChannel, instance of AMQPConnection given%s

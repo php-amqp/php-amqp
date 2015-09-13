@@ -31,7 +31,7 @@ $ex->publish('message', 'routing.1', AMQP_NOPARAM, array("headers" => array("tes
 $q->consume("consumeThings");
 $q->consume("consumeThings");
 ?>
---EXPECT--
+--EXPECTF--
 object(AMQPEnvelope)#5 (18) {
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
@@ -71,7 +71,7 @@ object(AMQPEnvelope)#5 (18) {
   ["app_id":"AMQPEnvelope":private]=>
   string(0) ""
 }
-object(AMQPEnvelope)#5 (18) {
+object(AMQPEnvelope)#%d (18) {
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
   ["delivery_tag":"AMQPEnvelope":private]=>

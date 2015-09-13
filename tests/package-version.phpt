@@ -8,13 +8,7 @@ $package = simplexml_load_file(dirname(__FILE__) . '/../package.xml');
 $packageVersion = $package->version->release;
 
 $ext = new ReflectionExtension('amqp');
-ob_start();
-$ext->info();
-$info = ob_get_contents();
-ob_end_clean();
-$matches = array();
-preg_match('/Version\s*=>\s*([0-9.a-z-]+)/m', $info, $matches);
-$srcVersion = $matches[1];
+$srcVersion = $ext->getVersion();
 
 if (0 === strcmp($packageVersion, $srcVersion)) {
     echo "package.xml matches phpinfo() output\n";

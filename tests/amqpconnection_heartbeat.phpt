@@ -9,7 +9,7 @@ $credentials = array('heartbeat' => $heartbeat);
 $cnn = new AMQPConnection($credentials);
 $cnn->connect();
 
-debug_zval_dump($cnn);
+var_dump($cnn);
 
 sleep($heartbeat*10);
 
@@ -21,29 +21,29 @@ $ch = new AMQPChannel($cnn);
 }
 
 ?>
---EXPECT--
-object(AMQPConnection)#1 (11) refcount(2){
+--EXPECTF--
+object(AMQPConnection)#1 (11) {
   ["login":"AMQPConnection":private]=>
-  string(5) "guest" refcount(1)
+  string(5) "guest"
   ["password":"AMQPConnection":private]=>
-  string(5) "guest" refcount(1)
+  string(5) "guest"
   ["host":"AMQPConnection":private]=>
-  string(9) "localhost" refcount(1)
+  string(9) "localhost"
   ["vhost":"AMQPConnection":private]=>
-  string(1) "/" refcount(1)
+  string(1) "/"
   ["port":"AMQPConnection":private]=>
-  long(5672) refcount(1)
+  %s(5672)
   ["read_timeout":"AMQPConnection":private]=>
-  double(0) refcount(1)
+  %s(0)
   ["write_timeout":"AMQPConnection":private]=>
-  double(0) refcount(1)
+  %s(0)
   ["connect_timeout":"AMQPConnection":private]=>
-  double(0) refcount(1)
+  %s(0)
   ["channel_max":"AMQPConnection":private]=>
-  long(256) refcount(1)
+  %s(256)
   ["frame_max":"AMQPConnection":private]=>
-  long(131072) refcount(1)
+  %s(131072)
   ["heartbeat":"AMQPConnection":private]=>
-  long(2) refcount(1)
+  %s(2)
 }
 AMQPException: Library error: a socket error occurred
