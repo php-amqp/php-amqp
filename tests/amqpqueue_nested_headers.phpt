@@ -53,9 +53,9 @@ $msg = $errorQ->get(AMQP_AUTOACK);
 
 $header = $msg->getHeader('x-death');
 
-echo isset($header['count']) ? 'with' : 'without', ' count ', PHP_EOL;
+echo isset($header[0]['count']) ? 'with' : 'without', ' count ', PHP_EOL;
 
-unset($header['count']);
+unset($header[0]['count']);
 
 var_dump($header);
 

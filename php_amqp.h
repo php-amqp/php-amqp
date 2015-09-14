@@ -89,7 +89,6 @@ extern zend_class_entry *amqp_connection_class_entry;
 extern zend_class_entry *amqp_channel_class_entry;
 extern zend_class_entry *amqp_queue_class_entry;
 extern zend_class_entry *amqp_exchange_class_entry;
-extern zend_class_entry *amqp_envelope_class_entry;
 
 extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_connection_exception_class_entry,
@@ -152,6 +151,14 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define IS_NOWAIT(bitmask)		(AMQP_NOWAIT & (bitmask)) ? 1 : 0 /* NOTE: always 0 in rabbitmq-c internals, so don't use it unless you are clearly understand aftermath*/
 
 
+#define PHP_AMQP_NOPARAMS() if (zend_parse_parameters_none() == FAILURE) { return; }
+
+#define PHP_AMQP_RETURN_PROP(ce, obj, prop_name) RETURN_ZVAL(zend_read_property(ce, obj, ZEND_STRL(prop_name), 0 TSRMLS_CC), 1, 0);
+
+#define PHP_AMQP_RETURN_THIS_PROP(prop_name) \
+    zval * _zv = zend_read_property(this_ce, getThis(), ZEND_STRL(prop_name), 0 TSRMLS_CC); \
+    RETURN_ZVAL(_zv, 1, 0); \
+
 
 #define AMQP_SET_NAME(object, str) \
 	(object)->name_len = strlen(str) >= sizeof((object)->name) ? sizeof((object)->name) - 1 : strlen(str); \
@@ -172,6 +179,11 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define AMQP_SET_STR_PROPERTY(object, str, len) \
 	strncpy((object), (str), (len) >= sizeof(object) ? sizeof(object) - 1 : (len)); \
 	(object)[(len) >= sizeof(object) ? sizeof(object) - 1 : (len)] = '\0';
+
+//#define PHP_AMQP_SET_STR_PROPERTY(zo, prop, str, len) \
+//	strncpy((object), (str), (len) >= sizeof(object) ? sizeof(object) - 1 : (len)); \
+//	(object)[(len) >= sizeof(object) ? sizeof(object) - 1 : (len)] = '\0';
+
 
 #define AMQP_GET_CHANNEL(object) \
 	(amqp_channel_object *) amqp_object_store_get_valid_object((object)->channel TSRMLS_CC);
@@ -300,29 +312,6 @@ typedef struct _amqp_exchange_object {
 	int flags;
 	zval *arguments;
 } amqp_exchange_object;
-
-typedef struct _amqp_envelope_object {
-	zend_object zo;
-	char *body;
-	size_t body_len;
-	char routing_key[256];
-	uint delivery_tag;
-	int delivery_mode;
-	char exchange_name[256];
-	int is_redelivery;
-	char content_type[256];
-	char content_encoding[256];
-	char type[256];
-	long timestamp;
-	int priority;
-	char expiration[256];
-	char user_id[256];
-	char app_id[256];
-	char message_id[256];
-	char reply_to[256];
-	char correlation_id[256];
-	zval *headers;
-} amqp_envelope_object;
 
 
 #define AMQP_ERROR_CATEGORY_MASK (1 << 29)
