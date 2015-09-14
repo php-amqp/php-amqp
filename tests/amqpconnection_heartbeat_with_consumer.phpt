@@ -37,8 +37,18 @@ $q->consume(function (AMQPEnvelope $envelope) {
   echo 'Consumed: ', $envelope->getBody(), PHP_EOL;
   return false;
 });
+$t = microtime(true) - $t;
 
-echo 'Consuming took: ', (float) round(microtime(true) - $t, 4), 'sec', PHP_EOL;
+echo 'Consuming took: ', (float) round($t, 4), 'sec', PHP_EOL;
+
+$t_min = (float)round($heartbeat * 9.5, 4);
+$t_max = (float)round($heartbeat * 10.5, 4);
+
+if ($t > $t_min && $t < $t_max) {
+  echo "Timing OK ($t_min < $t < $t_max)", PHP_EOL;
+} else {
+  echo "Timing ERROR ($t_min < $t < $t_max)", PHP_EOL;
+}
 
 $ch2 = new AMQPChannel($cnn);
 
@@ -83,5 +93,6 @@ object(AMQPConnection)#1 (15) refcount(2){
   long(2) refcount(1)
 }
 Consumed: test message 1 (should be dead lettered)
-Consuming took: 20%fsec
+Consuming took: %fsec
+Timing OK (%f < %f < %f)
 Done
