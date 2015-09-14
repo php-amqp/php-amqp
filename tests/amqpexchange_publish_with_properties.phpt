@@ -56,7 +56,8 @@ $attrs_control = array(
 echo $ex->publish('message', 'routing.key', AMQP_NOPARAM, $attrs) ? 'true' : 'false', PHP_EOL;
 
 
-echo 'Message attributes are ', $attrs == $attrs_control ? 'the same' : 'not the same', PHP_EOL;
+//var_dump($attrs, $attrs_control);
+echo 'Message attributes are ', $attrs === $attrs_control ? 'the same' : 'not the same', PHP_EOL;
 
 $msg = $q->get(AMQP_AUTOACK);
 

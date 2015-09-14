@@ -105,6 +105,16 @@ class AMQPExchange
     }
 
     /**
+     * Check whether argument associated with the given key exists.
+     *
+     * @param string $key The key to look up.
+     *
+     * @return bool
+     */
+    public function hasArgument($key)
+    {
+    }
+    /**
      * Get all arguments set on the given exchange.
      *
      * @return array An array containing all of the set key/value pairs.

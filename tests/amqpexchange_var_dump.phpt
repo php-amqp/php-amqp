@@ -19,37 +19,125 @@ $ex->setArguments(array("x-ha-policy" => "all"));
 var_dump($ex);
 ?>
 --EXPECTF--
-object(AMQPExchange)#3 (7) {
-  ["name"]=>
+object(AMQPExchange)#3 (9) {
+  ["connection":"AMQPExchange":private]=>
+  object(AMQPConnection)#1 (15) {
+    ["login"]=>
+    string(5) "guest"
+    ["password"]=>
+    string(5) "guest"
+    ["host"]=>
+    string(9) "localhost"
+    ["vhost"]=>
+    string(1) "/"
+    ["port"]=>
+    int(5672)
+    ["read_timeout"]=>
+    float(0)
+    ["write_timeout"]=>
+    float(0)
+    ["connect_timeout"]=>
+    float(0)
+    ["is_connected"]=>
+    bool(true)
+    ["is_persistent"]=>
+    bool(false)
+    ["connection_resource"]=>
+    resource(4) of type (AMQP Connection Resource)
+    ["used_channels"]=>
+    int(1)
+    ["max_channel_id"]=>
+    int(256)
+    ["max_frame_size"]=>
+    int(131072)
+    ["heartbeat_interval"]=>
+    int(0)
+  }
+  ["channel":"AMQPExchange":private]=>
+  object(AMQPChannel)#2 (4) {
+    ["channel_id"]=>
+    int(1)
+    ["prefetch_count"]=>
+    int(3)
+    ["prefetch_size"]=>
+    int(0)
+    ["is_connected"]=>
+    bool(true)
+  }
+  ["name":"AMQPExchange":private]=>
   string(%d) "exchange-%f"
-  ["type"]=>
+  ["type":"AMQPExchange":private]=>
   string(6) "fanout"
-  ["passive"]=>
+  ["passive":"AMQPExchange":private]=>
   bool(false)
-  ["durable"]=>
+  ["durable":"AMQPExchange":private]=>
   bool(false)
-  ["auto_delete"]=>
+  ["auto_delete":"AMQPExchange":private]=>
   bool(false)
-  ["internal"]=>
+  ["internal":"AMQPExchange":private]=>
   bool(false)
-  ["arguments"]=>
+  ["arguments":"AMQPExchange":private]=>
   array(0) {
   }
 }
-object(AMQPExchange)#3 (7) {
-  ["name"]=>
+object(AMQPExchange)#3 (9) {
+  ["connection":"AMQPExchange":private]=>
+  object(AMQPConnection)#1 (15) {
+    ["login"]=>
+    string(5) "guest"
+    ["password"]=>
+    string(5) "guest"
+    ["host"]=>
+    string(9) "localhost"
+    ["vhost"]=>
+    string(1) "/"
+    ["port"]=>
+    int(5672)
+    ["read_timeout"]=>
+    float(0)
+    ["write_timeout"]=>
+    float(0)
+    ["connect_timeout"]=>
+    float(0)
+    ["is_connected"]=>
+    bool(true)
+    ["is_persistent"]=>
+    bool(false)
+    ["connection_resource"]=>
+    resource(4) of type (AMQP Connection Resource)
+    ["used_channels"]=>
+    int(1)
+    ["max_channel_id"]=>
+    int(256)
+    ["max_frame_size"]=>
+    int(131072)
+    ["heartbeat_interval"]=>
+    int(0)
+  }
+  ["channel":"AMQPExchange":private]=>
+  object(AMQPChannel)#2 (4) {
+    ["channel_id"]=>
+    int(1)
+    ["prefetch_count"]=>
+    int(3)
+    ["prefetch_size"]=>
+    int(0)
+    ["is_connected"]=>
+    bool(true)
+  }
+  ["name":"AMQPExchange":private]=>
   string(%d) "exchange-%f"
-  ["type"]=>
+  ["type":"AMQPExchange":private]=>
   string(6) "fanout"
-  ["passive"]=>
+  ["passive":"AMQPExchange":private]=>
   bool(false)
-  ["durable"]=>
+  ["durable":"AMQPExchange":private]=>
   bool(false)
-  ["auto_delete"]=>
+  ["auto_delete":"AMQPExchange":private]=>
   bool(false)
-  ["internal"]=>
+  ["internal":"AMQPExchange":private]=>
   bool(false)
-  ["arguments"]=>
+  ["arguments":"AMQPExchange":private]=>
   array(1) {
     ["x-ha-policy"]=>
     string(3) "all"

@@ -23,8 +23,7 @@
 
 /* $Id: amqp_exchange.h 318206 2011-10-19 04:17:01Z pdezwart $ */
 
-void amqp_exchange_dtor(void *object TSRMLS_DC);
-zend_object_value amqp_exchange_ctor(zend_class_entry *ce TSRMLS_DC);
+extern zend_class_entry *amqp_exchange_class_entry;
 
 PHP_METHOD(amqp_exchange_class, __construct);
 
@@ -41,6 +40,7 @@ PHP_METHOD(amqp_exchange_class, getArgument);
 PHP_METHOD(amqp_exchange_class, getArguments);
 PHP_METHOD(amqp_exchange_class, setArgument);
 PHP_METHOD(amqp_exchange_class, setArguments);
+PHP_METHOD(amqp_exchange_class, hasArgument);
 
 PHP_METHOD(amqp_exchange_class, declareExchange);
 PHP_METHOD(amqp_exchange_class, delete);
@@ -50,6 +50,8 @@ PHP_METHOD(amqp_exchange_class, publish);
 
 PHP_METHOD(amqp_exchange_class, getChannel);
 PHP_METHOD(amqp_exchange_class, getConnection);
+
+PHP_MINIT_FUNCTION(amqp_exchange);
 
 /*
 *Local variables:

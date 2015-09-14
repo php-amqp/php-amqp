@@ -88,7 +88,6 @@ char *stringify_bytes(amqp_bytes_t bytes);
 extern zend_class_entry *amqp_connection_class_entry;
 extern zend_class_entry *amqp_channel_class_entry;
 extern zend_class_entry *amqp_queue_class_entry;
-extern zend_class_entry *amqp_exchange_class_entry;
 
 extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_connection_exception_class_entry,
@@ -159,6 +158,11 @@ extern zend_class_entry *amqp_exception_class_entry,
     zval * _zv = zend_read_property(this_ce, getThis(), ZEND_STRL(prop_name), 0 TSRMLS_CC); \
     RETURN_ZVAL(_zv, 1, 0); \
 
+#define PHP_AMQP_READ_THIS_PROP(name) zend_read_property(this_ce, getThis(), ZEND_STRL(name), 0 TSRMLS_CC)
+#define PHP_AMQP_READ_THIS_PROP_BOOL(name) Z_BVAL_P(PHP_AMQP_READ_THIS_PROP(name))
+#define PHP_AMQP_READ_THIS_PROP_STR(name) Z_STRVAL_P(PHP_AMQP_READ_THIS_PROP(name))
+#define PHP_AMQP_READ_THIS_PROP_STRLEN(name) Z_STRLEN_P(PHP_AMQP_READ_THIS_PROP(name))
+#define PHP_AMQP_READ_THIS_PROP_ARR(name) Z_ARRVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 
 #define AMQP_SET_NAME(object, str) \
 	(object)->name_len = strlen(str) >= sizeof((object)->name) ? sizeof((object)->name) - 1 : strlen(str); \
@@ -183,6 +187,9 @@ extern zend_class_entry *amqp_exception_class_entry,
 //#define PHP_AMQP_SET_STR_PROPERTY(zo, prop, str, len) \
 //	strncpy((object), (str), (len) >= sizeof(object) ? sizeof(object) - 1 : (len)); \
 //	(object)[(len) >= sizeof(object) ? sizeof(object) - 1 : (len)] = '\0';
+
+#define PHP_AMQP_GET_CHANNEL(object) \
+	(amqp_channel_object *) amqp_object_store_get_valid_object((object) TSRMLS_CC);
 
 
 #define AMQP_GET_CHANNEL(object) \
@@ -300,18 +307,6 @@ typedef struct _amqp_queue_object {
 	int flags;
 	zval *arguments;
 } amqp_queue_object;
-
-typedef struct _amqp_exchange_object {
-	zend_object zo;
-	zval *channel;
-	char is_connected;
-	char name[256];
-	int name_len;
-	char type[256];
-	int type_len;
-	int flags;
-	zval *arguments;
-} amqp_exchange_object;
 
 
 #define AMQP_ERROR_CATEGORY_MASK (1 << 29)
