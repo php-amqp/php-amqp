@@ -7,6 +7,8 @@ if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
 }
 --FILE--
 <?php
+require '_test_helpers.php';
+
 $cnn = new AMQPConnection();
 $cnn->connect();
 $ch = new AMQPChannel($cnn);
@@ -24,10 +26,7 @@ $q->bind($ex->getName(), 'routing.*');
 // Publish a message to the exchange with a routing key
 $ex->publish('message', 'routing.1');
 $ex->publish('message', 'routing.1', AMQP_NOPARAM, array("headers" => array("test" => "passed")));
-function consumeThings($message, $queue) {
-	var_dump($message);
-	return false;
-}
+
 // Read from the queue
 $q->consume("consumeThings");
 $q->consume("consumeThings");
@@ -43,7 +42,7 @@ object(AMQPEnvelope)#5 (18) {
   ["delivery_tag"]=>
   int(1)
   ["delivery_mode"]=>
-  int(0)
+  int(1)
   ["exchange_name"]=>
   string(9) "exchange1"
   ["is_redelivery"]=>
@@ -82,7 +81,7 @@ object(AMQPEnvelope)#5 (18) {
   ["delivery_tag"]=>
   int(2)
   ["delivery_mode"]=>
-  int(0)
+  int(1)
   ["exchange_name"]=>
   string(9) "exchange1"
   ["is_redelivery"]=>
