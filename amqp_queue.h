@@ -23,8 +23,7 @@
 
 /* $Id: amqp_queue.h 321959 2012-01-09 17:56:10Z pdezwart $ */
 
-void amqp_queue_dtor(void *object TSRMLS_DC);
-zend_object_value amqp_queue_ctor(zend_class_entry *ce TSRMLS_DC);
+extern zend_class_entry *amqp_queue_class_entry;
 
 PHP_METHOD(amqp_queue_class, __construct);
 
@@ -38,6 +37,7 @@ PHP_METHOD(amqp_queue_class, getArgument);
 PHP_METHOD(amqp_queue_class, getArguments);
 PHP_METHOD(amqp_queue_class, setArgument);
 PHP_METHOD(amqp_queue_class, setArguments);
+PHP_METHOD(amqp_queue_class, hasArgument);
 
 PHP_METHOD(amqp_queue_class, declareQueue);
 PHP_METHOD(amqp_queue_class, bind);
@@ -56,6 +56,8 @@ PHP_METHOD(amqp_queue_class, delete);
 PHP_METHOD(amqp_queue_class, getChannel);
 PHP_METHOD(amqp_queue_class, getConnection);
 PHP_METHOD(amqp_queue_class, getConsumerTag);
+
+PHP_MINIT_FUNCTION(amqp_queue);
 
 /*
 *Local variables:

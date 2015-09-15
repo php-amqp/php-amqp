@@ -22,20 +22,64 @@ $q->declareQueue();
 var_dump($q);
 ?>
 --EXPECT--
-object(AMQPQueue)#4 (7) {
-  ["queue_name"]=>
+object(AMQPQueue)#4 (9) {
+  ["connection":"AMQPQueue":private]=>
+  object(AMQPConnection)#1 (15) {
+    ["login"]=>
+    string(5) "guest"
+    ["password"]=>
+    string(5) "guest"
+    ["host"]=>
+    string(9) "localhost"
+    ["vhost"]=>
+    string(1) "/"
+    ["port"]=>
+    int(5672)
+    ["read_timeout"]=>
+    float(0)
+    ["write_timeout"]=>
+    float(0)
+    ["connect_timeout"]=>
+    float(0)
+    ["is_connected"]=>
+    bool(true)
+    ["is_persistent"]=>
+    bool(false)
+    ["connection_resource"]=>
+    resource(4) of type (AMQP Connection Resource)
+    ["used_channels"]=>
+    int(1)
+    ["max_channel_id"]=>
+    int(256)
+    ["max_frame_size"]=>
+    int(131072)
+    ["heartbeat_interval"]=>
+    int(0)
+  }
+  ["channel":"AMQPQueue":private]=>
+  object(AMQPChannel)#2 (4) {
+    ["channel_id"]=>
+    int(1)
+    ["prefetch_count"]=>
+    int(3)
+    ["prefetch_size"]=>
+    int(0)
+    ["is_connected"]=>
+    bool(true)
+  }
+  ["name":"AMQPQueue":private]=>
   string(14) "queue_var_dump"
-  ["consumer_tag"]=>
+  ["consumer_tag":"AMQPQueue":private]=>
   NULL
-  ["passive"]=>
+  ["passive":"AMQPQueue":private]=>
   bool(false)
-  ["durable"]=>
+  ["durable":"AMQPQueue":private]=>
   bool(false)
-  ["exclusive"]=>
+  ["exclusive":"AMQPQueue":private]=>
   bool(false)
-  ["auto_delete"]=>
+  ["auto_delete":"AMQPQueue":private]=>
   bool(true)
-  ["arguments"]=>
+  ["arguments":"AMQPQueue":private]=>
   array(0) {
   }
 }

@@ -304,6 +304,17 @@ class AMQPQueue
     }
 
     /**
+     * Check whether a queue has specific argument.
+     *
+     * @param string $key   The key to check.
+     *
+     * @return boolean
+     */
+    public function hasArgument($key)
+    {
+    }
+
+    /**
      * Set the flags on the queue.
      *
      * @param integer $flags A bitmask of flags:

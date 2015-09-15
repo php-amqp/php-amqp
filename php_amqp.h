@@ -87,7 +87,6 @@ char *stringify_bytes(amqp_bytes_t bytes);
 /* True global resources - no need for thread safety here */
 extern zend_class_entry *amqp_connection_class_entry;
 extern zend_class_entry *amqp_channel_class_entry;
-extern zend_class_entry *amqp_queue_class_entry;
 
 extern zend_class_entry *amqp_exception_class_entry,
 	*amqp_connection_exception_class_entry,
@@ -163,6 +162,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define PHP_AMQP_READ_THIS_PROP_STR(name) Z_STRVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 #define PHP_AMQP_READ_THIS_PROP_STRLEN(name) Z_STRLEN_P(PHP_AMQP_READ_THIS_PROP(name))
 #define PHP_AMQP_READ_THIS_PROP_ARR(name) Z_ARRVAL_P(PHP_AMQP_READ_THIS_PROP(name))
+#define PHP_AMQP_READ_THIS_PROP_LONG(name) Z_LVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 
 #define AMQP_SET_NAME(object, str) \
 	(object)->name_len = strlen(str) >= sizeof((object)->name) ? sizeof((object)->name) - 1 : strlen(str); \
@@ -296,17 +296,6 @@ typedef struct _amqp_connection_object {
 	double connect_timeout;
 	amqp_connection_resource *connection_resource;
 } amqp_connection_object;
-
-typedef struct _amqp_queue_object {
-	zend_object zo;
-	zval *channel;
-	char name[256];
-	int name_len;
-	char consumer_tag[256];
-	int consumer_tag_len;
-	int flags;
-	zval *arguments;
-} amqp_queue_object;
 
 
 #define AMQP_ERROR_CATEGORY_MASK (1 << 29)

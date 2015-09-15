@@ -16,4 +16,4 @@ try {
 
 ?>
 --EXPECTF--
-Parameter must be an instance of AMQPChannel.
+Catchable fatal error: Argument 1 passed to AMQPQueue::__construct() must be an instance of AMQPChannel, instance of AMQPConnection given in %s/bug_61533.php on line 7
