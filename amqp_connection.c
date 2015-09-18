@@ -141,6 +141,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 	}
 	zend_hash_add(debug_info, "max_channel_id", sizeof("max_channel_id"), &value, sizeof(zval *), NULL);
 
+#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH > 52
 	MAKE_STD_ZVAL(value);
 	if (connection->connection_resource) {
 		ZVAL_LONG(value, amqp_get_frame_max(connection->connection_resource->connection_state));
@@ -156,6 +157,7 @@ HashTable *amqp_connection_object_get_debug_info(zval *object, int *is_temp TSRM
 		ZVAL_NULL(value);
 	}
 	zend_hash_add(debug_info, "heartbeat_interval", sizeof("heartbeat_interval"), &value, sizeof(zval *), NULL);
+#endif
 
 	/* Start adding values */
 	return debug_info;
@@ -1361,6 +1363,7 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
 }
 /* }}} */
 
+#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH > 52
 /* {{{ proto amqp::getMaxFrameSize()
 Get max supported frame size per connection in bytes */
 PHP_METHOD(amqp_connection_class, getMaxFrameSize)
@@ -1408,6 +1411,7 @@ PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 	RETURN_LONG(amqp_get_heartbeat(connection->connection_resource->connection_state));
 }
 /* }}} */
+#endif
 
 /* {{{ proto amqp::isPersistent()
 check whether amqp connection is persistent */
