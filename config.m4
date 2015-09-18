@@ -80,7 +80,7 @@ if test "$PHP_AMQP" != "no"; then
 		fi
 	fi
 
-	PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $AMQP_DIR/lib, AMQP_SHARED_LIBADD)
+	PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $AMQP_DIR/PHP_LIBDIR, AMQP_SHARED_LIBADD)
 	PHP_SUBST(AMQP_SHARED_LIBADD)
 
 	AMQP_SOURCES="amqp.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_object_store.c"
