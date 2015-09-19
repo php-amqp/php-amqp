@@ -42,7 +42,7 @@ class TutorialProducer
 {
     private $connection;
     private $channel;
-    private $exch;
+    private $exchange;
     private $queue;
     
     public function __construct() 
@@ -54,13 +54,13 @@ class TutorialProducer
         $this->queue = new AMQPQueue($this->channel);
         $this->queue->setName("queue-hello-world");
         $this->queue->declareQueue();
-        $this->exch = new AMQPExchange($this->channel);
-        $this->exch->setName("exchange-hello-world");
-        $this->exch->setType(AMQP_EX_TYPE_FANOUT);        
-        $this->exch->declareExchange();    
+        $this->exchange = new AMQPExchange($this->channel);
+        $this->exchange->setName("exchange-hello-world");
+        $this->exchange->setType(AMQP_EX_TYPE_FANOUT);        
+        $this->exchange->declareExchange();    
         $this->queue->bind($this->exch->getName()); 
-        $this->exch->publish('Hello World!');
-        $this->exch->publish('QUIT');
+        $this->exchange->publish('Hello World!');
+        $this->exchange->publish('QUIT');
     }
 }
 
