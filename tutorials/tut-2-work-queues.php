@@ -1,50 +1,50 @@
 <?php
 
-if(!extension_loaded("amqp")) 
-{
+if(!extension_loaded("amqp")) {
     die("AMQP module not installed");
 }
 
-class TutorialNewTask {
-    private $conn;
-    private $chan;
-    private $exch;
+class TutorialNewTask 
+{
+    private $connection;
+    private $channel;
+    private $exchange;
     private $queue;
     
     public function __construct() 
     {
-        $this->conn = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
-        $this->conn->connect();
-        $this->chan = new AMQPChannel($this->conn);
-        $this->queue = new AMQPQueue($this->chan);
+        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection->connect();
+        $this->channel = new AMQPChannel($this->connection);
+        $this->queue = new AMQPQueue($this->channel);
         $this->queue->setName("queue-task");
         $this->queue->declareQueue();
-        $this->exch = new AMQPExchange($this->chan);
-        $this->exch->setName("exchange-task");
-        $this->exch->setType(AMQP_EX_TYPE_FANOUT);
-        $this->exch->declareExchange();    
-        $this->queue->bind($this->exch->getName()); 
+        $this->exchange = new AMQPExchange($this->channel);
+        $this->exchange->setName("exchange-task");
+        $this->exchange->setType(AMQP_EX_TYPE_FANOUT);
+        $this->exchange->declareExchange();    
+        $this->queue->bind($this->exchange->getName()); 
     }
     
     public function sendTask($task)
     {
-        $this->exch->publish($task);
+        $this->exchange->publish($task);
     }
 }
 
 class TutorialWorker 
 {
-    private $conn;
-    private $chan;
+    private $connection;
+    private $channel;
     private $queue;
     
     public function __construct() 
     {
-        $this->conn = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
-        $this->conn->connect();
-        $this->chan = new AMQPChannel($this->conn);
-        $this->chan->setPrefetchCount(1);
-        $this->queue = new AMQPQueue($this->chan);
+        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection->connect();
+        $this->channel = new AMQPChannel($this->connection);
+        $this->channel->setPrefetchCount(1);
+        $this->queue = new AMQPQueue($this->channel);
         $this->queue->setName("queue-task");
         $this->queue->declareQueue();
         echo "Worker " . getmypid() . " starting up...\n";
@@ -69,18 +69,15 @@ class TutorialWorker
 
 // We use PCNTL to create new processes to handle
 // different ends of the queuing systems.
-if(!extension_loaded("pcntl")) 
-{
+if(!extension_loaded("pcntl")) {
     die("PCNTL module not installed");
 }
 
 $pid = pcntl_fork();
-if($pid == -1)
-{
+if($pid == -1) {
     die("Fork failed\n.");
 }
-else if($pid) 
-{
+else if($pid) {
     $task = new TutorialNewTask;
     
     sleep(1); // Wait for workers to start up and attach to queue.
@@ -100,8 +97,7 @@ else if($pid)
     
     sleep(1);
 }
-else 
-{
+else {
     // Another fork to produce two workers
     $pid = pcntl_fork(); 
     $worker = new TutorialWorker;

@@ -1,54 +1,53 @@
 <?php
 
-if(!extension_loaded("amqp")) 
-{
+if(!extension_loaded("amqp")) {
     die("AMQP module not installed");
 }
 
 class TutorialPublisher 
 {
-    private $conn;
-    private $chan;
-    private $exch;
+    private $connection;
+    private $channel;
+    private $exchange;
 
     public function __construct() 
     {
-        $this->conn = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
-        $this->conn->connect();
-        $this->chan = new AMQPChannel($this->conn);
-        $this->exch = new AMQPExchange($this->chan);
-        $this->exch->setName("exchange-logs");
-        $this->exch->setType(AMQP_EX_TYPE_FANOUT);
-        $this->exch->declareExchange();
+        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection->connect();
+        $this->channel = new AMQPChannel($this->connection);
+        $this->exchange = new AMQPExchange($this->channel);
+        $this->exchange->setName("exchange-logs");
+        $this->exchange->setType(AMQP_EX_TYPE_FANOUT);
+        $this->exchange->declareExchange();
         echo "Publisher " . getmypid() . " starting up using exchange ". 
-                $this->exch->getName() . "\n";
+                $this->exchange->getName() . "\n";
     }
 
     public function sendLog($log) 
     {
-        $this->exch->publish($log);
+        $this->exchange->publish($log);
     }
 }
 
 class TutorialSubscriber 
 {
-    private $conn;
-    private $chan;
-    private $exch;
+    private $connection;
+    private $channel;
+    private $exchange;
     private $queue;
     public function __construct() 
     {
-        $this->conn = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
-        $this->conn->connect();
-        $this->chan = new AMQPChannel($this->conn);
-        $this->chan->setPrefetchCount(1);
-        $this->queue = new AMQPQueue($this->chan);
+        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection->connect();
+        $this->channel = new AMQPChannel($this->connection);
+        $this->channel->setPrefetchCount(1);
+        $this->queue = new AMQPQueue($this->channel);
         $this->queue->declareQueue();
-        $this->exch = new AMQPExchange($this->chan);
-        $this->exch->setName("exchange-logs");
-        $this->exch->setType(AMQP_EX_TYPE_FANOUT);
-        $this->exch->declareExchange(); 
-        $this->queue->bind($this->exch->getName()); 
+        $this->exchange = new AMQPExchange($this->channel);
+        $this->exchange->setName("exchange-logs");
+        $this->exchange->setType(AMQP_EX_TYPE_FANOUT);
+        $this->exchange->declareExchange(); 
+        $this->queue->bind($this->exchange->getName()); 
         echo "Subscriber " . getmypid() . " starting up on queue " . 
                 $this->queue->getName() . "\n";
     }
@@ -72,18 +71,15 @@ class TutorialSubscriber
 
 // We use PCNTL to create new processes to handle
 // different ends of the queuing systems.
-if(!extension_loaded("pcntl")) 
-{
+if(!extension_loaded("pcntl")) {
     die("PCNTL module not installed");
 }
 
 $pid = pcntl_fork();
-if($pid == -1) 
-{
+if($pid == -1) {
     die("Fork failed\n.");
 }
-else if($pid) 
-{
+else if($pid) {
     $logger = new TutorialPublisher;
     
     sleep(1); // Wait for subscribers to start and bind their queues.
@@ -96,8 +92,7 @@ else if($pid)
     
     sleep(1);
 }
-else 
-{
+else {
     // Another fork to produce two subscribers
     $pid = pcntl_fork(); 
     $logger = new TutorialSubscriber;

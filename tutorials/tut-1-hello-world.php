@@ -1,23 +1,22 @@
 <?php
 
-if(!extension_loaded("amqp")) 
-{
+if(!extension_loaded("amqp")) {
     die("AMQP module not installed");
 }
 
 class TutorialConsumer 
 {
-    private $conn;
-    private $chan;
+    private $connection;
+    private $channel;
     private $queue;
     
     public function __construct() 
     {
-        $this->conn = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
-        $this->conn->connect();
-        $this->chan = new AMQPChannel($this->conn);
-        $this->chan->setPrefetchCount(1);
-        $this->queue = new AMQPQueue($this->chan);
+        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection->connect();
+        $this->channel = new AMQPChannel($this->connection);
+        $this->channel->setPrefetchCount(1);
+        $this->queue = new AMQPQueue($this->channel);
         $this->queue->setName("queue-hello-world");
         $this->queue->declareQueue();
     }
@@ -39,20 +38,20 @@ class TutorialConsumer
 
 class TutorialProducer 
 {
-    private $conn;
-    private $chan;
+    private $connection;
+    private $channel;
     private $exch;
     private $queue;
     
     public function __construct() 
     {
-        $this->conn = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
-        $this->conn->connect();
-        $this->chan = new AMQPChannel($this->conn);
-        $this->queue = new AMQPQueue($this->chan);
+        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection->connect();
+        $this->channel = new AMQPChannel($this->connection);
+        $this->queue = new AMQPQueue($this->channel);
         $this->queue->setName("queue-hello-world");
         $this->queue->declareQueue();
-        $this->exch = new AMQPExchange($this->chan);
+        $this->exch = new AMQPExchange($this->channel);
         $this->exch->setName("exchange-hello-world");
         $this->exch->setType(AMQP_EX_TYPE_FANOUT);        
         $this->exch->declareExchange();    
@@ -70,16 +69,13 @@ if(!extension_loaded("pcntl"))
 }
 
 $pid = pcntl_fork();
-if($pid == -1) 
-{
+if($pid == -1) {
     die("Fork failed\n.");
 } 
-else if($pid) 
-{
+else if($pid) {
     $consumer = new TutorialConsumer;
     $consumer->consume();
 }
-else 
-{ 
+else { 
    $producer = new TutorialProducer;
 }
