@@ -1,6 +1,6 @@
 <?php
 
-if(!extension_loaded("amqp")) {
+if (!extension_loaded("amqp")) {
     die("AMQP module not installed");
 }
 
@@ -12,7 +12,8 @@ class TutorialPublisher
 
     public function __construct() 
     {
-        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection = new AMQPConnection(
+            ['localhost', 5672, 'guest', 'guest']);
         $this->connection->connect();
         $this->channel = new AMQPChannel($this->connection);
         $this->exchange = new AMQPExchange($this->channel);
@@ -37,7 +38,8 @@ class TutorialSubscriber
     private $queue;
     public function __construct() 
     {
-        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection = new AMQPConnection(
+            ['localhost', 5672, 'guest', 'guest']);
         $this->connection->connect();
         $this->channel = new AMQPChannel($this->connection);
         $this->channel->setPrefetchCount(1);
@@ -55,9 +57,9 @@ class TutorialSubscriber
     public function consume() 
     {
         $this->queue->consume(
-             function(AMQPEnvelope $message, AMQPQueue $queue) {
+             function (AMQPEnvelope $message, AMQPQueue $queue) {
                 $queue->ack($message->getDeliveryTag());
-                if($message->getBody() == "QUIT") { 
+                if ($message->getBody() == "QUIT") { 
                     $this->queue->delete();
                     echo "Subscriber " . getmypid() . " received exit.\n";
                     exit(0); 
@@ -78,8 +80,7 @@ if(!extension_loaded("pcntl")) {
 $pid = pcntl_fork();
 if($pid == -1) {
     die("Fork failed\n.");
-}
-else if($pid) {
+} elseif($pid) {
     $logger = new TutorialPublisher;
     
     sleep(1); // Wait for subscribers to start and bind their queues.
@@ -91,8 +92,7 @@ else if($pid) {
     $logger->sendLog("QUIT");
     
     sleep(1);
-}
-else {
+} else {
     // Another fork to produce two subscribers
     $pid = pcntl_fork(); 
     $logger = new TutorialSubscriber;

@@ -1,6 +1,6 @@
 <?php
 
-if(!extension_loaded("amqp")) {
+if (!extension_loaded("amqp")) {
     die("AMQP module not installed");
 }
 
@@ -13,10 +13,11 @@ class TutorialServer
     public function __construct() 
     {
         // Create a "well known" named queue to receive requests on.
-        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection = new AMQPConnection(
+            ['localhost', 5672, 'guest', 'guest']);
         $this->connection->connect();
-        $this->channel = new AMQPChannel($this->connection);
-        $this->channel->setPrefetchCount(1);
+        $this->channel = new AMQPChannel ($this->connection);
+        $this->channel->setPrefetchCount (1);
         $this->queue = new AMQPQueue($this->channel);
         $this->queue->setName("queue-well-known-rpc-name");
         $this->queue->declareQueue();
@@ -24,8 +25,8 @@ class TutorialServer
 
     private function verifyRequest($req) 
     {
-        foreach(['func', 'a', 'b'] as $key) {
-            if(!array_key_exists($key, $req)) {
+        foreach (['func', 'a', 'b'] as $key) {
+            if (!array_key_exists($key, $req)) {
                 return false;
             }
         }
@@ -35,18 +36,18 @@ class TutorialServer
     public function consume() 
     {
         $this->queue->consume(
-            function(AMQPEnvelope $message, AMQPQueue $queue) {
+            function (AMQPEnvelope $message, AMQPQueue $queue) {
                 $queue->ack($message->getDeliveryTag());
-                if($message->getBody() == "QUIT") {
+                if ($message->getBody() == "QUIT") {
                     $this->queue->delete();
                     exit(0);
                 }
                 $req = json_decode($message->getBody(), true);
-                if(!is_array($req) || !$this->verifyRequest($req)) {
+                if (!is_array($req) || !$this->verifyRequest($req)) {
                     return;
                 }
                 $result = 0;
-                switch($req['func']) {
+                switch ($req['func']) {
                     case 'add': $result = $req['a'] + $req['b']; break;
                     case 'sub': $result = $req['a'] - $req['b']; break;
                     case 'mul': $result = $req['a'] * $req['b']; break;
@@ -126,9 +127,9 @@ class TutorialClient
         ]));
         
         $this->reply_queue->consume(
-            function(\AMQPEnvelope $message, AMQPQueue $queue) {
+            function (\AMQPEnvelope $message, AMQPQueue $queue) {
                 $req = json_decode($message->getBody(), true);
-                if($message->getCorrelationId() == $this->correlation_id) {
+                if ($message->getCorrelationId() == $this->correlation_id) {
                     $queue->ack($message->getDeliveryTag());
                     $this->request = $req;
                     return false; // Break consumer loop
@@ -162,19 +163,17 @@ class TutorialClient
 
 // We use PCNTL to create new processes to handle
 // different ends of the queuing systems.
-if(!extension_loaded("pcntl")) {
+if (!extension_loaded("pcntl")) {
     die("PCNTL module not installed");
 }
 
 $pid = pcntl_fork();
-if($pid == -1) {
+if ($pid == -1) {
     die("Fork failed\n.");
-}
-else if($pid) {
+} elseif ($pid) {
     $server = new TutorialServer;
     $server->consume();
-}
-else { 
+} else { 
    $client = new TutorialClient;
    echo "1 + 2 = " . $client->add(1, 2) . "\n";
    echo "4 - 3 = " . $client->sub(4, 3) . "\n";

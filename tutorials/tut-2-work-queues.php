@@ -1,6 +1,6 @@
 <?php
 
-if(!extension_loaded("amqp")) {
+if (!extension_loaded("amqp")) {
     die("AMQP module not installed");
 }
 
@@ -13,7 +13,8 @@ class TutorialNewTask
     
     public function __construct() 
     {
-        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection = new AMQPConnection(
+            ['localhost', 5672, 'guest', 'guest']);
         $this->connection->connect();
         $this->channel = new AMQPChannel($this->connection);
         $this->queue = new AMQPQueue($this->channel);
@@ -40,7 +41,8 @@ class TutorialWorker
     
     public function __construct() 
     {
-        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection = new AMQPConnection(
+            ['localhost', 5672, 'guest', 'guest']);
         $this->connection->connect();
         $this->channel = new AMQPChannel($this->connection);
         $this->channel->setPrefetchCount(1);
@@ -53,9 +55,9 @@ class TutorialWorker
     public function consume() 
     {
         $this->queue->consume(
-            function(AMQPEnvelope $message, AMQPQueue $queue) {
+            function (AMQPEnvelope $message, AMQPQueue $queue) {
                 $queue->ack($message->getDeliveryTag());
-                if($message->getBody() == "QUIT") { 
+                if ($message->getBody() == "QUIT") { 
                     $this->queue->delete();
                     echo "Worker " . getmypid() . " received exit.\n";
                     exit(0); 
@@ -76,8 +78,7 @@ if(!extension_loaded("pcntl")) {
 $pid = pcntl_fork();
 if($pid == -1) {
     die("Fork failed\n.");
-}
-else if($pid) {
+} elseif($pid) {
     $task = new TutorialNewTask;
     
     sleep(1); // Wait for workers to start up and attach to queue.
@@ -96,8 +97,7 @@ else if($pid) {
     $task->sendTask("QUIT");
     
     sleep(1);
-}
-else {
+} else {
     // Another fork to produce two workers
     $pid = pcntl_fork(); 
     $worker = new TutorialWorker;

@@ -1,6 +1,6 @@
 <?php
 
-if(!extension_loaded("amqp")) {
+if (!extension_loaded("amqp")) {
     die("AMQP module not installed");
 }
 
@@ -12,7 +12,8 @@ class TutorialConsumer
     
     public function __construct() 
     {
-        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection = new AMQPConnection(
+            ['localhost', 5672, 'guest', 'guest']);
         $this->connection->connect();
         $this->channel = new AMQPChannel($this->connection);
         $this->channel->setPrefetchCount(1);
@@ -24,13 +25,14 @@ class TutorialConsumer
     public function consume() 
     {
         $this->queue->consume(
-            function(AMQPEnvelope $message, AMQPQueue $queue) {
+            function (AMQPEnvelope $message, AMQPQueue $queue) {
                 $queue->ack($message->getDeliveryTag());
-                if($message->getBody() == "QUIT") { 
+                if ($message->getBody() == "QUIT") { 
                     $this->queue->delete();
                     exit(0);                 
                 }
-                echo "From '". $queue->getName() . "': " . $message->getBody() . "\n";
+                echo "From '". $queue->getName() . "': " . 
+                    $message->getBody() . "\n";
             }
         );
     }
@@ -45,7 +47,8 @@ class TutorialProducer
     
     public function __construct() 
     {
-        $this->connection = new AMQPConnection(['localhost', 5672, 'guest', 'guest']);
+        $this->connection = new AMQPConnection(
+            ['localhost', 5672, 'guest', 'guest']);
         $this->connection->connect();
         $this->channel = new AMQPChannel($this->connection);
         $this->queue = new AMQPQueue($this->channel);
@@ -63,19 +66,16 @@ class TutorialProducer
 
 // We use PCNTL to create new processes to handle
 // different ends of the queuing systems.
-if(!extension_loaded("pcntl")) 
-{
+if(!extension_loaded("pcntl")) {
     die("PCNTL module not installed");
 }
 
 $pid = pcntl_fork();
 if($pid == -1) {
     die("Fork failed\n.");
-} 
-else if($pid) {
+} elseif($pid) {
     $consumer = new TutorialConsumer;
     $consumer->consume();
-}
-else { 
+} else { 
    $producer = new TutorialProducer;
 }
