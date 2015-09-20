@@ -58,7 +58,7 @@ class TutorialProducer
         $this->exchange->setName("exchange-hello-world");
         $this->exchange->setType(AMQP_EX_TYPE_FANOUT);        
         $this->exchange->declareExchange();    
-        $this->queue->bind($this->exch->getName()); 
+        $this->queue->bind($this->exchange->getName()); 
         $this->exchange->publish('Hello World!');
         $this->exchange->publish('QUIT');
     }
