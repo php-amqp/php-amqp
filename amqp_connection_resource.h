@@ -20,6 +20,7 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
+
 #ifndef PHP_AMQP_CONNECTION_RESOURCE_H
 #define PHP_AMQP_CONNECTION_RESOURCE_H
 
@@ -44,11 +45,12 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_object *channel, amqp_channel_t channel_id);
 
 /* Creating and destroying resource */
-amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, zend_bool persistent TSRMLS_DC);
+amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, char persistent);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor);
 
 #endif
+
 /*
 *Local variables:
 *tab-width: 4

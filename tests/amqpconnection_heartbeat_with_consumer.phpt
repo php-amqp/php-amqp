@@ -52,35 +52,35 @@ echo 'Done', PHP_EOL
 --EXPECTF--
 object(AMQPConnection)#1 (15) refcount(2){
   ["login"]=>
-  string(5) "guest" refcount(1)
+  string(5) "guest" refcount(2)
   ["password"]=>
-  string(5) "guest" refcount(1)
+  string(5) "guest" refcount(2)
   ["host"]=>
-  string(9) "localhost" refcount(1)
+  string(9) "localhost" refcount(2)
   ["vhost"]=>
-  string(1) "/" refcount(1)
+  string(1) "/" refcount(2)
   ["port"]=>
-  long(5672) refcount(1)
+  int(5672)
   ["read_timeout"]=>
-  double(40) refcount(1)
+  float(40)
   ["write_timeout"]=>
-  double(0) refcount(1)
+  float(0)
   ["connect_timeout"]=>
-  double(0) refcount(1)
+  float(0)
   ["is_connected"]=>
-  bool(true) refcount(1)
+  bool(true)
   ["is_persistent"]=>
-  bool(false) refcount(1)
+  bool(false)
   ["connection_resource"]=>
-  resource(4) of type (AMQP Connection Resource) refcount(1)
+  resource(4) of type (AMQP Connection Resource) refcount(3)
   ["used_channels"]=>
-  long(0) refcount(1)
+  int(0)
   ["max_channel_id"]=>
-  long(256) refcount(1)
+  int(256)
   ["max_frame_size"]=>
-  long(131072) refcount(1)
+  int(131072)
   ["heartbeat_interval"]=>
-  long(2) refcount(1)
+  int(2)
 }
 Consumed: test message 1 (should be dead lettered)
 Consuming took: 20%fsec

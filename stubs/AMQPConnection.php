@@ -236,31 +236,6 @@ class AMQPConnection
     /**
      * Sets the interval of time to wait for income activity from AMQP broker
      *
-     * @deprecated use AMQPConnection::setReadTimout($timeout) instead
-     *
-     * @param int $timeout
-     *
-     * @return bool
-     */
-    public function setTimeout($timeout)
-    {
-    }
-
-    /**
-     * Get the configured interval of time to wait for income activity
-     * from AMQP broker
-     *
-     * @deprecated use AMQPConnection::getReadTimout() instead
-     *
-     * @return float
-     */
-    public function getTimeout()
-    {
-    }
-
-    /**
-     * Sets the interval of time to wait for income activity from AMQP broker
-     *
      * @param int $timeout
      *
      * @return bool

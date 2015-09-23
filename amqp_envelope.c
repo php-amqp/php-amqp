@@ -21,8 +21,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_envelope.c 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -39,6 +37,7 @@
 # include <signal.h>
 # include <stdint.h>
 #endif
+
 #include <amqp.h>
 #include <amqp_framing.h>
 
@@ -50,14 +49,14 @@
 
 #include "php_amqp.h"
 
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 zend_object_handlers amqp_envelope_object_handlers;
+
 HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS_DC) {
-	zval *value;
+	zval value;
 	HashTable *debug_info;
 
 	/* Get the envelope object from which to read */
-	amqp_envelope_object *envelope = (amqp_envelope_object *)zend_object_store_get_object(object TSRMLS_CC);
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(object);
 
 	/* Let zend clean up for us: */
 	*is_temp = 1;
@@ -67,163 +66,128 @@ HashTable *amqp_envelope_object_get_debug_info(zval *object, int *is_temp TSRMLS
 	ZEND_INIT_SYMTABLE_EX(debug_info, 18 + 1, 0);
 
 	/* Start adding values */
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->body, envelope->body_len, 1);
-	zend_hash_add(debug_info, "body", sizeof("body"), &value, sizeof(zval *), NULL);
+	ZVAL_STR(&value, zend_string_copy(envelope->body));
+	zend_hash_str_add(debug_info, "body", sizeof("body")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->content_type, strlen(envelope->content_type), 1);
-	zend_hash_add(debug_info, "content_type", sizeof("content_type"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->content_type, strlen(envelope->content_type));
+	zend_hash_str_add(debug_info, "content_type", sizeof("content_type")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->routing_key, strlen(envelope->routing_key), 1);
-	zend_hash_add(debug_info, "routing_key", sizeof("routing_key"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->routing_key, strlen(envelope->routing_key));
+	zend_hash_str_add(debug_info, "routing_key", sizeof("routing_key")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->delivery_tag);
-	zend_hash_add(debug_info, "delivery_tag", sizeof("delivery_tag"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->delivery_tag);
+	zend_hash_str_add(debug_info, "delivery_tag", sizeof("delivery_tag")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->delivery_mode);
-	zend_hash_add(debug_info, "delivery_mode", sizeof("delivery_mode"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->delivery_mode);
+	zend_hash_str_add(debug_info, "delivery_mode", sizeof("delivery_mode")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->exchange_name, strlen(envelope->exchange_name), 1);
-	zend_hash_add(debug_info, "exchange_name", sizeof("exchange_name"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->exchange_name, strlen(envelope->exchange_name));
+	zend_hash_str_add(debug_info, "exchange_name", sizeof("exchange_name")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->is_redelivery);
-	zend_hash_add(debug_info, "is_redelivery", sizeof("is_redelivery"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->is_redelivery);
+	zend_hash_str_add(debug_info, "is_redelivery", sizeof("is_redelivery")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->content_encoding, strlen(envelope->content_encoding), 1);
-	zend_hash_add(debug_info, "content_encoding", sizeof("content_encoding"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->content_encoding, strlen(envelope->content_encoding));
+	zend_hash_str_add(debug_info, "content_encoding", sizeof("content_encoding")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->type, strlen(envelope->type), 1);
-	zend_hash_add(debug_info, "type", sizeof("type"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->type, strlen(envelope->type));
+	zend_hash_str_add(debug_info, "type", sizeof("type")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->timestamp);
-	zend_hash_add(debug_info, "timestamp", sizeof("timestamp"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->timestamp);
+	zend_hash_str_add(debug_info, "timestamp", sizeof("timestamp")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_LONG(value, envelope->priority);
-	zend_hash_add(debug_info, "priority", sizeof("priority"), &value, sizeof(zval *), NULL);
+	ZVAL_LONG(&value, envelope->priority);
+	zend_hash_str_add(debug_info, "priority", sizeof("priority")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->expiration, strlen(envelope->expiration), 1);
-	zend_hash_add(debug_info, "expiration", sizeof("expiration"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->expiration, strlen(envelope->expiration));
+	zend_hash_str_add(debug_info, "expiration", sizeof("expiration")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->user_id, strlen(envelope->user_id), 1);
-	zend_hash_add(debug_info, "user_id", sizeof("user_id"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->user_id, strlen(envelope->user_id));
+	zend_hash_str_add(debug_info, "user_id", sizeof("user_id")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->app_id, strlen(envelope->app_id), 1);
-	zend_hash_add(debug_info, "app_id", sizeof("app_id"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->app_id, strlen(envelope->app_id));
+	zend_hash_str_add(debug_info, "app_id", sizeof("app_id")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->message_id, strlen(envelope->message_id), 1);
-	zend_hash_add(debug_info, "message_id", sizeof("message_id"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->message_id, strlen(envelope->message_id));
+	zend_hash_str_add(debug_info, "message_id", sizeof("message_id")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->reply_to, strlen(envelope->reply_to), 1);
-	zend_hash_add(debug_info, "reply_to", sizeof("reply_to"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->reply_to, strlen(envelope->reply_to));
+	zend_hash_str_add(debug_info, "reply_to", sizeof("reply_to")-1, &value);
 
-	MAKE_STD_ZVAL(value);
-	ZVAL_STRINGL(value, envelope->correlation_id, strlen(envelope->correlation_id), 1);
-	zend_hash_add(debug_info, "correlation_id", sizeof("correlation_id"), &value, sizeof(zval *), NULL);
+	ZVAL_STRINGL(&value, envelope->correlation_id, strlen(envelope->correlation_id));
+	zend_hash_str_add(debug_info, "correlation_id", sizeof("correlation_id")-1, &value);
 
-	Z_ADDREF_P(envelope->headers);
-	zend_hash_add(debug_info, "headers", sizeof("headers"), &envelope->headers, sizeof(envelope->headers), NULL);
+	Z_ADDREF(envelope->headers);
+	zend_hash_str_add(debug_info, "headers", sizeof("headers")-1, &envelope->headers);
 
 	return debug_info;
 }
-#endif
 
-void amqp_envelope_dtor(void *object TSRMLS_DC)
+void amqp_envelope_free_obj(zend_object *object TSRMLS_DC)
 {
-	amqp_envelope_object *envelope = (amqp_envelope_object*)object;
-
-	if (envelope->headers) {
-		zval_ptr_dtor(&envelope->headers);
-	}
+	amqp_envelope_object *envelope = amqp_envelope_object_fetch_object(object);
 
 	if (envelope->body) {
-		efree(envelope->body);
+		zend_string_release(envelope->body);
 	}
 
 	zend_object_std_dtor(&envelope->zo TSRMLS_CC);
-
-	efree(object);
 }
 
-zend_object_value amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC)
+void amqp_envelope_dtor_obj(zend_object *object TSRMLS_DC)
 {
-	zend_object_value new_value;
-	amqp_envelope_object *envelope = (amqp_envelope_object*)emalloc(sizeof(amqp_envelope_object));
+	amqp_envelope_object *envelope = amqp_envelope_object_fetch_object(object);
 
-	memset(envelope, 0, sizeof(amqp_envelope_object));
+	zval_ptr_dtor(&envelope->headers);
+}
 
-	MAKE_STD_ZVAL(envelope->headers);
-	array_init(envelope->headers);
+zend_object* amqp_envelope_ctor(zend_class_entry *ce TSRMLS_DC)
+{
+	amqp_envelope_object *envelope = (amqp_envelope_object*)ecalloc(1,
+			sizeof(amqp_envelope_object)
+			+ zend_object_properties_size(ce));
 
 	zend_object_std_init(&envelope->zo, ce TSRMLS_CC);
-	AMQP_OBJECT_PROPERTIES_INIT(envelope->zo, ce);
+	object_properties_init(&envelope->zo, ce);
 
-	new_value.handle = zend_objects_store_put(envelope, (zend_objects_store_dtor_t)zend_objects_destroy_object, (zend_objects_free_object_storage_t)amqp_envelope_dtor, NULL TSRMLS_CC);
+	array_init(&envelope->headers);
 
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
 	memcpy((void *)&amqp_envelope_object_handlers, (void *)zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 	amqp_envelope_object_handlers.get_debug_info = amqp_envelope_object_get_debug_info;
-	new_value.handlers = &amqp_envelope_object_handlers;
-#else
-	new_value.handlers = zend_get_std_object_handlers();
-#endif
+	amqp_envelope_object_handlers.free_obj = amqp_envelope_free_obj;
+	amqp_envelope_object_handlers.dtor_obj = amqp_envelope_dtor_obj;
+	amqp_envelope_object_handlers.offset = XtOffsetOf(amqp_envelope_object, zo);
+	envelope->zo.handlers = &amqp_envelope_object_handlers;
 
-	return new_value;
+	return &envelope->zo;
 }
 
-/* {{{ proto AMQPEnvelope::__construct(AMQPConnection obj)
+/* {{{ proto AMQPEnvelope::__construct()
  */
 PHP_METHOD(amqp_envelope_class, __construct)
 {
-	zval *id;
-
-	amqp_envelope_object *envelope;
-
-	/* Parse out the method parameters */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
-
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
 }
 /* }}} */
-
 
 /* {{{ proto AMQPEnvelope::getBody()
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getBody)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	if (envelope->body == 0) {
+	if (ZSTR_LEN(envelope->body) == 0) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRINGL(envelope->body, envelope->body_len, 1);
+	RETURN_STR(zend_string_copy(envelope->body));
 }
 /* }}} */
 
@@ -231,18 +195,14 @@ PHP_METHOD(amqp_envelope_class, getBody)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getRoutingKey)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->routing_key, 1);
+	RETURN_STRING(envelope->routing_key);
 }
 /* }}} */
 
@@ -250,36 +210,27 @@ PHP_METHOD(amqp_envelope_class, getRoutingKey)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getDeliveryMode)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
-
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	RETURN_LONG(envelope->delivery_mode);
 }
 /* }}} */
 
-
 /* {{{ proto AMQPEnvelope::getDeliveryTag()
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getDeliveryTag)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
-
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	RETURN_LONG(envelope->delivery_tag);
 }
@@ -289,18 +240,14 @@ PHP_METHOD(amqp_envelope_class, getDeliveryTag)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getExchangeName)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->exchange_name, 1);
+	RETURN_STRING(envelope->exchange_name);
 }
 /* }}} */
 
@@ -308,16 +255,12 @@ PHP_METHOD(amqp_envelope_class, getExchangeName)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, isRedelivery)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
-
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	/* We have no envelope */
 	RETURN_BOOL(envelope->is_redelivery);
@@ -328,18 +271,14 @@ PHP_METHOD(amqp_envelope_class, isRedelivery)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getContentType)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->content_type, 1);
+	RETURN_STRING(envelope->content_type);
 }
 /* }}} */
 
@@ -347,18 +286,14 @@ PHP_METHOD(amqp_envelope_class, getContentType)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getContentEncoding)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->content_encoding, 1);
+	RETURN_STRING(envelope->content_encoding);
 }
 /* }}} */
 
@@ -366,18 +301,14 @@ PHP_METHOD(amqp_envelope_class, getContentEncoding)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getType)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->type, 1);
+	RETURN_STRING(envelope->type);
 }
 /* }}} */
 
@@ -385,16 +316,12 @@ PHP_METHOD(amqp_envelope_class, getType)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getTimestamp)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
-
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	RETURN_LONG(envelope->timestamp);
 }
@@ -404,16 +331,12 @@ PHP_METHOD(amqp_envelope_class, getTimestamp)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getPriority)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
-
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
 
 	RETURN_LONG(envelope->priority);
 }
@@ -423,18 +346,14 @@ PHP_METHOD(amqp_envelope_class, getPriority)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getExpiration)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->expiration, 1);
+	RETURN_STRING(envelope->expiration);
 }
 /* }}} */
 
@@ -442,18 +361,14 @@ PHP_METHOD(amqp_envelope_class, getExpiration)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getUserId)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->user_id, 1);
+	RETURN_STRING(envelope->user_id);
 }
 /* }}} */
 
@@ -461,18 +376,14 @@ PHP_METHOD(amqp_envelope_class, getUserId)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getAppId)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->app_id, 1);
+	RETURN_STRING(envelope->app_id);
 }
 /* }}} */
 
@@ -480,18 +391,14 @@ PHP_METHOD(amqp_envelope_class, getAppId)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getMessageId)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->message_id, 1);
+	RETURN_STRING(envelope->message_id);
 }
 /* }}} */
 
@@ -499,18 +406,14 @@ PHP_METHOD(amqp_envelope_class, getMessageId)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getReplyTo)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->reply_to, 1);
+	RETURN_STRING(envelope->reply_to);
 }
 /* }}} */
 
@@ -518,18 +421,14 @@ PHP_METHOD(amqp_envelope_class, getReplyTo)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getCorrelationId)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	RETURN_STRING(envelope->correlation_id, 1);
+	RETURN_STRING(envelope->correlation_id);
 }
 /* }}} */
 
@@ -537,53 +436,38 @@ PHP_METHOD(amqp_envelope_class, getCorrelationId)
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getHeader)
 {
-	zval *id;
-	zval **tmp;
-	amqp_envelope_object *envelope;
-	char *key;
-	int key_len;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
+	zval *tmp = 0;
+	zend_string* key;
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &id, amqp_envelope_class_entry, &key, &key_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "S", &key) == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
 	/* Look for the hash key */
-	if (zend_hash_find(HASH_OF(envelope->headers), key, key_len + 1, (void **)&tmp) == FAILURE) {
+	if ((tmp = zend_hash_find(HASH_OF(&envelope->headers), key)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	*return_value = **tmp;
-	zval_copy_ctor(return_value);
-	INIT_PZVAL(return_value);
-
+	RETURN_ZVAL(tmp, 1, 0);
 }
 /* }}} */
-
 
 /* {{{ proto AMQPEnvelope::getHeaders()
 check amqp envelope */
 PHP_METHOD(amqp_envelope_class, getHeaders)
 {
-	zval *id;
-	amqp_envelope_object *envelope;
+	amqp_envelope_object *envelope = AMQP_ENVELOPE_OBJ_P(getThis());
 
 	/* Try to pull amqp object out of method params */
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &id, amqp_envelope_class_entry) == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 
-	/* Get the envelope object out of the store */
-	envelope = (amqp_envelope_object *)zend_object_store_get_object(id TSRMLS_CC);
-
-	zval_dtor(return_value);
-	MAKE_COPY_ZVAL(&envelope->headers, return_value);
+	RETURN_ZVAL(&envelope->headers, 1, 0);
 }
 /* }}} */
-
 
 /*
 *Local variables:
