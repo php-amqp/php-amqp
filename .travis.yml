@@ -3,6 +3,8 @@ language: php
 php:
   - 7.0
 
+sudo: false
+
 services:
   - rabbitmq
 
@@ -13,15 +15,15 @@ matrix:
 #  allow_failures:
 #    - php: 7.0
 
-install:
-  - sudo apt-get update
-  - sudo apt-get -qq --fix-missing install valgrind
-
-  - wget -qO - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | sudo apt-key add -
-  - sudo add-apt-repository 'deb http://www.rabbitmq.com/debian/ testing main'
-  - sudo apt-get update
-  - sudo apt-get install --only-upgrade -y rabbitmq-server
-  - sudo service rabbitmq-server restart
+#install:
+#  - sudo apt-get update
+#  - sudo apt-get -qq --fix-missing install valgrind
+#
+#  - wget -qO - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | sudo apt-key add -
+#  - sudo add-apt-repository 'deb http://www.rabbitmq.com/debian/ testing main'
+#  - sudo apt-get update
+#  - sudo apt-get install --only-upgrade -y rabbitmq-server
+#  - sudo service rabbitmq-server restart
 
 env:
   global:
@@ -35,20 +37,27 @@ env:
     - LIBRABBITMQ_VERSION=master
     - LIBRABBITMQ_VERSION=v0.6.0 TEST_PHP_ARGS=-m
     - LIBRABBITMQ_VERSION=v0.6.0
+    - LIBRABBITMQ_VERSION=v0.7.0 TEST_PHP_ARGS=-m
+    - LIBRABBITMQ_VERSION=v0.7.0
 
-before_script:
-  - sh -c "php -i"
-  - sh -c "git clone git://github.com/alanxz/rabbitmq-c.git"
-  - sh -c "cd rabbitmq-c && git checkout ${LIBRABBITMQ_VERSION}"
-  - sh -c "cd rabbitmq-c && git submodule init && git submodule update"
-  - sh -c "cd rabbitmq-c && autoreconf -i && ./configure && make && sudo make install"
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then phpize && ./configure && make ; fi
+
+before_install:
+#  - sh -c "php -i"
+  - sh provision/install_rabbitmq-c.sh ${LIBRABBITMQ_VERSION}
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then phpize && ./configure  --with-librabbitmq-dir=$HOME/rabbitmq-c && make ; fi
+
+install:
+
 
 script:
   - sh -c "make test | tee result.txt"
   - sh test-report.sh
 
 addons:
+  apt:
+    packages:
+      - valgrind
+
   coverity_scan:
     project:
       name: "pinepain/php-amqp"

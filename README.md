@@ -6,13 +6,17 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
 ### Requirements:
 
  - [RabbitMQ C library](https://github.com/alanxz/rabbitmq-c), commonly known as librabbitmq
-   (since php-amqp>=1.6.0  librabbitmq >= 0.6.0 required, see [release note](http://pecl.php.net/package/amqp/1.6.0)).
+   (since php-amqp>=1.6.0  librabbitmq >= 0.5.2 required, >= 0.6.0 recommended,
+   see [release note](http://pecl.php.net/package/amqp/1.6.0)).
 
 ### Installation
  
  Some systems has php-amqp extension in their repo or available via external repositories, so it is MAY be the preferable
  way to install.
- 
+
+ RPM packages are available in Fedora and EPEL (for RHEL and CentOS) official repositories,
+ see [php-pecl-amqp](https://apps.fedoraproject.org/packages/php-pecl-amqp)
+
  If you want to stay on the bleeding edge and have the latest version, install it from
  [PECL](http://pecl.php.net/package/amqp) or compile from sources
  (follow [PHP official docs instruction](http://us1.php.net/manual/en/install.pecl.phpize.php)).
