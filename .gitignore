@@ -7,15 +7,8 @@ Makefile.global
 Makefile.objects
 acinclude.m4
 aclocal.m4
-amqp.la
-amqp.lo
-amqp_channel.lo
-amqp_connection.lo
-amqp_connection_resource.lo
-amqp_envelope.lo
-amqp_exchange.lo
-amqp_queue.lo
-amqp_object_store.lo
+*.la
+*.lo
 autom4te.cache/*
 build/*
 config.guess
