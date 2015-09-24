@@ -176,8 +176,6 @@ static void php_amqp_prepare_for_disconnect(amqp_connection_object *connection T
 		return;
 	}
 
-	resource->resource_id = 0;
-
 	assert(resource->slots != NULL);
 
 	/* NOTE: when we have persistent connection we do not move channels between php requests
@@ -207,7 +205,11 @@ void php_amqp_disconnect_safe(amqp_connection_object *connection TSRMLS_DC)
 {
 	php_amqp_prepare_for_disconnect(connection TSRMLS_CC);
 
-	if(!connection->is_persistent && connection->connection_resource && connection->connection_resource->resource_id > 0) {
+	if (connection->is_persistent) {
+		connection->connection_resource->resource_id = 0;
+	}
+
+	if(connection->connection_resource && connection->connection_resource->resource_id > 0) {
 		zend_list_delete(connection->connection_resource->resource_id);
 	}
 
