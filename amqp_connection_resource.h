@@ -31,6 +31,20 @@
 extern int le_amqp_connection_resource;
 extern int le_amqp_connection_resource_persistent;
 
+typedef struct _amqp_connection_params {
+  char *login;
+  char *password;
+  char *host;
+  char *vhost;
+  int port;
+  int channel_max;
+  int frame_max;
+  int heartbeat;
+  double read_timeout;
+  double write_timeout;
+  double connect_timeout;
+} amqp_connection_params;
+
 /* Figure out what's going on connection and handle protocol exceptions, if any */
 int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id TSRMLS_DC);
 
@@ -44,7 +58,7 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_object *channel, amqp_channel_t channel_id);
 
 /* Creating and destroying resource */
-amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, zend_bool persistent TSRMLS_DC);
+amqp_connection_resource *connection_resource_constructor(amqp_connection_params *params, zend_bool persistent TSRMLS_DC);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor);
 

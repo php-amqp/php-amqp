@@ -27,13 +27,8 @@ missing
 mkinstalldirs
 modules/*
 run-tests.php
-tests/*.diff
-tests/*.exp
-tests/*.log
-tests/*.out
-tests/*.php
-tests/*.sh
-tests/*.mem
+tests/*
+!tests/*.phpt
 !tests/_test_helpers.php
 php_test_results_*
 tmp-php.ini

@@ -24,36 +24,28 @@ var_dump($q);
 --EXPECT--
 object(AMQPQueue)#4 (9) {
   ["connection":"AMQPQueue":private]=>
-  object(AMQPConnection)#1 (15) {
-    ["login"]=>
+  object(AMQPConnection)#1 (11) {
+    ["login":"AMQPConnection":private]=>
     string(5) "guest"
-    ["password"]=>
+    ["password":"AMQPConnection":private]=>
     string(5) "guest"
-    ["host"]=>
+    ["host":"AMQPConnection":private]=>
     string(9) "localhost"
-    ["vhost"]=>
+    ["vhost":"AMQPConnection":private]=>
     string(1) "/"
-    ["port"]=>
+    ["port":"AMQPConnection":private]=>
     int(5672)
-    ["read_timeout"]=>
+    ["read_timeout":"AMQPConnection":private]=>
     float(0)
-    ["write_timeout"]=>
+    ["write_timeout":"AMQPConnection":private]=>
     float(0)
-    ["connect_timeout"]=>
+    ["connect_timeout":"AMQPConnection":private]=>
     float(0)
-    ["is_connected"]=>
-    bool(true)
-    ["is_persistent"]=>
-    bool(false)
-    ["connection_resource"]=>
-    resource(4) of type (AMQP Connection Resource)
-    ["used_channels"]=>
-    int(1)
-    ["max_channel_id"]=>
+    ["channel_max":"AMQPConnection":private]=>
     int(256)
-    ["max_frame_size"]=>
+    ["frame_max":"AMQPConnection":private]=>
     int(131072)
-    ["heartbeat_interval"]=>
+    ["heartbeat":"AMQPConnection":private]=>
     int(0)
   }
   ["channel":"AMQPQueue":private]=>

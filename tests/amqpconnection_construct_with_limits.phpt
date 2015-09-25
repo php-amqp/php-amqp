@@ -15,35 +15,27 @@ $cnn->connect();
 debug_zval_dump($cnn);
 ?>
 --EXPECTF--
-object(AMQPConnection)#1 (15) refcount(2){
-  ["login"]=>
+object(AMQPConnection)#1 (11) refcount(2){
+  ["login":"AMQPConnection":private]=>
   string(5) "guest" refcount(1)
-  ["password"]=>
+  ["password":"AMQPConnection":private]=>
   string(5) "guest" refcount(1)
-  ["host"]=>
+  ["host":"AMQPConnection":private]=>
   string(9) "localhost" refcount(1)
-  ["vhost"]=>
+  ["vhost":"AMQPConnection":private]=>
   string(1) "/" refcount(1)
-  ["port"]=>
+  ["port":"AMQPConnection":private]=>
   long(5672) refcount(1)
-  ["read_timeout"]=>
+  ["read_timeout":"AMQPConnection":private]=>
   double(0) refcount(1)
-  ["write_timeout"]=>
+  ["write_timeout":"AMQPConnection":private]=>
   double(0) refcount(1)
-  ["connect_timeout"]=>
+  ["connect_timeout":"AMQPConnection":private]=>
   double(0) refcount(1)
-  ["is_connected"]=>
-  bool(true) refcount(1)
-  ["is_persistent"]=>
-  bool(false) refcount(1)
-  ["connection_resource"]=>
-  resource(4) of type (AMQP Connection Resource) refcount(1)
-  ["used_channels"]=>
-  long(0) refcount(1)
-  ["max_channel_id"]=>
+  ["channel_max":"AMQPConnection":private]=>
   long(10) refcount(1)
-  ["max_frame_size"]=>
+  ["frame_max":"AMQPConnection":private]=>
   long(10240) refcount(1)
-  ["heartbeat_interval"]=>
+  ["heartbeat":"AMQPConnection":private]=>
   long(5) refcount(1)
 }

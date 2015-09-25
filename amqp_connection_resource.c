@@ -271,7 +271,7 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 
 /* Creating and destroying resource */
 
-amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, zend_bool persistent TSRMLS_DC)
+amqp_connection_resource *connection_resource_constructor(amqp_connection_params *params, zend_bool persistent TSRMLS_DC)
 {
 	struct timeval tv = {0};
 	struct timeval *tv_ptr = &tv;
@@ -288,27 +288,21 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	/* Allocate space for the connection resource */
 	resource = (amqp_connection_resource *)pecalloc(1, sizeof(amqp_connection_resource), persistent);
 
-	/* Initialize all the data */
-	resource->is_connected  = 0;
-	resource->max_slots     = 0;
-	resource->used_slots    = 0;
-	resource->resource_id   = 0;
-
 	/* Create the connection */
 	resource->connection_state = amqp_new_connection();
 
 	/* Create socket object */
 	resource->socket = amqp_tcp_socket_new(resource->connection_state);
 
-	if (connection->connect_timeout > 0) {
-		tv.tv_sec = (long int) connection->connect_timeout;
-		tv.tv_usec = (long int) ((connection->connect_timeout - tv.tv_sec) * 1000000);
+	if (params->connect_timeout > 0) {
+		tv.tv_sec = (long int) params->connect_timeout;
+		tv.tv_usec = (long int) ((params->connect_timeout - tv.tv_sec) * 1000000);
 	} else {
 		tv_ptr = NULL;
 	}
 
 	/* Try to connect and verify that no error occurred */
-	if (amqp_socket_open_noblock(resource->socket, connection->host, connection->port, tv_ptr)) {
+	if (amqp_socket_open_noblock(resource->socket, params->host, params->port, tv_ptr)) {
 
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not connect to host.", 0 TSRMLS_CC);
 
@@ -317,12 +311,12 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 		return NULL;
 	}
 
-	if (!php_amqp_set_resource_read_timeout(resource, connection->read_timeout TSRMLS_CC)) {
+	if (!php_amqp_set_resource_read_timeout(resource, params->read_timeout TSRMLS_CC)) {
 		connection_resource_destructor(resource, persistent TSRMLS_CC);
 		return NULL;
 	}
 
-	if (!php_amqp_set_resource_write_timeout(resource, connection->write_timeout TSRMLS_CC)) {
+	if (!php_amqp_set_resource_write_timeout(resource, params->write_timeout TSRMLS_CC)) {
 		connection_resource_destructor(resource, persistent TSRMLS_CC);
 		return NULL;
 	}
@@ -365,14 +359,14 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 
 	amqp_rpc_reply_t res = amqp_login_with_properties(
 		resource->connection_state,
-		connection->vhost,
-		connection->channel_max,
-		connection->frame_max,
-		connection->heartbeat,
+		params->vhost,
+		params->channel_max,
+		params->frame_max,
+		params->heartbeat,
 		&custom_properties_table,
 		AMQP_SASL_METHOD_PLAIN,
-		connection->login,
-		connection->password
+		params->login,
+		params->password
 	);
 
 	efree(std_datetime);

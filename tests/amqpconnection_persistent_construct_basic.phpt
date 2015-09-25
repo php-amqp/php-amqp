@@ -7,8 +7,10 @@ AMQPConnection persitent constructor
 $cnn = new AMQPConnection();
 $cnn->pconnect();
 echo get_class($cnn) . "\n";
-echo $cnn->isConnected() ? 'true' : 'false';
+echo $cnn->isConnected() ? 'true' : 'false', PHP_EOL;
+echo $cnn->isPersistent() ? 'true' : 'false', PHP_EOL;
 ?>
 --EXPECT--
 AMQPConnection
+true
 true

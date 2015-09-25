@@ -49,6 +49,7 @@
 #endif
 
 #include "php_amqp.h"
+#include "amqp_connection.h"
 #include "amqp_connection_resource.h"
 
 #if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 3
@@ -122,16 +123,16 @@ void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC)
 		if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 			PHP_AMQP_INIT_ERROR_MESSAGE();
 
-			php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+			php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 			php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-			php_amqp_maybe_release_buffers_on_channel(connection, channel);
+			php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 			PHP_AMQP_DESTROY_ERROR_MESSAGE();
 			return;
 		}
 
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 	}
 }
 
@@ -233,10 +234,10 @@ PHP_METHOD(amqp_channel_class, __construct)
 
 		PHP_AMQP_INIT_ERROR_MESSAGE();
 
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 
@@ -247,7 +248,7 @@ PHP_METHOD(amqp_channel_class, __construct)
 
 	/* r->channel_id is a 16-bit channel number insibe amqp_bytes_t, assertion below will without converting to uint16_t*/
 	/* assert (r->channel_id == channel->channel_id);*/
-	php_amqp_maybe_release_buffers_on_channel(connection, channel);
+	php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 	channel->is_connected = '\1';
 
@@ -266,16 +267,16 @@ PHP_METHOD(amqp_channel_class, __construct)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		PHP_AMQP_INIT_ERROR_MESSAGE();
 
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
-	php_amqp_maybe_release_buffers_on_channel(connection, channel);
+	php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 }
 /* }}} */
 
@@ -359,16 +360,16 @@ PHP_METHOD(amqp_channel_class, setPrefetchCount)
 		if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 			PHP_AMQP_INIT_ERROR_MESSAGE();
 
-			php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+			php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 			php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-			php_amqp_maybe_release_buffers_on_channel(connection, channel);
+			php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 			PHP_AMQP_DESTROY_ERROR_MESSAGE();
 			return;
 		}
 
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 	}
 
 	/* Set the prefetch count - the implication is to disable the size */
@@ -431,16 +432,16 @@ PHP_METHOD(amqp_channel_class, setPrefetchSize)
 		if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 			PHP_AMQP_INIT_ERROR_MESSAGE();
 
-			php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+			php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 			php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-			php_amqp_maybe_release_buffers_on_channel(connection, channel);
+			php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 			PHP_AMQP_DESTROY_ERROR_MESSAGE();
 			return;
 		}
 
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 	}
 
 	/* Set the prefetch size - the implication is to disable the count */
@@ -511,16 +512,16 @@ PHP_METHOD(amqp_channel_class, qos)
 		if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 			PHP_AMQP_INIT_ERROR_MESSAGE();
 
-			php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+			php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 			php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-			php_amqp_maybe_release_buffers_on_channel(connection, channel);
+			php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 			PHP_AMQP_DESTROY_ERROR_MESSAGE();
 			return;
 		}
 
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 	}
 
 	RETURN_TRUE;
@@ -559,16 +560,16 @@ PHP_METHOD(amqp_channel_class, startTransaction)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		PHP_AMQP_INIT_ERROR_MESSAGE();
 
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
-	php_amqp_maybe_release_buffers_on_channel(connection, channel);
+	php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 	RETURN_TRUE;
 }
@@ -606,16 +607,16 @@ PHP_METHOD(amqp_channel_class, commitTransaction)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		PHP_AMQP_INIT_ERROR_MESSAGE();
 
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
-	php_amqp_maybe_release_buffers_on_channel(connection, channel);
+	php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 	RETURN_TRUE;
 }
@@ -652,16 +653,16 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		PHP_AMQP_INIT_ERROR_MESSAGE();
 
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
-	php_amqp_maybe_release_buffers_on_channel(connection, channel);
+	php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 	RETURN_TRUE;
 }
@@ -718,16 +719,16 @@ PHP_METHOD(amqp_channel_class, basicRecover)
 	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
 		PHP_AMQP_INIT_ERROR_MESSAGE();
 
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection, channel TSRMLS_CC);
+		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, connection->connection_resource, channel TSRMLS_CC);
 
 		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
-		php_amqp_maybe_release_buffers_on_channel(connection, channel);
+		php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
-	php_amqp_maybe_release_buffers_on_channel(connection, channel);
+	php_amqp_maybe_release_buffers_on_channel(connection->connection_resource, channel);
 
 	RETURN_TRUE;
 
