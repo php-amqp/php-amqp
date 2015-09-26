@@ -55,7 +55,7 @@ int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, doub
 /* Channel-related functions */
 amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connection_resource *resource);
 int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *resource, amqp_channel_t channel_id);
-int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_object *channel, amqp_channel_t channel_id);
+int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_resource *channel_resource, amqp_channel_t channel_id);
 
 /* Creating and destroying resource */
 amqp_connection_resource *connection_resource_constructor(amqp_connection_params *params, zend_bool persistent TSRMLS_DC);

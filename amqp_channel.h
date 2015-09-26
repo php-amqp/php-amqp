@@ -23,8 +23,10 @@
 
 /* $Id: amqp_channel.h 305865 2010-12-01 01:30:56Z pdezwart $ */
 
-void php_amqp_close_channel(amqp_channel_object *channel TSRMLS_DC);
-void amqp_channel_dtor(void *object TSRMLS_DC);
+extern zend_class_entry *amqp_channel_class_entry;
+
+void php_amqp_close_channel(amqp_channel_resource *channel_resource TSRMLS_DC);
+void amqp_channel_free(void *object TSRMLS_DC);
 zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC);
 
 PHP_METHOD(amqp_channel_class, __construct);
@@ -43,6 +45,8 @@ PHP_METHOD(amqp_channel_class, rollbackTransaction);
 PHP_METHOD(amqp_channel_class, getConnection);
 
 PHP_METHOD(amqp_channel_class, basicRecover);
+
+PHP_MINIT_FUNCTION(amqp_channel);
 
 /*
 *Local variables:

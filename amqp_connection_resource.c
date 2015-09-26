@@ -238,7 +238,7 @@ amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connec
 	return 0;
 }
 
-int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_object *channel, amqp_channel_t channel_id)
+int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_resource *channel_resource, amqp_channel_t channel_id)
 {
 	assert(resource != NULL);
 	assert(resource->slots != NULL);
@@ -248,7 +248,8 @@ int php_amqp_connection_resource_register_channel(amqp_connection_resource *reso
 		return FAILURE;
 	}
 
-	resource->slots[channel_id - 1] = channel;
+	resource->slots[channel_id - 1] = channel_resource;
+	channel_resource->connection_resource = resource;
 	resource->used_slots++;
 
 	return SUCCESS;
@@ -261,6 +262,8 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 	assert(channel_id > 0 && channel_id <= resource->max_slots);
 
 	if (resource->slots[channel_id - 1] != 0) {
+		resource->slots[channel_id - 1]->connection_resource = NULL;
+
 		resource->slots[channel_id - 1] = 0;
 		resource->used_slots--;
 	}
@@ -400,7 +403,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
     resource->max_slots = (amqp_channel_t) amqp_get_channel_max(resource->connection_state);
 	assert(resource->max_slots > 0);
 
-	resource->slots = (amqp_channel_object **)pecalloc(resource->max_slots + 1, sizeof(amqp_channel_object*), persistent);
+	resource->slots = (amqp_channel_resource **)pecalloc(resource->max_slots + 1, sizeof(amqp_channel_object*), persistent);
 
 	resource->is_connected = '\1';
 
@@ -425,7 +428,6 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 {
 	assert(resource != NULL);
 
-	zend_rsrc_list_entry *le;
 #ifndef PHP_WIN32
 	void * old_handler;
 

@@ -59,12 +59,12 @@
 #endif
 
 #include "amqp_connection.h"
+#include "amqp_channel.h"
 #include "amqp_envelope.h"
 #include "amqp_exchange.h"
 #include "amqp_queue.h"
 
 /* True global resources - no need for thread safety here */
-zend_class_entry *amqp_channel_class_entry;
 
 zend_class_entry *amqp_exception_class_entry,
 				 *amqp_connection_exception_class_entry,
@@ -72,88 +72,10 @@ zend_class_entry *amqp_exception_class_entry,
 				 *amqp_queue_exception_class_entry,
 				 *amqp_exchange_exception_class_entry;
 
-
-/* The last parameter of ZEND_BEGIN_ARG_INFO_EX indicates how many of the method flags are required. */
-/* The first parameter of ZEND_ARG_INFO indicates whether the variable is being passed by reference */
-
-
-
-/* amqp_channel_class ARG_INFO definition */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_INFO(0, amqp_connection)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_isConnected, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_getChannelId, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_setPrefetchSize, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_INFO(0, size)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_getPrefetchSize, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_setPrefetchCount, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_INFO(0, count)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_getPrefetchCount, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_qos, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 2)
-	ZEND_ARG_INFO(0, size)
-	ZEND_ARG_INFO(0, count)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_startTransaction, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_commitTransaction, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_rollbackTransaction, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_getConnection, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_basicRecover, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-	ZEND_ARG_INFO(0, requeue)
-ZEND_END_ARG_INFO()
-
-
-
-
 /* {{{ amqp_functions[]
 *
 *Every user visible function must have an entry in amqp_functions[].
 */
-zend_function_entry amqp_channel_class_functions[] = {
-	PHP_ME(amqp_channel_class, __construct, 	arginfo_amqp_channel_class__construct,		ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_channel_class, isConnected, 	arginfo_amqp_channel_class_isConnected,		ZEND_ACC_PUBLIC)
-
-	PHP_ME(amqp_channel_class, getChannelId,    arginfo_amqp_channel_class_getChannelId,    ZEND_ACC_PUBLIC)
-
-	PHP_ME(amqp_channel_class, setPrefetchSize, arginfo_amqp_channel_class_setPrefetchSize,	ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_channel_class, getPrefetchSize, arginfo_amqp_channel_class_getPrefetchSize,	ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_channel_class, setPrefetchCount,arginfo_amqp_channel_class_setPrefetchCount,ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_channel_class, getPrefetchCount,arginfo_amqp_channel_class_getPrefetchCount,ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_channel_class, qos,				arginfo_amqp_channel_class_qos,				ZEND_ACC_PUBLIC)
-
-	PHP_ME(amqp_channel_class, startTransaction,	arginfo_amqp_channel_class_startTransaction,	ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_channel_class, commitTransaction,	arginfo_amqp_channel_class_commitTransaction,	ZEND_ACC_PUBLIC)
-	PHP_ME(amqp_channel_class, rollbackTransaction,	arginfo_amqp_channel_class_rollbackTransaction,	ZEND_ACC_PUBLIC)
-
-	PHP_ME(amqp_channel_class, getConnection,	arginfo_amqp_channel_class_getConnection, ZEND_ACC_PUBLIC)
-
-	PHP_ME(amqp_channel_class, basicRecover,	arginfo_amqp_channel_class_basicRecover, ZEND_ACC_PUBLIC)
-
-	{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
-};
-
 zend_function_entry amqp_functions[] = {
 	{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
 };
@@ -183,11 +105,11 @@ zend_module_entry amqp_module_entry = {
 	ZEND_GET_MODULE(amqp)
 #endif
 
-void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *connection_resource, amqp_channel_object *channel TSRMLS_DC)
+void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *connection_resource, amqp_channel_resource *channel_resource TSRMLS_DC)
 {
 	assert(connection_resource != NULL);
 
-	switch (php_amqp_connection_resource_error(reply, message, connection_resource, (channel ? channel->channel_id : 0) TSRMLS_CC)) {
+	switch (php_amqp_connection_resource_error(reply, message, connection_resource, (amqp_channel_t)(channel_resource ? channel_resource->channel_id : 0) TSRMLS_CC)) {
 		case PHP_AMQP_RESOURCE_RESPONSE_OK:
 			break;
 		case PHP_AMQP_RESOURCE_RESPONSE_ERROR:
@@ -195,12 +117,13 @@ void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_reso
 			break;
 		case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED:
 			/* Mark channel as closed to prevent sending channel.close request */
-			assert(channel != NULL);
-			channel->is_connected = '\0';
+			assert(channel_resource != NULL);
+			if (channel_resource) {
+				channel_resource->is_connected = '\0';
 
-			/* Close channel */
-			php_amqp_close_channel(channel TSRMLS_CC);
-
+				/* Close channel */
+				php_amqp_close_channel(channel_resource TSRMLS_CC);
+			}
 			/* No more error handling necessary, returning. */
 			break;
 		case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED:
@@ -252,14 +175,14 @@ void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exc
 }
 
 
-void php_amqp_maybe_release_buffers_on_channel(amqp_connection_resource *connection_resource, amqp_channel_object *channel)
+void php_amqp_maybe_release_buffers_on_channel(amqp_connection_resource *connection_resource, amqp_channel_resource *channel_resource)
 {
 	assert(connection_resource != NULL);
-	assert(channel != NULL);
-	assert(channel->channel_id > 0);
+	assert(channel_resource != NULL);
+	assert(channel_resource->channel_id > 0);
 
 	if (connection_resource) {
-		amqp_maybe_release_buffers_on_channel(connection_resource->connection_state, channel->channel_id);
+		amqp_maybe_release_buffers_on_channel(connection_resource->connection_state, channel_resource->channel_id);
 	}
 }
 
@@ -490,11 +413,7 @@ PHP_MINIT_FUNCTION(amqp)
 	le_amqp_connection_resource_persistent = zend_register_list_destructors_ex(NULL, amqp_connection_resource_dtor_persistent, PHP_AMQP_CONNECTION_RES_NAME, module_number);
 
 	PHP_MINIT(amqp_connection)(INIT_FUNC_ARGS_PASSTHRU);
-
-	INIT_CLASS_ENTRY(ce, "AMQPChannel", amqp_channel_class_functions);
-	ce.create_object = amqp_channel_ctor;
-	amqp_channel_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
-
+	PHP_MINIT(amqp_channel)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(amqp_queue)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(amqp_exchange)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(amqp_envelope)(INIT_FUNC_ARGS_PASSTHRU);
