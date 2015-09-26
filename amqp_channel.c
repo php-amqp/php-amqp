@@ -162,7 +162,7 @@ PHP_METHOD(amqp_channel_class, __construct)
 
 	/* Pull out and verify the connection */
 	connection = PHP_AMQP_GET_CONNECTION(connection_object);
-	AMQP_VERIFY_CONNECTION(connection, "Could not create channel.");
+	PHP_AMQP_VERIFY_CONNECTION(connection, "Could not create channel.");
 
 	zend_update_property(this_ce, getThis(), ZEND_STRL("connection"), connection_object TSRMLS_CC);
 

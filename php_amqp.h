@@ -135,10 +135,6 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define DEFAULT_FRAME_MAX					PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_FRAME_MAX)
 #define DEFAULT_HEARTBEAT					PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_HEARTBEAT)
 
-#define AMQP_READ_SUCCESS					1
-#define AMQP_READ_NO_MESSAGES				0
-#define AMQP_READ_ERROR						-1
-
 
 #define IS_PASSIVE(bitmask)		(AMQP_PASSIVE & (bitmask)) ? 1 : 0
 #define IS_DURABLE(bitmask)		(AMQP_DURABLE & (bitmask)) ? 1 : 0
@@ -168,62 +164,27 @@ extern zend_class_entry *amqp_exception_class_entry,
 #define PHP_AMQP_READ_THIS_PROP_LONG(name) Z_LVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 #define PHP_AMQP_READ_THIS_PROP_DOUBLE(name) Z_DVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 
-#define AMQP_SET_NAME(object, str) \
-	(object)->name_len = strlen(str) >= sizeof((object)->name) ? sizeof((object)->name) - 1 : strlen(str); \
-	strncpy((object)->name, name, (object)->name_len); \
-	(object)->name[(object)->name_len] = '\0';
-
-#define AMQP_SET_TYPE(object, str) \
-	(object)->type_len = strlen(str) >= sizeof((object)->type) ? sizeof((object)->type) - 1 : strlen(str); \
-	strncpy((object)->type, type, (object)->type_len); \
-	(object)->type[(object)->type_len] = '\0';
-
-#define AMQP_SET_LONG_PROPERTY(object, value) \
-	(object) = (value);
-
-#define AMQP_SET_BOOL_PROPERTY(object, value) \
-	(object) = (value) == 0 ? 0 : 1;
-
-#define AMQP_SET_STR_PROPERTY(object, str, len) \
-	strncpy((object), (str), (len) >= sizeof(object) ? sizeof(object) - 1 : (len)); \
-	(object)[(len) >= sizeof(object) ? sizeof(object) - 1 : (len)] = '\0';
-
-//#define PHP_AMQP_SET_STR_PROPERTY(zo, prop, str, len) \
-//	strncpy((object), (str), (len) >= sizeof(object) ? sizeof(object) - 1 : (len)); \
-//	(object)[(len) >= sizeof(object) ? sizeof(object) - 1 : (len)] = '\0';
-
-
-#define AMQP_GET_CONNECTION(object) \
-	(amqp_connection_object *) amqp_object_store_get_valid_object((object)->connection TSRMLS_CC);
-
 #define PHP_AMQP_GET_CONNECTION(obj) (amqp_connection_object *)zend_object_store_get_object((obj) TSRMLS_CC)
 #define PHP_AMQP_GET_CHANNEL(obj) (amqp_channel_object *)zend_object_store_get_object((obj) TSRMLS_CC)
 
 #define PHP_AMQP_GET_CHANNEL_RESOURCE(obj) ((amqp_channel_object *)zend_object_store_get_object((obj) TSRMLS_CC))->channel_resource
 
-#define AMQP_ASSIGN_CONNECTION(connection, object) \
-	if (!(object)->connection) { \
-		return; \
-	} \
-	connection = AMQP_GET_CONNECTION(object)
 
-
-
-#define AMQP_VERIFY_CONNECTION_ERROR(error, reason) \
+#define PHP_AMQP_VERIFY_CONNECTION_ERROR(error, reason) \
 		char verify_connection_error_tmp[255]; \
 		snprintf(verify_connection_error_tmp, 255, "%s %s", error, reason); \
 		zend_throw_exception(amqp_connection_exception_class_entry, verify_connection_error_tmp, 0 TSRMLS_CC); \
 		return; \
 
-#define AMQP_VERIFY_CONNECTION(connection, error) \
+#define PHP_AMQP_VERIFY_CONNECTION(connection, error) \
 	if (!connection) { \
-		AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
+		PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
 	} \
 	if (!(connection)->connection_resource || !(connection)->connection_resource->is_connected) { \
-		AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
+		PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
 	} \
 
-#define AMQP_VERIFY_CHANNEL_ERROR(error, reason) \
+#define PHP_AMQP_VERIFY_CHANNEL_ERROR(error, reason) \
 		char verify_channel_error_tmp[255]; \
 		snprintf(verify_channel_error_tmp, 255, "%s %s", error, reason); \
 		zend_throw_exception(amqp_channel_exception_class_entry, verify_channel_error_tmp, 0 TSRMLS_CC); \
@@ -231,27 +192,27 @@ extern zend_class_entry *amqp_exception_class_entry,
 
 #define PHP_AMQP_VERIFY_CHANNEL_RESOURCE(resource, error) \
 	if (!resource) { \
-		AMQP_VERIFY_CHANNEL_ERROR(error, "Stale reference to the channel object.") \
+		PHP_AMQP_VERIFY_CHANNEL_ERROR(error, "Stale reference to the channel object.") \
 	} \
 	if (!(resource)->is_connected) { \
-		AMQP_VERIFY_CHANNEL_ERROR(error, "No channel available.") \
+		PHP_AMQP_VERIFY_CHANNEL_ERROR(error, "No channel available.") \
 	} \
 	if (!(resource)->connection_resource) { \
-		AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
+		PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
 	} \
 	if (!(resource)->connection_resource->is_connected) { \
-		AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
+		PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
 	} \
 
 #define PHP_AMQP_VERIFY_CHANNEL_CONNECTION_RESOURCE(resource, error) \
 	if (!resource) { \
-		AMQP_VERIFY_CHANNEL_ERROR(error, "Stale reference to the channel object.") \
+		PHP_AMQP_VERIFY_CHANNEL_ERROR(error, "Stale reference to the channel object.") \
 	} \
 	if (!(resource)->connection_resource) { \
-		AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
+		PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "Stale reference to the connection object.") \
 	} \
 	if (!(resource)->connection_resource->is_connected) { \
-		AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
+		PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.") \
 	} \
 
 
