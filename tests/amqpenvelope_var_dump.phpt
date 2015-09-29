@@ -7,7 +7,7 @@ if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
 }
 --FILE--
 <?php
-require '_test_helpers.php';
+require '_test_helpers.php.inc';
 
 $cnn = new AMQPConnection();
 $cnn->connect();

@@ -4,7 +4,7 @@ AMQPEnvelope test get*() accessors
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
 <?php
-require '_test_helpers.php';
+require '_test_helpers.php.inc';
 
 $cnn = new AMQPConnection();
 $cnn->connect();

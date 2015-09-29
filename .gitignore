@@ -29,6 +29,6 @@ modules/*
 run-tests.php
 tests/*
 !tests/*.phpt
-!tests/_test_helpers.php
+!tests/_test_helpers.php.inc
 php_test_results_*
 tmp-php.ini
