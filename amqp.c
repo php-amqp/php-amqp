@@ -59,6 +59,7 @@
 #endif
 
 #include "amqp_connection.h"
+#include "amqp_connection_resource.h"
 #include "amqp_channel.h"
 #include "amqp_envelope.h"
 #include "amqp_exchange.h"

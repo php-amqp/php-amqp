@@ -31,6 +31,8 @@
 extern int le_amqp_connection_resource;
 extern int le_amqp_connection_resource_persistent;
 
+void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_DC);
+
 typedef struct _amqp_connection_params {
   char *login;
   char *password;

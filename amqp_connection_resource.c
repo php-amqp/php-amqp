@@ -51,6 +51,7 @@
 #endif
 
 #include "php_amqp.h"
+#include "amqp_channel.h"
 #include "amqp_connection_resource.h"
 
 #ifndef E_DEPRECATED
@@ -424,6 +425,8 @@ ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor)
 	connection_resource_destructor(resource, 0 TSRMLS_CC);
 }
 
+
+
 static void connection_resource_destructor(amqp_connection_resource *resource, int persistent TSRMLS_DC)
 {
 	assert(resource != NULL);
@@ -439,6 +442,13 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 	/* Start ignoring SIGPIPE */
 	old_handler = signal(SIGPIPE, SIG_IGN);
 #endif
+
+	if (resource->slots) {
+		php_amqp_prepare_for_disconnect(resource TSRMLS_CC);
+
+		pefree(resource->slots, persistent);
+		resource->slots = NULL;
+	}
 
 	/* connection may be closed in case of previous failure */
 	if (resource->is_connected) {
@@ -456,12 +466,36 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 		pefree(resource->resource_key, persistent);
 	}
 
-	if (resource->slots) {
-		pefree(resource->slots, persistent);
-		resource->slots = NULL;
-	}
-
 	pefree(resource, persistent);
 }
 
+void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_DC)
+{
+	if (!resource) {
+		return;
+	}
 
+	if(resource->slots != NULL) {
+		/* NOTE: when we have persistent connection we do not move channels between php requests
+		 *       due to current php-amqp extension limitation in AMQPChannel where __construct == channel.open AMQP method call
+		 *       and __destruct = channel.close AMQP method call
+		 */
+
+		/* Clean up old memory allocations which are now invalid (new connection) */
+		amqp_channel_t slot;
+
+		for (slot = 0; slot < resource->max_slots; slot++) {
+			if (resource->slots[slot] != 0) {
+				php_amqp_close_channel(resource->slots[slot] TSRMLS_CC);
+			}
+		}
+	}
+
+	/* If it's persistent connection do not destroy connection resource (this keep connection alive) */
+	if (resource->is_persistent) {
+		/* Cleanup buffers to reduce memory usage in idle mode */
+		amqp_maybe_release_buffers(resource->connection_state);
+	}
+
+	return;
+}
