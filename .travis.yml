@@ -13,11 +13,16 @@ services:
   - rabbitmq
 
 matrix:
-#  exclude:
-#    - php: hhvm
-#      env: DB=pgsql  # PDO driver for pgsql is unsupported by HHVM (3rd party install for support)
   allow_failures:
+    # PHP 7 requires valgring >= 3.8.0 for leack checking, we have older on on travis
     - php: 7.0
+      env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+    - php: 7.0
+      env: LIBRABBITMQ_VERSION=v0.6.0 TEST_PHP_ARGS=-m
+    - php: 7.0
+      env: LIBRABBITMQ_VERSION=v0.7.0 TEST_PHP_ARGS=-m
+    - php: 7.0
+      env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
 
 #install:
 #  - sudo apt-get update
