@@ -28,18 +28,26 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active> <!- - yes, very - ->
  </developer>
  -->
- <date>2015-09-14</date>
+ <date>2015-11-03</date>
  <time>15:00:00</time>
  <version>
-  <release>1.6.0beta4</release>
+  <release>1.6.0</release>
   <api>1.0.0</api>
  </version>
  <stability>
-  <release>beta</release>
+  <release>stable</release>
   <api>stable</api>
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+1.6.0 Release:
+  * Various build fixes (Remi Collet)
+  * librabbitmq 0.5 compatibility (Remi Collet)
+
+  For a complete list of changes see:
+  https://github.com/pdezwart/php-amqp/compare/v1.6.0beta4...v1.6.0
+
+
 1.6.0beta4 Release:
   * Add ability to re-attach consuming callback (Bogdan Padalko)
   * Add AMQPQueue::getConsumerTag() method and fix consumer tag handling in AMQPQueue class methods (Bogdan Padalko)
