@@ -13,7 +13,7 @@ PHP_ARG_WITH(amqp, for amqp support,
 [  --with-amqp             Include amqp support])
 
 PHP_ARG_WITH(librabbitmq-dir,  for amqp,
-[  --with-librabbitmq-dir[=DIR]   Set the path to librabbit-mq install prefix.], yes)
+[  --with-librabbitmq-dir[=DIR]   Set the path to librabbitmq install prefix.], yes)
 
 
 if test "$PHP_AMQP" != "no"; then
