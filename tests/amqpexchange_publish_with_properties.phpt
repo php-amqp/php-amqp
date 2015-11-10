@@ -4,7 +4,7 @@ AMQPExchange publish with properties
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
 <?php
-require '_test_helpers.php';
+require '_test_helpers.php.inc';
 
 $cnn = new AMQPConnection();
 $cnn->connect();
@@ -56,7 +56,8 @@ $attrs_control = array(
 echo $ex->publish('message', 'routing.key', AMQP_NOPARAM, $attrs) ? 'true' : 'false', PHP_EOL;
 
 
-echo 'Message attributes are ', $attrs == $attrs_control ? 'the same' : 'not the same', PHP_EOL;
+//var_dump($attrs, $attrs_control);
+echo 'Message attributes are ', $attrs === $attrs_control ? 'the same' : 'not the same', PHP_EOL;
 
 $msg = $q->get(AMQP_AUTOACK);
 

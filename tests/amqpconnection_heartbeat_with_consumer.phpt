@@ -9,7 +9,7 @@ $credentials = array('heartbeat' => $heartbeat, 'read_timeout' => $heartbeat * 2
 $cnn = new AMQPConnection($credentials);
 $cnn->connect();
 
-debug_zval_dump($cnn);
+var_dump($cnn);
 
 $ch = new AMQPChannel($cnn);
 
@@ -37,8 +37,18 @@ $q->consume(function (AMQPEnvelope $envelope) {
   echo 'Consumed: ', $envelope->getBody(), PHP_EOL;
   return false;
 });
+$t = microtime(true) - $t;
 
-echo 'Consuming took: ', (float) round(microtime(true) - $t, 4), 'sec', PHP_EOL;
+echo 'Consuming took: ', (float) round($t, 4), 'sec', PHP_EOL;
+
+$t_min = (float)round($heartbeat * 9.5, 4);
+$t_max = (float)round($heartbeat * 10.5, 4);
+
+if ($t > $t_min && $t < $t_max) {
+  echo "Timing OK ($t_min < $t < $t_max)", PHP_EOL;
+} else {
+  echo "Timing ERROR ($t_min < $t < $t_max)", PHP_EOL;
+}
 
 $ch2 = new AMQPChannel($cnn);
 
@@ -50,38 +60,31 @@ echo 'Done', PHP_EOL
 
 ?>
 --EXPECTF--
-object(AMQPConnection)#1 (15) refcount(2){
-  ["login"]=>
-  string(5) "guest" refcount(1)
-  ["password"]=>
-  string(5) "guest" refcount(1)
-  ["host"]=>
-  string(9) "localhost" refcount(1)
-  ["vhost"]=>
-  string(1) "/" refcount(1)
-  ["port"]=>
-  long(5672) refcount(1)
-  ["read_timeout"]=>
-  double(40) refcount(1)
-  ["write_timeout"]=>
-  double(0) refcount(1)
-  ["connect_timeout"]=>
-  double(0) refcount(1)
-  ["is_connected"]=>
-  bool(true) refcount(1)
-  ["is_persistent"]=>
-  bool(false) refcount(1)
-  ["connection_resource"]=>
-  resource(4) of type (AMQP Connection Resource) refcount(1)
-  ["used_channels"]=>
-  long(0) refcount(1)
-  ["max_channel_id"]=>
-  long(256) refcount(1)
-  ["max_frame_size"]=>
-  long(131072) refcount(1)
-  ["heartbeat_interval"]=>
-  long(2) refcount(1)
+object(AMQPConnection)#1 (11) {
+  ["login":"AMQPConnection":private]=>
+  string(5) "guest"
+  ["password":"AMQPConnection":private]=>
+  string(5) "guest"
+  ["host":"AMQPConnection":private]=>
+  string(9) "localhost"
+  ["vhost":"AMQPConnection":private]=>
+  string(1) "/"
+  ["port":"AMQPConnection":private]=>
+  %s(5672)
+  ["read_timeout":"AMQPConnection":private]=>
+  %s(40)
+  ["write_timeout":"AMQPConnection":private]=>
+  %s(0)
+  ["connect_timeout":"AMQPConnection":private]=>
+  %s(0)
+  ["channel_max":"AMQPConnection":private]=>
+  %s(256)
+  ["frame_max":"AMQPConnection":private]=>
+  %s(131072)
+  ["heartbeat":"AMQPConnection":private]=>
+  %s(2)
 }
 Consumed: test message 1 (should be dead lettered)
-Consuming took: 20%fsec
+Consuming took: %fsec
+Timing OK (%f < %f < %f)
 Done

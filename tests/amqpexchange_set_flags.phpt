@@ -20,20 +20,77 @@ $ex->setFlags(AMQP_PASSIVE | AMQP_DURABLE | AMQP_AUTODELETE | AMQP_INTERNAL);
 var_dump($ex);
 ?>
 --EXPECTF--
-object(AMQPExchange)#3 (7) {
-  ["name"]=>
+object(AMQPExchange)#3 (9) {
+  ["connection":"AMQPExchange":private]=>
+  object(AMQPConnection)#1 (11) {
+    ["login":"AMQPConnection":private]=>
+    string(5) "guest"
+    ["password":"AMQPConnection":private]=>
+    string(5) "guest"
+    ["host":"AMQPConnection":private]=>
+    string(9) "localhost"
+    ["vhost":"AMQPConnection":private]=>
+    string(1) "/"
+    ["port":"AMQPConnection":private]=>
+    int(5672)
+    ["read_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["write_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["connect_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["channel_max":"AMQPConnection":private]=>
+    int(256)
+    ["frame_max":"AMQPConnection":private]=>
+    int(131072)
+    ["heartbeat":"AMQPConnection":private]=>
+    int(0)
+  }
+  ["channel":"AMQPExchange":private]=>
+  object(AMQPChannel)#2 (3) {
+    ["connection":"AMQPChannel":private]=>
+    object(AMQPConnection)#1 (11) {
+      ["login":"AMQPConnection":private]=>
+      string(5) "guest"
+      ["password":"AMQPConnection":private]=>
+      string(5) "guest"
+      ["host":"AMQPConnection":private]=>
+      string(9) "localhost"
+      ["vhost":"AMQPConnection":private]=>
+      string(1) "/"
+      ["port":"AMQPConnection":private]=>
+      int(5672)
+      ["read_timeout":"AMQPConnection":private]=>
+      float(0)
+      ["write_timeout":"AMQPConnection":private]=>
+      float(0)
+      ["connect_timeout":"AMQPConnection":private]=>
+      float(0)
+      ["channel_max":"AMQPConnection":private]=>
+      int(256)
+      ["frame_max":"AMQPConnection":private]=>
+      int(131072)
+      ["heartbeat":"AMQPConnection":private]=>
+      int(0)
+    }
+    ["prefetch_count":"AMQPChannel":private]=>
+    int(3)
+    ["prefetch_size":"AMQPChannel":private]=>
+    int(0)
+  }
+  ["name":"AMQPExchange":private]=>
   string(%d) "exchange-%f"
-  ["type"]=>
+  ["type":"AMQPExchange":private]=>
   string(6) "fanout"
-  ["passive"]=>
+  ["passive":"AMQPExchange":private]=>
   bool(true)
-  ["durable"]=>
+  ["durable":"AMQPExchange":private]=>
   bool(true)
-  ["auto_delete"]=>
+  ["auto_delete":"AMQPExchange":private]=>
   bool(true)
-  ["internal"]=>
+  ["internal":"AMQPExchange":private]=>
   bool(true)
-  ["arguments"]=>
+  ["arguments":"AMQPExchange":private]=>
   array(1) {
     ["x-ha-policy"]=>
     string(3) "all"

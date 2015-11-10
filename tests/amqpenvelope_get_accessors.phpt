@@ -4,7 +4,7 @@ AMQPEnvelope test get*() accessors
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
 <?php
-require '_test_helpers.php';
+require '_test_helpers.php.inc';
 
 $cnn = new AMQPConnection();
 $cnn->connect();
@@ -21,10 +21,18 @@ $q->declareQueue();
 // Bind it on the exchange to routing.key
 $q->bind($ex->getName(), 'routing.*');
 // Publish a message to the exchange with a routing key
-$ex->publish('message', 'routing.1');
+$ex->publish('message', 'routing.1', AMQP_NOPARAM, array('headers' => array('foo' => 'bar')));
 
 // Read from the queue
-$q->consume('dump_message');
+$msg = $q->get();
+dump_message($msg);
+
+$header = $msg->getHeader('foo');
+var_dump($header);
+$header = 'changed';
+$header = $msg->getHeader('foo');
+var_dump($header);
+
 ?>
 --EXPECTF--
 AMQPEnvelope
@@ -63,5 +71,9 @@ AMQPEnvelope
     getCorrelationId:
         string(0) ""
     getHeaders:
-        array(0) {
+        array(1) {
+  ["foo"]=>
+  string(3) "bar"
 }
+string(3) "bar"
+string(3) "bar"

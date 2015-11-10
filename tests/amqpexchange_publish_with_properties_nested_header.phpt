@@ -36,7 +36,8 @@ $ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => $headers
 
 $message =$q->get(AMQP_AUTOACK);
 var_dump($message->getHeaders());
-echo $message->getHeaders() == $headers ? 'same' : 'differs';
+var_dump($headers);
+echo $message->getHeaders() === $headers ? 'same' : 'differs';
 echo PHP_EOL, PHP_EOL;
 
 
@@ -56,7 +57,8 @@ $ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => $headers
 
 $message =$q->get(AMQP_AUTOACK);
 var_dump($message->getHeaders());
-echo $message->getHeaders() == $headers ? 'same' : 'differs';
+var_dump($headers);
+echo $message->getHeaders() === $headers ? 'same' : 'differs';
 echo PHP_EOL, PHP_EOL;
 
 ?>
@@ -77,8 +79,45 @@ array(1) {
     }
   }
 }
+array(1) {
+  ["nested"]=>
+  array(3) {
+    ["string"]=>
+    string(6) "passed"
+    [999]=>
+    string(13) "numeric works"
+    ["sub-nested"]=>
+    array(2) {
+      ["should"]=>
+      string(5) "works"
+      [42]=>
+      string(3) "too"
+    }
+  }
+}
 same
 
+array(1) {
+  ["x-death"]=>
+  array(1) {
+    [0]=>
+    array(5) {
+      ["reason"]=>
+      string(8) "rejected"
+      ["queue"]=>
+      string(8) "my_queue"
+      ["time"]=>
+      int(1410527691)
+      ["exchange"]=>
+      string(11) "my_exchange"
+      ["routing-keys"]=>
+      array(1) {
+        [0]=>
+        string(14) "my_routing_key"
+      }
+    }
+  }
+}
 array(1) {
   ["x-death"]=>
   array(1) {

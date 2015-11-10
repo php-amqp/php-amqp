@@ -9,144 +9,92 @@ if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
 --FILE--
 <?php
 $cnn = new AMQPConnection();
+var_dump($cnn->isConnected());
 var_dump($cnn);
 $cnn->connect();
+var_dump($cnn->isConnected());
 $cnn->connect();
-var_dump($cnn);
-
-$c = new AMQPChannel($cnn);
-
+var_dump($cnn->isConnected());
 var_dump($cnn);
 
 $cnn->disconnect();
+var_dump($cnn->isConnected());
 var_dump($cnn);
 ?>
 --EXPECT--
-object(AMQPConnection)#1 (15) {
-  ["login"]=>
+bool(false)
+object(AMQPConnection)#1 (11) {
+  ["login":"AMQPConnection":private]=>
   string(5) "guest"
-  ["password"]=>
+  ["password":"AMQPConnection":private]=>
   string(5) "guest"
-  ["host"]=>
+  ["host":"AMQPConnection":private]=>
   string(9) "localhost"
-  ["vhost"]=>
+  ["vhost":"AMQPConnection":private]=>
   string(1) "/"
-  ["port"]=>
+  ["port":"AMQPConnection":private]=>
   int(5672)
-  ["read_timeout"]=>
+  ["read_timeout":"AMQPConnection":private]=>
   float(0)
-  ["write_timeout"]=>
+  ["write_timeout":"AMQPConnection":private]=>
   float(0)
-  ["connect_timeout"]=>
+  ["connect_timeout":"AMQPConnection":private]=>
   float(0)
-  ["is_connected"]=>
-  bool(false)
-  ["is_persistent"]=>
-  bool(false)
-  ["connection_resource"]=>
-  NULL
-  ["used_channels"]=>
-  NULL
-  ["max_channel_id"]=>
-  NULL
-  ["max_frame_size"]=>
-  NULL
-  ["heartbeat_interval"]=>
-  NULL
-}
-object(AMQPConnection)#1 (15) {
-  ["login"]=>
-  string(5) "guest"
-  ["password"]=>
-  string(5) "guest"
-  ["host"]=>
-  string(9) "localhost"
-  ["vhost"]=>
-  string(1) "/"
-  ["port"]=>
-  int(5672)
-  ["read_timeout"]=>
-  float(0)
-  ["write_timeout"]=>
-  float(0)
-  ["connect_timeout"]=>
-  float(0)
-  ["is_connected"]=>
-  bool(true)
-  ["is_persistent"]=>
-  bool(false)
-  ["connection_resource"]=>
-  resource(4) of type (AMQP Connection Resource)
-  ["used_channels"]=>
-  int(0)
-  ["max_channel_id"]=>
+  ["channel_max":"AMQPConnection":private]=>
   int(256)
-  ["max_frame_size"]=>
+  ["frame_max":"AMQPConnection":private]=>
   int(131072)
-  ["heartbeat_interval"]=>
+  ["heartbeat":"AMQPConnection":private]=>
   int(0)
 }
-object(AMQPConnection)#1 (15) {
-  ["login"]=>
+bool(true)
+bool(true)
+object(AMQPConnection)#1 (11) {
+  ["login":"AMQPConnection":private]=>
   string(5) "guest"
-  ["password"]=>
+  ["password":"AMQPConnection":private]=>
   string(5) "guest"
-  ["host"]=>
+  ["host":"AMQPConnection":private]=>
   string(9) "localhost"
-  ["vhost"]=>
+  ["vhost":"AMQPConnection":private]=>
   string(1) "/"
-  ["port"]=>
+  ["port":"AMQPConnection":private]=>
   int(5672)
-  ["read_timeout"]=>
+  ["read_timeout":"AMQPConnection":private]=>
   float(0)
-  ["write_timeout"]=>
+  ["write_timeout":"AMQPConnection":private]=>
   float(0)
-  ["connect_timeout"]=>
+  ["connect_timeout":"AMQPConnection":private]=>
   float(0)
-  ["is_connected"]=>
-  bool(true)
-  ["is_persistent"]=>
-  bool(false)
-  ["connection_resource"]=>
-  resource(4) of type (AMQP Connection Resource)
-  ["used_channels"]=>
-  int(1)
-  ["max_channel_id"]=>
+  ["channel_max":"AMQPConnection":private]=>
   int(256)
-  ["max_frame_size"]=>
+  ["frame_max":"AMQPConnection":private]=>
   int(131072)
-  ["heartbeat_interval"]=>
+  ["heartbeat":"AMQPConnection":private]=>
   int(0)
 }
-object(AMQPConnection)#1 (15) {
-  ["login"]=>
+bool(false)
+object(AMQPConnection)#1 (11) {
+  ["login":"AMQPConnection":private]=>
   string(5) "guest"
-  ["password"]=>
+  ["password":"AMQPConnection":private]=>
   string(5) "guest"
-  ["host"]=>
+  ["host":"AMQPConnection":private]=>
   string(9) "localhost"
-  ["vhost"]=>
+  ["vhost":"AMQPConnection":private]=>
   string(1) "/"
-  ["port"]=>
+  ["port":"AMQPConnection":private]=>
   int(5672)
-  ["read_timeout"]=>
+  ["read_timeout":"AMQPConnection":private]=>
   float(0)
-  ["write_timeout"]=>
+  ["write_timeout":"AMQPConnection":private]=>
   float(0)
-  ["connect_timeout"]=>
+  ["connect_timeout":"AMQPConnection":private]=>
   float(0)
-  ["is_connected"]=>
-  bool(false)
-  ["is_persistent"]=>
-  bool(false)
-  ["connection_resource"]=>
-  NULL
-  ["used_channels"]=>
-  NULL
-  ["max_channel_id"]=>
-  NULL
-  ["max_frame_size"]=>
-  NULL
-  ["heartbeat_interval"]=>
-  NULL
+  ["channel_max":"AMQPConnection":private]=>
+  int(256)
+  ["frame_max":"AMQPConnection":private]=>
+  int(131072)
+  ["heartbeat":"AMQPConnection":private]=>
+  int(0)
 }

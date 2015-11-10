@@ -22,20 +22,77 @@ $q->declareQueue();
 var_dump($q);
 ?>
 --EXPECT--
-object(AMQPQueue)#4 (7) {
-  ["queue_name"]=>
+object(AMQPQueue)#4 (9) {
+  ["connection":"AMQPQueue":private]=>
+  object(AMQPConnection)#1 (11) {
+    ["login":"AMQPConnection":private]=>
+    string(5) "guest"
+    ["password":"AMQPConnection":private]=>
+    string(5) "guest"
+    ["host":"AMQPConnection":private]=>
+    string(9) "localhost"
+    ["vhost":"AMQPConnection":private]=>
+    string(1) "/"
+    ["port":"AMQPConnection":private]=>
+    int(5672)
+    ["read_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["write_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["connect_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["channel_max":"AMQPConnection":private]=>
+    int(256)
+    ["frame_max":"AMQPConnection":private]=>
+    int(131072)
+    ["heartbeat":"AMQPConnection":private]=>
+    int(0)
+  }
+  ["channel":"AMQPQueue":private]=>
+  object(AMQPChannel)#2 (3) {
+    ["connection":"AMQPChannel":private]=>
+    object(AMQPConnection)#1 (11) {
+      ["login":"AMQPConnection":private]=>
+      string(5) "guest"
+      ["password":"AMQPConnection":private]=>
+      string(5) "guest"
+      ["host":"AMQPConnection":private]=>
+      string(9) "localhost"
+      ["vhost":"AMQPConnection":private]=>
+      string(1) "/"
+      ["port":"AMQPConnection":private]=>
+      int(5672)
+      ["read_timeout":"AMQPConnection":private]=>
+      float(0)
+      ["write_timeout":"AMQPConnection":private]=>
+      float(0)
+      ["connect_timeout":"AMQPConnection":private]=>
+      float(0)
+      ["channel_max":"AMQPConnection":private]=>
+      int(256)
+      ["frame_max":"AMQPConnection":private]=>
+      int(131072)
+      ["heartbeat":"AMQPConnection":private]=>
+      int(0)
+    }
+    ["prefetch_count":"AMQPChannel":private]=>
+    int(3)
+    ["prefetch_size":"AMQPChannel":private]=>
+    int(0)
+  }
+  ["name":"AMQPQueue":private]=>
   string(14) "queue_var_dump"
-  ["consumer_tag"]=>
+  ["consumer_tag":"AMQPQueue":private]=>
   NULL
-  ["passive"]=>
+  ["passive":"AMQPQueue":private]=>
   bool(false)
-  ["durable"]=>
+  ["durable":"AMQPQueue":private]=>
   bool(false)
-  ["exclusive"]=>
+  ["exclusive":"AMQPQueue":private]=>
   bool(false)
-  ["auto_delete"]=>
+  ["auto_delete":"AMQPQueue":private]=>
   bool(true)
-  ["arguments"]=>
+  ["arguments":"AMQPQueue":private]=>
   array(0) {
   }
 }

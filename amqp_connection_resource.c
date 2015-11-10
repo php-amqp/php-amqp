@@ -51,6 +51,7 @@
 #endif
 
 #include "php_amqp.h"
+#include "amqp_channel.h"
 #include "amqp_connection_resource.h"
 
 #ifndef E_DEPRECATED
@@ -88,7 +89,7 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 
 					spprintf(message, 0, "Server connection error: %d, message: %.*s",
 						m->reply_code,
-						(int) m->reply_text.len,
+						(PHP5to7_param_str_len_type_t) m->reply_text.len,
 						(char *) m->reply_text.bytes
 					);
 
@@ -120,7 +121,7 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 
 					spprintf(message, 0, "Server channel error: %d, message: %.*s",
 						m->reply_code,
-						(int) m->reply_text.len,
+						(PHP5to7_param_str_len_type_t) m->reply_text.len,
 						(char *)m->reply_text.bytes
 					);
 
@@ -238,7 +239,7 @@ amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connec
 	return 0;
 }
 
-int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_object *channel, amqp_channel_t channel_id)
+int php_amqp_connection_resource_register_channel(amqp_connection_resource *resource, amqp_channel_resource *channel_resource, amqp_channel_t channel_id)
 {
 	assert(resource != NULL);
 	assert(resource->slots != NULL);
@@ -248,7 +249,8 @@ int php_amqp_connection_resource_register_channel(amqp_connection_resource *reso
 		return FAILURE;
 	}
 
-	resource->slots[channel_id - 1] = channel;
+	resource->slots[channel_id - 1] = channel_resource;
+	channel_resource->connection_resource = resource;
 	resource->used_slots++;
 
 	return SUCCESS;
@@ -261,6 +263,8 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 	assert(channel_id > 0 && channel_id <= resource->max_slots);
 
 	if (resource->slots[channel_id - 1] != 0) {
+		resource->slots[channel_id - 1]->connection_resource = NULL;
+
 		resource->slots[channel_id - 1] = 0;
 		resource->used_slots--;
 	}
@@ -271,7 +275,7 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 
 /* Creating and destroying resource */
 
-amqp_connection_resource *connection_resource_constructor(amqp_connection_object *connection, zend_bool persistent TSRMLS_DC)
+amqp_connection_resource *connection_resource_constructor(amqp_connection_params *params, zend_bool persistent TSRMLS_DC)
 {
 	struct timeval tv = {0};
 	struct timeval *tv_ptr = &tv;
@@ -288,27 +292,21 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 	/* Allocate space for the connection resource */
 	resource = (amqp_connection_resource *)pecalloc(1, sizeof(amqp_connection_resource), persistent);
 
-	/* Initialize all the data */
-	resource->is_connected  = 0;
-	resource->max_slots     = 0;
-	resource->used_slots    = 0;
-	resource->resource_id   = 0;
-
 	/* Create the connection */
 	resource->connection_state = amqp_new_connection();
 
 	/* Create socket object */
 	resource->socket = amqp_tcp_socket_new(resource->connection_state);
 
-	if (connection->connect_timeout > 0) {
-		tv.tv_sec = (long int) connection->connect_timeout;
-		tv.tv_usec = (long int) ((connection->connect_timeout - tv.tv_sec) * 1000000);
+	if (params->connect_timeout > 0) {
+		tv.tv_sec = (long int) params->connect_timeout;
+		tv.tv_usec = (long int) ((params->connect_timeout - tv.tv_sec) * 1000000);
 	} else {
 		tv_ptr = NULL;
 	}
 
 	/* Try to connect and verify that no error occurred */
-	if (amqp_socket_open_noblock(resource->socket, connection->host, connection->port, tv_ptr)) {
+	if (amqp_socket_open_noblock(resource->socket, params->host, params->port, tv_ptr)) {
 
 		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not connect to host.", 0 TSRMLS_CC);
 
@@ -317,12 +315,12 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 		return NULL;
 	}
 
-	if (!php_amqp_set_resource_read_timeout(resource, connection->read_timeout TSRMLS_CC)) {
+	if (!php_amqp_set_resource_read_timeout(resource, params->read_timeout TSRMLS_CC)) {
 		connection_resource_destructor(resource, persistent TSRMLS_CC);
 		return NULL;
 	}
 
-	if (!php_amqp_set_resource_write_timeout(resource, connection->write_timeout TSRMLS_CC)) {
+	if (!php_amqp_set_resource_write_timeout(resource, params->write_timeout TSRMLS_CC)) {
 		connection_resource_destructor(resource, persistent TSRMLS_CC);
 		return NULL;
 	}
@@ -361,18 +359,18 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 
 	/* We can assume that connection established here but it is not true, real handshake goes during login */
 
-	assert(connection->frame_max > 0);
+	assert(params->frame_max > 0);
 
 	amqp_rpc_reply_t res = amqp_login_with_properties(
 		resource->connection_state,
-		connection->vhost,
-		connection->channel_max,
-		connection->frame_max,
-		connection->heartbeat,
+		params->vhost,
+		params->channel_max,
+		params->frame_max,
+		params->heartbeat,
 		&custom_properties_table,
 		AMQP_SASL_METHOD_PLAIN,
-		connection->login,
-		connection->password
+		params->login,
+		params->password
 	);
 
 	efree(std_datetime);
@@ -406,7 +404,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
     resource->max_slots = (amqp_channel_t) amqp_get_channel_max(resource->connection_state);
 	assert(resource->max_slots > 0);
 
-	resource->slots = (amqp_channel_object **)pecalloc(resource->max_slots + 1, sizeof(amqp_channel_object*), persistent);
+	resource->slots = (amqp_channel_resource **)pecalloc(resource->max_slots + 1, sizeof(amqp_channel_object*), persistent);
 
 	resource->is_connected = '\1';
 
@@ -415,14 +413,14 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_object
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)rsrc->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)PHP5to7_ZEND_RESOURCE_DTOR_ARG->ptr;
 
 	connection_resource_destructor(resource, 1 TSRMLS_CC);
 }
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)rsrc->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)PHP5to7_ZEND_RESOURCE_DTOR_ARG->ptr;
 
 	connection_resource_destructor(resource, 0 TSRMLS_CC);
 }
@@ -431,7 +429,6 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 {
 	assert(resource != NULL);
 
-	zend_rsrc_list_entry *le;
 #ifndef PHP_WIN32
 	void * old_handler;
 
@@ -443,6 +440,17 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 	/* Start ignoring SIGPIPE */
 	old_handler = signal(SIGPIPE, SIG_IGN);
 #endif
+
+	if (resource->parent) {
+		resource->parent->connection_resource = NULL;
+	}
+
+	if (resource->slots) {
+		php_amqp_prepare_for_disconnect(resource TSRMLS_CC);
+
+		pefree(resource->slots, persistent);
+		resource->slots = NULL;
+	}
 
 	/* connection may be closed in case of previous failure */
 	if (resource->is_connected) {
@@ -460,12 +468,37 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 		pefree(resource->resource_key, persistent);
 	}
 
-	if (resource->slots) {
-		pefree(resource->slots, persistent);
-		resource->slots = NULL;
-	}
-
 	pefree(resource, persistent);
 }
 
+void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_DC)
+{
+	if (resource == NULL) {
+		return;
+	}
+
+	if(resource->slots != NULL) {
+		/* NOTE: when we have persistent connection we do not move channels between php requests
+		 *       due to current php-amqp extension limitation in AMQPChannel where __construct == channel.open AMQP method call
+		 *       and __destruct = channel.close AMQP method call
+		 */
+
+		/* Clean up old memory allocations which are now invalid (new connection) */
+		amqp_channel_t slot;
+
+		for (slot = 0; slot < resource->max_slots; slot++) {
+			if (resource->slots[slot] != 0) {
+				php_amqp_close_channel(resource->slots[slot] TSRMLS_CC);
+			}
+		}
+	}
+
+	/* If it's persistent connection do not destroy connection resource (this keep connection alive) */
+	if (resource->is_persistent) {
+		/* Cleanup buffers to reduce memory usage in idle mode */
+		amqp_maybe_release_buffers(resource->connection_state);
+	}
+
+	return;
+}
 

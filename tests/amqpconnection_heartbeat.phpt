@@ -9,7 +9,7 @@ $credentials = array('heartbeat' => $heartbeat);
 $cnn = new AMQPConnection($credentials);
 $cnn->connect();
 
-debug_zval_dump($cnn);
+var_dump($cnn);
 
 sleep($heartbeat*10);
 
@@ -22,36 +22,28 @@ $ch = new AMQPChannel($cnn);
 
 ?>
 --EXPECTF--
-object(AMQPConnection)#1 (15) refcount(2){
-  ["login"]=>
-  string(5) "guest" refcount(1)
-  ["password"]=>
-  string(5) "guest" refcount(1)
-  ["host"]=>
-  string(9) "localhost" refcount(1)
-  ["vhost"]=>
-  string(1) "/" refcount(1)
-  ["port"]=>
-  long(5672) refcount(1)
-  ["read_timeout"]=>
-  double(0) refcount(1)
-  ["write_timeout"]=>
-  double(0) refcount(1)
-  ["connect_timeout"]=>
-  double(0) refcount(1)
-  ["is_connected"]=>
-  bool(true) refcount(1)
-  ["is_persistent"]=>
-  bool(false) refcount(1)
-  ["connection_resource"]=>
-  resource(4) of type (AMQP Connection Resource) refcount(1)
-  ["used_channels"]=>
-  long(0) refcount(1)
-  ["max_channel_id"]=>
-  long(256) refcount(1)
-  ["max_frame_size"]=>
-  long(131072) refcount(1)
-  ["heartbeat_interval"]=>
-  long(2) refcount(1)
+object(AMQPConnection)#1 (11) {
+  ["login":"AMQPConnection":private]=>
+  string(5) "guest"
+  ["password":"AMQPConnection":private]=>
+  string(5) "guest"
+  ["host":"AMQPConnection":private]=>
+  string(9) "localhost"
+  ["vhost":"AMQPConnection":private]=>
+  string(1) "/"
+  ["port":"AMQPConnection":private]=>
+  %s(5672)
+  ["read_timeout":"AMQPConnection":private]=>
+  %s(0)
+  ["write_timeout":"AMQPConnection":private]=>
+  %s(0)
+  ["connect_timeout":"AMQPConnection":private]=>
+  %s(0)
+  ["channel_max":"AMQPConnection":private]=>
+  %s(256)
+  ["frame_max":"AMQPConnection":private]=>
+  %s(131072)
+  ["heartbeat":"AMQPConnection":private]=>
+  %s(2)
 }
 AMQPException: Library error: a socket error occurred

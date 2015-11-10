@@ -35,8 +35,13 @@ $msg = $q->get(AMQP_AUTOACK);
 echo $msg->getBody() . "\n";
 var_dump($msg->getHeaders());
 echo $msg->getContentType() . "\n";
+
+var_dump($msg->hasHeader("first"));
 echo $msg->getHeader("first") . "\n";
 echo $msg->getHeader("second") . "\n";
+
+echo 'Has nonexistent header: ', var_export($msg->hasHeader("nonexistent"), true), PHP_EOL;
+echo 'Get nonexistent header: ', var_export($msg->getHeader("nonexistent"), true), PHP_EOL;
 
 $ex->delete();
 $q->delete();
@@ -50,7 +55,8 @@ array(2) {
   int(2)
 }
 text/plain
+bool(true)
 one
 2
-
-
+Has nonexistent header: false
+Get nonexistent header: false

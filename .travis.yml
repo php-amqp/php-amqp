@@ -13,11 +13,16 @@ services:
   - rabbitmq
 
 matrix:
-#  exclude:
-#    - php: hhvm
-#      env: DB=pgsql  # PDO driver for pgsql is unsupported by HHVM (3rd party install for support)
   allow_failures:
+    # PHP 7 requires valgring >= 3.8.0 for leack checking, we have older on on travis
     - php: 7.0
+      env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+    - php: 7.0
+      env: LIBRABBITMQ_VERSION=v0.6.0 TEST_PHP_ARGS=-m
+    - php: 7.0
+      env: LIBRABBITMQ_VERSION=v0.7.0 TEST_PHP_ARGS=-m
+    - php: 7.0
+      env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
 
 #install:
 #  - sudo apt-get update
@@ -43,10 +48,11 @@ env:
     - LIBRABBITMQ_VERSION=v0.6.0
     - LIBRABBITMQ_VERSION=v0.7.0 TEST_PHP_ARGS=-m
     - LIBRABBITMQ_VERSION=v0.7.0
+    - LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
+    - LIBRABBITMQ_VERSION=v0.5.2
 
 
 before_install:
-#  - sh -c "php -i"
   - sh provision/install_rabbitmq-c.sh ${LIBRABBITMQ_VERSION}
   - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then phpize && ./configure  --with-librabbitmq-dir=$HOME/rabbitmq-c && make ; fi
 
@@ -55,6 +61,7 @@ install:
 
 script:
   - sh -c "make test | tee result.txt"
+  - php -n -c './tmp-php.ini' -d "extension_dir=./modules/" -d "extension=amqp.so" benchmark.php
   - sh test-report.sh
 
 addons:

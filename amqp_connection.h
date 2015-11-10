@@ -23,16 +23,9 @@
 
 /* $Id: amqp_connection.h 326660 2012-07-17 05:32:34Z pdezwart $ */
 
+extern zend_class_entry *amqp_connection_class_entry;
 
-void amqp_connection_dtor(void *object TSRMLS_DC);
-zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC);
-
-void php_amqp_connect(amqp_connection_object *amqp_connection, int persistent TSRMLS_DC);
-void php_amqp_disconnect_force(amqp_connection_object *connection TSRMLS_DC);
-void php_amqp_disconnect_safe(amqp_connection_object *connection TSRMLS_DC);
-
-
-
+int php_amqp_connect(amqp_connection_object *amqp_connection, zend_bool persistent, INTERNAL_FUNCTION_PARAMETERS);
 
 PHP_METHOD(amqp_connection_class, __construct);
 PHP_METHOD(amqp_connection_class, isConnected);
@@ -74,6 +67,8 @@ PHP_METHOD(amqp_connection_class, getHeartbeatInterval);
 PHP_METHOD(amqp_connection_class, getMaxFrameSize);
 #endif
 PHP_METHOD(amqp_connection_class, isPersistent);
+
+PHP_MINIT_FUNCTION(amqp_connection);
 
 /*
 *Local variables:

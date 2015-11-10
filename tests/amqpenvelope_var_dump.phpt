@@ -7,7 +7,7 @@ if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
 }
 --FILE--
 <?php
-require '_test_helpers.php';
+require '_test_helpers.php.inc';
 
 $cnn = new AMQPConnection();
 $cnn->connect();
@@ -31,84 +31,84 @@ $ex->publish('message', 'routing.1', AMQP_NOPARAM, array("headers" => array("tes
 $q->consume("consumeThings");
 $q->consume("consumeThings");
 ?>
---EXPECT--
+--EXPECTF--
 object(AMQPEnvelope)#5 (18) {
-  ["body"]=>
+  ["body":"AMQPEnvelope":private]=>
   string(7) "message"
-  ["content_type"]=>
-  string(10) "text/plain"
-  ["routing_key"]=>
-  string(9) "routing.1"
-  ["delivery_tag"]=>
+  ["delivery_tag":"AMQPEnvelope":private]=>
   int(1)
-  ["delivery_mode"]=>
-  int(1)
-  ["exchange_name"]=>
+  ["is_redelivery":"AMQPEnvelope":private]=>
+  bool(false)
+  ["exchange_name":"AMQPEnvelope":private]=>
   string(9) "exchange1"
-  ["is_redelivery"]=>
-  int(0)
-  ["content_encoding"]=>
+  ["routing_key":"AMQPEnvelope":private]=>
+  string(9) "routing.1"
+  ["content_type":"AMQPEnvelope":private]=>
+  string(10) "text/plain"
+  ["content_encoding":"AMQPEnvelope":private]=>
   string(0) ""
-  ["type"]=>
-  string(0) ""
-  ["timestamp"]=>
-  int(0)
-  ["priority"]=>
-  int(0)
-  ["expiration"]=>
-  string(0) ""
-  ["user_id"]=>
-  string(0) ""
-  ["app_id"]=>
-  string(0) ""
-  ["message_id"]=>
-  string(0) ""
-  ["reply_to"]=>
-  string(0) ""
-  ["correlation_id"]=>
-  string(0) ""
-  ["headers"]=>
+  ["headers":"AMQPEnvelope":private]=>
   array(0) {
   }
-}
-object(AMQPEnvelope)#5 (18) {
-  ["body"]=>
-  string(7) "message"
-  ["content_type"]=>
-  string(10) "text/plain"
-  ["routing_key"]=>
-  string(9) "routing.1"
-  ["delivery_tag"]=>
-  int(2)
-  ["delivery_mode"]=>
+  ["delivery_mode":"AMQPEnvelope":private]=>
   int(1)
-  ["exchange_name"]=>
+  ["priority":"AMQPEnvelope":private]=>
+  int(0)
+  ["correlation_id":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["reply_to":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["expiration":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["message_id":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["timestamp":"AMQPEnvelope":private]=>
+  int(0)
+  ["type":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["user_id":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["app_id":"AMQPEnvelope":private]=>
+  string(0) ""
+}
+object(AMQPEnvelope)#%d (18) {
+  ["body":"AMQPEnvelope":private]=>
+  string(7) "message"
+  ["delivery_tag":"AMQPEnvelope":private]=>
+  int(2)
+  ["is_redelivery":"AMQPEnvelope":private]=>
+  bool(false)
+  ["exchange_name":"AMQPEnvelope":private]=>
   string(9) "exchange1"
-  ["is_redelivery"]=>
-  int(0)
-  ["content_encoding"]=>
+  ["routing_key":"AMQPEnvelope":private]=>
+  string(9) "routing.1"
+  ["content_type":"AMQPEnvelope":private]=>
+  string(10) "text/plain"
+  ["content_encoding":"AMQPEnvelope":private]=>
   string(0) ""
-  ["type"]=>
-  string(0) ""
-  ["timestamp"]=>
-  int(0)
-  ["priority"]=>
-  int(0)
-  ["expiration"]=>
-  string(0) ""
-  ["user_id"]=>
-  string(0) ""
-  ["app_id"]=>
-  string(0) ""
-  ["message_id"]=>
-  string(0) ""
-  ["reply_to"]=>
-  string(0) ""
-  ["correlation_id"]=>
-  string(0) ""
-  ["headers"]=>
+  ["headers":"AMQPEnvelope":private]=>
   array(1) {
     ["test"]=>
     string(6) "passed"
   }
+  ["delivery_mode":"AMQPEnvelope":private]=>
+  int(1)
+  ["priority":"AMQPEnvelope":private]=>
+  int(0)
+  ["correlation_id":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["reply_to":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["expiration":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["message_id":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["timestamp":"AMQPEnvelope":private]=>
+  int(0)
+  ["type":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["user_id":"AMQPEnvelope":private]=>
+  string(0) ""
+  ["app_id":"AMQPEnvelope":private]=>
+  string(0) ""
 }

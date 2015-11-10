@@ -99,6 +99,17 @@ class AMQPEnvelope
     }
 
     /**
+     * Check whether specific message header exists.
+     *
+     * @param string $header_key Name of the header to check.
+     *
+     * @return boolean
+     */
+    public function hasHeader($header_key)
+    {
+    }
+
+    /**
      * Get the headers of the message.
      *
      * @return array An array of key value pairs associated with the message.
