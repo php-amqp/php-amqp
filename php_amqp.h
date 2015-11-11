@@ -320,7 +320,7 @@ typedef struct _amqp_connection_object {
 #endif
 
 #ifndef PHP_AMQP_VERSION
-#define PHP_AMQP_VERSION "1.6.0"
+#define PHP_AMQP_VERSION "1.7.0alpha1"
 #endif
 
 #ifndef PHP_AMQP_REVISION

@@ -33,3 +33,4 @@ tests/*
 !tests/_test_helpers.php.inc
 php_test_results_*
 tmp-php.ini
+*.tgz
