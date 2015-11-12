@@ -118,7 +118,7 @@ typedef struct _amqp_channel_object {
 #endif
 } amqp_channel_object;
 
-typedef struct _amqp_connection_resource {
+struct _amqp_connection_resource {
 	zend_bool is_connected;
 	zend_bool is_persistent;
 	zend_bool is_dirty;
@@ -131,9 +131,9 @@ typedef struct _amqp_connection_resource {
 	PHP5to7_param_str_len_type_t resource_key_len;
 	amqp_connection_state_t connection_state;
 	amqp_socket_t *socket;
-} amqp_connection_resource;
+};
 
-typedef struct _amqp_connection_object {
+struct _amqp_connection_object {
 #if PHP_MAJOR_VERSION >= 7
 	amqp_connection_resource *connection_resource;
 	zend_object zo;
@@ -141,7 +141,7 @@ typedef struct _amqp_connection_object {
 	zend_object zo;
 	amqp_connection_resource *connection_resource;
 #endif
-} amqp_connection_object;
+};
 
 #define DEFAULT_PORT						"5672"		/* default AMQP port */
 #define DEFAULT_HOST						"localhost"
