@@ -2,13 +2,12 @@
 
 echo Provisioning...
 sudo apt-get update
+sudo apt-get -y autoremove
 
 # Make sure these tools installed
-sudo apt-get install -y git curl pkgconf
-
-# Add PPA with fresh PHP:
-sudo add-apt-repository -y ppa:ondrej/php5-5.6
-sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git htop curl tshark pkgconf
+# Add PPA with fresh PHP 5:
+sudo add-apt-repository -u -y ppa:ondrej/php5-5.6
 
 # Install available php from packages
 sudo apt-get install -y php5 php5-cli php5-dev php5-fpm
@@ -30,25 +29,25 @@ sudo mkdir -p /var/www/html/
 sudo chown -R vagrant:vagrant /var/www
 
 # Requirements to build php from sources
-sudo apt-get install -y libxml2-dev \
-                        libcurl4-openssl-dev \
-                        libjpeg-dev \
-                        libpng-dev \
-                        libxpm-dev \
-                        libmcrypt-dev \
-                        libmysqlclient-dev \
-                        libpq-dev \
-                        libicu-dev \
-                        libfreetype6-dev \
-                        libldap2-dev \
-                        libxslt-dev \
-                        libbz2-dev \
-                        libreadline-dev \
-                        autoconf \
-                        libtool \
-                        pkg-config \
-                        valgrind \
-                        tshark
+sudo apt-get install -y \
+    libxml2-dev \
+    libcurl4-openssl-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libxpm-dev \
+    libmcrypt-dev \
+    libmysqlclient-dev \
+    libpq-dev \
+    libicu-dev \
+    libfreetype6-dev \
+    libldap2-dev \
+    libxslt-dev \
+    libbz2-dev \
+    libreadline-dev \
+    autoconf \
+    libtool \
+    pkg-config \
+    valgrind
 
 # Benchmarking...
 sudo apt-get install -y apache2-utils
@@ -78,6 +77,7 @@ sudo apt-get update
 #sudo apt-get install --only-upgrade -y rabbitmq-server
 sudo apt-get install -y rabbitmq-server
 sudo rabbitmq-plugins enable rabbitmq_management
+sudo cp ~/php-amqp/provision/rabbitmq.config /etc/rabbitmq/
 sudo service rabbitmq-server restart
 
 # Note: it may be good idea to checkout latest stable rabbitmq-c version, but master branch for dev reasons also good
@@ -98,7 +98,7 @@ cd rabbitmq-c && autoreconf -i && ./configure && make && sudo make install
 #sudo sh -c "echo '/home/vagrant/php-amqp/coredump-%e.%p' > /proc/sys/kernel/core_pattern"
 
 # To test with typical dev configuration - with xdebug:
-#sudo apt-get install php5-xdebug
+#sudo apt-get install -y php5-xdebug
 
 # Cleanup unused stuff
 sudo apt-get autoremove -y
