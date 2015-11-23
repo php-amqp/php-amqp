@@ -28,10 +28,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active> <!- - yes, very - ->
  </developer>
  -->
- <date>2015-11-03</date>
- <time>15:00:00</time>
+ <date>2015-11-23</date>
+ <time>19:00:00</time>
  <version>
-  <release>1.6.0</release>
+  <release>1.6.1</release>
   <api>1.0.0</api>
  </version>
  <stability>
@@ -40,6 +40,13 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
+1.6.1 Release:
+  * Fix invalid amqp_table_t arguments population and freeing
+  * Fix not properly deleted connection resource
+
+  For a complete list of changes see:
+  https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.6.1
+
 1.6.0 Release:
   * Various build fixes (Remi Collet)
   * librabbitmq 0.5 compatibility (Remi Collet)
