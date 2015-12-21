@@ -142,9 +142,9 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 	connection_params.frame_max = (int) PHP_AMQP_READ_THIS_PROP_LONG("frame_max");
 	connection_params.channel_max = (int) PHP_AMQP_READ_THIS_PROP_LONG("channel_max");
 	connection_params.heartbeat = (int) PHP_AMQP_READ_THIS_PROP_LONG("heartbeat");
-	connection_params.read_timeout = (int) PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout");
-	connection_params.write_timeout = (int) PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout");
-	connection_params.connect_timeout = (int) PHP_AMQP_READ_THIS_PROP_DOUBLE("connect_timeout");
+	connection_params.read_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout");
+	connection_params.write_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout");
+	connection_params.connect_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("connect_timeout");
 
 
 	if (persistent) {
