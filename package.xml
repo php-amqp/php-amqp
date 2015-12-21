@@ -28,10 +28,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active> <!- - yes, very - ->
  </developer>
  -->
- <date>2015-11-11</date>
- <time>15:00:00</time>
+ <date>2015-12-21</date>
+ <time>15:30:00</time>
  <version>
-  <release>1.7.0-dev</release>
+  <release>1.7.0alpha2</release>
   <api>1.0.0</api>
  </version>
  <stability>
@@ -40,15 +40,11 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes><![CDATA[
-    * Add PHP7 support (Bogdan Padalko, Steffen Hanikel)
-    * Add AMQPEnvelope::hasHeader(), AMQPExchange::hasArgument() and AMQPQueue::hasArgument() to check whether specific header exists (Bogdan Padalko)
-    * Completely move to zend object custom objects (AMQPEnvelope, AMQPExchange and AMQPQueue) (Bogdan Padalko)
-    * Use zend object on custom objects for properties storing (AMQPConnection and AMQPChannel) (Bogdan Padalko)
-    * Fix not properly deleted connection resource. (Bogdan Padalko, Steffen Hanikel)
-    * Fix not properly allocated and freed amqp_table_t arguments table memory. (Bogdan Padalko, Steffen Hanikel)
+* Fix AMQPConnection::setPort() writes to wrong property (Bogdan Padalko)
+* Upgrade vagrant box to Ubuntu 15.10 Wily Werwof (Bogdan Padalko)
 
-    For a complete list of changes see:
-    https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0alpha1
+For a complete list of changes see:
+https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha1...v1.7.0alpha2
  ]]></notes>
  <contents>
   <dir name="/">
@@ -233,6 +229,29 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </extsrcrelease>
 
  <changelog>
+  <!-- -->
+  <release>
+   <version>
+    <release>1.7.0-dev</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes><![CDATA[
+      * Add PHP7 support (Bogdan Padalko, Steffen Hanikel)
+      * Add AMQPEnvelope::hasHeader(), AMQPExchange::hasArgument() and AMQPQueue::hasArgument() to check whether specific header exists (Bogdan Padalko)
+      * Completely move to zend object custom objects (AMQPEnvelope, AMQPExchange and AMQPQueue) (Bogdan Padalko)
+      * Use zend object on custom objects for properties storing (AMQPConnection and AMQPChannel) (Bogdan Padalko)
+      * Fix not properly deleted connection resource. (Bogdan Padalko, Steffen Hanikel)
+      * Fix not properly allocated and freed amqp_table_t arguments table memory. (Bogdan Padalko, Steffen Hanikel)
+
+      For a complete list of changes see:
+      https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0alpha1
+   ]]></notes>
+  </release>
   <!-- -->
   <release>
    <version>
