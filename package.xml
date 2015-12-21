@@ -40,11 +40,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes><![CDATA[
-* Fix AMQPConnection::setPort() writes to wrong property (Bogdan Padalko)
-* Upgrade vagrant box to Ubuntu 15.10 Wily Werwof (Bogdan Padalko)
+* TBD
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha1...v1.7.0alpha2
+https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha2...v1.7.0
  ]]></notes>
  <contents>
   <dir name="/">
@@ -229,10 +228,28 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha1...v1.7.0alpha2
  </extsrcrelease>
 
  <changelog>
+  <release>
+   <version>
+    <release>1.7.0alpha2</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes><![CDATA[
+  * Fix AMQPConnection::setPort() writes to wrong property (Bogdan Padalko)
+  * Upgrade vagrant box to Ubuntu 15.10 Wily Werwof (Bogdan Padalko)
+
+  For a complete list of changes see:
+  https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha1...v1.7.0alpha2
+   ]]></notes>
+  </release>
   <!-- -->
   <release>
    <version>
-    <release>1.7.0-dev</release>
+    <release>1.7.0alpha1</release>
     <api>1.0.0</api>
    </version>
    <stability>
