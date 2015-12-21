@@ -843,7 +843,7 @@ PHP_METHOD(amqp_connection_class, setPort)
 		return;
 	}
 
-	zend_update_property_long(this_ce, getThis(), ZEND_STRL("read_timeout"), port TSRMLS_CC);
+	zend_update_property_long(this_ce, getThis(), ZEND_STRL("port"), port TSRMLS_CC);
 
 	RETURN_TRUE;
 }

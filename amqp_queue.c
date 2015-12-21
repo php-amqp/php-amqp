@@ -125,6 +125,9 @@ PHP_METHOD(amqp_queue_class, setName)
 
 	/* Set the queue name */
 	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("name"), name, name_len TSRMLS_CC);
+
+	/* BC */
+	RETURN_TRUE;
 }
 /* }}} */
 

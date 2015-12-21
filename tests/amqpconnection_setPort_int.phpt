@@ -5,7 +5,9 @@ AMQPConnection constructor
 --FILE--
 <?php
 $cnn = new AMQPConnection();
-echo $cnn->setPort(12345);
+echo var_export($cnn->setPort(12345), true), PHP_EOL;
+echo $cnn->getPort(), PHP_EOL;
 ?>
 --EXPECT--
-1
+true
+12345
