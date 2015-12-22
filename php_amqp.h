@@ -233,8 +233,7 @@ struct _amqp_connection_object {
 #endif
 
 
-#define PHP_AMQP_GET_CHANNEL_RESOURCE(obj) (PHP_AMQP_GET_CHANNEL(obj))->channel_resource
-
+#define PHP_AMQP_GET_CHANNEL_RESOURCE(obj) (IS_OBJECT == Z_TYPE_P(obj) ? (PHP_AMQP_GET_CHANNEL(obj))->channel_resource : NULL)
 
 #define PHP_AMQP_VERIFY_CONNECTION_ERROR(error, reason) \
 		char verify_connection_error_tmp[255]; \
