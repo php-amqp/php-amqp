@@ -121,7 +121,7 @@ static void php_amqp_disconnect(amqp_connection_resource *resource TSRMLS_DC)
 }
 
 
-static void php_amqp_disconnect_force(amqp_connection_resource *resource TSRMLS_DC)
+void php_amqp_disconnect_force(amqp_connection_resource *resource TSRMLS_DC)
 {
 	php_amqp_prepare_for_disconnect(resource TSRMLS_CC);
 	resource->is_dirty = '\1';
@@ -1096,7 +1096,6 @@ PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 }
 /* }}} */
 #endif
-
 
 /* {{{ proto amqp::isPersistent()
 check whether amqp connection is persistent */

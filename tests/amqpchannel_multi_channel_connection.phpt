@@ -1,5 +1,5 @@
 --TEST--
-Multiple AMQPChannels per AMQPConnection
+AMQPConnection - multiple AMQPChannels per AMQPConnection
 --SKIPIF--
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
