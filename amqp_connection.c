@@ -28,7 +28,6 @@
 
 #include "php.h"
 #include "php_ini.h"
-#include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
 #ifdef PHP_WIN32
@@ -63,6 +62,30 @@ zend_class_entry *amqp_connection_class_entry;
 zend_object_handlers amqp_connection_object_handlers;
 
 
+static int php_amqp_connection_resource_deleter(PHP5to7_zend_resource_le_t *el, amqp_connection_resource *connection_resource TSRMLS_DC)
+{
+    if (Z_RES_P(el)->ptr == connection_resource) {
+		return ZEND_HASH_APPLY_REMOVE | ZEND_HASH_APPLY_STOP;
+    }
+
+	return ZEND_HASH_APPLY_KEEP;
+}
+
+static PHP5to7_param_str_len_type_t php_amqp_get_connection_hash(amqp_connection_params *params, char **hash) {
+	return spprintf(hash,
+					0,
+					"amqp_conn_res_h:%s_p:%d_v:%s_l:%s_p:%s_f:%d_c:%d_h:%d",
+					params->host,
+					params->port,
+					params->vhost,
+					params->login,
+					params->password,
+					params->frame_max,
+					params->channel_max,
+					params->heartbeat
+	);
+}
+
 static void php_amqp_cleanup_connection_resource(amqp_connection_resource *connection_resource TSRMLS_DC)
 {
 	if (!connection_resource) {
@@ -76,15 +99,7 @@ static void php_amqp_cleanup_connection_resource(amqp_connection_resource *conne
 
 	if (connection_resource->is_dirty) {
 		if (connection_resource->is_persistent) {
-
-			PHP5to7_zend_resource_le_t *le = PHP5to7_ZEND_RESOURCE_LE_EMPTY;
-
-			if (PHP5to7_ZEND_HASH_FIND(&EG(persistent_list), connection_resource->resource_key, connection_resource->resource_key_len + 1, le)) {
-
-				if (PHP5to7_ZEND_RSRC_TYPE_P(Z_RES_P(le)) == le_amqp_connection_resource_persistent) {
-					PHP5to7_ZEND_HASH_DEL(&EG(persistent_list), connection_resource->resource_key, (uint)(connection_resource->resource_key_len + 1));
-				}
-			}
+			zend_hash_apply_with_argument(&EG(persistent_list), (apply_func_arg_t)php_amqp_connection_resource_deleter, (void*)connection_resource TSRMLS_CC);
 		}
 
 		zend_list_delete(resource);
@@ -122,7 +137,8 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
-	char *key;	PHP5to7_param_str_len_type_t key_len;
+	char *key = NULL;
+	PHP5to7_param_str_len_type_t key_len = 0;
 
 	if (connection->connection_resource) {
 		/* Clean up old memory allocations which are now invalid (new connection) */
@@ -150,19 +166,9 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 		PHP5to7_zend_resource_store_t *le = PHP5to7_ZEND_RESOURCE_EMPTY;
 
 		/* Look for an established resource */
-		key_len = spprintf(&key, 0,
-						   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
-						   connection_params.host,
-						   connection_params.port,
-						   connection_params.vhost,
-						   connection_params.login,
-						   connection_params.password,
-						   connection_params.frame_max,
-						   connection_params.channel_max,
-						   connection_params.heartbeat
-		);
+		key_len = php_amqp_get_connection_hash(&connection_params, &key);
 
-		if (PHP5to7_ZEND_HASH_STR_FIND_PTR(&EG(persistent_list), key, key_len + 1, le)) {
+		if (PHP5to7_ZEND_HASH_STR_FIND_PTR(&EG(persistent_list), key, key_len, le)) {
 			efree(key);
 
 			if (le->type != le_amqp_connection_resource_persistent) {
@@ -218,22 +224,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 	if (persistent) {
 		connection->connection_resource->is_persistent = persistent;
 
-		key_len = spprintf(&key, 0,
-						   "amqp_conn_res_%s_%d_%s_%s_%s_%d_%d_%d",
-						   connection_params.host,
-						   connection_params.port,
-						   connection_params.vhost,
-						   connection_params.login,
-						   connection_params.password,
-						   connection_params.frame_max,
-						   connection_params.channel_max,
-						   connection_params.heartbeat
-		);
-
-		connection->connection_resource->resource_key     = pestrndup(key, (uint) key_len, persistent);
-		connection->connection_resource->resource_key_len = key_len;
-
-		efree(key);
+		key_len = php_amqp_get_connection_hash(&connection_params, &key);
 
 		PHP5to7_zend_resource_store_t new_le;
 
@@ -241,10 +232,12 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 		new_le.ptr  = connection->connection_resource;
 		new_le.type = persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource;
 
-		if (!PHP5to7_ZEND_HASH_STR_UPD_MEM(&EG(persistent_list), connection->connection_resource->resource_key, connection->connection_resource->resource_key_len + 1, new_le, sizeof(PHP5to7_zend_resource_store_t))) {
+		if (!PHP5to7_ZEND_HASH_STR_UPD_MEM(&EG(persistent_list), key, key_len, new_le, sizeof(PHP5to7_zend_resource_store_t))) {
+			efree(key);
 			php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 			return 0;
 		}
+		efree(key);
 	}
 
 	return 1;

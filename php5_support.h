@@ -47,7 +47,8 @@ typedef zval* PHP5to7_zval_t;
 #define PHP5to7_ZEND_HASH_DEL(ht, key, len) zend_hash_del_key_or_index((ht), (key), (uint)(len), 0, HASH_DEL_KEY);
 #define PHP5to7_ZEND_HASH_ADD(ht, key, len, pData, nDataSize) (zend_hash_add((ht), (key), (uint)(len), &(pData), nDataSize, NULL) != FAILURE)
 #define PHP5to7_ZEND_HASH_STR_UPD_MEM(ht, key, len, pData, nDataSize) PHP5to7_ZEND_HASH_ADD((ht), (key), (len), (pData), (nDataSize))
-#define PHP5to7_ZEND_HASH_STR_FIND_PTR(ht, str, len, res) PHP5to7_ZEND_HASH_FIND((ht), (str), (len), (res))
+#define PHP5to7_ZEND_HASH_STR_FIND_PTR(ht, key, len, res) PHP5to7_ZEND_HASH_FIND((ht), (key), (len), (res))
+#define PHP5to7_ZEND_HASH_STR_DEL(ht, key, len) PHP5to7_ZEND_HASH_DEL((ht), (key), (len))
 
 #define PHP5to7_SET_FCI_RETVAL_PTR(fci, pzv) (fci).retval_ptr_ptr = &(pzv);
 #define PHP5to7_CHECK_FCI_RETVAL_PTR(fci) ((fci).retval_ptr_ptr && *(fci).retval_ptr_ptr)

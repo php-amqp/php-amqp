@@ -128,8 +128,6 @@ struct _amqp_connection_resource {
 	amqp_channel_t max_slots;
 	amqp_channel_t used_slots;
 	amqp_channel_resource **slots;
-	char *resource_key;
-	PHP5to7_param_str_len_type_t resource_key_len;
 	amqp_connection_state_t connection_state;
 	amqp_socket_t *socket;
 };
