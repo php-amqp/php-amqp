@@ -71,6 +71,7 @@ static void php_amqp_cleanup_connection_resource(amqp_connection_resource *conne
 
 	PHP5to7_zend_resource_t resource = connection_resource->resource;
 
+	connection_resource->parent->connection_resource = NULL;
 	connection_resource->parent = NULL;
 
 	if (connection_resource->is_dirty) {
@@ -126,8 +127,6 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 	if (connection->connection_resource) {
 		/* Clean up old memory allocations which are now invalid (new connection) */
 		php_amqp_cleanup_connection_resource(connection->connection_resource TSRMLS_CC);
-
-		connection->connection_resource = NULL;
 	}
 
 	assert(connection->connection_resource == NULL);
@@ -191,7 +190,6 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 			    || php_amqp_set_resource_write_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout") TSRMLS_CC) == 0) {
 
 				php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-				connection->connection_resource = NULL;
 			   return 0;
 			}
 
@@ -245,7 +243,6 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
 		if (!PHP5to7_ZEND_HASH_STR_UPD_MEM(&EG(persistent_list), connection->connection_resource->resource_key, connection->connection_resource->resource_key_len + 1, new_le, sizeof(PHP5to7_zend_resource_store_t))) {
 			php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-			connection->connection_resource = NULL;
 			return 0;
 		}
 	}
@@ -259,7 +256,6 @@ void amqp_connection_free(PHP5to7_obj_free_zend_object *object TSRMLS_DC)
 
 	if (connection->connection_resource) {
 		php_amqp_disconnect(connection->connection_resource TSRMLS_CC);
-		connection->connection_resource = NULL;
 	}
 
 	zend_object_std_dtor(&connection->zo TSRMLS_CC);
@@ -596,7 +592,6 @@ PHP_METHOD(amqp_connection_class, pdisconnect)
 	}
 
 	php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-	connection->connection_resource = NULL;
 
 	RETURN_TRUE;
 }
@@ -627,7 +622,6 @@ PHP_METHOD(amqp_connection_class, disconnect)
 	assert(connection->connection_resource != NULL);
 
 	php_amqp_disconnect(connection->connection_resource TSRMLS_CC);
-	connection->connection_resource = NULL;
 
 	RETURN_TRUE;
 }
@@ -656,7 +650,6 @@ PHP_METHOD(amqp_connection_class, reconnect)
 		}
 
 		php_amqp_disconnect(connection->connection_resource TSRMLS_CC);
-		connection->connection_resource = NULL;
 	}
 
 	RETURN_BOOL(php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU));
@@ -686,7 +679,6 @@ PHP_METHOD(amqp_connection_class, preconnect)
 		}
 
 		php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-		connection->connection_resource = NULL;
 	}
 
 	RETURN_BOOL(php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU));
@@ -926,7 +918,6 @@ PHP_METHOD(amqp_connection_class, setTimeout)
 		if (php_amqp_set_resource_read_timeout(connection->connection_resource, read_timeout TSRMLS_CC) == 0) {
 
 			php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-			connection->connection_resource = NULL;
 
 			RETURN_FALSE;
 		}
@@ -973,7 +964,6 @@ PHP_METHOD(amqp_connection_class, setReadTimeout)
 		if (php_amqp_set_resource_read_timeout(connection->connection_resource, read_timeout TSRMLS_CC) == 0) {
 
 			php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-			connection->connection_resource = NULL;
 
 			RETURN_FALSE;
 		}
@@ -1020,7 +1010,6 @@ PHP_METHOD(amqp_connection_class, setWriteTimeout)
 		if (php_amqp_set_resource_write_timeout(connection->connection_resource, write_timeout TSRMLS_CC) == 0) {
 
 			php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-			connection->connection_resource = NULL;
 
 			RETURN_FALSE;
 		}
