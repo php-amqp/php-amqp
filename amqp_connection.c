@@ -1056,6 +1056,7 @@ PHP_METHOD(amqp_connection_class, getUsedChannels)
 Get max supported channels number per connection */
 PHP_METHOD(amqp_connection_class, getMaxChannels)
 {
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	amqp_connection_object *connection;
 
 	PHP_AMQP_NOPARAMS();
@@ -1063,13 +1064,11 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
 	/* Get the connection object out of the store */
 	connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-	if (!connection->connection_resource || !connection->connection_resource->is_connected) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
-
-		RETURN_NULL();
+	if (connection->connection_resource && connection->connection_resource->is_connected) {
+		RETURN_LONG(connection->connection_resource->max_slots);
 	}
 
-	RETURN_LONG(connection->connection_resource->max_slots);
+	PHP_AMQP_RETURN_THIS_PROP("channel_max");
 }
 /* }}} */
 
@@ -1078,6 +1077,7 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
 Get max supported frame size per connection in bytes */
 PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 {
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	amqp_connection_object *connection;
 
 	PHP_AMQP_NOPARAMS();
@@ -1085,13 +1085,11 @@ PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 	/* Get the connection object out of the store */
 	connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-	if (!connection->connection_resource || !connection->connection_resource->is_connected) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
-
-		RETURN_NULL();
+	if (connection->connection_resource && connection->connection_resource->is_connected) {
+		RETURN_LONG(amqp_get_frame_max(connection->connection_resource->connection_state));
 	}
 
-	RETURN_LONG(amqp_get_frame_max(connection->connection_resource->connection_state));
+	PHP_AMQP_RETURN_THIS_PROP("frame_max");
 }
 /* }}} */
 
@@ -1099,6 +1097,7 @@ PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 Get number of seconds between heartbeats of the connection in seconds */
 PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 {
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	amqp_connection_object *connection;
 
 	PHP_AMQP_NOPARAMS();
@@ -1106,16 +1105,16 @@ PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 	/* Get the connection object out of the store */
 	connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-	if (!connection->connection_resource || !connection->connection_resource->is_connected) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
-
-		RETURN_NULL();
+	if (connection->connection_resource != NULL
+		&& connection->connection_resource->is_connected != '\0') {
+		RETURN_LONG(amqp_get_heartbeat(connection->connection_resource->connection_state));
 	}
 
-	RETURN_LONG(amqp_get_heartbeat(connection->connection_resource->connection_state));
+	PHP_AMQP_RETURN_THIS_PROP("heartbeat");
 }
 /* }}} */
 #endif
+
 
 /* {{{ proto amqp::isPersistent()
 check whether amqp connection is persistent */
