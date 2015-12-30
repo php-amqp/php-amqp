@@ -526,6 +526,7 @@ PHP_METHOD(amqp_queue_class, setArguments)
 	/* Destroy the arguments storage */
 	if (queue->arguments) {
 		zval_ptr_dtor(&queue->arguments);
+		ALLOC_INIT_ZVAL(queue->arguments);
 	}
 
 	MAKE_COPY_ZVAL(&arguments, queue->arguments);
