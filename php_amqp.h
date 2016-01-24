@@ -128,8 +128,6 @@ struct _amqp_connection_resource {
 	amqp_channel_t max_slots;
 	amqp_channel_t used_slots;
 	amqp_channel_resource **slots;
-	char *resource_key;
-	PHP5to7_param_str_len_type_t resource_key_len;
 	amqp_connection_state_t connection_state;
 	amqp_socket_t *socket;
 };
@@ -235,8 +233,7 @@ struct _amqp_connection_object {
 #endif
 
 
-#define PHP_AMQP_GET_CHANNEL_RESOURCE(obj) (PHP_AMQP_GET_CHANNEL(obj))->channel_resource
-
+#define PHP_AMQP_GET_CHANNEL_RESOURCE(obj) (IS_OBJECT == Z_TYPE_P(obj) ? (PHP_AMQP_GET_CHANNEL(obj))->channel_resource : NULL)
 
 #define PHP_AMQP_VERIFY_CONNECTION_ERROR(error, reason) \
 		char verify_connection_error_tmp[255]; \

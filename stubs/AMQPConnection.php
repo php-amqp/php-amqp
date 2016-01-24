@@ -312,7 +312,10 @@ class AMQPConnection
     /**
      * Get the maximum number of channels the connection can handle.
      *
-     * @return int|null
+     * When connection is connected, effective connection value returned, which is normally the same as original
+     * correspondent value passed to constructor, otherwise original value passed to constructor returned.
+     *
+     * @return int
      */
     public function getMaxChannels()
     {
@@ -321,7 +324,10 @@ class AMQPConnection
     /**
      * Get max supported frame size per connection in bytes.
      *
-     * @return int|null
+     * When connection is connected, effective connection value returned, which is normally the same as original
+     * correspondent value passed to constructor, otherwise original value passed to constructor returned.
+     *
+     * @return int
      */
     public function getMaxFrameSize()
     {
@@ -330,7 +336,10 @@ class AMQPConnection
     /**
      * Get number of seconds between heartbeats of the connection in seconds.
      *
-     * @return int|null
+     * When connection is connected, effective connection value returned, which is normally the same as original
+     * correspondent value passed to constructor, otherwise original value passed to constructor returned.
+     *
+     * @return int
      */
     public function getHeartbeatInterval()
     {
@@ -339,7 +348,9 @@ class AMQPConnection
     /**
      * Whether connection persistent.
      *
-     * @return bool|null
+     * When connection is not connected, boolean false always returned
+     *
+     * @return bool
      */
     public function isPersistent()
     {

@@ -464,10 +464,6 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 	signal(SIGPIPE, old_handler);
 #endif
 
-	if (resource->resource_key_len) {
-		pefree(resource->resource_key, persistent);
-	}
-
 	pefree(resource, persistent);
 }
 

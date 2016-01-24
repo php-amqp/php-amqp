@@ -80,7 +80,7 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource TSRMLS_DC)
 
 	channel_resource->is_connected = '\0';
 
-	if (connection_resource && connection_resource->is_connected) {
+	if (connection_resource && connection_resource->is_connected && channel_resource->channel_id > 0) {
 		assert(connection_resource != NULL);
 
 		amqp_channel_close(connection_resource->connection_state, channel_resource->channel_id, AMQP_REPLY_SUCCESS);
@@ -222,8 +222,12 @@ PHP_METHOD(amqp_channel_class, __construct)
 
 		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 
-		php_amqp_connection_resource_unregister_channel(channel_resource->connection_resource, channel_resource->channel_id);
-		channel_resource->channel_id = 0;
+		/* Prevent double free, it may happens in case case channel resource was already freed due to some hard error. */
+		if (channel_resource->connection_resource) {
+			php_amqp_connection_resource_unregister_channel(channel_resource->connection_resource, channel_resource->channel_id);
+			channel_resource->channel_id = 0;
+		}
+
 		return;
 	}
 

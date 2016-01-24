@@ -110,7 +110,15 @@ void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_reso
 		case PHP_AMQP_RESOURCE_RESPONSE_OK:
 			break;
 		case PHP_AMQP_RESOURCE_RESPONSE_ERROR:
-			/* Library or other non-protocol or even protocol related errors may be here, do nothing with this for now. */
+			/* Library or other non-protocol or even protocol related errors may be here. */
+			/* In most cases it designate some underlying hard errors. Fail fast. */
+		case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED:
+			/* Mark connection resource as closed to prevent sending any further requests */
+			connection_resource->is_connected = '\0';
+
+			/* Close connection with all its channels */
+			php_amqp_disconnect_force(connection_resource TSRMLS_CC);
+
 			break;
 		case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED:
 			/* Mark channel as closed to prevent sending channel.close request */
@@ -121,16 +129,6 @@ void php_amqp_error(amqp_rpc_reply_t reply, char **message, amqp_connection_reso
 				/* Close channel */
 				php_amqp_close_channel(channel_resource TSRMLS_CC);
 			}
-			/* No more error handling necessary, returning. */
-			break;
-		case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED:
-			/* Mark connection as closed to prevent sending any further requests */
-			connection_resource->is_connected = '\0';
-
-			/* Close connection with all its channels */
-			php_amqp_prepare_for_disconnect(connection_resource TSRMLS_CC);
-			connection_resource->is_dirty = '\1';
-
 			/* No more error handling necessary, returning. */
 			break;
 		default:

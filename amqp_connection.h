@@ -26,6 +26,7 @@
 extern zend_class_entry *amqp_connection_class_entry;
 
 int php_amqp_connect(amqp_connection_object *amqp_connection, zend_bool persistent, INTERNAL_FUNCTION_PARAMETERS);
+void php_amqp_disconnect_force(amqp_connection_resource *resource TSRMLS_DC);
 
 PHP_METHOD(amqp_connection_class, __construct);
 PHP_METHOD(amqp_connection_class, isConnected);
@@ -62,10 +63,8 @@ PHP_METHOD(amqp_connection_class, setWriteTimeout);
 
 PHP_METHOD(amqp_connection_class, getUsedChannels);
 PHP_METHOD(amqp_connection_class, getMaxChannels);
-#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH > 52
 PHP_METHOD(amqp_connection_class, getHeartbeatInterval);
 PHP_METHOD(amqp_connection_class, getMaxFrameSize);
-#endif
 PHP_METHOD(amqp_connection_class, isPersistent);
 
 PHP_MINIT_FUNCTION(amqp_connection);
