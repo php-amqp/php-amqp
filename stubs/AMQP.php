@@ -66,11 +66,16 @@ define('AMQP_IFUNUSED', 512);
 
 /**
  * When publishing a message, the message must be routed to a valid queue. If it is not, an error will be returned.
+ * Note: This flag does not currently work in pecl-amqp, and WILL cause undefined behavior if you use it.
+ * @link https://bugs.php.net/bug.php?id=62786
+ * @link https://github.com/pdezwart/php-amqp/issues/23
  */
 define('AMQP_MANDATORY', 1024);
 
 /**
- * When publishing a message, mark this message for immediate processing by the broker. (High priority message.)
+ * When publishing a message, the message must be routed to a valid queue with an available consumer. If it is not, an
+ * error will be thrown. If this flag is not set, the server will queue the message, but with no guarantee that it will
+ * ever be consumed.
  */
 define('AMQP_IMMEDIATE', 2048);
 
