@@ -326,7 +326,7 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 	} PHP5to7_ZEND_HASH_FOREACH_END();
 };
 
-inline amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC)
+amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC)
 {
 	amqp_table_t *arguments;
 	/* In setArguments, we are overwriting all the existing values */

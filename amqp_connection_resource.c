@@ -173,7 +173,7 @@ int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, doubl
 	if (timeout == 0.) {
 		read_timeout = 0;
 	} else {
-		read_timeout = (int) (max(connection->read_timeout * 1.e+3 - .5e+3, 1.));
+		read_timeout = (int) (max(timeout * 1.e+3 - .5e+3, 1.));
 	}
 #else
 	struct timeval read_timeout;
