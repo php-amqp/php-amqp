@@ -58,7 +58,7 @@ zend_class_entry *amqp_exchange_class_entry;
 
 /* {{{ proto AMQPExchange::__construct(AMQPChannel channel);
 create Exchange   */
-PHP_METHOD(amqp_exchange_class, __construct)
+static PHP_METHOD(amqp_exchange_class, __construct)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -87,7 +87,7 @@ PHP_METHOD(amqp_exchange_class, __construct)
 
 /* {{{ proto AMQPExchange::getName()
 Get the exchange name */
-PHP_METHOD(amqp_exchange_class, getName)
+static PHP_METHOD(amqp_exchange_class, getName)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -105,7 +105,7 @@ PHP_METHOD(amqp_exchange_class, getName)
 
 /* {{{ proto AMQPExchange::setName(string name)
 Set the exchange name */
-PHP_METHOD(amqp_exchange_class, setName)
+static PHP_METHOD(amqp_exchange_class, setName)
 {
 	char *name = NULL;
 	PHP5to7_param_str_len_type_t name_len = 0;
@@ -128,7 +128,7 @@ PHP_METHOD(amqp_exchange_class, setName)
 
 /* {{{ proto AMQPExchange::getFlags()
 Get the exchange parameters */
-PHP_METHOD(amqp_exchange_class, getFlags)
+static PHP_METHOD(amqp_exchange_class, getFlags)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -159,7 +159,7 @@ PHP_METHOD(amqp_exchange_class, getFlags)
 
 /* {{{ proto AMQPExchange::setFlags(long bitmask)
 Set the exchange parameters */
-PHP_METHOD(amqp_exchange_class, setFlags)
+static PHP_METHOD(amqp_exchange_class, setFlags)
 {
 	PHP5to7_param_long_type_t flagBitmask;
 
@@ -180,7 +180,7 @@ PHP_METHOD(amqp_exchange_class, setFlags)
 
 /* {{{ proto AMQPExchange::getType()
 Get the exchange type */
-PHP_METHOD(amqp_exchange_class, getType)
+static PHP_METHOD(amqp_exchange_class, getType)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -198,7 +198,7 @@ PHP_METHOD(amqp_exchange_class, getType)
 
 /* {{{ proto AMQPExchange::setType(string type)
 Set the exchange type */
-PHP_METHOD(amqp_exchange_class, setType)
+static PHP_METHOD(amqp_exchange_class, setType)
 {
 	char *type = NULL;	PHP5to7_param_str_len_type_t type_len = 0;
 
@@ -213,7 +213,7 @@ PHP_METHOD(amqp_exchange_class, setType)
 
 /* {{{ proto AMQPExchange::getArgument(string key)
 Get the exchange argument referenced by key */
-PHP_METHOD(amqp_exchange_class, getArgument)
+static PHP_METHOD(amqp_exchange_class, getArgument)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -234,7 +234,7 @@ PHP_METHOD(amqp_exchange_class, getArgument)
 /* }}} */
 
 /* {{{ proto AMQPExchange::hasArgument(string key) */
-PHP_METHOD(amqp_exchange_class, hasArgument)
+static PHP_METHOD(amqp_exchange_class, hasArgument)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -256,7 +256,7 @@ PHP_METHOD(amqp_exchange_class, hasArgument)
 
 /* {{{ proto AMQPExchange::getArguments
 Get the exchange arguments */
-PHP_METHOD(amqp_exchange_class, getArguments)
+static PHP_METHOD(amqp_exchange_class, getArguments)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -267,7 +267,7 @@ PHP_METHOD(amqp_exchange_class, getArguments)
 
 /* {{{ proto AMQPExchange::setArguments(array args)
 Overwrite all exchange arguments with given args */
-PHP_METHOD(amqp_exchange_class, setArguments)
+static PHP_METHOD(amqp_exchange_class, setArguments)
 {
 	zval *zvalArguments;
 
@@ -283,7 +283,7 @@ PHP_METHOD(amqp_exchange_class, setArguments)
 
 
 /* {{{ proto AMQPExchange::setArgument(key, value) */
-PHP_METHOD(amqp_exchange_class, setArgument)
+static PHP_METHOD(amqp_exchange_class, setArgument)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -320,7 +320,7 @@ PHP_METHOD(amqp_exchange_class, setArgument)
 /* {{{ proto AMQPExchange::declareExchange();
 declare Exchange
 */
-PHP_METHOD(amqp_exchange_class, declareExchange)
+static PHP_METHOD(amqp_exchange_class, declareExchange)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -347,7 +347,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 	}
 
 	arguments = convert_zval_to_amqp_table(PHP_AMQP_READ_THIS_PROP("arguments") TSRMLS_CC);
-	
+
 #if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH > 52
 	amqp_exchange_declare(
 		channel_resource->connection_resource->connection_state,
@@ -376,16 +376,9 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 
 	php_amqp_free_amqp_table(arguments);
 
-	/* handle any errors that occured outside of signals */
-	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
-		PHP_AMQP_INIT_ERROR_MESSAGE();
-
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, channel_resource->connection_resource, channel_resource TSRMLS_CC);
-
-		php_amqp_zend_throw_exception(res, amqp_exchange_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
+	if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+		php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry TSRMLS_CC);
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
@@ -399,7 +392,7 @@ PHP_METHOD(amqp_exchange_class, declareExchange)
 /* {{{ proto AMQPExchange::delete([string name[, long params]]);
 delete Exchange
 */
-PHP_METHOD(amqp_exchange_class, delete)
+static PHP_METHOD(amqp_exchange_class, delete)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -426,15 +419,9 @@ PHP_METHOD(amqp_exchange_class, delete)
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
-	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
-		PHP_AMQP_INIT_ERROR_MESSAGE();
-
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, channel_resource->connection_resource, channel_resource TSRMLS_CC);
-
-		php_amqp_zend_throw_exception(res, amqp_exchange_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
+	if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+		php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry TSRMLS_CC);
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
@@ -448,7 +435,7 @@ PHP_METHOD(amqp_exchange_class, delete)
 /* {{{ proto AMQPExchange::publish(string msg, [string key, [int flags, [array headers]]]);
 publish into Exchange
 */
-PHP_METHOD(amqp_exchange_class, publish)
+static PHP_METHOD(amqp_exchange_class, publish)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -647,14 +634,10 @@ PHP_METHOD(amqp_exchange_class, publish)
 		res.reply_type 	  = AMQP_RESPONSE_LIBRARY_EXCEPTION;
 		res.library_error = status;
 
-		PHP_AMQP_INIT_ERROR_MESSAGE();
+		php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource TSRMLS_CC);
 
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, channel_resource->connection_resource, channel_resource TSRMLS_CC);
-
-		php_amqp_zend_throw_exception(res, amqp_queue_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
+		php_amqp_zend_throw_exception(res, amqp_exchange_exception_class_entry, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
@@ -666,7 +649,7 @@ PHP_METHOD(amqp_exchange_class, publish)
 /* {{{ proto int exchange::bind(string srcExchangeName[, string routingKey, array arguments]);
 bind exchange to exchange by routing key
 */
-PHP_METHOD(amqp_exchange_class, bind)
+static PHP_METHOD(amqp_exchange_class, bind)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -708,15 +691,9 @@ PHP_METHOD(amqp_exchange_class, bind)
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
-	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
-		PHP_AMQP_INIT_ERROR_MESSAGE();
-
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, channel_resource->connection_resource, channel_resource TSRMLS_CC);
-
-		php_amqp_zend_throw_exception(res, amqp_exchange_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
+	if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+		php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry TSRMLS_CC);
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
@@ -729,7 +706,7 @@ PHP_METHOD(amqp_exchange_class, bind)
 /* {{{ proto int exchange::unbind(string srcExchangeName[, string routingKey, array arguments]);
 remove exchange to exchange binding by routing key
 */
-PHP_METHOD(amqp_exchange_class, unbind)
+static PHP_METHOD(amqp_exchange_class, unbind)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
@@ -771,15 +748,9 @@ PHP_METHOD(amqp_exchange_class, unbind)
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
-	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
-		PHP_AMQP_INIT_ERROR_MESSAGE();
-
-		php_amqp_error(res, PHP_AMQP_ERROR_MESSAGE_PTR, channel_resource->connection_resource, channel_resource TSRMLS_CC);
-
-		php_amqp_zend_throw_exception(res, amqp_exchange_exception_class_entry, PHP_AMQP_ERROR_MESSAGE, 0 TSRMLS_CC);
+	if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+		php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry TSRMLS_CC);
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-		PHP_AMQP_DESTROY_ERROR_MESSAGE();
 		return;
 	}
 
@@ -791,7 +762,7 @@ PHP_METHOD(amqp_exchange_class, unbind)
 
 /* {{{ proto AMQPExchange::getChannel()
 Get the AMQPChannel object in use */
-PHP_METHOD(amqp_exchange_class, getChannel)
+static PHP_METHOD(amqp_exchange_class, getChannel)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -801,7 +772,7 @@ PHP_METHOD(amqp_exchange_class, getChannel)
 
 /* {{{ proto AMQPExchange::getConnection()
 Get the AMQPConnection object in use */
-PHP_METHOD(amqp_exchange_class, getConnection)
+static PHP_METHOD(amqp_exchange_class, getConnection)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -917,7 +888,7 @@ zend_function_entry amqp_exchange_class_functions[] = {
 
 		PHP_MALIAS(amqp_exchange_class, declare, declareExchange, arginfo_amqp_exchange_class_declareExchange, ZEND_ACC_PUBLIC | ZEND_ACC_DEPRECATED)
 
-		{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
+		{NULL, NULL, NULL}
 };
 
 PHP_MINIT_FUNCTION(amqp_exchange)

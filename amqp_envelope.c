@@ -503,7 +503,7 @@ zend_function_entry amqp_envelope_class_functions[] = {
         PHP_ME(amqp_envelope_class, getHeader, arginfo_amqp_envelope_class_getHeader, ZEND_ACC_PUBLIC)
         PHP_ME(amqp_envelope_class, hasHeader, arginfo_amqp_envelope_class_hasHeader, ZEND_ACC_PUBLIC)
 
-        {NULL, NULL, NULL}    /* Must be the last line in amqp_functions[] */
+        {NULL, NULL, NULL}
 };
 
 

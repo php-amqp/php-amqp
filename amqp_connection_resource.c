@@ -62,10 +62,11 @@ int le_amqp_connection_resource;
 int le_amqp_connection_resource_persistent;
 
 static void connection_resource_destructor(amqp_connection_resource *resource, int persistent TSRMLS_DC);
+static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource);
+static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id);
 
 
 /* Figure out what's going on connection and handle protocol exceptions, if any */
-
 int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id TSRMLS_DC)
 {
 	assert (resource != NULL);
@@ -79,71 +80,18 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 			return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
 
 		case AMQP_RESPONSE_LIBRARY_EXCEPTION:
+
 			spprintf(message, 0, "Library error: %s", amqp_error_string2(reply.library_error));
 			return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
 
 		case AMQP_RESPONSE_SERVER_EXCEPTION:
 			switch (reply.reply.id) {
 				case AMQP_CONNECTION_CLOSE_METHOD: {
-					amqp_connection_close_t *m = (amqp_connection_close_t *)reply.reply.decoded;
-
-					spprintf(message, 0, "Server connection error: %d, message: %.*s",
-						m->reply_code,
-						(PHP5to7_param_str_len_type_t) m->reply_text.len,
-						(char *) m->reply_text.bytes
-					);
-
-					/*
-					 *    - If r.reply.id == AMQP_CONNECTION_CLOSE_METHOD a connection exception
-					 *      occurred, cast r.reply.decoded to amqp_connection_close_t* to see
-					 *      details of the exception. The client amqp_send_method() a
-					 *      amqp_connection_close_ok_t and disconnect from the broker.
-					 */
-
-					amqp_connection_close_ok_t *decoded = (amqp_connection_close_ok_t *) NULL;
-
-					amqp_send_method(
-						resource->connection_state,
-						0, /* NOTE: 0-channel is reserved for things like this */
-						AMQP_CONNECTION_CLOSE_OK_METHOD,
-						&decoded
-					);
-
-					/* Prevent finishing AMQP connection in connection resource destructor */
-					resource->is_connected = '\0';
-
+					php_amqp_close_connection_from_server(reply, message, resource);
 					return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED;
 				}
 				case AMQP_CHANNEL_CLOSE_METHOD: {
-					assert(channel_id > 0 && channel_id <= resource->max_slots);
-
-					amqp_channel_close_t *m = (amqp_channel_close_t *) reply.reply.decoded;
-
-					spprintf(message, 0, "Server channel error: %d, message: %.*s",
-						m->reply_code,
-						(PHP5to7_param_str_len_type_t) m->reply_text.len,
-						(char *)m->reply_text.bytes
-					);
-
-					/*
-					 *    - If r.reply.id == AMQP_CHANNEL_CLOSE_METHOD a channel exception
-					 *      occurred, cast r.reply.decoded to amqp_channel_close_t* to see details
-					 *      of the exception. The client should amqp_send_method() a
-					 *      amqp_channel_close_ok_t. The channel must be re-opened before it
-					 *      can be used again. Any resources associated with the channel
-					 *      (auto-delete exchanges, auto-delete queues, consumers) are invalid
-					 *      and must be recreated before attempting to use them again.
-					 */
-
-					amqp_channel_close_ok_t *decoded = (amqp_channel_close_ok_t *) NULL;
-
-					amqp_send_method(
-						resource->connection_state,
-						channel_id,
-						AMQP_CHANNEL_CLOSE_OK_METHOD,
-						&decoded
-					);
-
+					php_amqp_close_channel_from_server(reply, message, resource, channel_id);
 					return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED;
 				}
 			}
@@ -156,6 +104,151 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 	/* Should not never get here*/
 }
 
+static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource) {
+	amqp_connection_close_t *m = (amqp_connection_close_t *)reply.reply.decoded;
+
+	spprintf(message, 0, "Server connection error: %d, message: %.*s",
+		m->reply_code,
+		(PHP5to7_param_str_len_type_t) m->reply_text.len,
+		(char *) m->reply_text.bytes
+	);
+
+	/*
+	 *    - If r.reply.id == AMQP_CONNECTION_CLOSE_METHOD a connection exception
+	 *      occurred, cast r.reply.decoded to amqp_connection_close_t* to see
+	 *      details of the exception. The client amqp_send_method() a
+	 *      amqp_connection_close_ok_t and disconnect from the broker.
+	 */
+
+	amqp_connection_close_ok_t *decoded = (amqp_connection_close_ok_t *) NULL;
+
+	amqp_send_method(
+		resource->connection_state,
+		0, /* NOTE: 0-channel is reserved for things like this */
+		AMQP_CONNECTION_CLOSE_OK_METHOD,
+		&decoded
+	);
+
+	/* Prevent finishing AMQP connection in connection resource destructor */
+	resource->is_connected = '\0';
+}
+
+static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id) {
+	assert(channel_id > 0 && channel_id <= resource->max_slots);
+
+	amqp_channel_close_t *m = (amqp_channel_close_t *) reply.reply.decoded;
+
+	spprintf(message, 0, "Server channel error: %d, message: %.*s",
+		m->reply_code,
+		(PHP5to7_param_str_len_type_t) m->reply_text.len,
+		(char *)m->reply_text.bytes
+	);
+
+	/*
+	 *    - If r.reply.id == AMQP_CHANNEL_CLOSE_METHOD a channel exception
+	 *      occurred, cast r.reply.decoded to amqp_channel_close_t* to see details
+	 *      of the exception. The client should amqp_send_method() a
+	 *      amqp_channel_close_ok_t. The channel must be re-opened before it
+	 *      can be used again. Any resources associated with the channel
+	 *      (auto-delete exchanges, auto-delete queues, consumers) are invalid
+	 *      and must be recreated before attempting to use them again.
+	 */
+
+	amqp_channel_close_ok_t *decoded = (amqp_channel_close_ok_t *) NULL;
+
+	amqp_send_method(
+		resource->connection_state,
+		channel_id,
+		AMQP_CHANNEL_CLOSE_OK_METHOD,
+		&decoded
+	);
+}
+
+
+int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id, amqp_channel_object *channel TSRMLS_DC)
+{
+	assert(resource != NULL);
+
+	amqp_frame_t frame;
+	amqp_rpc_reply_t ret;
+
+	assert(AMQP_RESPONSE_LIBRARY_EXCEPTION == reply.reply_type);
+	assert(AMQP_STATUS_UNEXPECTED_STATE == reply.library_error);
+
+	if (AMQP_STATUS_OK != amqp_simple_wait_frame(resource->connection_state, &frame)) {
+
+		if (*message != NULL) {
+			efree(*message);
+		}
+
+		spprintf(message, 0, "Library error: %s", amqp_error_string2(reply.library_error));
+		return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
+	}
+
+	if (AMQP_FRAME_METHOD == frame.frame_type) {
+		switch (frame.payload.method.id) {
+			case AMQP_CONNECTION_CLOSE_METHOD: {
+				php_amqp_close_connection_from_server(reply, message, resource);
+				return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED;
+			}
+			case AMQP_CHANNEL_CLOSE_METHOD: {
+				php_amqp_close_channel_from_server(reply, message, resource, channel_id);
+				return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED;
+			}
+
+			case AMQP_BASIC_ACK_METHOD:
+				/* if we've turned publisher confirms on, and we've published a message
+				 * here is a message being confirmed
+				 */
+
+				/* TODO: call basic.ack/nack method handling callback */
+				return PHP_AMQP_RESOURCE_RESPONSE_OK;
+			case AMQP_BASIC_NACK_METHOD:
+				/* if we've turned publisher confirms on, and we've published a message
+				 * here is a message being confirmed
+				 */
+
+				/* TODO: call basic.ack/nack method handling callback */
+				return PHP_AMQP_RESOURCE_RESPONSE_OK;
+			case AMQP_BASIC_RETURN_METHOD:
+				/* if a published message couldn't be routed and the mandatory flag was set
+				 * this is what would be returned. The message then needs to be read.
+				 */
+
+				{
+					amqp_basic_return_t *m = (amqp_basic_return_t *) frame.payload.method.decoded;
+
+					amqp_message_t msg;
+					ret = amqp_read_message(resource->connection_state, frame.channel, &msg, 0);
+
+					if (AMQP_RESPONSE_NORMAL != ret.reply_type) {
+						return php_amqp_connection_resource_error(ret, message, resource, channel_id TSRMLS_CC);
+					}
+
+					/* TODO: call basic.return method handling callback */
+
+					amqp_destroy_message(&msg);
+				}
+
+				return PHP_AMQP_RESOURCE_RESPONSE_OK;
+
+			default:
+				if (*message != NULL) {
+					efree(*message);
+				}
+
+				spprintf(message, 0, "Library error: An unexpected method was received 0x%08X\n", frame.payload.method.id);
+				return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
+		}
+	}
+
+	if (*message != NULL) {
+		efree(*message);
+	}
+
+	spprintf(message, 0, "Library error: %s", amqp_error_string2(reply.library_error));
+	return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
+}
 
 /* Socket-related functions */
 int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC)
@@ -375,8 +468,8 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
 	efree(std_datetime);
 
-	if (res.reply_type != AMQP_RESPONSE_NORMAL) {
-		char *message, *long_message;
+	if (AMQP_RESPONSE_NORMAL != res.reply_type) {
+		char *message = NULL, *long_message = NULL;
 
 		php_amqp_connection_resource_error(res, &message, resource, 0 TSRMLS_CC);
 
@@ -497,4 +590,3 @@ void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_D
 
 	return;
 }
-

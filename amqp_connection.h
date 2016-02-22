@@ -28,44 +28,6 @@ extern zend_class_entry *amqp_connection_class_entry;
 int php_amqp_connect(amqp_connection_object *amqp_connection, zend_bool persistent, INTERNAL_FUNCTION_PARAMETERS);
 void php_amqp_disconnect_force(amqp_connection_resource *resource TSRMLS_DC);
 
-PHP_METHOD(amqp_connection_class, __construct);
-PHP_METHOD(amqp_connection_class, isConnected);
-PHP_METHOD(amqp_connection_class, connect);
-PHP_METHOD(amqp_connection_class, pconnect);
-PHP_METHOD(amqp_connection_class, pdisconnect);
-PHP_METHOD(amqp_connection_class, disconnect);
-PHP_METHOD(amqp_connection_class, reconnect);
-PHP_METHOD(amqp_connection_class, preconnect);
-
-PHP_METHOD(amqp_connection_class, getLogin);
-PHP_METHOD(amqp_connection_class, setLogin);
-
-PHP_METHOD(amqp_connection_class, getPassword);
-PHP_METHOD(amqp_connection_class, setPassword);
-
-PHP_METHOD(amqp_connection_class, getHost);
-PHP_METHOD(amqp_connection_class, setHost);
-
-PHP_METHOD(amqp_connection_class, getPort);
-PHP_METHOD(amqp_connection_class, setPort);
-
-PHP_METHOD(amqp_connection_class, getVhost);
-PHP_METHOD(amqp_connection_class, setVhost);
-
-PHP_METHOD(amqp_connection_class, getTimeout);
-PHP_METHOD(amqp_connection_class, setTimeout);
-
-PHP_METHOD(amqp_connection_class, getReadTimeout);
-PHP_METHOD(amqp_connection_class, setReadTimeout);
-
-PHP_METHOD(amqp_connection_class, getWriteTimeout);
-PHP_METHOD(amqp_connection_class, setWriteTimeout);
-
-PHP_METHOD(amqp_connection_class, getUsedChannels);
-PHP_METHOD(amqp_connection_class, getMaxChannels);
-PHP_METHOD(amqp_connection_class, getHeartbeatInterval);
-PHP_METHOD(amqp_connection_class, getMaxFrameSize);
-PHP_METHOD(amqp_connection_class, isPersistent);
 
 PHP_MINIT_FUNCTION(amqp_connection);
 
