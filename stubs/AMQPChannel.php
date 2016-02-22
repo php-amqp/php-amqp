@@ -179,4 +179,34 @@ class AMQPChannel
     public function basicRecover($requeue = true)
     {
     }
+
+    /**
+     * Set callback to process basic.return AMQP server method
+     *
+     * @param callable|null $callback
+     *
+     * Callback function with all arguments has the following signature:
+     *
+     *      function callback(int $reply_code,
+     *                        string $reply_text,
+     *                        string $exchange,
+     *                        string $routing_key,
+     *                        AMQPBasicProperties $properties,
+     *                        string $body) : bool;
+     *
+     * and should return boolean false when wait loop should be canceled.
+     *
+     */
+    public function setReturnCallback(callable $callback=null)
+    {
+    }
+
+    /**
+     * Start wait loop for basic.return AMQP server methods
+     *
+     * @param float $timeout Timeout in seconds. May be fractional.
+     */
+    public function waitForBasicReturn($timeout = 0.0)
+    {
+    }
 }

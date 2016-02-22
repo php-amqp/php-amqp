@@ -21,8 +21,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_connection.c 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -40,9 +38,10 @@
 # include <signal.h>
 # include <stdint.h>
 #endif
+
 #include <amqp.h>
-#include <amqp_framing.h>
 #include <amqp_tcp_socket.h>
+#include <amqp_framing.h>
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -50,9 +49,11 @@
 # include <unistd.h>
 #endif
 
-#include "php_amqp.h"
-#include "amqp_channel.h"
+//#include "amqp_basic_properties.h"
+#include "amqp_methods_handling.h"
 #include "amqp_connection_resource.h"
+#include "amqp_channel.h"
+#include "php_amqp.h"
 
 #ifndef E_DEPRECATED
 #define E_DEPRECATED E_WARNING
@@ -170,18 +171,21 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
 	assert(resource != NULL);
 
 	amqp_frame_t frame;
-	amqp_rpc_reply_t ret;
 
 	assert(AMQP_RESPONSE_LIBRARY_EXCEPTION == reply.reply_type);
 	assert(AMQP_STATUS_UNEXPECTED_STATE == reply.library_error);
 
-	if (AMQP_STATUS_OK != amqp_simple_wait_frame(resource->connection_state, &frame)) {
-
+	if (channel_id < 0 || AMQP_STATUS_OK != amqp_simple_wait_frame(resource->connection_state, &frame)) {
 		if (*message != NULL) {
 			efree(*message);
 		}
 
 		spprintf(message, 0, "Library error: %s", amqp_error_string2(reply.library_error));
+		return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
+	}
+
+	if (channel_id != frame.channel) {
+		spprintf(message, 0, "Library error: channel mismatch");
 		return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
 	}
 
@@ -215,23 +219,7 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
 				 * this is what would be returned. The message then needs to be read.
 				 */
 
-				{
-					amqp_basic_return_t *m = (amqp_basic_return_t *) frame.payload.method.decoded;
-
-					amqp_message_t msg;
-					ret = amqp_read_message(resource->connection_state, frame.channel, &msg, 0);
-
-					if (AMQP_RESPONSE_NORMAL != ret.reply_type) {
-						return php_amqp_connection_resource_error(ret, message, resource, channel_id TSRMLS_CC);
-					}
-
-					/* TODO: call basic.return method handling callback */
-
-					amqp_destroy_message(&msg);
-				}
-
-				return PHP_AMQP_RESOURCE_RESPONSE_OK;
-
+				return php_amqp_handle_basic_return(message, resource, channel_id, channel, &frame.payload.method TSRMLS_CC);
 			default:
 				if (*message != NULL) {
 					efree(*message);
@@ -590,3 +578,4 @@ void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_D
 
 	return;
 }
+

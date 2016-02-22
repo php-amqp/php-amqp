@@ -12,18 +12,6 @@ sudo: false
 services:
   - rabbitmq
 
-matrix:
-  allow_failures:
-    # PHP 7 requires valgring >= 3.8.0 for leack checking, we have older on on travis
-    - php: 7.0
-      env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
-    - php: 7.0
-      env: LIBRABBITMQ_VERSION=v0.6.0 TEST_PHP_ARGS=-m
-    - php: 7.0
-      env: LIBRABBITMQ_VERSION=v0.7.0 TEST_PHP_ARGS=-m
-    - php: 7.0
-      env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
-
 #install:
 #  - sudo apt-get update
 #  - sudo apt-get -qq --fix-missing install valgrind
@@ -44,10 +32,10 @@ env:
   matrix:
     - LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
     - LIBRABBITMQ_VERSION=master
+    - LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
+    - LIBRABBITMQ_VERSION=v0.7.1
     - LIBRABBITMQ_VERSION=v0.6.0 TEST_PHP_ARGS=-m
     - LIBRABBITMQ_VERSION=v0.6.0
-    - LIBRABBITMQ_VERSION=v0.7.0 TEST_PHP_ARGS=-m
-    - LIBRABBITMQ_VERSION=v0.7.0
     - LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
     - LIBRABBITMQ_VERSION=v0.5.2
 

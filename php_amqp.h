@@ -38,6 +38,8 @@ typedef struct _amqp_connection_resource amqp_connection_resource;
 typedef struct _amqp_connection_object amqp_connection_object;
 typedef struct _amqp_channel_object amqp_channel_object;
 typedef struct _amqp_channel_resource amqp_channel_resource;
+typedef struct _amqp_channel_callbacks amqp_channel_callbacks;
+typedef struct _amqp_callback_bucket amqp_callback_bucket;
 
 #if PHP_MAJOR_VERSION >= 7
 	#include "php7_support.h"
@@ -105,15 +107,30 @@ struct _amqp_channel_resource {
 	amqp_connection_resource *connection_resource;
 };
 
-/* NOTE: due to how internally PHP works with custom object, zend_object position in structure matters */
+struct _amqp_callback_bucket {
+	zend_fcall_info fci;
+	zend_fcall_info_cache fcc;
+};
 
+struct _amqp_channel_callbacks {
+	amqp_callback_bucket basic_return;
+};
+
+
+/* NOTE: due to how internally PHP works with custom object, zend_object position in structure matters */
 struct _amqp_channel_object {
 #if PHP_MAJOR_VERSION >= 7
+	amqp_channel_callbacks callbacks;
+	zval *gc_data;
+    int   gc_data_count;
 	amqp_channel_resource *channel_resource;
 	zend_object zo;
 #else
 	zend_object zo;
 	amqp_channel_resource *channel_resource;
+	amqp_channel_callbacks callbacks;
+	zval  **gc_data;
+	long    gc_data_count;
 #endif
 };
 
@@ -293,7 +310,7 @@ struct _amqp_connection_object {
 
 #define PHP_AMQP_IS_ERROR_RECOVERABLE(res, channel_resource, channel_object) ( \
 	AMQP_RESPONSE_LIBRARY_EXCEPTION == (res).reply_type && AMQP_STATUS_UNEXPECTED_STATE == (res).library_error \
-	&& (PHP_AMQP_RESOURCE_RESPONSE_OK == php_amqp_connection_resource_error_advanced(res, &PHP_AMQP_G(error_message), (channel_resource)->connection_resource, (amqp_channel_t)(channel_resource ? (channel_resource)->channel_id : 0), (channel_object) TSRMLS_CC)) \
+	&& (0 <= php_amqp_connection_resource_error_advanced(res, &PHP_AMQP_G(error_message), (channel_resource)->connection_resource, (amqp_channel_t)(channel_resource ? (channel_resource)->channel_id : 0), (channel_object) TSRMLS_CC)) \
 )
 
 

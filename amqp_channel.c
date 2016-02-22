@@ -39,6 +39,7 @@
 # include <stdint.h>
 # include <signal.h>
 #endif
+
 #include <amqp.h>
 #include <amqp_framing.h>
 
@@ -50,6 +51,7 @@
 
 #include "php_amqp.h"
 #include "amqp_connection.h"
+#include "amqp_methods_handling.h"
 #include "amqp_connection_resource.h"
 #include "amqp_channel.h"
 
@@ -97,6 +99,148 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource TSRMLS_DC)
 	}
 }
 
+#if PHP_MAJOR_VERSION >= 7
+
+static void php_amqp_destroy_fci(zend_fcall_info *fci) {
+    if (fci->size > 0) {
+        zval_ptr_dtor(&fci->function_name);
+        if (fci->object != NULL) {
+            GC_REFCOUNT(fci->object)--;
+        }
+        fci->size = 0;
+    }
+}
+
+static void php_amqp_duplicate_fci(zend_fcall_info *source) {
+    if (source->size > 0) {
+
+        zval_add_ref(&source->function_name);
+        if (source->object != NULL) {
+            GC_REFCOUNT(source->object)++;
+        }
+    }
+}
+
+static int php_amqp_get_fci_gc_data_count(zend_fcall_info *fci) {
+    int cnt = 0;
+
+    if (fci->size > 0) {
+        cnt ++;
+
+        if (fci->object != NULL) {
+            cnt++;
+        }
+    }
+
+    return cnt;
+}
+
+static int php_amqp_get_fci_gc_data(zend_fcall_info *fci, zval **gc_data, int offset) {
+    if (ZEND_FCI_INITIALIZED(*fci)) {
+
+		ZVAL_COPY_VALUE(gc_data[offset++], &fci->function_name);
+
+        if (fci->object != NULL) {
+            ZVAL_OBJ(gc_data[offset++], fci->object);
+        }
+    }
+
+    return offset;
+}
+
+static HashTable *amqp_channel_gc(zval *object, zval **table, int *n) /* {{{ */
+{
+	amqp_channel_object *channel = PHP_AMQP_GET_CHANNEL(object);
+
+	int cnt = php_amqp_get_fci_gc_data_count(&channel->callbacks.basic_return.fci);
+
+	if (cnt > channel->gc_data_count) {
+		channel->gc_data_count = cnt;
+		channel->gc_data = (zval *) erealloc(channel->gc_data, sizeof(zval) * channel->gc_data_count);
+	}
+
+	php_amqp_get_fci_gc_data(&channel->callbacks.basic_return.fci, &channel->gc_data, 0);
+
+	*table = channel->gc_data;
+	*n     = cnt;
+
+	return zend_std_get_properties(object TSRMLS_CC);
+} /* }}} */
+
+#else
+static void php_amqp_destroy_fci(zend_fcall_info *fci) {
+	if (fci->size > 0) {
+		zval_ptr_dtor(&fci->function_name);
+		if (fci->object_ptr != NULL) {
+			zval_ptr_dtor(&fci->object_ptr);
+		}
+		fci->size = 0;
+	}
+}
+
+static void php_amqp_duplicate_fci(zend_fcall_info *source) {
+	if (source->size > 0) {
+
+		zval_add_ref(&source->function_name);
+		if (source->object_ptr != NULL) {
+			zval_add_ref(&source->object_ptr);
+		}
+	}
+}
+
+static int php_amqp_get_fci_gc_data_count(zend_fcall_info *fci) {
+	int cnt = 0;
+
+	if (fci->size > 0) {
+		cnt ++;
+
+		if (fci->object_ptr != NULL) {
+			cnt++;
+		}
+	}
+
+	return cnt;
+}
+
+static int php_amqp_get_fci_gc_data(zend_fcall_info *fci, zval **gc_data, int offset) {
+
+	if (ZEND_FCI_INITIALIZED(*fci)) {
+		gc_data[offset++] = fci->function_name;
+
+		if (fci->object_ptr != NULL) {
+			gc_data[offset++] = fci->object_ptr;
+		}
+	}
+
+	return offset;
+}
+
+static HashTable *amqp_channel_gc(zval *object, zval ***table, int *n TSRMLS_DC) /* {{{ */
+{
+	amqp_channel_object *channel = PHP_AMQP_GET_CHANNEL(object);
+
+	int cnt = php_amqp_get_fci_gc_data_count(&channel->callbacks.basic_return.fci);
+
+	if (cnt > channel->gc_data_count) {
+		channel->gc_data_count = cnt;
+		channel->gc_data = (zval **) erealloc(channel->gc_data, sizeof(zval *) * channel->gc_data_count);
+	}
+
+	php_amqp_get_fci_gc_data(&channel->callbacks.basic_return.fci, channel->gc_data, 0);
+
+	*table = channel->gc_data;
+	*n     = cnt;
+
+	return zend_std_get_properties(object TSRMLS_CC);
+} /* }}} */
+
+#endif
+
+static void php_amqp_clean_callbacks(amqp_channel_callbacks *callbacks) {
+	php_amqp_destroy_fci(&callbacks->basic_return.fci);
+}
+
+
 void amqp_channel_free(PHP5to7_obj_free_zend_object *object TSRMLS_DC)
 {
 	amqp_channel_object *channel = PHP_AMQP_FETCH_CHANNEL(object);
@@ -107,6 +251,12 @@ void amqp_channel_free(PHP5to7_obj_free_zend_object *object TSRMLS_DC)
 		efree(channel->channel_resource);
 		channel->channel_resource = NULL;
 	}
+
+	if (channel->gc_data) {
+		efree(channel->gc_data);
+	}
+
+	php_amqp_clean_callbacks(&channel->callbacks);
 
 	zend_object_std_dtor(&channel->zo TSRMLS_CC);
 
@@ -590,8 +740,118 @@ static PHP_METHOD(amqp_channel_class, basicRecover)
 }
 /* }}} */
 
+/* {{{ proto bool AMQPChannel::setReturnCallback(callable callback)
+Set callback for basic.return server method handling */
+PHP_METHOD(amqp_channel_class, setReturnCallback)
+{
+	zend_fcall_info fci = empty_fcall_info;
+	zend_fcall_info_cache fcc = empty_fcall_info_cache;
 
-/* amqp_channel_class ARG_INFO definition */
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f!", &fci, &fcc) == FAILURE) {
+		return;
+	}
+
+	amqp_channel_object *channel = PHP_AMQP_GET_CHANNEL(getThis());
+
+	php_amqp_destroy_fci(&channel->callbacks.basic_return.fci);
+
+	if (ZEND_FCI_INITIALIZED(fci)) {
+		php_amqp_duplicate_fci(&fci);
+		channel->callbacks.basic_return.fci = fci;
+		channel->callbacks.basic_return.fcc = fcc;
+	}
+}
+/* }}} */
+
+
+/* {{{ proto bool AMQPChannel::waitForBasicReturn(double timeout)
+Wait for basic.return method from server */
+PHP_METHOD(amqp_channel_class, waitForBasicReturn)
+{
+	amqp_channel_object *channel;
+	amqp_channel_resource *channel_resource;
+	amqp_method_t method;
+
+	int status;
+
+	double timeout = 0;
+
+	struct timeval tv = {0};
+	struct timeval *tv_ptr = &tv;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|d", &timeout) == FAILURE) {
+		return;
+	}
+
+	if (timeout < 0) {
+		zend_throw_exception(amqp_channel_exception_class_entry, "Timeout must be greater than or equal to zero.", 0 TSRMLS_CC);
+		return;
+	}
+
+	channel = PHP_AMQP_GET_CHANNEL(getThis());
+
+	channel_resource = channel->channel_resource;
+	PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not start wait loop for basic.return method.");
+
+	if (timeout > 0) {
+		tv.tv_sec = (long int) timeout;
+		tv.tv_usec = (long int) ((timeout - tv.tv_sec) * 1000000);
+	} else {
+		tv_ptr = NULL;
+
+	}
+
+	assert(channel_resource->channel_id > 0);
+
+	while(1) {
+		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+
+		status = amqp_simple_wait_method_noblock(channel_resource->connection_resource->connection_state, channel_resource->channel_id, AMQP_BASIC_RETURN_METHOD, &method, tv_ptr);
+
+		if (AMQP_STATUS_TIMEOUT == status) {
+			zend_throw_exception(amqp_queue_exception_class_entry, "Wait timeout exceed", 0 TSRMLS_CC);
+
+			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+			return;
+		}
+
+		if (status != AMQP_STATUS_OK) {
+			/* Emulate library error */
+			amqp_rpc_reply_t res;
+			res.reply_type 	  = AMQP_RESPONSE_LIBRARY_EXCEPTION;
+			res.library_error = status;
+
+			php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource TSRMLS_CC);
+
+			php_amqp_zend_throw_exception(res, amqp_queue_exception_class_entry, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
+			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+			return;
+		}
+
+		status = php_amqp_handle_basic_return(&PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource->channel_id, channel, &method TSRMLS_CC);
+
+		if (PHP_AMQP_RESOURCE_RESPONSE_BREAK == status) {
+			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+			break;
+		}
+
+		if (PHP_AMQP_RESOURCE_RESPONSE_OK != status) {
+			/* Emulate library error */
+			amqp_rpc_reply_t res;
+			res.reply_type 	  = AMQP_RESPONSE_LIBRARY_EXCEPTION;
+			res.library_error = status;
+
+			php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource TSRMLS_CC);
+
+			php_amqp_zend_throw_exception(res, amqp_queue_exception_class_entry, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
+			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+			return;
+		}
+	}
+}
+/* }}} */
+
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 				ZEND_ARG_OBJ_INFO(0, amqp_connection, AMQPConnection, 0)
 ZEND_END_ARG_INFO()
@@ -637,6 +897,13 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_basicRecover, ZEND_SEND_BY_VAL
 				ZEND_ARG_INFO(0, requeue)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_setReturnCallback, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+				ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_waitForBasicReturn, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+				ZEND_ARG_INFO(0, timeout)
+ZEND_END_ARG_INFO()
 
 zend_function_entry amqp_channel_class_functions[] = {
 		PHP_ME(amqp_channel_class, __construct, 	arginfo_amqp_channel_class__construct,		ZEND_ACC_PUBLIC)
@@ -658,6 +925,9 @@ zend_function_entry amqp_channel_class_functions[] = {
 
 		PHP_ME(amqp_channel_class, basicRecover,	arginfo_amqp_channel_class_basicRecover, ZEND_ACC_PUBLIC)
 
+		PHP_ME(amqp_channel_class, setReturnCallback, arginfo_amqp_channel_class_setReturnCallback, ZEND_ACC_PUBLIC)
+		PHP_ME(amqp_channel_class, waitForBasicReturn, arginfo_amqp_channel_class_waitForBasicReturn, ZEND_ACC_PUBLIC)
+
 		{NULL, NULL, NULL}
 };
 
@@ -677,8 +947,12 @@ PHP_MINIT_FUNCTION(amqp_channel)
 #if PHP_MAJOR_VERSION >=7
 	memcpy(&amqp_channel_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
-	amqp_channel_object_handlers.offset = XtOffsetOf(amqp_connection_object, zo);
+	amqp_channel_object_handlers.offset = XtOffsetOf(amqp_channel_object, zo);
 	amqp_channel_object_handlers.free_obj = amqp_channel_free;
+#endif
+
+#if ZEND_MODULE_API_NO >= 20100000
+	//amqp_channel_object_handlers.get_gc = amqp_channel_gc;
 #endif
 
 	return SUCCESS;

@@ -20,18 +20,31 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
+#ifndef PHP_AMQP_METHODS_HANDLING_H
+#define PHP_AMQP_METHODS_HANDLING_H
 
-/* $Id: amqp_connection.h 326660 2012-07-17 05:32:34Z pdezwart $ */
-
+#include "php_amqp.h"
+#include "amqp.h"
 #include "php.h"
 
-extern zend_class_entry *amqp_connection_class_entry;
+int amqp_simple_wait_method_list_noblock(amqp_connection_state_t state,
+                                         amqp_channel_t expected_channel,
+                                         amqp_method_number_t *expected_methods,
+                                         amqp_method_t *output,
+                                         struct timeval *timeout);
 
-int php_amqp_connect(amqp_connection_object *amqp_connection, zend_bool persistent, INTERNAL_FUNCTION_PARAMETERS);
-void php_amqp_disconnect_force(amqp_connection_resource *resource TSRMLS_DC);
+int amqp_simple_wait_method_noblock(amqp_connection_state_t state,
+                            amqp_channel_t expected_channel,
+                            amqp_method_number_t expected_method,
+                            amqp_method_t *output,
+                            struct timeval *timeout);
 
 
-PHP_MINIT_FUNCTION(amqp_connection);
+int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *msg, amqp_callback_bucket *cb TSRMLS_DC);
+int php_amqp_handle_basic_return(char **message, amqp_connection_resource *resource, amqp_channel_t channel_id, amqp_channel_object *channel, amqp_method_t *method TSRMLS_DC);
+
+
+#endif
 
 /*
 *Local variables:

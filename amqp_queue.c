@@ -449,6 +449,7 @@ static PHP_METHOD(amqp_queue_class, get)
 	}
 
 	if (AMQP_BASIC_GET_EMPTY_METHOD == res.reply.id) {
+		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 		RETURN_FALSE;
 	}
 

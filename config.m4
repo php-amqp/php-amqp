@@ -125,7 +125,7 @@ if test "$PHP_AMQP" != "no"; then
 		fi
 	fi
 
-	AMQP_SOURCES="amqp.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c"
+	AMQP_SOURCES="amqp.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c"
 
 	PHP_NEW_EXTENSION(amqp, $AMQP_SOURCES, $ext_shared)
 fi
