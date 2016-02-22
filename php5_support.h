@@ -101,6 +101,7 @@ typedef zend_rsrc_list_entry PHP5to7_zend_resource_le_t;
 #define PHP5to7_ZEND_RSRC_TYPE_P(le) Z_TYPE_P(le)
 #define PHP5to7_ZEND_REGISTER_RESOURCE(rsrc_pointer, rsrc_type) ZEND_REGISTER_RESOURCE(NULL, (rsrc_pointer), (rsrc_type))
 
+#define PHP5to7_PARENT_CLASS_NAME_C(name) , (name)
 
 #endif //PHP_AMQP_PHP5_SUPPORT_H
 

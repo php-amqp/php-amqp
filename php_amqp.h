@@ -198,6 +198,7 @@ struct _amqp_connection_object {
 #define PHP_AMQP_READ_OBJ_PROP(cls, obj, name) zend_read_property((cls), (obj), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
 #define PHP_AMQP_READ_OBJ_PROP_DOUBLE(cls, obj, name) Z_DVAL_P(PHP_AMQP_READ_OBJ_PROP((cls), (obj), (name)))
 
+#define PHP_AMQP_READ_THIS_PROP_CE(name, ce) zend_read_property((ce), getThis(), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
 #define PHP_AMQP_READ_THIS_PROP(name) zend_read_property(this_ce, getThis(), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
 #define PHP_AMQP_READ_THIS_PROP_BOOL(name) Z_BVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 #define PHP_AMQP_READ_THIS_PROP_STR(name) Z_STRVAL_P(PHP_AMQP_READ_THIS_PROP(name))

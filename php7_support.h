@@ -94,6 +94,8 @@ typedef zval PHP5to7_zend_resource_le_t;
 #define PHP5to7_ZEND_RSRC_TYPE_P(le) (le)->type
 #define PHP5to7_ZEND_REGISTER_RESOURCE(rsrc_pointer, rsrc_type) zend_register_resource((rsrc_pointer), (rsrc_type))
 
+#define PHP5to7_PARENT_CLASS_NAME_C(name)
+
 #endif //PHP_AMQP_PHP7_SUPPORT_H
 
 /*

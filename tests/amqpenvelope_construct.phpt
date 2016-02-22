@@ -10,42 +10,44 @@ if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
 var_dump(new AMQPEnvelope());
 ?>
 --EXPECT--
-object(AMQPEnvelope)#1 (18) {
-  ["body":"AMQPEnvelope":private]=>
+object(AMQPEnvelope)#1 (19) {
+  ["content_type":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["delivery_tag":"AMQPEnvelope":private]=>
-  int(0)
-  ["is_redelivery":"AMQPEnvelope":private]=>
-  bool(false)
-  ["exchange_name":"AMQPEnvelope":private]=>
+  ["content_encoding":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["routing_key":"AMQPEnvelope":private]=>
-  string(0) ""
-  ["content_type":"AMQPEnvelope":private]=>
-  string(0) ""
-  ["content_encoding":"AMQPEnvelope":private]=>
-  string(0) ""
-  ["headers":"AMQPEnvelope":private]=>
+  ["headers":"AMQPBasicProperties":private]=>
   array(0) {
   }
-  ["delivery_mode":"AMQPEnvelope":private]=>
+  ["delivery_mode":"AMQPBasicProperties":private]=>
   int(1)
-  ["priority":"AMQPEnvelope":private]=>
+  ["priority":"AMQPBasicProperties":private]=>
   int(0)
-  ["correlation_id":"AMQPEnvelope":private]=>
+  ["correlation_id":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["reply_to":"AMQPEnvelope":private]=>
+  ["reply_to":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["expiration":"AMQPEnvelope":private]=>
+  ["expiration":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["message_id":"AMQPEnvelope":private]=>
+  ["message_id":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["timestamp":"AMQPEnvelope":private]=>
+  ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
-  ["type":"AMQPEnvelope":private]=>
+  ["type":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["user_id":"AMQPEnvelope":private]=>
+  ["user_id":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["app_id":"AMQPEnvelope":private]=>
+  ["app_id":"AMQPBasicProperties":private]=>
   string(0) ""
+  ["cluster_id":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["body":"AMQPEnvelope":private]=>
+  NULL
+  ["delivery_tag":"AMQPEnvelope":private]=>
+  NULL
+  ["is_redelivery":"AMQPEnvelope":private]=>
+  NULL
+  ["exchange_name":"AMQPEnvelope":private]=>
+  NULL
+  ["routing_key":"AMQPEnvelope":private]=>
+  NULL
 }

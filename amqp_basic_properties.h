@@ -21,13 +21,20 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_envelope.h 321054 2011-12-16 01:23:28Z pdezwart $ */
+#include "php.h"
+#include "php_amqp.h"
 
-extern zend_class_entry *amqp_envelope_class_entry;
+extern zend_class_entry *amqp_basic_properties_class_entry;
 
-void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelope TSRMLS_DC);
+void parse_amqp_table(amqp_table_t *table, zval *result);
+void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSRMLS_DC);
 
-PHP_MINIT_FUNCTION(amqp_envelope);
+
+void php_amqp_basic_properties_convert_to_zval(amqp_basic_properties_t *props, zval *obj TSRMLS_DC);
+void php_amqp_basic_properties_set_empty_headers(zval *obj TSRMLS_DC);
+
+
+PHP_MINIT_FUNCTION(amqp_basic_properties);
 
 
 /*
