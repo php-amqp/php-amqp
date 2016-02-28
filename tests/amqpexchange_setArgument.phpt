@@ -44,7 +44,7 @@ var_dump($ex);
 --EXPECTF--
 object(AMQPExchange)#3 (9) {
   ["connection":"AMQPExchange":private]=>
-  object(AMQPConnection)#1 (11) {
+  object(AMQPConnection)#1 (15) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -54,24 +54,32 @@ object(AMQPExchange)#3 (9) {
     ["vhost":"AMQPConnection":private]=>
     string(1) "/"
     ["port":"AMQPConnection":private]=>
-    %s(5672)
+    int(5672)
     ["read_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["write_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["connect_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["channel_max":"AMQPConnection":private]=>
-    %s(256)
+    int(256)
     ["frame_max":"AMQPConnection":private]=>
-    %s(131072)
+    int(131072)
     ["heartbeat":"AMQPConnection":private]=>
-    %s(0)
+    int(0)
+    ["cacert":"AMQPConnection":private]=>
+    string(0) ""
+    ["key":"AMQPConnection":private]=>
+    string(0) ""
+    ["cert":"AMQPConnection":private]=>
+    string(0) ""
+    ["verify":"AMQPConnection":private]=>
+    bool(true)
   }
   ["channel":"AMQPExchange":private]=>
   object(AMQPChannel)#2 (3) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (11) {
+    object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -81,24 +89,32 @@ object(AMQPExchange)#3 (9) {
       ["vhost":"AMQPConnection":private]=>
       string(1) "/"
       ["port":"AMQPConnection":private]=>
-      %s(5672)
+      int(5672)
       ["read_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["write_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["connect_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["channel_max":"AMQPConnection":private]=>
-      %s(256)
+      int(256)
       ["frame_max":"AMQPConnection":private]=>
-      %s(131072)
+      int(131072)
       ["heartbeat":"AMQPConnection":private]=>
-      %s(0)
+      int(0)
+      ["cacert":"AMQPConnection":private]=>
+      string(0) ""
+      ["key":"AMQPConnection":private]=>
+      string(0) ""
+      ["cert":"AMQPConnection":private]=>
+      string(0) ""
+      ["verify":"AMQPConnection":private]=>
+      bool(true)
     }
     ["prefetch_count":"AMQPChannel":private]=>
-    %s(3)
+    int(3)
     ["prefetch_size":"AMQPChannel":private]=>
-    %s(0)
+    int(0)
   }
   ["name":"AMQPExchange":private]=>
   string(%d) "test.exchange.ae.%f"
@@ -118,7 +134,7 @@ object(AMQPExchange)#3 (9) {
 }
 object(AMQPExchange)#4 (9) {
   ["connection":"AMQPExchange":private]=>
-  object(AMQPConnection)#1 (11) {
+  object(AMQPConnection)#1 (15) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -128,24 +144,32 @@ object(AMQPExchange)#4 (9) {
     ["vhost":"AMQPConnection":private]=>
     string(1) "/"
     ["port":"AMQPConnection":private]=>
-    %s(5672)
+    int(5672)
     ["read_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["write_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["connect_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["channel_max":"AMQPConnection":private]=>
-    %s(256)
+    int(256)
     ["frame_max":"AMQPConnection":private]=>
-    %s(131072)
+    int(131072)
     ["heartbeat":"AMQPConnection":private]=>
-    %s(0)
+    int(0)
+    ["cacert":"AMQPConnection":private]=>
+    string(0) ""
+    ["key":"AMQPConnection":private]=>
+    string(0) ""
+    ["cert":"AMQPConnection":private]=>
+    string(0) ""
+    ["verify":"AMQPConnection":private]=>
+    bool(true)
   }
   ["channel":"AMQPExchange":private]=>
   object(AMQPChannel)#2 (3) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (11) {
+    object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -155,24 +179,32 @@ object(AMQPExchange)#4 (9) {
       ["vhost":"AMQPConnection":private]=>
       string(1) "/"
       ["port":"AMQPConnection":private]=>
-      %s(5672)
+      int(5672)
       ["read_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["write_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["connect_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["channel_max":"AMQPConnection":private]=>
-      %s(256)
+      int(256)
       ["frame_max":"AMQPConnection":private]=>
-      %s(131072)
+      int(131072)
       ["heartbeat":"AMQPConnection":private]=>
-      %s(0)
+      int(0)
+      ["cacert":"AMQPConnection":private]=>
+      string(0) ""
+      ["key":"AMQPConnection":private]=>
+      string(0) ""
+      ["cert":"AMQPConnection":private]=>
+      string(0) ""
+      ["verify":"AMQPConnection":private]=>
+      bool(true)
     }
     ["prefetch_count":"AMQPChannel":private]=>
-    %s(3)
+    int(3)
     ["prefetch_size":"AMQPChannel":private]=>
-    %s(0)
+    int(0)
   }
   ["name":"AMQPExchange":private]=>
   string(%d) "test.exchange.%f"
@@ -197,12 +229,12 @@ object(AMQPExchange)#4 (9) {
     ["x-alternate-exchange-one-more-time"]=>
     string(%d) "test.exchange.ae.%f"
     ["x-numeric-argument"]=>
-    %s(100000)
+    int(100000)
   }
 }
 object(AMQPExchange)#4 (9) {
   ["connection":"AMQPExchange":private]=>
-  object(AMQPConnection)#1 (11) {
+  object(AMQPConnection)#1 (15) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -212,24 +244,32 @@ object(AMQPExchange)#4 (9) {
     ["vhost":"AMQPConnection":private]=>
     string(1) "/"
     ["port":"AMQPConnection":private]=>
-    %s(5672)
+    int(5672)
     ["read_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["write_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["connect_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["channel_max":"AMQPConnection":private]=>
-    %s(256)
+    int(256)
     ["frame_max":"AMQPConnection":private]=>
-    %s(131072)
+    int(131072)
     ["heartbeat":"AMQPConnection":private]=>
-    %s(0)
+    int(0)
+    ["cacert":"AMQPConnection":private]=>
+    string(0) ""
+    ["key":"AMQPConnection":private]=>
+    string(0) ""
+    ["cert":"AMQPConnection":private]=>
+    string(0) ""
+    ["verify":"AMQPConnection":private]=>
+    bool(true)
   }
   ["channel":"AMQPExchange":private]=>
   object(AMQPChannel)#2 (3) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (11) {
+    object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -239,24 +279,32 @@ object(AMQPExchange)#4 (9) {
       ["vhost":"AMQPConnection":private]=>
       string(1) "/"
       ["port":"AMQPConnection":private]=>
-      %s(5672)
+      int(5672)
       ["read_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["write_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["connect_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["channel_max":"AMQPConnection":private]=>
-      %s(256)
+      int(256)
       ["frame_max":"AMQPConnection":private]=>
-      %s(131072)
+      int(131072)
       ["heartbeat":"AMQPConnection":private]=>
-      %s(0)
+      int(0)
+      ["cacert":"AMQPConnection":private]=>
+      string(0) ""
+      ["key":"AMQPConnection":private]=>
+      string(0) ""
+      ["cert":"AMQPConnection":private]=>
+      string(0) ""
+      ["verify":"AMQPConnection":private]=>
+      bool(true)
     }
     ["prefetch_count":"AMQPChannel":private]=>
-    %s(3)
+    int(3)
     ["prefetch_size":"AMQPChannel":private]=>
-    %s(0)
+    int(0)
   }
   ["name":"AMQPExchange":private]=>
   string(%d) "test.exchange.%f"
@@ -279,6 +327,6 @@ object(AMQPExchange)#4 (9) {
     ["x-empty-string"]=>
     string(0) ""
     ["x-numeric-argument"]=>
-    %s(100000)
+    int(100000)
   }
 }

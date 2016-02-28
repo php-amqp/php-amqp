@@ -61,6 +61,27 @@ zend_class_entry *amqp_connection_class_entry;
 
 zend_object_handlers amqp_connection_object_handlers;
 
+#define PHP_AMQP_EXTRACT_CONNECTION_STR(name) \
+	zdata = NULL; \
+	if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), (name), sizeof(name), zdata)) { \
+		convert_to_string(PHP5to7_MAYBE_DEREF(zdata)); \
+	} \
+	if (zdata && Z_STRLEN_P(PHP5to7_MAYBE_DEREF(zdata)) > 0) { \
+		zend_update_property_string(this_ce, getThis(), ZEND_STRL(name), Z_STRVAL_P(PHP5to7_MAYBE_DEREF(zdata)) TSRMLS_CC); \
+	} else { \
+		zend_update_property_string(this_ce, getThis(), ZEND_STRL(name), INI_STR("amqp." name) TSRMLS_CC); \
+	}
+
+#define PHP_AMQP_EXTRACT_CONNECTION_BOOL(name) \
+	zdata = NULL; \
+	if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), (name), sizeof(name), zdata)) { \
+		convert_to_long(PHP5to7_MAYBE_DEREF(zdata)); \
+	} \
+	if (zdata) { \
+		zend_update_property_bool(this_ce, getThis(), ZEND_STRL(name), Z_LVAL_P(PHP5to7_MAYBE_DEREF(zdata)) TSRMLS_CC); \
+	} else { \
+		zend_update_property_bool(this_ce, getThis(), ZEND_STRL(name), INI_INT("amqp." name) TSRMLS_CC); \
+	}
 
 static int php_amqp_connection_resource_deleter(PHP5to7_zend_resource_le_t *el, amqp_connection_resource *connection_resource TSRMLS_DC)
 {
@@ -74,7 +95,7 @@ static int php_amqp_connection_resource_deleter(PHP5to7_zend_resource_le_t *el, 
 static PHP5to7_param_str_len_type_t php_amqp_get_connection_hash(amqp_connection_params *params, char **hash) {
 	return spprintf(hash,
 					0,
-					"amqp_conn_res_h:%s_p:%d_v:%s_l:%s_p:%s_f:%d_c:%d_h:%d",
+					"amqp_conn_res_h:%s_p:%d_v:%s_l:%s_p:%s_f:%d_c:%d_h:%d_cacert:%s_cert:%s_key:%s",
 					params->host,
 					params->port,
 					params->vhost,
@@ -82,7 +103,10 @@ static PHP5to7_param_str_len_type_t php_amqp_get_connection_hash(amqp_connection
 					params->password,
 					params->frame_max,
 					params->channel_max,
-					params->heartbeat
+					params->heartbeat,
+					params->cacert,
+					params->cert,
+					params->key
 	);
 }
 
@@ -160,7 +184,10 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 	connection_params.read_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout");
 	connection_params.write_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout");
 	connection_params.connect_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("connect_timeout");
-
+	connection_params.cacert = PHP_AMQP_READ_THIS_PROP_STRLEN("cacert") ? PHP_AMQP_READ_THIS_PROP_STR("cacert") : NULL;
+	connection_params.cert = PHP_AMQP_READ_THIS_PROP_STRLEN("cert") ? PHP_AMQP_READ_THIS_PROP_STR("cert") : NULL;
+	connection_params.key = PHP_AMQP_READ_THIS_PROP_STRLEN("key") ? PHP_AMQP_READ_THIS_PROP_STR("key") : NULL;
+	connection_params.verify = (int) PHP_AMQP_READ_THIS_PROP_BOOL("verify");
 
 	if (persistent) {
 		PHP5to7_zend_resource_store_t *le = PHP5to7_ZEND_RESOURCE_EMPTY;
@@ -483,6 +510,11 @@ static PHP_METHOD(amqp_connection_class, __construct)
 		}
 	}
 
+	PHP_AMQP_EXTRACT_CONNECTION_STR("cacert");
+	PHP_AMQP_EXTRACT_CONNECTION_STR("key");
+	PHP_AMQP_EXTRACT_CONNECTION_STR("cert");
+
+	PHP_AMQP_EXTRACT_CONNECTION_BOOL("verify");
 }
 /* }}} */
 
@@ -1035,7 +1067,7 @@ static PHP_METHOD(amqp_connection_class, getUsedChannels)
 
 /* {{{ proto amqp::getMaxChannels()
 Get max supported channels number per connection */
-static PHP_METHOD(amqp_connection_class, getMaxChannels)
+PHP_METHOD(amqp_connection_class, getMaxChannels)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	amqp_connection_object *connection;
@@ -1112,6 +1144,103 @@ static PHP_METHOD(amqp_connection_class, isPersistent)
 }
 /* }}} */
 
+
+/* {{{ proto amqp::getCACert() */
+static PHP_METHOD(amqp_connection_class, getCACert)
+{
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	PHP_AMQP_NOPARAMS();
+	PHP_AMQP_RETURN_THIS_PROP("cacert");
+}
+/* }}} */
+
+/* {{{ proto amqp::setCACert(string cacert) */
+static PHP_METHOD(amqp_connection_class, setCACert)
+{
+	char *str = NULL;	PHP5to7_param_str_len_type_t str_len = 0;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+		return;
+	}
+
+	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("cacert"), str, str_len TSRMLS_CC);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
+/* {{{ proto amqp::getCert() */
+static PHP_METHOD(amqp_connection_class, getCert)
+{
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	PHP_AMQP_NOPARAMS();
+	PHP_AMQP_RETURN_THIS_PROP("cert");
+}
+/* }}} */
+
+/* {{{ proto amqp::setCert(string cert) */
+static PHP_METHOD(amqp_connection_class, setCert)
+{
+	char *str = NULL;	PHP5to7_param_str_len_type_t str_len = 0;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+		return;
+	}
+
+	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("cert"), str, str_len TSRMLS_CC);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
+/* {{{ proto amqp::getKey() */
+static PHP_METHOD(amqp_connection_class, getKey)
+{
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	PHP_AMQP_NOPARAMS();
+	PHP_AMQP_RETURN_THIS_PROP("key");
+}
+/* }}} */
+
+/* {{{ proto amqp::setKey(string key) */
+static PHP_METHOD(amqp_connection_class, setKey)
+{
+	char *str = NULL;	PHP5to7_param_str_len_type_t str_len = 0;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+		return;
+	}
+
+	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("key"), str, str_len TSRMLS_CC);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
+
+/* {{{ proto amqp::getVerify() */
+static PHP_METHOD(amqp_connection_class, getVerify)
+{
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	PHP_AMQP_NOPARAMS();
+	PHP_AMQP_RETURN_THIS_PROP("verify");
+}
+/* }}} */
+
+/* {{{ proto amqp::setVerify(bool verify) */
+static PHP_METHOD(amqp_connection_class, setVerify)
+{
+	zend_bool verify = 1;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "b", &verify) == FAILURE) {
+		return;
+	}
+
+	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("verify"), verify TSRMLS_CC);
+
+	RETURN_TRUE;
+}
+/* }}} */
 
 /* amqp_connection_class ARG_INFO definition */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
@@ -1210,6 +1339,34 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_isPersistent, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getCACert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setCACert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+				ZEND_ARG_INFO(0, cacert)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getCert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setCert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+				ZEND_ARG_INFO(0, cert)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getKey, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setKey, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+				ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getVerify, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setVerify, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+				ZEND_ARG_INFO(0, verify)
+ZEND_END_ARG_INFO()
+
 
 zend_function_entry amqp_connection_class_functions[] = {
 		PHP_ME(amqp_connection_class, __construct, 	arginfo_amqp_connection_class__construct,	ZEND_ACC_PUBLIC)
@@ -1251,6 +1408,18 @@ zend_function_entry amqp_connection_class_functions[] = {
 		PHP_ME(amqp_connection_class, getHeartbeatInterval,  arginfo_amqp_connection_class_getHeartbeatInterval,	ZEND_ACC_PUBLIC)
 		PHP_ME(amqp_connection_class, getMaxFrameSize,  arginfo_amqp_connection_class_getMaxFrameSize,	ZEND_ACC_PUBLIC)
 
+		PHP_ME(amqp_connection_class, getCACert, 	arginfo_amqp_connection_class_getCACert,		ZEND_ACC_PUBLIC)
+		PHP_ME(amqp_connection_class, setCACert, 	arginfo_amqp_connection_class_setCACert,		ZEND_ACC_PUBLIC)
+
+		PHP_ME(amqp_connection_class, getCert, 	arginfo_amqp_connection_class_getCert,		ZEND_ACC_PUBLIC)
+		PHP_ME(amqp_connection_class, setCert, 	arginfo_amqp_connection_class_setCert,		ZEND_ACC_PUBLIC)
+
+		PHP_ME(amqp_connection_class, getKey, 	arginfo_amqp_connection_class_getKey,		ZEND_ACC_PUBLIC)
+		PHP_ME(amqp_connection_class, setKey, 	arginfo_amqp_connection_class_setKey,		ZEND_ACC_PUBLIC)
+
+		PHP_ME(amqp_connection_class, getVerify, 	arginfo_amqp_connection_class_getVerify,		ZEND_ACC_PUBLIC)
+		PHP_ME(amqp_connection_class, setVerify, 	arginfo_amqp_connection_class_setVerify,		ZEND_ACC_PUBLIC)
+
 		{NULL, NULL, NULL}
 };
 
@@ -1276,6 +1445,11 @@ PHP_MINIT_FUNCTION(amqp_connection)
 	zend_declare_property_null(this_ce, ZEND_STRL("channel_max"), ZEND_ACC_PRIVATE TSRMLS_CC);
 	zend_declare_property_null(this_ce, ZEND_STRL("frame_max"), ZEND_ACC_PRIVATE TSRMLS_CC);
 	zend_declare_property_null(this_ce, ZEND_STRL("heartbeat"), ZEND_ACC_PRIVATE TSRMLS_CC);
+
+	zend_declare_property_null(this_ce, ZEND_STRL("cacert"), ZEND_ACC_PRIVATE TSRMLS_CC);
+	zend_declare_property_null(this_ce, ZEND_STRL("key"), ZEND_ACC_PRIVATE TSRMLS_CC);
+	zend_declare_property_null(this_ce, ZEND_STRL("cert"), ZEND_ACC_PRIVATE TSRMLS_CC);
+	zend_declare_property_null(this_ce, ZEND_STRL("verify"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
 #if PHP_MAJOR_VERSION >=7
 	memcpy(&amqp_connection_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));

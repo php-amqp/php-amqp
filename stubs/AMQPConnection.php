@@ -42,6 +42,13 @@ class AMQPConnection
      *      'heartbeat'   => The delay, in seconds, of the connection heartbeat that the server wants.
      *                       0 means the server does not want a heartbeat. Note, librabbitmq has limited heartbeat support,
      *                       which means heartbeats checked only during blocking calls.
+     *
+     *      TLS support (see https://www.rabbitmq.com/ssl.html for details):
+     *      'cacert' => Path to the CA cert file in PEM format..
+     *      'cert'   => Path to the client certificate in PEM foramt.
+     *      'key'    => Path to the client key in PEM format.
+     *      'verify' => Enable or disable peer verification. If peer verification is enabled then the common name in the
+     *                  server certificate must match the server name. Peer verification is enabled by default.
      * )
      *
      * @param array $credentials Optional array of credential information for
@@ -353,6 +360,78 @@ class AMQPConnection
      * @return bool
      */
     public function isPersistent()
+    {
+    }
+
+    /**
+     * Get path to the CA cert file in PEM format
+     *
+     * @return string
+     */
+    public function getCACert()
+    {
+    }
+
+    /**
+     * Set path to the CA cert file in PEM format
+     *
+     * @param string $cacert
+     */
+    public function setCACert($cacert)
+    {
+    }
+
+    /**
+     * Get path to the client certificate in PEM format
+     *
+     * @return string
+     */
+    public function getCert()
+    {
+    }
+
+    /**
+     * Set path to the client certificate in PEM format
+     *
+     * @param string $cert
+     */
+    public function setCert($cert)
+    {
+    }
+
+    /**
+     * Get path to the client key in PEM format
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+    }
+
+    /**
+     * Set path to the client key in PEM format
+     *
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+    }
+
+    /**
+     * Get whether peer verification enabled or disabled
+     *
+     * @return bool
+     */
+    public function getVerify()
+    {
+    }
+
+    /**
+     * Enable or disable peer verification
+     *
+     * @param bool $verify
+     */
+    public function setVerify($verify)
     {
     }
 }

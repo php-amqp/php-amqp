@@ -42,6 +42,7 @@
 #include <amqp.h>
 #include <amqp_tcp_socket.h>
 #include <amqp_framing.h>
+#include <amqp_ssl_socket.h>
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -375,7 +376,44 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 	resource->connection_state = amqp_new_connection();
 
 	/* Create socket object */
-	resource->socket = amqp_tcp_socket_new(resource->connection_state);
+	if (params->cacert) {
+		resource->socket = amqp_ssl_socket_new(resource->connection_state);
+
+		if (!resource->socket) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not create SSL socket.", 0 TSRMLS_CC);
+
+			return NULL;
+		}
+	} else {
+		resource->socket = amqp_tcp_socket_new(resource->connection_state);
+
+		if (!resource->socket) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not create socket.", 0 TSRMLS_CC);
+
+			return NULL;
+		}
+	}
+
+	if (params->cacert && amqp_ssl_socket_set_cacert(resource->socket, params->cacert)) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not set CA certificate.", 0 TSRMLS_CC);
+
+		return NULL;
+	}
+
+	if (params->cacert) {
+#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH >= 80
+		amqp_ssl_socket_set_verify_peer(resource->socket, params->verify);
+		amqp_ssl_socket_set_verify_hostname(resource->socket, params->verify);
+#else
+		amqp_ssl_socket_set_verify(resource->socket, params->verify);
+#endif
+	}
+
+	if (params->cert && params->key && amqp_ssl_socket_set_key(resource->socket, params->cert, params->key)) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not setting client cert.", 0 TSRMLS_CC);
+
+		return NULL;
+	}
 
 	if (params->connect_timeout > 0) {
 		tv.tv_sec = (long int) params->connect_timeout;

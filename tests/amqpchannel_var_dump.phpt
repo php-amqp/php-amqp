@@ -20,7 +20,7 @@ var_dump($ch);
 --EXPECT--
 object(AMQPChannel)#2 (3) {
   ["connection":"AMQPChannel":private]=>
-  object(AMQPConnection)#1 (11) {
+  object(AMQPConnection)#1 (15) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -43,6 +43,14 @@ object(AMQPChannel)#2 (3) {
     int(131072)
     ["heartbeat":"AMQPConnection":private]=>
     int(0)
+    ["cacert":"AMQPConnection":private]=>
+    string(0) ""
+    ["key":"AMQPConnection":private]=>
+    string(0) ""
+    ["cert":"AMQPConnection":private]=>
+    string(0) ""
+    ["verify":"AMQPConnection":private]=>
+    bool(true)
   }
   ["prefetch_count":"AMQPChannel":private]=>
   int(3)
@@ -51,7 +59,7 @@ object(AMQPChannel)#2 (3) {
 }
 object(AMQPChannel)#2 (3) {
   ["connection":"AMQPChannel":private]=>
-  object(AMQPConnection)#1 (11) {
+  object(AMQPConnection)#1 (15) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -74,6 +82,14 @@ object(AMQPChannel)#2 (3) {
     int(131072)
     ["heartbeat":"AMQPConnection":private]=>
     int(0)
+    ["cacert":"AMQPConnection":private]=>
+    string(0) ""
+    ["key":"AMQPConnection":private]=>
+    string(0) ""
+    ["cert":"AMQPConnection":private]=>
+    string(0) ""
+    ["verify":"AMQPConnection":private]=>
+    bool(true)
   }
   ["prefetch_count":"AMQPChannel":private]=>
   int(3)
