@@ -181,9 +181,48 @@ class AMQPChannel
     }
 
     /**
+     * Set the channel to use publisher acknowledgements. This can only used on a non-transactional channel.
+     */
+    public function confirmSelect()
+    {
+    }
+
+    /**
+     * Set callback to process basic.ack and basic.nac AMQP server methods (applicable when channel in confirm mode).
+     *
+     * @param callable|null $ack_callback
+     * @param callable|null $nack_callback
+     *
+     * Callback functions with all arguments have the following signature:
+     *
+     *      function ack_callback(int $delivery_tag, bool $multiple) : bool;
+     *      function nack_callback(int $delivery_tag, bool $multiple, bool $requeue) : bool;
+     *
+     * and should return boolean false when wait loop should be canceled.
+     *
+     * Note, basic.nack server method will only be delivered if an internal error occurs in the Erlang process
+     * responsible for a queue (see https://www.rabbitmq.com/confirms.html for details).
+     *
+     */
+    public function setConfirmCallback(callable $ack_callback=null, callable $nack_callback=null)
+    {
+    }
+
+    /**
+     * Wait until all messages published since the last call have been either ack'd or nack'd by the broker.
+     *
+     * Note, this method also catch all basic.return message from server.
+     *
+     * @param float $timeout Timeout in seconds. May be fractional.
+     */
+    public function waitForConfirm($timeout = 0.0)
+    {
+    }
+
+    /**
      * Set callback to process basic.return AMQP server method
      *
-     * @param callable|null $callback
+     * @param callable|null $return_callback
      *
      * Callback function with all arguments has the following signature:
      *
@@ -197,7 +236,7 @@ class AMQPChannel
      * and should return boolean false when wait loop should be canceled.
      *
      */
-    public function setReturnCallback(callable $callback=null)
+    public function setReturnCallback(callable $return_callback=null)
     {
     }
 

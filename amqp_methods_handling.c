@@ -75,6 +75,13 @@ int amqp_simple_wait_method_list_noblock(amqp_connection_state_t state,
 		expected_channel != frame.channel ||
 		!amqp_id_in_reply_list(frame.payload.method.id, expected_methods)) {
 
+		if (AMQP_CHANNEL_CLOSE_METHOD == frame.payload.method.id || AMQP_CONNECTION_CLOSE_METHOD == frame.payload.method.id) {
+
+			*output = frame.payload.method;
+
+			return AMQP_RESPONSE_SERVER_EXCEPTION;
+		}
+
 		return AMQP_STATUS_WRONG_METHOD;
 	}
 
@@ -101,6 +108,8 @@ int php_amqp_handle_basic_return(char **message, amqp_connection_resource *resou
 	amqp_message_t msg;
 	int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
 
+	assert(AMQP_BASIC_RETURN_METHOD == method->id);
+
 	amqp_basic_return_t *m = (amqp_basic_return_t *) method->decoded;
 
 	ret = amqp_read_message(resource->connection_state, channel_id, &msg, 0);
@@ -125,12 +134,7 @@ int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *
 	PHP5to7_zval_t params PHP5to7_MAYBE_SET_TO_NULL;
 	PHP5to7_zval_t basic_properties PHP5to7_MAYBE_SET_TO_NULL;
 
-	zval retval;
-	zval *retval_ptr = &retval;
-
 	int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
-
-	ZVAL_NULL(&retval);
 
 	PHP5to7_MAYBE_INIT(params);
 	PHP5to7_ARRAY_INIT(params);
@@ -150,6 +154,85 @@ int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *
 
 	PHP5to7_ADD_NEXT_INDEX_STRINGL_DUP(PHP5to7_MAYBE_PTR(params), (const char *) msg->body.bytes, (PHP5to7_param_str_len_type_t) msg->body.len);
 
+	status = php_amqp_call_callback_with_params(params, cb TSRMLS_CC);
+
+	PHP5to7_MAYBE_DESTROY(basic_properties);
+
+	return status;
+}
+
+int php_amqp_handle_basic_ack(char **message, amqp_connection_resource *resource, amqp_channel_t channel_id, amqp_channel_object *channel, amqp_method_t *method TSRMLS_DC) {
+	amqp_rpc_reply_t ret;
+	int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
+
+	assert(AMQP_BASIC_ACK_METHOD == method->id);
+
+	amqp_basic_ack_t *m = (amqp_basic_ack_t *) method->decoded;
+
+	if (channel->callbacks.basic_ack.fci.size > 0) {
+		status = php_amqp_call_basic_ack_callback(m, &channel->callbacks.basic_ack TSRMLS_CC);
+	} else {
+		zend_error(E_NOTICE, "Unhandled basic.ack method from server received. Use AMQPChannel::setConfirmCallback() to process it.");
+		status = PHP_AMQP_RESOURCE_RESPONSE_BREAK;
+	}
+
+	return status;
+}
+
+int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *cb TSRMLS_DC) {
+	PHP5to7_zval_t params PHP5to7_MAYBE_SET_TO_NULL;
+
+	PHP5to7_MAYBE_INIT(params);
+	PHP5to7_ARRAY_INIT(params);
+
+	/* callback(int $delivery_tag, bool $multiple); */
+	add_next_index_long(PHP5to7_MAYBE_PTR(params), (PHP5to7_param_long_type_t) m->delivery_tag);
+	add_next_index_bool(PHP5to7_MAYBE_PTR(params), m->multiple);
+
+	return php_amqp_call_callback_with_params(params, cb TSRMLS_CC);
+}
+
+int php_amqp_handle_basic_nack(char **message, amqp_connection_resource *resource, amqp_channel_t channel_id, amqp_channel_object *channel, amqp_method_t *method TSRMLS_DC) {
+	amqp_rpc_reply_t ret;
+	int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
+
+	assert(AMQP_BASIC_NACK_METHOD == method->id);
+
+	amqp_basic_nack_t *m = (amqp_basic_nack_t *) method->decoded;
+
+	if (channel->callbacks.basic_nack.fci.size > 0) {
+		status = php_amqp_call_basic_nack_callback(m, &channel->callbacks.basic_nack TSRMLS_CC);
+	} else {
+		zend_error(E_NOTICE, "Unhandled basic.nack method from server received. Use AMQPChannel::setConfirmCallback() to process it.");
+		status = PHP_AMQP_RESOURCE_RESPONSE_BREAK;
+	}
+
+	return status;
+}
+
+int php_amqp_call_basic_nack_callback(amqp_basic_nack_t *m, amqp_callback_bucket *cb TSRMLS_DC) {
+	PHP5to7_zval_t params PHP5to7_MAYBE_SET_TO_NULL;
+
+	PHP5to7_MAYBE_INIT(params);
+	PHP5to7_ARRAY_INIT(params);
+
+	/* callback(int $delivery_tag, bool $multiple, bool $requeue); */
+	add_next_index_long(PHP5to7_MAYBE_PTR(params), (PHP5to7_param_long_type_t) m->delivery_tag);
+	add_next_index_bool(PHP5to7_MAYBE_PTR(params), m->multiple);
+	add_next_index_bool(PHP5to7_MAYBE_PTR(params), m->requeue);
+
+	return php_amqp_call_callback_with_params(params, cb TSRMLS_CC);
+}
+
+int php_amqp_call_callback_with_params(PHP5to7_zval_t params, amqp_callback_bucket *cb TSRMLS_DC)
+{
+	zval retval;
+	zval *retval_ptr = &retval;
+
+	int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
+
+	ZVAL_NULL(&retval);
+
 	/* Convert everything to be callable */
 	zend_fcall_info_args(&cb->fci, PHP5to7_MAYBE_PTR(params) TSRMLS_CC);
 
@@ -166,8 +249,6 @@ int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *
 	/* Clean up our mess */
 	zend_fcall_info_args_clear(&cb->fci, 1);
 	PHP5to7_MAYBE_DESTROY(params);
-	PHP5to7_MAYBE_DESTROY(basic_properties);
-
 	PHP5to7_MAYBE_DESTROY2(retval, retval_ptr);
 
 	return status;

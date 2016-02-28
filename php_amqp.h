@@ -114,6 +114,8 @@ struct _amqp_callback_bucket {
 
 struct _amqp_channel_callbacks {
 	amqp_callback_bucket basic_return;
+	amqp_callback_bucket basic_ack;
+	amqp_callback_bucket basic_nack;
 };
 
 

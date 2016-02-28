@@ -205,15 +205,13 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
 				 * here is a message being confirmed
 				 */
 
-				/* TODO: call basic.ack/nack method handling callback */
-				return PHP_AMQP_RESOURCE_RESPONSE_OK;
+				return php_amqp_handle_basic_ack(message, resource, channel_id, channel, &frame.payload.method TSRMLS_CC);
 			case AMQP_BASIC_NACK_METHOD:
 				/* if we've turned publisher confirms on, and we've published a message
 				 * here is a message being confirmed
 				 */
 
-				/* TODO: call basic.ack/nack method handling callback */
-				return PHP_AMQP_RESOURCE_RESPONSE_OK;
+				return php_amqp_handle_basic_nack(message, resource, channel_id, channel, &frame.payload.method TSRMLS_CC);
 			case AMQP_BASIC_RETURN_METHOD:
 				/* if a published message couldn't be routed and the mandatory flag was set
 				 * this is what would be returned. The message then needs to be read.
