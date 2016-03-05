@@ -122,6 +122,8 @@ PHP_METHOD(amqp_exchange_class, setName)
 
 	/* Set the exchange name */
 	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("name"), name, name_len TSRMLS_CC);
+	
+	RETURN_TRUE;
 }
 /* }}} */
 
@@ -174,6 +176,8 @@ PHP_METHOD(amqp_exchange_class, setFlags)
 	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("durable"), IS_DURABLE(flagBitmask) TSRMLS_CC);
 	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("auto_delete"), IS_AUTODELETE(flagBitmask) TSRMLS_CC);
 	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("internal"), IS_INTERNAL(flagBitmask) TSRMLS_CC);
+	
+	RETURN_TRUE;
 }
 /* }}} */
 
@@ -207,6 +211,8 @@ PHP_METHOD(amqp_exchange_class, setType)
 	}
 
 	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("type"), type, type_len TSRMLS_CC);
+	
+	RETURN_TRUE;
 }
 /* }}} */
 
