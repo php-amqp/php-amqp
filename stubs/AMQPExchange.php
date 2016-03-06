@@ -211,7 +211,7 @@ class AMQPExchange
      *                       AMQP_DURABLE, AMQP_PASSIVE
      *                       (and AMQP_DURABLE, if librabbitmq version >= 0.5.3)
      *
-     * @return boolean True on success or false on failure.
+     * @return void
      */
     public function setFlags($flags)
     {
@@ -222,7 +222,7 @@ class AMQPExchange
      *
      * @param string $exchange_name The name of the exchange to set as string.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setName($exchange_name)
     {
@@ -236,7 +236,7 @@ class AMQPExchange
      *
      * @param string $exchange_type The type of exchange as a string.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setType($exchange_type)
     {
