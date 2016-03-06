@@ -708,8 +708,6 @@ PHP_METHOD(amqp_connection_class, setLogin)
 	}
 
 	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("login"), login, login_len TSRMLS_CC);
-
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -742,8 +740,6 @@ PHP_METHOD(amqp_connection_class, setPassword)
 	}
 
 	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("password"), password, password_len TSRMLS_CC);
-
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -777,8 +773,6 @@ PHP_METHOD(amqp_connection_class, setHost)
 	}
 
 	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("host"), host, host_len TSRMLS_CC);
-
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -829,8 +823,6 @@ PHP_METHOD(amqp_connection_class, setPort)
 	}
 
 	zend_update_property_long(this_ce, getThis(), ZEND_STRL("port"), port TSRMLS_CC);
-
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -863,8 +855,6 @@ PHP_METHOD(amqp_connection_class, setVhost)
 	}
 
 	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("vhost"), vhost, vhost_len TSRMLS_CC);
-
-	RETURN_TRUE;
 }
 /* }}} */
 

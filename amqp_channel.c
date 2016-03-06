@@ -344,8 +344,6 @@ PHP_METHOD(amqp_channel_class, setPrefetchCount)
 	/* Set the prefetch count - the implication is to disable the size */
 	zend_update_property_long(this_ce, getThis(), ZEND_STRL("prefetch_count"), prefetch_count TSRMLS_CC);
 	zend_update_property_long(this_ce, getThis(), ZEND_STRL("prefetch_size"), 0 TSRMLS_CC);
-
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -405,8 +403,6 @@ PHP_METHOD(amqp_channel_class, setPrefetchSize)
 	/* Set the prefetch size - the implication is to disable the count */
 	zend_update_property_long(this_ce, getThis(), ZEND_STRL("prefetch_count"), 0 TSRMLS_CC);
 	zend_update_property_long(this_ce, getThis(), ZEND_STRL("prefetch_size"), prefetch_size TSRMLS_CC);
-
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -471,8 +467,6 @@ PHP_METHOD(amqp_channel_class, qos)
 
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 	}
-
-	RETURN_TRUE;
 }
 /* }}} */
 
