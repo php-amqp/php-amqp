@@ -135,17 +135,17 @@ static int php_amqp_get_fci_gc_data_count(zend_fcall_info *fci) {
     return cnt;
 }
 
-static int php_amqp_get_fci_gc_data(zend_fcall_info *fci, zval **gc_data, int offset) {
+static zval * php_amqp_get_fci_gc_data(zend_fcall_info *fci, zval *gc_data) {
     if (ZEND_FCI_INITIALIZED(*fci)) {
 
-		ZVAL_COPY_VALUE(gc_data[offset++], &fci->function_name);
+		ZVAL_COPY_VALUE(gc_data++, &fci->function_name);
 
         if (fci->object != NULL) {
-            ZVAL_OBJ(gc_data[offset++], fci->object);
+            ZVAL_OBJ(gc_data++, fci->object);
         }
     }
 
-    return offset;
+	return gc_data;
 }
 
 static HashTable *amqp_channel_gc(zval *object, zval **table, int *n) /* {{{ */
@@ -160,12 +160,14 @@ static HashTable *amqp_channel_gc(zval *object, zval **table, int *n) /* {{{ */
 
 	if (cnt > channel->gc_data_count) {
 		channel->gc_data_count = cnt;
-		channel->gc_data = (zval *) erealloc(channel->gc_data, sizeof(zval) * channel->gc_data_count);
+		channel->gc_data = (zval *) erealloc(channel->gc_data, sizeof(zval) * cnt);
 	}
 
-	php_amqp_get_fci_gc_data(&channel->callbacks.basic_return.fci, &channel->gc_data, 0);
-	php_amqp_get_fci_gc_data(&channel->callbacks.basic_ack.fci, &channel->gc_data, basic_return_cnt);
-	php_amqp_get_fci_gc_data(&channel->callbacks.basic_nack.fci, &channel->gc_data, basic_ack_cnt);
+	zval *gc_data = channel->gc_data;
+
+	gc_data = php_amqp_get_fci_gc_data(&channel->callbacks.basic_return.fci, gc_data);
+	gc_data = php_amqp_get_fci_gc_data(&channel->callbacks.basic_ack.fci, gc_data);
+	php_amqp_get_fci_gc_data(&channel->callbacks.basic_nack.fci, gc_data);
 
 	*table = channel->gc_data;
 	*n     = cnt;
@@ -238,7 +240,7 @@ static HashTable *amqp_channel_gc(zval *object, zval ***table, int *n TSRMLS_DC)
 
 	php_amqp_get_fci_gc_data(&channel->callbacks.basic_return.fci, channel->gc_data, 0);
 	php_amqp_get_fci_gc_data(&channel->callbacks.basic_ack.fci, channel->gc_data, basic_return_cnt);
-	php_amqp_get_fci_gc_data(&channel->callbacks.basic_nack.fci, channel->gc_data, basic_ack_cnt);
+	php_amqp_get_fci_gc_data(&channel->callbacks.basic_nack.fci, channel->gc_data, basic_return_cnt + basic_ack_cnt);
 
 	*table = channel->gc_data;
 	*n     = cnt;
