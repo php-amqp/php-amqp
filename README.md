@@ -2,7 +2,7 @@
 
 Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/rabbitmq-c)
 
-This extension works with both PHP 5 and PHP 7 (both zts and non-zts).
+This extension works both with PHP 5 and PHP 7 (both zts and non-zts).
 
 ### Requirements:
 
@@ -32,7 +32,7 @@ and [php-amqp specific examples](https://github.com/rabbitmq/rabbitmq-tutorials/
 There are also available [stub files](https://github.com/pdezwart/php-amqp/tree/master/stubs) with accurate PHPDoc which
 may be also used in your IDE for code completion, navigation and documentation in-place.
 
-Finally, check [tests files](https://github.com/pdezwart/php-amqp/tree/master/tests) demonstrates typical usage and edge cases.
+Finally, check out the [tests](https://github.com/pdezwart/php-amqp/tree/master/tests) to see typical usage and edge cases.
  
 ### Notes
 
@@ -49,10 +49,10 @@ Finally, check [tests files](https://github.com/pdezwart/php-amqp/tree/master/te
   Limitations:
 
   - there may be only one persistent connection per unique credentials (login+password+host+port+vhost).
-    If there will be attempt to create another persistent connection with same credentials, exception will be thrown.
-  - channels on persistent connection are not persistent: they are destroyed between requests.
+    If there will be an attempt to create another persistent connection with the same credentials, an exception will be thrown.
+  - channels on persistent connections are not persistent: they are destroyed between requests.
   - heartbeats are limited to blocking calls only, so if there are no any operations on a connection or no active 
-    consumer set, connection may be closed by broker as dead.
+    consumer set, connection may be closed by the broker as dead.
 
 *Developers note: alternatively for built-in persistent connection support [raphf](http://pecl.php.net/package/raphf) pecl extension may be used.*
 
@@ -60,25 +60,25 @@ Finally, check [tests files](https://github.com/pdezwart/php-amqp/tree/master/te
  
  1. First, search through the closed issues and [stackoverflow.com](http://stackoverflow.com).
  3. Submit an issue with short and definitive title that describe your problem
- 4. Provide platform info, php interpreter version, SAPI mode (cli, fpm, cgi, etc) extension is used in, php-amqp extension version, librabbitmq version, make tools version.
- 5. Description should provide information how to reproduce a problem ([gist](https://gist.github.com/) is the most preferable way to include large sources) in a definitive way. When special environment [Vagrant](http://www.vagrantup.com/) may be in handy.
- 6. If stack trace generated include it in full via [gist](https://gist.github.com/) or the important part (if you are definitely know what you are doing) directly in description.
+ 4. Provide platform info, PHP interpreter version, SAPI mode (cli, fpm, cgi, etc) extension is used in, php-amqp extension version, librabbitmq version, make tools version.
+ 5. Description should provide information on how to reproduce a problem ([gist](https://gist.github.com/) is the most preferable way to include large sources) in a definitive way. Use [Vagrant](http://www.vagrantup.com/) to replicate unusual environments.
+ 6. If stack trace is generated, include it in full via [gist](https://gist.github.com/) or the important part (if you definitely know what you are doing) directly in the description.
  
 #### Things to check before reporting a problem
 
  Some of them, the list is not complete.
 
- 1. You are running on correct machine in correct environment and you platform meet your application requirement.
- 2. librabbimq installed and discoverable in your environment so php-amqp extension can load it.
+ 1. You are running on correct machine in correct environment and your platform meets your application requirement.
+ 2. librabbimq is installed and discoverable in your environment so php-amqp extension can load it.
  3. php-amqp extension present in system (find `amqp.so` or `amqp.dll` if you are on windows), it is loaded (`php --ri amqp` produced some info), and there are no underlying abstraction that MAY emulate php-amqp work.
- 5. You has correct RabbitMQ credentials.
- 6. You are using the latest php-amqp, librabbitm, RabbitMQ and sometimes PHP version itself. Sometimes your problem is already solved.
+ 5. You hav correct RabbitMQ credentials.
+ 6. You are using the latest php-amqp, librabbitmq, RabbitMQ and sometimes PHP version itself. Sometimes your problem is already solved.
  7. Other extensions disabled (especially useful when PHP interpreter crashes and you get stack trace and segmentation fault).
 
 
 ## Development
 
- There are vagrant environment with pre-installed software and libraries necessary to build, test and run php-amqp extension.
+ There is a Vagrant environment with pre-installed software and libraries necessary to build, test and run the php-amqp extension.
 
  To start it, just type `vagrant up` and then `vagrant ssh` in php-amqp directory.
 
@@ -124,7 +124,7 @@ using `-Y amqp` attribute, just give a try - `tshark -i lo -Y amqp`.
 > NOTE: -w provides raw packet data, not text. If you want text output you need to redirect stdout (e.g. using '>'), don't use the -w option for this.
 
 
-#### Configuring RabbitMQ server
+#### Configuring a RabbitMQ server
 
 If you need to tweek RabbitMQ server params use default config
 [rabbitmq.config.example](https://github.com/rabbitmq/rabbitmq-server/blob/master/docs/rabbitmq.config.example)
