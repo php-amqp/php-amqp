@@ -28,10 +28,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active> <!- - yes, very - ->
  </developer>
  -->
- <date>2015-12-21</date>
+ <date>2016-04-26</date>
  <time>15:30:00</time>
  <version>
-  <release>1.7.0-dev</release>
+  <release>1.7.0</release>
   <api>1.0.0</api>
  </version>
  <stability>
@@ -40,10 +40,26 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes><![CDATA[
-* TBD
+     * Add PHP7 support (Bogdan Padalko, Steffen Hanikel)
+     * Add AMQPEnvelope::hasHeader(), AMQPExchange::hasArgument() and AMQPQueue::hasArgument() to check whether specific header exists (Bogdan Padalko)
+     * Fix AMQPConnection::setPort() writes to wrong property (Bogdan Padalko)
+     * Add compiled librabbitmq version early check (Bogdan Padalko)
+     * Fix segfault when channel zval type != IS_OBJECT (Bogdan Padalko)
+     * Fix API breakage when rabbitmq-c < 0.6.0 used (Bogdan Padalko)
+     * Close connection on library errors (Bogdan Padalko)
+     * Do not store connection resource ID string (Bogdan Padalko)
+     * Explicitly cleanup references on connection on cleanup (Bogdan Padalko)
+     * Show effective connection values when connection is active and passed values otherwise (Bogdad Padalko)
+     * Completely move to zend object custom objects (AMQPEnvelope, AMQPExchange and AMQPQueue) (Bogdan Padalko)
+     * Use zend object on custom objects for properties storing (AMQPConnection and AMQPChannel) (Bogdan Padalko)
+     * Fix not properly deleted connection resource. (Bogdan Padalko, Steffen Hanikel)
+     * Fix not properly allocated and freed amqp_table_t arguments table memory. (Bogdan Padalko, Steffen Hanikel)
+     * Upgrade vagrant box to Ubuntu 15.10 Wily Werwof (Bogdan Padalko)
+     * Fix various grammar and spelling mistakes (Artem Gordinsky)
+     * Update stubs (Sascha-Oliver Prolic)
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha2...v1.7.0
+https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
  ]]></notes>
  <contents>
   <dir name="/">
@@ -67,31 +83,32 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha2...v1.7.0
    <file name="config.m4" role="src" />
    <file name="config.w32" role="src" />
 
-   <file name="benchmark.php" role="doc" />
-   <file name="CREDITS" role="doc" />
-   <file name="LICENSE" role="doc" />
+   <file name="benchmark.php" role="doc"/>
+   <file name="CREDITS" role="doc"/>
+   <file name="LICENSE" role="doc"/>
 
-   <file name="stubs/AMQP.php" role="doc" />
-   <file name="stubs/AMQPChannel.php" role="doc" />
-   <file name="stubs/AMQPChannelException.php" role="doc" />
-   <file name="stubs/AMQPConnection.php" role="doc" />
-   <file name="stubs/AMQPConnectionException.php" role="doc" />
-   <file name="stubs/AMQPEnvelope.php" role="doc" />
-   <file name="stubs/AMQPException.php" role="doc" />
-   <file name="stubs/AMQPExchange.php" role="doc" />
-   <file name="stubs/AMQPExchangeException.php" role="doc" />
-   <file name="stubs/AMQPQueue.php" role="doc" />
-   <file name="stubs/AMQPQueueException.php" role="doc" />
+   <file name="stubs/AMQP.php" role="doc"/>
+   <file name="stubs/AMQPChannel.php" role="doc"/>
+   <file name="stubs/AMQPChannelException.php" role="doc"/>
+   <file name="stubs/AMQPConnection.php" role="doc"/>
+   <file name="stubs/AMQPConnectionException.php" role="doc"/>
+   <file name="stubs/AMQPEnvelope.php" role="doc"/>
+   <file name="stubs/AMQPException.php" role="doc"/>
+   <file name="stubs/AMQPExchange.php" role="doc"/>
+   <file name="stubs/AMQPExchangeException.php" role="doc"/>
+   <file name="stubs/AMQPQueue.php" role="doc"/>
+   <file name="stubs/AMQPQueueException.php" role="doc"/>
 
    <file name="tests/_test_helpers.php.inc" role="test"/>
    <file name="tests/amqpchannel_basicRecover.phpt" role="test"/>
    <file name="tests/amqpchannel_construct_basic.phpt" role="test"/>
-   <file name="tests/amqpchannel_get_connection.phpt" role="test"/>
    <file name="tests/amqpchannel_getChannelId.phpt" role="test"/>
+   <file name="tests/amqpchannel_get_connection.phpt" role="test"/>
    <file name="tests/amqpchannel_multi_channel_connection.phpt" role="test"/>
    <file name="tests/amqpchannel_slots_usage.phpt" role="test"/>
    <file name="tests/amqpchannel_var_dump.phpt" role="test"/>
    <file name="tests/amqpconnection_connect_login_failure.phpt" role="test"/>
+   <file name="tests/amqpconnection_connection_getters.phpt" role="test"/>
    <file name="tests/amqpconnection_construct_basic.phpt" role="test"/>
    <file name="tests/amqpconnection_construct_ini_read_timeout.phpt" role="test"/>
    <file name="tests/amqpconnection_construct_ini_timeout.phpt" role="test"/>
@@ -105,6 +122,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha2...v1.7.0
    <file name="tests/amqpconnection_getUsedChannels.phpt" role="test"/>
    <file name="tests/amqpconnection_heartbeat.phpt" role="test"/>
    <file name="tests/amqpconnection_heartbeat_with_consumer.phpt" role="test"/>
+   <file name="tests/amqpconnection_heartbeat_with_persistent.phpt" role="test"/>
    <file name="tests/amqpconnection_persistent_construct_basic.phpt" role="test"/>
    <file name="tests/amqpconnection_persistent_in_use.phpt" role="test"/>
    <file name="tests/amqpconnection_persistent_reusable.phpt" role="test"/>
@@ -142,6 +160,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha2...v1.7.0
    <file name="tests/amqpexchange_construct_basic.phpt" role="test"/>
    <file name="tests/amqpexchange_declare_basic.phpt" role="test"/>
    <file name="tests/amqpexchange_declare_existent.phpt" role="test"/>
+   <file name="tests/amqpexchange_declare_with_stalled_reference.phpt" role="test"/>
    <file name="tests/amqpexchange_declare_without_name.phpt" role="test"/>
    <file name="tests/amqpexchange_declare_without_type.phpt" role="test"/>
    <file name="tests/amqpexchange_get_channel.phpt" role="test"/>
@@ -156,9 +175,9 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha2...v1.7.0
    <file name="tests/amqpexchange_publish_with_properties_ignore_unsupported_header_values.phpt" role="test"/>
    <file name="tests/amqpexchange_publish_with_properties_nested_header.phpt" role="test"/>
    <file name="tests/amqpexchange_publish_with_properties_user_id_failure.phpt" role="test"/>
+   <file name="tests/amqpexchange_setArgument.phpt" role="test"/>
    <file name="tests/amqpexchange_set_flag.phpt" role="test"/>
    <file name="tests/amqpexchange_set_flags.phpt" role="test"/>
-   <file name="tests/amqpexchange_setArgument.phpt" role="test"/>
    <file name="tests/amqpexchange_unbind.phpt" role="test"/>
    <file name="tests/amqpexchange_unbind_with_arguments.phpt" role="test"/>
    <file name="tests/amqpexchange_unbind_without_key.phpt" role="test"/>
@@ -177,6 +196,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha2...v1.7.0
    <file name="tests/amqpqueue_consume_timeout.phpt" role="test"/>
    <file name="tests/amqpqueue_declare_basic.phpt" role="test"/>
    <file name="tests/amqpqueue_declare_with_arguments.phpt" role="test"/>
+   <file name="tests/amqpqueue_declare_with_stalled_reference.phpt" role="test"/>
    <file name="tests/amqpqueue_delete_basic.phpt" role="test"/>
    <file name="tests/amqpqueue_empty_name.phpt" role="test"/>
    <file name="tests/amqpqueue_get_basic.phpt" role="test"/>
@@ -198,23 +218,23 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha2...v1.7.0
    <file name="tests/bug_19840.phpt" role="test"/>
    <file name="tests/bug_61533.phpt" role="test"/>
    <file name="tests/bug_62354.phpt" role="test"/>
+   <file name="tests/bug_gh147.phpt" role="test"/>
+   <file name="tests/bug_gh155_direct_reply_to.phpt" role="test"/>
    <file name="tests/bug_gh50-1.phpt" role="test"/>
    <file name="tests/bug_gh50-2.phpt" role="test"/>
    <file name="tests/bug_gh50-3.phpt" role="test"/>
    <file name="tests/bug_gh50-4.phpt" role="test"/>
-   <file name="tests/bug_gh53.phpt" role="test"/>
    <file name="tests/bug_gh53-2.phpt" role="test"/>
+   <file name="tests/bug_gh53.phpt" role="test"/>
    <file name="tests/bug_gh72-1.phpt" role="test"/>
    <file name="tests/bug_gh72-2.phpt" role="test"/>
-   <file name="tests/bug_gh147.phpt" role="test"/>
-   <file name="tests/bug_gh155_direct_reply_to.phpt" role="test"/>
    <file name="tests/package-version.phpt" role="test"/>
   </dir> <!-- / -->
  </contents>
  <dependencies>
   <required>
    <php>
-   <min>5.2.0</min>
+   <min>5.3.0</min>
    </php>
    <pearinstaller>
    <min>1.4.0</min>
