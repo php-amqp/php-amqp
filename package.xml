@@ -40,26 +40,9 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes><![CDATA[
-     * Add PHP7 support (Bogdan Padalko, Steffen Hanikel)
-     * Add AMQPEnvelope::hasHeader(), AMQPExchange::hasArgument() and AMQPQueue::hasArgument() to check whether specific header exists (Bogdan Padalko)
-     * Fix AMQPConnection::setPort() writes to wrong property (Bogdan Padalko)
-     * Add compiled librabbitmq version early check (Bogdan Padalko)
-     * Fix segfault when channel zval type != IS_OBJECT (Bogdan Padalko)
-     * Fix API breakage when rabbitmq-c < 0.6.0 used (Bogdan Padalko)
-     * Close connection on library errors (Bogdan Padalko)
-     * Do not store connection resource ID string (Bogdan Padalko)
-     * Explicitly cleanup references on connection on cleanup (Bogdan Padalko)
-     * Show effective connection values when connection is active and passed values otherwise (Bogdad Padalko)
-     * Completely move to zend object custom objects (AMQPEnvelope, AMQPExchange and AMQPQueue) (Bogdan Padalko)
-     * Use zend object on custom objects for properties storing (AMQPConnection and AMQPChannel) (Bogdan Padalko)
-     * Fix not properly deleted connection resource. (Bogdan Padalko, Steffen Hanikel)
-     * Fix not properly allocated and freed amqp_table_t arguments table memory. (Bogdan Padalko, Steffen Hanikel)
-     * Upgrade vagrant box to Ubuntu 15.10 Wily Werwof (Bogdan Padalko)
-     * Fix various grammar and spelling mistakes (Artem Gordinsky)
-     * Update stubs (Sascha-Oliver Prolic)
-
+     * TBD
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
+https://github.com/pdezwart/php-amqp/compare/v1.7.0...
  ]]></notes>
  <contents>
   <dir name="/">
@@ -248,6 +231,40 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
  </extsrcrelease>
 
  <changelog>
+  <release>
+   <version>
+    <release>1.7.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes><![CDATA[
+     * Add PHP7 support (Bogdan Padalko, Steffen Hanikel)
+     * Add AMQPEnvelope::hasHeader(), AMQPExchange::hasArgument() and AMQPQueue::hasArgument() to check whether specific header exists (Bogdan Padalko)
+     * Fix AMQPConnection::setPort() writes to wrong property (Bogdan Padalko)
+     * Add compiled librabbitmq version early check (Bogdan Padalko)
+     * Fix segfault when channel zval type != IS_OBJECT (Bogdan Padalko)
+     * Fix API breakage when rabbitmq-c < 0.6.0 used (Bogdan Padalko)
+     * Close connection on library errors (Bogdan Padalko)
+     * Do not store connection resource ID string (Bogdan Padalko)
+     * Explicitly cleanup references on connection on cleanup (Bogdan Padalko)
+     * Show effective connection values when connection is active and passed values otherwise (Bogdad Padalko)
+     * Completely move to zend object custom objects (AMQPEnvelope, AMQPExchange and AMQPQueue) (Bogdan Padalko)
+     * Use zend object on custom objects for properties storing (AMQPConnection and AMQPChannel) (Bogdan Padalko)
+     * Fix not properly deleted connection resource. (Bogdan Padalko, Steffen Hanikel)
+     * Fix not properly allocated and freed amqp_table_t arguments table memory. (Bogdan Padalko, Steffen Hanikel)
+     * Upgrade vagrant box to Ubuntu 15.10 Wily Werwof (Bogdan Padalko)
+     * Fix various grammar and spelling mistakes (Artem Gordinsky)
+     * Update stubs (Sascha-Oliver Prolic)
+
+For a complete list of changes see:
+https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
+]]></notes>
+  </release>
+  <!-- -->
   <release>
    <version>
     <release>1.7.0alpha2</release>
