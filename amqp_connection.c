@@ -289,7 +289,7 @@ PHP5to7_zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
 /* {{{ proto AMQPConnection::__construct([array optional])
  * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'read_timeout', 'write_timeout', 'connect_timeout' and 'timeout' (deprecated) indexes
  */
-PHP_METHOD(amqp_connection_class, __construct)
+static PHP_METHOD(amqp_connection_class, __construct)
 {
 	zval* ini_arr = NULL;
 
@@ -489,7 +489,7 @@ PHP_METHOD(amqp_connection_class, __construct)
 
 /* {{{ proto amqp::isConnected()
 check amqp connection */
-PHP_METHOD(amqp_connection_class, isConnected)
+static PHP_METHOD(amqp_connection_class, isConnected)
 {
 	amqp_connection_object *connection;
 
@@ -511,7 +511,7 @@ PHP_METHOD(amqp_connection_class, isConnected)
 
 /* {{{ proto amqp::connect()
 create amqp connection */
-PHP_METHOD(amqp_connection_class, connect)
+static PHP_METHOD(amqp_connection_class, connect)
 {
 	amqp_connection_object *connection;
 
@@ -536,7 +536,7 @@ PHP_METHOD(amqp_connection_class, connect)
 
 /* {{{ proto amqp::connect()
 create amqp connection */
-PHP_METHOD(amqp_connection_class, pconnect)
+static PHP_METHOD(amqp_connection_class, pconnect)
 {
 	amqp_connection_object *connection;
 
@@ -563,7 +563,7 @@ PHP_METHOD(amqp_connection_class, pconnect)
 
 /* {{{ proto amqp:pdisconnect()
 destroy amqp persistent connection */
-PHP_METHOD(amqp_connection_class, pdisconnect)
+static PHP_METHOD(amqp_connection_class, pdisconnect)
 {
 	amqp_connection_object *connection;
 
@@ -593,7 +593,7 @@ PHP_METHOD(amqp_connection_class, pdisconnect)
 
 /* {{{ proto amqp::disconnect()
 destroy amqp connection */
-PHP_METHOD(amqp_connection_class, disconnect)
+static PHP_METHOD(amqp_connection_class, disconnect)
 {
 	amqp_connection_object *connection;
 
@@ -623,7 +623,7 @@ PHP_METHOD(amqp_connection_class, disconnect)
 
 /* {{{ proto amqp::reconnect()
 recreate amqp connection */
-PHP_METHOD(amqp_connection_class, reconnect)
+static PHP_METHOD(amqp_connection_class, reconnect)
 {
 	amqp_connection_object *connection;
 
@@ -651,7 +651,7 @@ PHP_METHOD(amqp_connection_class, reconnect)
 
 /* {{{ proto amqp::preconnect()
 recreate amqp connection */
-PHP_METHOD(amqp_connection_class, preconnect)
+static PHP_METHOD(amqp_connection_class, preconnect)
 {
 	amqp_connection_object *connection;
 
@@ -681,7 +681,7 @@ PHP_METHOD(amqp_connection_class, preconnect)
 
 /* {{{ proto amqp::getLogin()
 get the login */
-PHP_METHOD(amqp_connection_class, getLogin)
+static PHP_METHOD(amqp_connection_class, getLogin)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -692,7 +692,7 @@ PHP_METHOD(amqp_connection_class, getLogin)
 
 /* {{{ proto amqp::setLogin(string login)
 set the login */
-PHP_METHOD(amqp_connection_class, setLogin)
+static PHP_METHOD(amqp_connection_class, setLogin)
 {
 	char *login = NULL;	PHP5to7_param_str_len_type_t login_len = 0;
 
@@ -715,7 +715,7 @@ PHP_METHOD(amqp_connection_class, setLogin)
 
 /* {{{ proto amqp::getPassword()
 get the password */
-PHP_METHOD(amqp_connection_class, getPassword)
+static PHP_METHOD(amqp_connection_class, getPassword)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -726,7 +726,7 @@ PHP_METHOD(amqp_connection_class, getPassword)
 
 /* {{{ proto amqp::setPassword(string password)
 set the password */
-PHP_METHOD(amqp_connection_class, setPassword)
+static PHP_METHOD(amqp_connection_class, setPassword)
 {
 	char *password = NULL;	PHP5to7_param_str_len_type_t password_len = 0;
 
@@ -750,7 +750,7 @@ PHP_METHOD(amqp_connection_class, setPassword)
 
 /* {{{ proto amqp::getHost()
 get the host */
-PHP_METHOD(amqp_connection_class, getHost)
+static PHP_METHOD(amqp_connection_class, getHost)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -761,7 +761,7 @@ PHP_METHOD(amqp_connection_class, getHost)
 
 /* {{{ proto amqp::setHost(string host)
 set the host */
-PHP_METHOD(amqp_connection_class, setHost)
+static PHP_METHOD(amqp_connection_class, setHost)
 {
 	char *host = NULL;	PHP5to7_param_str_len_type_t host_len = 0;
 
@@ -785,7 +785,7 @@ PHP_METHOD(amqp_connection_class, setHost)
 
 /* {{{ proto amqp::getPort()
 get the port */
-PHP_METHOD(amqp_connection_class, getPort)
+static PHP_METHOD(amqp_connection_class, getPort)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -796,7 +796,7 @@ PHP_METHOD(amqp_connection_class, getPort)
 
 /* {{{ proto amqp::setPort(mixed port)
 set the port */
-PHP_METHOD(amqp_connection_class, setPort)
+static PHP_METHOD(amqp_connection_class, setPort)
 {
 	zval *zvalPort;
 	int port;
@@ -836,7 +836,7 @@ PHP_METHOD(amqp_connection_class, setPort)
 
 /* {{{ proto amqp::getVhost()
 get the vhost */
-PHP_METHOD(amqp_connection_class, getVhost)
+static PHP_METHOD(amqp_connection_class, getVhost)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -847,11 +847,10 @@ PHP_METHOD(amqp_connection_class, getVhost)
 
 /* {{{ proto amqp::setVhost(string vhost)
 set the vhost */
-PHP_METHOD(amqp_connection_class, setVhost)
+static PHP_METHOD(amqp_connection_class, setVhost)
 {
 	char *vhost = NULL;	PHP5to7_param_str_len_type_t vhost_len = 0;
 
-	/* Get the vhost from the method params */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &vhost, &vhost_len) == FAILURE) {
 		return;
 	}
@@ -871,7 +870,7 @@ PHP_METHOD(amqp_connection_class, setVhost)
 /* {{{ proto amqp::getTimeout()
 @deprecated
 get the timeout */
-PHP_METHOD(amqp_connection_class, getTimeout)
+static PHP_METHOD(amqp_connection_class, getTimeout)
 {
 	php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "AMQPConnection::getTimeout() method is deprecated; use AMQPConnection::getReadTimeout() instead");
 
@@ -884,7 +883,7 @@ PHP_METHOD(amqp_connection_class, getTimeout)
 /* {{{ proto amqp::setTimeout(double timeout)
 @deprecated
 set the timeout */
-PHP_METHOD(amqp_connection_class, setTimeout)
+static PHP_METHOD(amqp_connection_class, setTimeout)
 {
 	amqp_connection_object *connection;
 	double read_timeout;
@@ -922,7 +921,7 @@ PHP_METHOD(amqp_connection_class, setTimeout)
 
 /* {{{ proto amqp::getReadTimeout()
 get the read timeout */
-PHP_METHOD(amqp_connection_class, getReadTimeout)
+static PHP_METHOD(amqp_connection_class, getReadTimeout)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -932,7 +931,7 @@ PHP_METHOD(amqp_connection_class, getReadTimeout)
 
 /* {{{ proto amqp::setReadTimeout(double timeout)
 set read timeout */
-PHP_METHOD(amqp_connection_class, setReadTimeout)
+static PHP_METHOD(amqp_connection_class, setReadTimeout)
 {
 	amqp_connection_object *connection;
 	double read_timeout;
@@ -968,7 +967,7 @@ PHP_METHOD(amqp_connection_class, setReadTimeout)
 
 /* {{{ proto amqp::getWriteTimeout()
 get write timeout */
-PHP_METHOD(amqp_connection_class, getWriteTimeout)
+static PHP_METHOD(amqp_connection_class, getWriteTimeout)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	PHP_AMQP_NOPARAMS();
@@ -978,7 +977,7 @@ PHP_METHOD(amqp_connection_class, getWriteTimeout)
 
 /* {{{ proto amqp::setWriteTimeout(double timeout)
 set write timeout */
-PHP_METHOD(amqp_connection_class, setWriteTimeout)
+static PHP_METHOD(amqp_connection_class, setWriteTimeout)
 {
 	amqp_connection_object *connection;
 	double write_timeout;
@@ -1014,7 +1013,7 @@ PHP_METHOD(amqp_connection_class, setWriteTimeout)
 
 /* {{{ proto amqp::getUsedChannels()
 Get max used channels number */
-PHP_METHOD(amqp_connection_class, getUsedChannels)
+static PHP_METHOD(amqp_connection_class, getUsedChannels)
 {
 	amqp_connection_object *connection;
 
@@ -1036,7 +1035,7 @@ PHP_METHOD(amqp_connection_class, getUsedChannels)
 
 /* {{{ proto amqp::getMaxChannels()
 Get max supported channels number per connection */
-PHP_METHOD(amqp_connection_class, getMaxChannels)
+static PHP_METHOD(amqp_connection_class, getMaxChannels)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	amqp_connection_object *connection;
@@ -1056,7 +1055,7 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
 
 /* {{{ proto amqp::getMaxFrameSize()
 Get max supported frame size per connection in bytes */
-PHP_METHOD(amqp_connection_class, getMaxFrameSize)
+static PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	amqp_connection_object *connection;
@@ -1078,7 +1077,7 @@ PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 
 /* {{{ proto amqp::getHeartbeatInterval()
 Get number of seconds between heartbeats of the connection in seconds */
-PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
+static PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 	amqp_connection_object *connection;
@@ -1101,7 +1100,7 @@ PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 
 /* {{{ proto amqp::isPersistent()
 check whether amqp connection is persistent */
-PHP_METHOD(amqp_connection_class, isPersistent)
+static PHP_METHOD(amqp_connection_class, isPersistent)
 {
 	amqp_connection_object *connection;
 
@@ -1252,7 +1251,7 @@ zend_function_entry amqp_connection_class_functions[] = {
 		PHP_ME(amqp_connection_class, getHeartbeatInterval,  arginfo_amqp_connection_class_getHeartbeatInterval,	ZEND_ACC_PUBLIC)
 		PHP_ME(amqp_connection_class, getMaxFrameSize,  arginfo_amqp_connection_class_getMaxFrameSize,	ZEND_ACC_PUBLIC)
 
-		{NULL, NULL, NULL}	/* Must be the last line in amqp_functions[] */
+		{NULL, NULL, NULL}
 };
 
 

@@ -25,31 +25,6 @@
 
 extern zend_class_entry *amqp_exchange_class_entry;
 
-PHP_METHOD(amqp_exchange_class, __construct);
-
-PHP_METHOD(amqp_exchange_class, getName);
-PHP_METHOD(amqp_exchange_class, setName);
-
-PHP_METHOD(amqp_exchange_class, getType);
-PHP_METHOD(amqp_exchange_class, setType);
-
-PHP_METHOD(amqp_exchange_class, getFlags);
-PHP_METHOD(amqp_exchange_class, setFlags);
-
-PHP_METHOD(amqp_exchange_class, getArgument);
-PHP_METHOD(amqp_exchange_class, getArguments);
-PHP_METHOD(amqp_exchange_class, setArgument);
-PHP_METHOD(amqp_exchange_class, setArguments);
-PHP_METHOD(amqp_exchange_class, hasArgument);
-
-PHP_METHOD(amqp_exchange_class, declareExchange);
-PHP_METHOD(amqp_exchange_class, delete);
-PHP_METHOD(amqp_exchange_class, bind);
-PHP_METHOD(amqp_exchange_class, unbind);
-PHP_METHOD(amqp_exchange_class, publish);
-
-PHP_METHOD(amqp_exchange_class, getChannel);
-PHP_METHOD(amqp_exchange_class, getConnection);
 
 PHP_MINIT_FUNCTION(amqp_exchange);
 

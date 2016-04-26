@@ -23,6 +23,7 @@
 #ifndef PHP_AMQP_CONNECTION_RESOURCE_H
 #define PHP_AMQP_CONNECTION_RESOURCE_H
 
+#define PHP_AMQP_RESOURCE_RESPONSE_BREAK                    1
 #define PHP_AMQP_RESOURCE_RESPONSE_OK                       0
 #define PHP_AMQP_RESOURCE_RESPONSE_ERROR                   -1
 #define PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED    -2
@@ -30,6 +31,9 @@
 
 extern int le_amqp_connection_resource;
 extern int le_amqp_connection_resource_persistent;
+
+#include "php_amqp.h"
+#include "amqp.h"
 
 void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_DC);
 
@@ -49,6 +53,7 @@ typedef struct _amqp_connection_params {
 
 /* Figure out what's going on connection and handle protocol exceptions, if any */
 int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id TSRMLS_DC);
+int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id, amqp_channel_object *channel TSRMLS_DC);
 
 /* Socket-related functions */
 int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double read_timeout TSRMLS_DC);

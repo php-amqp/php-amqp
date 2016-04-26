@@ -25,6 +25,7 @@ $ex->publish('message', 'routing.1', AMQP_NOPARAM, array('headers' => array('foo
 
 // Read from the queue
 $msg = $q->get();
+var_dump($msg);
 dump_message($msg);
 
 $header = $msg->getHeader('foo');
@@ -35,6 +36,49 @@ var_dump($header);
 
 ?>
 --EXPECTF--
+object(AMQPEnvelope)#5 (19) {
+  ["content_type":"AMQPBasicProperties":private]=>
+  string(10) "text/plain"
+  ["content_encoding":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["headers":"AMQPBasicProperties":private]=>
+  array(1) {
+    ["foo"]=>
+    string(3) "bar"
+  }
+  ["delivery_mode":"AMQPBasicProperties":private]=>
+  int(1)
+  ["priority":"AMQPBasicProperties":private]=>
+  int(0)
+  ["correlation_id":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["reply_to":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["expiration":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["message_id":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["timestamp":"AMQPBasicProperties":private]=>
+  int(0)
+  ["type":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["user_id":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["app_id":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["cluster_id":"AMQPBasicProperties":private]=>
+  string(0) ""
+  ["body":"AMQPEnvelope":private]=>
+  string(7) "message"
+  ["delivery_tag":"AMQPEnvelope":private]=>
+  int(1)
+  ["is_redelivery":"AMQPEnvelope":private]=>
+  bool(false)
+  ["exchange_name":"AMQPEnvelope":private]=>
+  string(%d) "exchange-%f"
+  ["routing_key":"AMQPEnvelope":private]=>
+  string(9) "routing.1"
+}
 AMQPEnvelope
     getBody:
         string(7) "message"

@@ -1,5 +1,21 @@
 <?php
 
+function dump_methods($obj) {
+    $methods = get_class_methods($obj);
+
+    echo get_class($obj), PHP_EOL;
+
+    foreach($methods as $m) {
+        if ($m[0] == '_') {
+            // ignore all _* methods
+            continue;
+        }
+
+        echo '    ', $m, '():', PHP_EOL, '    ', '    ';
+        var_dump($obj->$m());
+    }
+}
+
 function dump_message($msg) {
     if (!$msg) {
         var_dump($msg);

@@ -25,37 +25,6 @@
 
 extern zend_class_entry *amqp_queue_class_entry;
 
-PHP_METHOD(amqp_queue_class, __construct);
-
-PHP_METHOD(amqp_queue_class, getName);
-PHP_METHOD(amqp_queue_class, setName);
-
-PHP_METHOD(amqp_queue_class, getFlags);
-PHP_METHOD(amqp_queue_class, setFlags);
-
-PHP_METHOD(amqp_queue_class, getArgument);
-PHP_METHOD(amqp_queue_class, getArguments);
-PHP_METHOD(amqp_queue_class, setArgument);
-PHP_METHOD(amqp_queue_class, setArguments);
-PHP_METHOD(amqp_queue_class, hasArgument);
-
-PHP_METHOD(amqp_queue_class, declareQueue);
-PHP_METHOD(amqp_queue_class, bind);
-
-PHP_METHOD(amqp_queue_class, get);
-PHP_METHOD(amqp_queue_class, consume);
-PHP_METHOD(amqp_queue_class, ack);
-PHP_METHOD(amqp_queue_class, nack);
-PHP_METHOD(amqp_queue_class, reject);
-PHP_METHOD(amqp_queue_class, purge);
-
-PHP_METHOD(amqp_queue_class, cancel);
-PHP_METHOD(amqp_queue_class, unbind);
-PHP_METHOD(amqp_queue_class, delete);
-
-PHP_METHOD(amqp_queue_class, getChannel);
-PHP_METHOD(amqp_queue_class, getConnection);
-PHP_METHOD(amqp_queue_class, getConsumerTag);
 
 PHP_MINIT_FUNCTION(amqp_queue);
 

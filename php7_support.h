@@ -36,6 +36,7 @@ typedef zval PHP5to7_zval_t;
 #define PHP5to7_MAYBE_INIT(zv)
 #define PHP5to7_ARRAY_INIT(zv) array_init(&(zv));
 #define PHP5to7_MAYBE_DESTROY(zv) if (!Z_ISUNDEF(zv)) { zval_ptr_dtor(&(zv)); }
+#define PHP5to7_MAYBE_DESTROY2(zv, pzv) if (!Z_ISUNDEF(zv)) { zval_ptr_dtor(pzv); }
 
 #define PHP5to7_ZVAL_STRINGL_DUP(z, s, l) ZVAL_STRINGL((z), (s), (l))
 #define PHP5to7_ADD_NEXT_INDEX_STRINGL_DUP(arg, str, length) add_next_index_stringl((arg), (str), (size_t)(length))
@@ -52,7 +53,7 @@ typedef zval PHP5to7_zval_t;
 #define PHP5to7_SET_FCI_RETVAL_PTR(fci, pzv) (fci).retval = (pzv);
 #define PHP5to7_CHECK_FCI_RETVAL_PTR(fci) ((fci).retval)
 
-#define PHP5to7_IS_FALSE_P(pzv) (Z_TYPE_P(return_value) == IS_FALSE)
+#define PHP5to7_IS_FALSE_P(pzv) (Z_TYPE_P(pzv) == IS_FALSE)
 
 #define PHP5to7_obj_free_zend_object zend_object
 #define PHP5to7_zend_object_value zend_object *
@@ -93,6 +94,8 @@ typedef zval PHP5to7_zend_resource_le_t;
 #define PHP5to7_ZEND_RESOURCE_LE_EMPTY NULL
 #define PHP5to7_ZEND_RSRC_TYPE_P(le) (le)->type
 #define PHP5to7_ZEND_REGISTER_RESOURCE(rsrc_pointer, rsrc_type) zend_register_resource((rsrc_pointer), (rsrc_type))
+
+#define PHP5to7_PARENT_CLASS_NAME_C(name)
 
 #endif //PHP_AMQP_PHP7_SUPPORT_H
 

@@ -27,28 +27,6 @@ extern zend_class_entry *amqp_envelope_class_entry;
 
 void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelope TSRMLS_DC);
 
-PHP_METHOD(amqp_envelope_class, __construct);
-PHP_METHOD(amqp_envelope_class, getBody);
-PHP_METHOD(amqp_envelope_class, getRoutingKey);
-PHP_METHOD(amqp_envelope_class, getDeliveryTag);
-PHP_METHOD(amqp_envelope_class, getDeliveryMode);
-PHP_METHOD(amqp_envelope_class, getExchangeName);
-PHP_METHOD(amqp_envelope_class, isRedelivery);
-PHP_METHOD(amqp_envelope_class, getContentType);
-PHP_METHOD(amqp_envelope_class, getContentEncoding);
-PHP_METHOD(amqp_envelope_class, getType);
-PHP_METHOD(amqp_envelope_class, getTimestamp);
-PHP_METHOD(amqp_envelope_class, getPriority);
-PHP_METHOD(amqp_envelope_class, getExpiration);
-PHP_METHOD(amqp_envelope_class, getUserId);
-PHP_METHOD(amqp_envelope_class, getAppId);
-PHP_METHOD(amqp_envelope_class, getMessageId);
-PHP_METHOD(amqp_envelope_class, getReplyTo);
-PHP_METHOD(amqp_envelope_class, getCorrelationId);
-PHP_METHOD(amqp_envelope_class, getHeaders);
-PHP_METHOD(amqp_envelope_class, getHeader);
-PHP_METHOD(amqp_envelope_class, hasHeader);
-
 PHP_MINIT_FUNCTION(amqp_envelope);
 
 

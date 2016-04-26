@@ -21,13 +21,21 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: amqp_channel.h 305865 2010-12-01 01:30:56Z pdezwart $ */
+#include "php.h"
+#include "php_amqp.h"
 
-extern zend_class_entry *amqp_channel_class_entry;
+extern zend_class_entry *amqp_basic_properties_class_entry;
 
-void php_amqp_close_channel(amqp_channel_resource *channel_resource TSRMLS_DC);
+void parse_amqp_table(amqp_table_t *table, zval *result);
+void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSRMLS_DC);
 
-PHP_MINIT_FUNCTION(amqp_channel);
+
+void php_amqp_basic_properties_convert_to_zval(amqp_basic_properties_t *props, zval *obj TSRMLS_DC);
+void php_amqp_basic_properties_set_empty_headers(zval *obj TSRMLS_DC);
+
+
+PHP_MINIT_FUNCTION(amqp_basic_properties);
+
 
 /*
 *Local variables:
