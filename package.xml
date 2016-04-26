@@ -31,7 +31,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <date>2016-04-26</date>
  <time>15:30:00</time>
  <version>
-  <release>1.7.0</release>
+  <release>1.7.1-dev</release>
   <api>1.0.0</api>
  </version>
  <stability>
@@ -42,7 +42,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <notes><![CDATA[
      * TBD
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.7.0...
+https://github.com/pdezwart/php-amqp/compare/v1.7.0...v1.7.1
  ]]></notes>
  <contents>
   <dir name="/">
