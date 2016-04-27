@@ -80,7 +80,7 @@ if test "$PHP_AMQP" != "no"; then
 		PHP_ADD_INCLUDE($AMQP_DIR/include)
 
 		old_CFLAGS=$CFLAGS
-		CFLAGS="-I$AMQP_DIR/include"
+		CFLAGS="$CFLAGS -I$AMQP_DIR/include"
 
 		AC_CACHE_CHECK(for librabbitmq version, ac_cv_librabbitmq_version, [
 			AC_TRY_RUN([
