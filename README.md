@@ -1,4 +1,4 @@
-# PHP AMQP bindings [![Build Status](https://travis-ci.org/pdezwart/php-amqp.svg?branch=master)](http://travis-ci.org/pdezwart/php-amqp)
+# PHP AMQP bindings [![Build Status](https://travis-ci.org/pdezwart/php-amqp.svg?branch=release/1.7)](http://travis-ci.org/pdezwart/php-amqp)
 
 Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/rabbitmq-c)
 
