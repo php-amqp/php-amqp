@@ -41,6 +41,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <license uri="http://www.php.net/license">PHP License</license>
  <notes><![CDATA[
      * Support for server method handling: confirms (publisher acknowledgments) and basic.return (Bogdan Padalko)
+     * Add support for pkg-config (Remi Collet)
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.7.0...v1.8.0
