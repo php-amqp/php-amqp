@@ -49,6 +49,10 @@ typedef struct _amqp_connection_params {
   double read_timeout;
   double write_timeout;
   double connect_timeout;
+  char *cacert;
+  char *cert;
+  char *key;
+  int verify;
 } amqp_connection_params;
 
 /* Figure out what's going on connection and handle protocol exceptions, if any */

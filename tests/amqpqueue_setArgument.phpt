@@ -38,7 +38,7 @@ var_dump($q_dead);
 --EXPECTF--
 object(AMQPQueue)#3 (9) {
   ["connection":"AMQPQueue":private]=>
-  object(AMQPConnection)#1 (11) {
+  object(AMQPConnection)#1 (15) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -48,24 +48,32 @@ object(AMQPQueue)#3 (9) {
     ["vhost":"AMQPConnection":private]=>
     string(1) "/"
     ["port":"AMQPConnection":private]=>
-    %s(5672)
+    int(5672)
     ["read_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["write_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["connect_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["channel_max":"AMQPConnection":private]=>
-    %s(256)
+    int(256)
     ["frame_max":"AMQPConnection":private]=>
-    %s(131072)
+    int(131072)
     ["heartbeat":"AMQPConnection":private]=>
-    %s(0)
+    int(0)
+    ["cacert":"AMQPConnection":private]=>
+    string(0) ""
+    ["key":"AMQPConnection":private]=>
+    string(0) ""
+    ["cert":"AMQPConnection":private]=>
+    string(0) ""
+    ["verify":"AMQPConnection":private]=>
+    bool(true)
   }
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (3) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (11) {
+    object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -75,24 +83,32 @@ object(AMQPQueue)#3 (9) {
       ["vhost":"AMQPConnection":private]=>
       string(1) "/"
       ["port":"AMQPConnection":private]=>
-      %s(5672)
+      int(5672)
       ["read_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["write_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["connect_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["channel_max":"AMQPConnection":private]=>
-      %s(256)
+      int(256)
       ["frame_max":"AMQPConnection":private]=>
-      %s(131072)
+      int(131072)
       ["heartbeat":"AMQPConnection":private]=>
-      %s(0)
+      int(0)
+      ["cacert":"AMQPConnection":private]=>
+      string(0) ""
+      ["key":"AMQPConnection":private]=>
+      string(0) ""
+      ["cert":"AMQPConnection":private]=>
+      string(0) ""
+      ["verify":"AMQPConnection":private]=>
+      bool(true)
     }
     ["prefetch_count":"AMQPChannel":private]=>
-    %s(3)
+    int(3)
     ["prefetch_size":"AMQPChannel":private]=>
-    %s(0)
+    int(0)
   }
   ["name":"AMQPQueue":private]=>
   string(%d) "test.queue.%f"
@@ -112,7 +128,7 @@ object(AMQPQueue)#3 (9) {
 }
 object(AMQPQueue)#4 (9) {
   ["connection":"AMQPQueue":private]=>
-  object(AMQPConnection)#1 (11) {
+  object(AMQPConnection)#1 (15) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -122,24 +138,32 @@ object(AMQPQueue)#4 (9) {
     ["vhost":"AMQPConnection":private]=>
     string(1) "/"
     ["port":"AMQPConnection":private]=>
-    %s(5672)
+    int(5672)
     ["read_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["write_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["connect_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["channel_max":"AMQPConnection":private]=>
-    %s(256)
+    int(256)
     ["frame_max":"AMQPConnection":private]=>
-    %s(131072)
+    int(131072)
     ["heartbeat":"AMQPConnection":private]=>
-    %s(0)
+    int(0)
+    ["cacert":"AMQPConnection":private]=>
+    string(0) ""
+    ["key":"AMQPConnection":private]=>
+    string(0) ""
+    ["cert":"AMQPConnection":private]=>
+    string(0) ""
+    ["verify":"AMQPConnection":private]=>
+    bool(true)
   }
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (3) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (11) {
+    object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -149,24 +173,32 @@ object(AMQPQueue)#4 (9) {
       ["vhost":"AMQPConnection":private]=>
       string(1) "/"
       ["port":"AMQPConnection":private]=>
-      %s(5672)
+      int(5672)
       ["read_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["write_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["connect_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["channel_max":"AMQPConnection":private]=>
-      %s(256)
+      int(256)
       ["frame_max":"AMQPConnection":private]=>
-      %s(131072)
+      int(131072)
       ["heartbeat":"AMQPConnection":private]=>
-      %s(0)
+      int(0)
+      ["cacert":"AMQPConnection":private]=>
+      string(0) ""
+      ["key":"AMQPConnection":private]=>
+      string(0) ""
+      ["cert":"AMQPConnection":private]=>
+      string(0) ""
+      ["verify":"AMQPConnection":private]=>
+      bool(true)
     }
     ["prefetch_count":"AMQPChannel":private]=>
-    %s(3)
+    int(3)
     ["prefetch_size":"AMQPChannel":private]=>
-    %s(0)
+    int(0)
   }
   ["name":"AMQPQueue":private]=>
   string(%d) "test.queue.dead.%f"
@@ -187,12 +219,12 @@ object(AMQPQueue)#4 (9) {
     ["x-dead-letter-routing-key"]=>
     string(%d) "test.queue.%f"
     ["x-message-ttl"]=>
-    %s(100000)
+    int(100000)
   }
 }
 object(AMQPQueue)#4 (9) {
   ["connection":"AMQPQueue":private]=>
-  object(AMQPConnection)#1 (11) {
+  object(AMQPConnection)#1 (15) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -202,24 +234,32 @@ object(AMQPQueue)#4 (9) {
     ["vhost":"AMQPConnection":private]=>
     string(1) "/"
     ["port":"AMQPConnection":private]=>
-    %s(5672)
+    int(5672)
     ["read_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["write_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["connect_timeout":"AMQPConnection":private]=>
-    %s(0)
+    float(0)
     ["channel_max":"AMQPConnection":private]=>
-    %s(256)
+    int(256)
     ["frame_max":"AMQPConnection":private]=>
-    %s(131072)
+    int(131072)
     ["heartbeat":"AMQPConnection":private]=>
-    %s(0)
+    int(0)
+    ["cacert":"AMQPConnection":private]=>
+    string(0) ""
+    ["key":"AMQPConnection":private]=>
+    string(0) ""
+    ["cert":"AMQPConnection":private]=>
+    string(0) ""
+    ["verify":"AMQPConnection":private]=>
+    bool(true)
   }
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (3) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (11) {
+    object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -229,24 +269,32 @@ object(AMQPQueue)#4 (9) {
       ["vhost":"AMQPConnection":private]=>
       string(1) "/"
       ["port":"AMQPConnection":private]=>
-      %s(5672)
+      int(5672)
       ["read_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["write_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["connect_timeout":"AMQPConnection":private]=>
-      %s(0)
+      float(0)
       ["channel_max":"AMQPConnection":private]=>
-      %s(256)
+      int(256)
       ["frame_max":"AMQPConnection":private]=>
-      %s(131072)
+      int(131072)
       ["heartbeat":"AMQPConnection":private]=>
-      %s(0)
+      int(0)
+      ["cacert":"AMQPConnection":private]=>
+      string(0) ""
+      ["key":"AMQPConnection":private]=>
+      string(0) ""
+      ["cert":"AMQPConnection":private]=>
+      string(0) ""
+      ["verify":"AMQPConnection":private]=>
+      bool(true)
     }
     ["prefetch_count":"AMQPChannel":private]=>
-    %s(3)
+    int(3)
     ["prefetch_size":"AMQPChannel":private]=>
-    %s(0)
+    int(0)
   }
   ["name":"AMQPQueue":private]=>
   string(%d) "test.queue.dead.%f"
@@ -265,6 +313,6 @@ object(AMQPQueue)#4 (9) {
     ["x-dead-letter-exchange"]=>
     string(0) ""
     ["x-message-ttl"]=>
-    %s(100000)
+    int(100000)
   }
 }

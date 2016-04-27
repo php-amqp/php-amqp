@@ -60,7 +60,7 @@ echo 'Done', PHP_EOL
 
 ?>
 --EXPECTF--
-object(AMQPConnection)#1 (11) {
+object(AMQPConnection)#1 (15) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -70,19 +70,27 @@ object(AMQPConnection)#1 (11) {
   ["vhost":"AMQPConnection":private]=>
   string(1) "/"
   ["port":"AMQPConnection":private]=>
-  %s(5672)
+  int(5672)
   ["read_timeout":"AMQPConnection":private]=>
-  %s(40)
+  float(40)
   ["write_timeout":"AMQPConnection":private]=>
-  %s(0)
+  float(0)
   ["connect_timeout":"AMQPConnection":private]=>
-  %s(0)
+  float(0)
   ["channel_max":"AMQPConnection":private]=>
-  %s(256)
+  int(256)
   ["frame_max":"AMQPConnection":private]=>
-  %s(131072)
+  int(131072)
   ["heartbeat":"AMQPConnection":private]=>
-  %s(2)
+  int(2)
+  ["cacert":"AMQPConnection":private]=>
+  string(0) ""
+  ["key":"AMQPConnection":private]=>
+  string(0) ""
+  ["cert":"AMQPConnection":private]=>
+  string(0) ""
+  ["verify":"AMQPConnection":private]=>
+  bool(true)
 }
 Consumed: test message 1 (should be dead lettered)
 Consuming took: %fsec
