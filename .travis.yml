@@ -1,12 +1,5 @@
 language: php
 
-php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-
 sudo: false
 
 services:
@@ -24,21 +17,71 @@ services:
 
 env:
   global:
-    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-    #   via the "travis encrypt" command using the project repo's public key
-    - secure: "KQZ2SfQEDucLTAhoHJ2o09nOOLr0O6cSyOiTd1WlJyio9+wRvPUkcEPJZ0wP5wkSxAuDN6vp0hPK1wks1Ue8njWRvd9Yki2rMSkn+WNsogu8+3tpgTG7IH7PwVIQ6LtOhaIpocy7XAhDrxCm9G6yaA2BpggEdstsFGAtHh30CfY="
     - NO_INTERACTION=1
     - TEST_TIMEOUT=120
-  matrix:
-    - LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
-    - LIBRABBITMQ_VERSION=master
-    - LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
-    - LIBRABBITMQ_VERSION=v0.7.1
-    - LIBRABBITMQ_VERSION=v0.6.0 TEST_PHP_ARGS=-m
-    - LIBRABBITMQ_VERSION=v0.6.0
-    - LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
-    - LIBRABBITMQ_VERSION=v0.5.2
 
+matrix:
+    include:
+        - php: 7.0
+          env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+        - php: 7.0
+          env: LIBRABBITMQ_VERSION=master
+        - php: 7.0
+          env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
+        - php: 7.0
+          env: LIBRABBITMQ_VERSION=v0.8.0
+        - php: 7.0
+          env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
+        - php: 7.0
+          env: LIBRABBITMQ_VERSION=v0.7.1
+        - php: 7.0
+          env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
+        - php: 7.0
+          env: LIBRABBITMQ_VERSION=v0.5.2
+
+        - php: 5.6
+          env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+        - php: 5.6
+          env: LIBRABBITMQ_VERSION=master
+        - php: 5.6
+          env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
+        - php: 5.6
+          env: LIBRABBITMQ_VERSION=v0.8.0
+        - php: 5.6
+          env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
+        - php: 5.6
+          env: LIBRABBITMQ_VERSION=v0.7.1
+        - php: 5.6
+          env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
+        - php: 5.6
+          env: LIBRABBITMQ_VERSION=v0.5.2
+
+        - php: 5.5
+          env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+        - php: 5.5
+          env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
+        - php: 5.5
+          env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
+        - php: 5.5
+          env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
+
+        - php: 5.4
+          env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+        - php: 5.4
+          env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
+        - php: 5.4
+          env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
+        - php: 5.4
+          env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
+
+        - php: 5.3
+          env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+        - php: 5.3
+          env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
+        - php: 5.3
+          env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
+        - php: 5.3
+          env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
 
 before_install:
   - sh provision/install_rabbitmq-c.sh ${LIBRABBITMQ_VERSION}
@@ -56,16 +99,6 @@ addons:
   apt:
     packages:
       - valgrind
-
-  coverity_scan:
-    project:
-      name: "pinepain/php-amqp"
-      description: "Build submitted via Travis CI"
-    notification_email: pinepain@gmail.com
-    build_command_prepend: phpize && ./configure
-    build_command:   make
-    branch_pattern: coverity_scan
-
 
 notifications:
   email:
