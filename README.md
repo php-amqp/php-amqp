@@ -9,6 +9,8 @@ This extension works both with PHP 5 and PHP 7 (both zts and non-zts).
  - [RabbitMQ C library](https://github.com/alanxz/rabbitmq-c), commonly known as librabbitmq
    (since php-amqp>=1.6.0  librabbitmq >= 0.5.2 required, >= 0.6.0 recommended,
    see [release note](http://pecl.php.net/package/amqp/1.6.0)).
+ - to run tests [RabbitMQ server](https://www.rabbitmq.com/) >= 3.4.0 required.
+
 
 ### Installation
  
