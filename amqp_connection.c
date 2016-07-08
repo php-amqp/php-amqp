@@ -359,7 +359,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 			return;
 		}
 	} else {
-		zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("password"), INI_STR("amqp.password"), (PHP5to7_param_str_len_type_t) (strlen(INI_STR("amqp.password")) > 128 ? 128 : strlen(INI_STR("amqp.login"))) TSRMLS_CC);
+		zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("password"), INI_STR("amqp.password"), (PHP5to7_param_str_len_type_t) (strlen(INI_STR("amqp.password")) > 128 ? 128 : strlen(INI_STR("amqp.password"))) TSRMLS_CC);
 	}
 
 	/* Pull the host out of the $params array */
