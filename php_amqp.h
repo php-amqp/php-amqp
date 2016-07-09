@@ -318,7 +318,7 @@ struct _amqp_connection_object {
 #endif
 
 #ifndef PHP_AMQP_VERSION
-#define PHP_AMQP_VERSION "1.7.1-dev"
+#define PHP_AMQP_VERSION "1.7.1"
 #endif
 
 #ifndef PHP_AMQP_REVISION
