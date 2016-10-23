@@ -42,6 +42,13 @@ class AMQPChannel
     }
 
     /**
+     * Closes the channel.
+     */
+    public function close()
+    {
+    }
+
+    /**
      * Return internal channel ID
      *
      * @return integer
