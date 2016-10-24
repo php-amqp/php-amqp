@@ -429,6 +429,22 @@ static PHP_METHOD(amqp_channel_class, isConnected)
 }
 /* }}} */
 
+/* {{{ proto bool AMQPChannel::close()
+Close amqp channel */
+static PHP_METHOD(amqp_channel_class, close)
+{
+    amqp_channel_resource *channel_resource;
+
+    PHP_AMQP_NOPARAMS();
+
+    channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
+
+    if(channel_resource && channel_resource->is_connected) {
+        php_amqp_close_channel(channel_resource TSRMLS_CC);
+    }
+}
+/* }}} */
+
 /* {{{ proto bool amqp::getChannelId()
 get amqp channel ID */
 static PHP_METHOD(amqp_channel_class, getChannelId)
@@ -1054,6 +1070,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_isConnected, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_close, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_getChannelId, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
@@ -1117,6 +1136,7 @@ ZEND_END_ARG_INFO()
 zend_function_entry amqp_channel_class_functions[] = {
 		PHP_ME(amqp_channel_class, __construct, 	arginfo_amqp_channel_class__construct,		ZEND_ACC_PUBLIC)
 		PHP_ME(amqp_channel_class, isConnected, 	arginfo_amqp_channel_class_isConnected,		ZEND_ACC_PUBLIC)
+		PHP_ME(amqp_channel_class, close,       	arginfo_amqp_channel_class_close,			ZEND_ACC_PUBLIC)
 
 		PHP_ME(amqp_channel_class, getChannelId,    arginfo_amqp_channel_class_getChannelId,    ZEND_ACC_PUBLIC)
 
