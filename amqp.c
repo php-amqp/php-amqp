@@ -109,6 +109,7 @@ ZEND_DECLARE_MODULE_GLOBALS(amqp);
 static PHP_GINIT_FUNCTION(amqp) /* {{{ */
 {
 	amqp_globals->error_message = NULL;
+	amqp_globals->error_code = 0;
 } /* }}} */
 
 static PHP_MINIT_FUNCTION(amqp) /* {{{ */
@@ -186,6 +187,8 @@ static PHP_RSHUTDOWN_FUNCTION(amqp) /* {{{ */
 		PHP_AMQP_G(error_message) = NULL;
     }
 
+    PHP_AMQP_G(error_code) = 0;
+
     return SUCCESS;
 } /* }}} */
 
@@ -236,6 +239,7 @@ int php_amqp_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_connect
 {
 	assert(connection_resource != NULL);
 
+	PHP_AMQP_G(error_code) = 0;
 	if (*message != NULL) {
 		efree(*message);
 	}
@@ -279,7 +283,7 @@ int php_amqp_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_connect
 }
 
 void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entry *exception_ce TSRMLS_DC) {
-	php_amqp_zend_throw_exception(reply, exception_ce, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
+	php_amqp_zend_throw_exception(reply, exception_ce, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 }
 
 void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, PHP5to7_param_long_type_t code TSRMLS_DC)

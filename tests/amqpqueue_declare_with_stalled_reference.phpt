@@ -32,9 +32,9 @@ $e = new QueueMock($ch);
 try {
     $e->declareQueue();
 } catch (\Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 
 ?>
 --EXPECT--
-AMQPChannelException: Could not declare queue. Stale reference to the channel object.
+AMQPChannelException(0): Could not declare queue. Stale reference to the channel object.

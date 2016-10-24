@@ -342,6 +342,7 @@ struct _amqp_connection_object {
 
 ZEND_BEGIN_MODULE_GLOBALS(amqp)
     char *error_message;
+    PHP5to7_param_long_type_t error_code;
 ZEND_END_MODULE_GLOBALS(amqp)
 
 ZEND_EXTERN_MODULE_GLOBALS(amqp);

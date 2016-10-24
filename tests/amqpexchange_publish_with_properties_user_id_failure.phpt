@@ -21,7 +21,7 @@ try {
     // NOTE: basic.publish is asynchronous, so ...
     echo $ex->publish('message', 'routing.key', AMQP_NOPARAM, array('user_id' => 'unknown-' . microtime(true))) ? 'true' : 'false', PHP_EOL;
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 
 echo "Channel ", $ch->isConnected() ? 'connected' : 'disconnected', PHP_EOL;
@@ -36,7 +36,7 @@ try {
 
     echo "Queue declared", PHP_EOL;
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 
 echo "Channel ", $ch->isConnected() ? 'connected' : 'disconnected', PHP_EOL;
@@ -49,6 +49,6 @@ Connection connected
 true
 Channel connected
 Connection connected
-AMQPQueueException: Server channel error: 406, message: PRECONDITION_FAILED - user_id property set to 'unknown-%f' but authenticated user was 'guest'
+AMQPQueueException(406): Server channel error: 406, message: PRECONDITION_FAILED - user_id property set to 'unknown-%f' but authenticated user was 'guest'
 Channel disconnected
 Connection connected

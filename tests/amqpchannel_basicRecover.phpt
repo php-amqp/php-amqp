@@ -67,7 +67,7 @@ try {
     });
 
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 $queue_2->cancel();
 //var_dump($connection_2, $channel_2);die;
@@ -91,7 +91,7 @@ try {
     });
 
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 
 
@@ -102,11 +102,11 @@ consumed test message #2 (original)
 consumed test message #8 (original)
 consumed test message #9 (original)
 consumed test message #10 (original)
-AMQPQueueException: Consumer timeout exceed
+AMQPQueueException(0): Consumer timeout exceed
 redelivered
 consumed test message #3 (redelivered)
 consumed test message #4 (redelivered)
 consumed test message #5 (redelivered)
 consumed test message #6 (redelivered)
 consumed test message #7 (redelivered)
-AMQPQueueException: Consumer timeout exceed
+AMQPQueueException(0): Consumer timeout exceed

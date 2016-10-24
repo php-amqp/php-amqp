@@ -25,7 +25,7 @@ $ch->confirmSelect();
 try {
     $ch->waitForConfirm(1);
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 
@@ -42,19 +42,19 @@ echo $ex1->publish('message 1', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false
 try {
     $ch->waitForConfirm();
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 try {
     $ch->waitForConfirm();
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 try {
     $ch->waitForConfirm(1);
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 
@@ -83,7 +83,7 @@ $ch->setConfirmCallback(function ($delivery_tag, $multiple) use(&$cnt) {
 try {
     $ch->waitForConfirm();
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 $ex1->delete();
@@ -95,12 +95,12 @@ echo $ex2->publish('message 2', 'routing.key') ? 'true' : 'false', PHP_EOL;
 try {
     $ch->waitForConfirm(1);
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 ?>
 --EXPECTF--
-AMQPQueueException: Wait timeout exceed
+AMQPQueueException(0): Wait timeout exceed
 true
 true
 Unhandled basic.ack method from server received. Use AMQPChannel::setConfirmCallback() to process it.
@@ -124,4 +124,4 @@ array(2) {
   bool(false)
 }
 true
-AMQPChannelException: Server channel error: 404, message: NOT_FOUND - no exchange 'exchange-nonexistent-%f' in vhost '/'
+AMQPChannelException(404): Server channel error: 404, message: NOT_FOUND - no exchange 'exchange-nonexistent-%f' in vhost '/'

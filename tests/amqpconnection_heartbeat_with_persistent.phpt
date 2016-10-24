@@ -27,7 +27,7 @@ try {
     $ch = new AMQPChannel($cnn);
     echo 'channel created', PHP_EOL;
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 
 echo PHP_EOL;
@@ -71,7 +71,7 @@ heartbeat: 2
 connected: true
 persistent: true
 
-AMQPException: Library error: a socket error occurred
+AMQPException(0): Library error: a socket error occurred
 
 heartbeat: 2
 connected: false

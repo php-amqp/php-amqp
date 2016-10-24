@@ -16,7 +16,7 @@ try {
     error_reporting(error_reporting() & ~E_WARNING);
     $queue = new AMQPQueue($conn);
 } catch (TypeError $e) {
-    echo get_class($e), ': ', $e->getMessage(), '.', PHP_EOL; // we pad exception message with dot to make EXPETF be the same on PHP 5 and PHP 7
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), '.', PHP_EOL; // we pad exception message with dot to make EXPETF be the same on PHP 5 and PHP 7
 }
 
 ?>

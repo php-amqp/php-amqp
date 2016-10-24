@@ -25,7 +25,7 @@ try {
     $ex->declareExchange();
     echo 'exchange ', $ex->getName(), ' declared', PHP_EOL;
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 
 echo "Channel connected: ", $ch->isConnected() ? "true" : "false", PHP_EOL;
@@ -35,13 +35,13 @@ try {
     $ex = new AMQPExchange($ch);
     echo "New exchange class created", PHP_EOL;
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 ?>
 --EXPECTF--
 Channel id: 1
 Exchange declared: true
-AMQPExchangeException: Server channel error: 406, message: PRECONDITION_FAILED - %s exchange 'exchange-%f' in vhost '/'%s
+AMQPExchangeException(406): Server channel error: 406, message: PRECONDITION_FAILED - %s exchange 'exchange-%f' in vhost '/'%s
 Channel connected: false
 Connection connected: true
-AMQPChannelException: Could not create exchange. No channel available.
+AMQPChannelException(0): Could not create exchange. No channel available.

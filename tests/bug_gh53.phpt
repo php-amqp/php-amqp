@@ -20,7 +20,7 @@ try {
     $channel->setPrefetchSize(1024);
 
 } catch (AMQPConnectionException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 var_dump($channel->isConnected());
 var_dump($connection->isConnected());
@@ -28,15 +28,13 @@ var_dump($channel->getPrefetchSize());
 var_dump($channel->getPrefetchCount());
 
 ?>
-==DONE==
 --EXPECTF--
 int(0)
 int(3)
 int(0)
 int(10)
-AMQPConnectionException: Server connection error: 540, message: NOT_IMPLEMENTED - prefetch_size!=0 (%d)
+AMQPConnectionException(540): Server connection error: 540, message: NOT_IMPLEMENTED - prefetch_size!=0 (%d)
 bool(false)
 bool(false)
 int(0)
 int(10)
-==DONE==

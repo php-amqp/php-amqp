@@ -44,7 +44,7 @@ try {
         return false;
     });
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 echo $ex->publish('message 2', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
@@ -72,7 +72,7 @@ try {
         return false;
     });
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 
@@ -84,7 +84,7 @@ true
 bool(false)
 Unhandled basic.return method from server received. Use AMQPChannel::setBasicReturnCallback() to process it.
 Unhandled basic.ack method from server received. Use AMQPChannel::setConfirmCallback() to process it.
-AMQPQueueException: Consumer timeout exceed
+AMQPQueueException(0): Consumer timeout exceed
 true
 Message returned: NO_ROUTE, message body:message 2
 Message acked
@@ -94,4 +94,4 @@ array(2) {
   [1]=>
   bool(false)
 }
-AMQPQueueException: Consumer timeout exceed
+AMQPQueueException(0): Consumer timeout exceed

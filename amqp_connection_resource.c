@@ -64,8 +64,8 @@ int le_amqp_connection_resource;
 int le_amqp_connection_resource_persistent;
 
 static void connection_resource_destructor(amqp_connection_resource *resource, int persistent TSRMLS_DC);
-static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource);
-static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id);
+static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource TSRMLS_DC);
+static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id TSRMLS_DC);
 
 
 /* Figure out what's going on connection and handle protocol exceptions, if any */
@@ -89,11 +89,11 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 		case AMQP_RESPONSE_SERVER_EXCEPTION:
 			switch (reply.reply.id) {
 				case AMQP_CONNECTION_CLOSE_METHOD: {
-					php_amqp_close_connection_from_server(reply, message, resource);
+					php_amqp_close_connection_from_server(reply, message, resource TSRMLS_CC);
 					return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED;
 				}
 				case AMQP_CHANNEL_CLOSE_METHOD: {
-					php_amqp_close_channel_from_server(reply, message, resource, channel_id);
+					php_amqp_close_channel_from_server(reply, message, resource, channel_id TSRMLS_CC);
 					return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED;
 				}
 			}
@@ -106,9 +106,10 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 	/* Should not never get here*/
 }
 
-static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource) {
+static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource TSRMLS_DC) {
 	amqp_connection_close_t *m = (amqp_connection_close_t *)reply.reply.decoded;
 
+	PHP_AMQP_G(error_code) = m->reply_code;
 	spprintf(message, 0, "Server connection error: %d, message: %.*s",
 		m->reply_code,
 		(PHP5to7_param_str_len_type_t) m->reply_text.len,
@@ -135,11 +136,12 @@ static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char *
 	resource->is_connected = '\0';
 }
 
-static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id) {
+static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource, amqp_channel_t channel_id TSRMLS_DC) {
 	assert(channel_id > 0 && channel_id <= resource->max_slots);
 
 	amqp_channel_close_t *m = (amqp_channel_close_t *) reply.reply.decoded;
 
+	PHP_AMQP_G(error_code) = m->reply_code;
 	spprintf(message, 0, "Server channel error: %d, message: %.*s",
 		m->reply_code,
 		(PHP5to7_param_str_len_type_t) m->reply_text.len,
@@ -193,11 +195,11 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
 	if (AMQP_FRAME_METHOD == frame.frame_type) {
 		switch (frame.payload.method.id) {
 			case AMQP_CONNECTION_CLOSE_METHOD: {
-				php_amqp_close_connection_from_server(reply, message, resource);
+				php_amqp_close_connection_from_server(reply, message, resource TSRMLS_CC);
 				return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED;
 			}
 			case AMQP_CHANNEL_CLOSE_METHOD: {
-				php_amqp_close_channel_from_server(reply, message, resource, channel_id);
+				php_amqp_close_channel_from_server(reply, message, resource, channel_id TSRMLS_CC);
 				return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED;
 			}
 
@@ -498,7 +500,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 		php_amqp_connection_resource_error(res, &message, resource, 0 TSRMLS_CC);
 
 		spprintf(&long_message, 0, "%s - Potential login failure.", message);
-		zend_throw_exception(amqp_connection_exception_class_entry, long_message, 0 TSRMLS_CC);
+		zend_throw_exception(amqp_connection_exception_class_entry, long_message, PHP_AMQP_G(error_code) TSRMLS_CC);
 
 		efree(message);
 		efree(long_message);
