@@ -20,7 +20,7 @@ try {
     $cnn->connect();
     echo 'Connected', PHP_EOL;
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 //
 echo ($cnn->isConnected() ? 'connected' : 'disconnected'), PHP_EOL;
@@ -29,5 +29,5 @@ echo ($cnn->isConnected() ? 'connected' : 'disconnected'), PHP_EOL;
 ?>
 --EXPECTF--
 disconnected
-AMQPConnectionException: %s error: %s - Potential login failure.
+AMQPConnectionException(%d): %s error: %s - Potential login failure.
 disconnected

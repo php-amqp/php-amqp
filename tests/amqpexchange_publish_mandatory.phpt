@@ -26,7 +26,7 @@ $ch = new AMQPChannel($cnn);
 try {
     $ch->waitForBasicReturn(1);
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 
@@ -51,7 +51,7 @@ var_dump($msg);
 try {
     $ch->waitForBasicReturn();
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 /* callback(int $reply_code, string $reply_text, string $exchange, string $routing_key, AMQPBasicProperties $properties, string $body); */
@@ -64,7 +64,7 @@ $ch->setReturnCallback(function ($reply_code, $reply_text, $exchange, $routing_k
 try {
     $ch->waitForBasicReturn();
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 
@@ -74,7 +74,7 @@ $q->delete();
 $ex->delete();
 ?>
 --EXPECTF--
-AMQPQueueException: Wait timeout exceed
+AMQPQueueException(0): Wait timeout exceed
 true
 true
 bool(false)

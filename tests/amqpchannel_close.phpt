@@ -45,7 +45,7 @@ echo 'connected: ', var_export($channel_1->isConnected(), true), PHP_EOL;
 try {
   $queue_1->get();
 } catch (AMQPChannelException $e) {
-    echo get_class($e) . ': ' . $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): " . $e->getMessage(), PHP_EOL;
 }
 
 $channel_1->close();
@@ -56,5 +56,5 @@ echo 'connected: ', var_export($channel_1->isConnected(), true), PHP_EOL;
 test message #1
 connected: true
 connected: false
-AMQPChannelException: Could not get messages from queue. No channel available.
+AMQPChannelException(0): Could not get messages from queue. No channel available.
 connected: false

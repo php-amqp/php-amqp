@@ -15,8 +15,8 @@ try {
 	$conn->connect();
     echo "No exception thrown\n";
 } catch (Exception $e) {
-    echo get_class($e), ': ', $e->getMessage();
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage();
 }
 ?>
 --EXPECT--
-AMQPConnectionException: Socket error: could not connect to host.
+AMQPConnectionException(0): Socket error: could not connect to host.

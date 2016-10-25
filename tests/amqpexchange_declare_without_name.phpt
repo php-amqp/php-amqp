@@ -17,8 +17,8 @@ try {
     $ex->declareExchange();
     echo 'Exchange declared', PHP_EOL;
 } catch (AMQPException $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 ?>
 --EXPECTF--
-AMQPExchangeException: Could not declare exchange. Exchanges must have a name.
+AMQPExchangeException(0): Could not declare exchange. Exchanges must have a name.

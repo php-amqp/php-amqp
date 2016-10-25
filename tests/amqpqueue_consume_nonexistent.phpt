@@ -26,9 +26,9 @@ $q->setName('nonexistent-' . microtime(true));
 try {
 	$q->consume('noop');
 } catch (Exception $e) {
-	echo get_class($e), ': ', $e->getMessage();
+	echo get_class($e), "({$e->getCode()}): ", $e->getMessage();
 }
 
 ?>
 --EXPECTF--
-AMQPQueueException: Server channel error: 404, message: NOT_FOUND - no queue 'nonexistent-%f' in vhost '/'
+AMQPQueueException(404): Server channel error: 404, message: NOT_FOUND - no queue 'nonexistent-%f' in vhost '/'

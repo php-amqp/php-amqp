@@ -44,7 +44,7 @@ try {
         return false;
     });
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 echo $ex->publish('message 2', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
@@ -62,7 +62,7 @@ try {
         return false;
     });
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(). PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
 
@@ -75,7 +75,7 @@ $ex->delete();
 true
 bool(false)
 Unhandled basic.return method from server received. Use AMQPChannel::setBasicReturnCallback() to process it.
-AMQPQueueException: Consumer timeout exceed
+AMQPQueueException(0): Consumer timeout exceed
 true
 Message returned
 array(6) {
@@ -122,4 +122,4 @@ array(6) {
   [5]=>
   string(9) "message 2"
 }
-AMQPQueueException: Consumer timeout exceed
+AMQPQueueException(0): Consumer timeout exceed

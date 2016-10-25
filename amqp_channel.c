@@ -374,7 +374,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 
 		php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource TSRMLS_CC);
 
-		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
+		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
 		/* Prevent double free, it may happens in case case channel resource was already freed due to some hard error. */
@@ -892,7 +892,7 @@ PHP_METHOD(amqp_channel_class, waitForBasicReturn)
 
 			php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource TSRMLS_CC);
 
-			php_amqp_zend_throw_exception(res, amqp_queue_exception_class_entry, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
+			php_amqp_zend_throw_exception(res, amqp_queue_exception_class_entry, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 			return;
 		}
@@ -912,7 +912,7 @@ PHP_METHOD(amqp_channel_class, waitForBasicReturn)
 
 			php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource TSRMLS_CC);
 
-			php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
+			php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 			return;
 		}
@@ -1022,7 +1022,7 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
 
 			php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource TSRMLS_CC);
 
-			php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
+			php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 			return;
 		}
@@ -1054,7 +1054,7 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
 
 			php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource TSRMLS_CC);
 
-			php_amqp_zend_throw_exception(res, amqp_queue_exception_class_entry, PHP_AMQP_G(error_message), 0 TSRMLS_CC);
+			php_amqp_zend_throw_exception(res, amqp_queue_exception_class_entry, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 			return;
 		}

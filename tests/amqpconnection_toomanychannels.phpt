@@ -20,10 +20,10 @@ try {
 	new AMQPChannel($cnn);
 	echo "Bad\n";
 } catch(Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 
 ?>
 --EXPECT--
 Good
-AMQPChannelException: Could not create channel. Connection has no open channel slots remaining.
+AMQPChannelException(0): Could not create channel. Connection has no open channel slots remaining.

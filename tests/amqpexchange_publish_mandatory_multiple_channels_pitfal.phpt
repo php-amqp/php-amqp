@@ -22,7 +22,7 @@ $ch1 = new AMQPChannel($cnn);
 try {
     $ch1->waitForBasicReturn(1);
 } catch (Exception $e) {
-    echo get_class($e), ': ', $e->getMessage() . PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage() . PHP_EOL;
 }
 
 $ch2 = new AMQPChannel($cnn);
@@ -30,7 +30,7 @@ $ch2 = new AMQPChannel($cnn);
 try {
     $ch2->waitForBasicReturn(1);
 } catch (Exception $e) {
-    echo get_class($e), ': ', $e->getMessage() . PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage() . PHP_EOL;
 }
 
 
@@ -65,7 +65,7 @@ var_dump($msg);
 try {
     $ch1->waitForBasicReturn();
 } catch (Exception $e) {
-    echo get_class($e), ': ', $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 
 // This error happens because on a channel 1 we are expecting only messages withing channel 1, but inside current
@@ -75,10 +75,10 @@ echo 'Connection active: ', ($cnn->isConnected() ? 'yes' : 'no');
 
 ?>
 --EXPECTF--
-AMQPQueueException: Wait timeout exceed
-AMQPQueueException: Wait timeout exceed
+AMQPQueueException(0): Wait timeout exceed
+AMQPQueueException(0): Wait timeout exceed
 true
 true
 bool(false)
-AMQPException: Library error: unexpected method received
+AMQPException(0): Library error: unexpected method received
 Connection active: no

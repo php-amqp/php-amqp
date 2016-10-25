@@ -13,10 +13,8 @@ $exchange = new AMQPExchange($channel);
 try {
 	$exchange->setName(str_repeat('a', 256));
 } catch (AMQPExchangeException $e) {
-	var_dump($e->getMessage());
+	echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 ?>
-==DONE==
 --EXPECT--
-string(67) "Invalid exchange name given, must be less than 255 characters long."
-==DONE==
+AMQPExchangeException(0): Invalid exchange name given, must be less than 255 characters long.

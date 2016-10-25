@@ -19,7 +19,7 @@ echo 'confirm.select: OK', PHP_EOL;
 try {
     $ch->startTransaction();
 } catch (Exception $e) {
-    echo get_class($e), ': ' . $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): " . $e->getMessage(), PHP_EOL;
 }
 
 $ch = new AMQPChannel($cnn);
@@ -29,13 +29,13 @@ echo 'transaction.start: OK', PHP_EOL;
 try {
     $ch->confirmSelect();
 } catch (Exception $e) {
-    echo get_class($e), ': ' . $e->getMessage(), PHP_EOL;
+    echo get_class($e), "({$e->getCode()}): " . $e->getMessage(), PHP_EOL;
 }
 
 
 ?>
 --EXPECT--
 confirm.select: OK
-AMQPChannelException: Server channel error: 406, message: PRECONDITION_FAILED - cannot switch from confirm to tx mode
+AMQPChannelException(406): Server channel error: 406, message: PRECONDITION_FAILED - cannot switch from confirm to tx mode
 transaction.start: OK
-AMQPChannelException: Server channel error: 406, message: PRECONDITION_FAILED - cannot switch from tx to confirm mode
+AMQPChannelException(406): Server channel error: 406, message: PRECONDITION_FAILED - cannot switch from tx to confirm mode
