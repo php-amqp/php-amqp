@@ -34,10 +34,6 @@ matrix:
           env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
         - php: 7.0
           env: LIBRABBITMQ_VERSION=v0.7.1
-        - php: 7.0
-          env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
-        - php: 7.0
-          env: LIBRABBITMQ_VERSION=v0.5.2
 
         - php: 5.6
           env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
@@ -63,24 +59,6 @@ matrix:
         - php: 5.5
           env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
         - php: 5.5
-          env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
-
-        - php: 5.4
-          env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
-        - php: 5.4
-          env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
-        - php: 5.4
-          env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
-        - php: 5.4
-          env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
-
-        - php: 5.3
-          env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
-        - php: 5.3
-          env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
-        - php: 5.3
-          env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
-        - php: 5.3
           env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
 
 before_install:
