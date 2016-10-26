@@ -41,4 +41,4 @@ echo 'done', PHP_EOL;
 --EXPECTF--
 start
 consuming
-Catchable fatal error: Object of class %s could not be converted to string in %s on line %d
+%s fatal error: Object of class %s could not be converted to string in %s on line %d
