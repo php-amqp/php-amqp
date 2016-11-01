@@ -131,26 +131,6 @@ if test "$PHP_AMQP" != "no"; then
 	fi
 	PHP_SUBST(AMQP_SHARED_LIBADD)
 
-	if test -z "$TRAVIS" ; then
-		type git &>/dev/null
-
-		if test $? -eq 0 ; then
-			git describe --abbrev=0 --tags &>/dev/null
-
-			if test $? -eq 0 ; then
-				AC_DEFINE_UNQUOTED([PHP_AMQP_VERSION], ["`git describe --abbrev=0 --tags`-`git rev-parse --abbrev-ref HEAD`-dev"], [git version])
-			fi
-
-			git rev-parse --short HEAD &>/dev/null
-
-			if test $? -eq 0 ; then
-				AC_DEFINE_UNQUOTED([PHP_AMQP_REVISION], ["`git rev-parse --short HEAD`"], [git revision])
-			fi
-		else
-			AC_MSG_NOTICE([git not installed. Cannot obtain php_amqp version tag. Install git.])
-		fi
-	fi
-
 	AMQP_SOURCES="amqp.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c"
 
 	PHP_NEW_EXTENSION(amqp, $AMQP_SOURCES, $ext_shared)
