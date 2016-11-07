@@ -362,7 +362,7 @@ ZEND_EXTERN_MODULE_GLOBALS(amqp);
 #endif
 
 #ifndef PHP_AMQP_VERSION
-#define PHP_AMQP_VERSION "1.8.0beta1"
+#define PHP_AMQP_VERSION "1.8.0beta2"
 #endif
 
 #ifndef PHP_AMQP_REVISION

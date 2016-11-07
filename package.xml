@@ -25,10 +25,10 @@
   <active>yes</active> <!- - yes, very - ->
  </developer>
  -->
-    <date>2016-11-01</date>
-    <time>16:00:00</time>
+    <date>2016-11-07</date>
+    <time>10:00:00</time>
     <version>
-        <release>1.8.0beta1</release>
+        <release>1.8.0beta2</release>
         <api>1.2.0</api>
     </version>
     <stability>
@@ -45,9 +45,10 @@
      * Fix segfault when deleting an unknown exchange (Bogdan Padalko)
      * Fix segfault with PHPUnit and xdebug for PHP 7 (Bogdan Padalko)
      * Add publisher confirms (Bogdan Padalko)
+     * Fix 1.8.0 release (Lars Strojny)
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0beta1
+https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0beta2
  ]]></notes>
     <contents>
         <dir name="/">
@@ -67,6 +68,10 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0beta1
             <file name="php5_support.h" role="src"/>
             <file name="php7_support.h" role="src"/>
             <file name="php_amqp.h" role="src"/>
+            <file name="amqp_basic_properties.h" role="src"/>
+            <file name="amqp_basic_properties.c" role="src"/>
+            <file name="amqp_methods_handling.h" role="src"/>
+            <file name="amqp_methods_handling.c" role="src"/>
             <file name="config.m4" role="src"/>
             <file name="config.w32" role="src"/>
             <file name="benchmark.php" role="doc"/>
