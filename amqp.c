@@ -453,9 +453,11 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 				internal_convert_zval_to_amqp_table(value, &field->value.table, 1 TSRMLS_CC);
 
 				break;
+			case IS_NULL:
+				field->kind = AMQP_FIELD_KIND_VOID;
+				break;
 			default:
 				switch(Z_TYPE_P(value)) {
-					case IS_NULL:     strcpy(type, "null"); break;
 					case IS_OBJECT:   strcpy(type, "object"); break;
 					case IS_RESOURCE: strcpy(type, "resource"); break;
 					default:          strcpy(type, "unknown");

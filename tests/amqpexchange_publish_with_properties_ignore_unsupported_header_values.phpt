@@ -29,8 +29,6 @@ $ex->delete();
 
 ?>
 --EXPECTF--
-Warning: AMQPExchange::publish(): Ignoring field 'null' due to unsupported value type (null) in %s on line %d
-
 Warning: AMQPExchange::publish(): Ignoring field 'object' due to unsupported value type (object) in %s on line %d
 
 Warning: AMQPExchange::publish(): Ignoring field 'resource' due to unsupported value type (resource) in %s on line %d
