@@ -424,7 +424,7 @@ void internal_convert_zval_to_amqp_table(zval *zvalArguments, amqp_table_t *argu
 		switch (Z_TYPE_P(value)) {
 			PHP5to7_CASE_IS_BOOL:
 				field->kind          = AMQP_FIELD_KIND_BOOLEAN;
-				field->value.boolean = (amqp_boolean_t)Z_LVAL_P(value);
+				field->value.boolean = (amqp_boolean_t)!PHP5to7_IS_FALSE_P(value);
 				break;
 			case IS_DOUBLE:
 				field->kind      = AMQP_FIELD_KIND_F64;
