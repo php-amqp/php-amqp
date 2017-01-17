@@ -363,12 +363,15 @@ PHP_MINIT_FUNCTION (amqp_basic_properties) {
 
 void parse_amqp_table(amqp_table_t *table, zval *result) {
     int i;
+    zend_bool has_value = 0;
+
     PHP5to7_zval_t value PHP5to7_MAYBE_SET_TO_NULL;
 
     assert(Z_TYPE_P(result) == IS_ARRAY);
 
     for (i = 0; i < table->num_entries; i++) {
         PHP5to7_MAYBE_INIT(value);
+        has_value = 1;
 
         amqp_table_entry_t *entry = &(table->entries[i]);
         switch (entry->value.kind) {
@@ -435,13 +438,17 @@ void parse_amqp_table(amqp_table_t *table, zval *result) {
                 break;
             case AMQP_FIELD_KIND_TIMESTAMP: ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.u64);
                 break;
-            case AMQP_FIELD_KIND_VOID:
+            case AMQP_FIELD_KIND_VOID: ZVAL_NULL(PHP5to7_MAYBE_PTR(value));
+                break;
             case AMQP_FIELD_KIND_DECIMAL:
-            default: ZVAL_NULL(PHP5to7_MAYBE_PTR(value));
+                /* TODO: add decimals support */
+                break;
+            default:
+                has_value = 0;
                 break;
         }
 
-        if (Z_TYPE_P(PHP5to7_MAYBE_PTR(value)) != IS_NULL) {
+        if (has_value) {
             char *key = estrndup(entry->key.bytes, (uint) entry->key.len);
             add_assoc_zval(result, key, PHP5to7_MAYBE_PTR(value));
             efree(key);
