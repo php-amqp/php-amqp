@@ -17,14 +17,12 @@
         <email>pdezwart@php.net</email>
         <active>no</active>
     </lead>
-    <!-- no PECL account
- <developer>
-  <name>Bogdan Padalko</name>
-  <user>pinepain</user>
-  <email>pinepain@gmail.com</email>
-  <active>yes</active> <!- - yes, very - ->
- </developer>
- -->
+    <developer>
+        <name>Bogdan Padalko</name>
+        <user>pinepain</user>
+        <email>pinepain@gmail.com</email>
+        <active>yes</active>
+    </developer>
     <date>2016-11-07</date>
     <time>10:00:00</time>
     <version>
