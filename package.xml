@@ -23,10 +23,10 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2016-11-07</date>
-    <time>10:00:00</time>
+    <date>2017-02-16</date>
+    <time>23:00:00</time>
     <version>
-        <release>1.8.0-dev</release>
+        <release>1.8.0</release>
         <api>1.2.0</api>
     </version>
     <stability>
@@ -43,7 +43,6 @@
      * Fix segfault when deleting an unknown exchange (Bogdan Padalko)
      * Fix segfault with PHPUnit and xdebug for PHP 7 (Bogdan Padalko)
      * Add publisher confirms (Bogdan Padalko)
-     * Fix 1.8.0 release (Lars Strojny)
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0beta2
@@ -247,7 +246,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0beta2
     <changelog>
         <release>
             <version>
-                <release>1.8.0beta1</release>
+                <release>1.8.0beta2</release>
                 <api>1.2.0</api>
             </version>
             <stability>
@@ -264,6 +263,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0beta2
              * Fix segfault when deleting an unknown exchange (Bogdan Padalko)
              * Fix segfault with PHPUnit and xdebug for PHP 7 (Bogdan Padalko)
              * Add publisher confirms (Bogdan Padalko)
+             * Fix 1.8.0 release (Lars Strojny)
 
         For a complete list of changes see:
         https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0
