@@ -30,7 +30,7 @@
         <api>1.2.0</api>
     </version>
     <stability>
-        <release>beta</release>
+        <release>stable</release>
         <api>stable</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
@@ -327,7 +327,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
                 <api>1.0.0</api>
             </version>
             <stability>
-                <release>stable</release>
+                <release>beta</release>
                 <api>stable</api>
             </stability>
             <license uri="http://www.php.net/license">PHP License</license>
