@@ -26,7 +26,7 @@
     <date>2017-02-16</date>
     <time>23:00:00</time>
     <version>
-        <release>1.8.0</release>
+        <release>1.8.1-dev</release>
         <api>1.2.0</api>
     </version>
     <stability>
@@ -35,17 +35,10 @@
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
     <notes><![CDATA[
-     * Add SSL connection support (Bogdan Padalko)
-     * Support for server method handling: confirms (publisher acknowledgments) and basic.return (Bogdan Padalko)
-     * Add support for pkg-config (Remi Collet)
-     * Preserve AMQP server error code for exceptions (Bogdan Padalko)
-     * Add AMQPChannel::close() (Bogdan Padalko)
-     * Fix segfault when deleting an unknown exchange (Bogdan Padalko)
-     * Fix segfault with PHPUnit and xdebug for PHP 7 (Bogdan Padalko)
-     * Add publisher confirms (Bogdan Padalko)
+     * TBD
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0
+https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.8.1
  ]]></notes>
     <contents>
         <dir name="/">
@@ -246,6 +239,30 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0
     <changelog>
         <release>
             <version>
+                <release>1.8.0</release>
+                <api>1.2.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[
+             * Add SSL connection support (Bogdan Padalko)
+             * Support for server method handling: confirms (publisher acknowledgments) and basic.return (Bogdan Padalko)
+             * Add support for pkg-config (Remi Collet)
+             * Preserve AMQP server error code for exceptions (Bogdan Padalko)
+             * Add AMQPChannel::close() (Bogdan Padalko)
+             * Fix segfault when deleting an unknown exchange (Bogdan Padalko)
+             * Fix segfault with PHPUnit and xdebug for PHP 7 (Bogdan Padalko)
+             * Add publisher confirms (Bogdan Padalko)
+
+        For a complete list of changes see:
+        https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0
+         ]]></notes>
+        </release>
+        <release>
+            <version>
                 <release>1.8.0beta2</release>
                 <api>1.2.0</api>
             </version>
@@ -266,7 +283,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0
              * Fix 1.8.0 release (Lars Strojny)
 
         For a complete list of changes see:
-        https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0
+        https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0beta2
          ]]></notes>
         </release>
         <release>
