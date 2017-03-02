@@ -83,7 +83,6 @@ typedef zval* PHP5to7_zval_t;
 
 #define PHP5to7_ZEND_HASH_KEY_MAYBE_UNPACK(real_key, key, key_len)
 
-#define PHP5to7_ZEND_HASH_FOREACH_CONTINUE continue
 #define PHP5to7_ZEND_HASH_FOREACH_END()
 
 #define Z_TRY_ADDREF_P(pz) Z_ADDREF_P(pz)

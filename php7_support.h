@@ -81,7 +81,6 @@ typedef zval PHP5to7_zval_t;
     (key_len) = ZSTR_LEN(real_key); \
     (key) = ZSTR_VAL(real_key);
 
-#define PHP5to7_ZEND_HASH_FOREACH_CONTINUE continue
 #define PHP5to7_ZEND_HASH_FOREACH_END() ZEND_HASH_FOREACH_END();
 
 /* Resources stuff */
