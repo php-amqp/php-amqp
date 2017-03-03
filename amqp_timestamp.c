@@ -105,6 +105,7 @@ PHP_MINIT_FUNCTION(amqp_timestamp)
 
 	INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
 	this_ce = zend_register_internal_class(&ce TSRMLS_CC);
+	this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
 
 	zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
 

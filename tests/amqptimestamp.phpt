@@ -21,6 +21,8 @@ try {
     echo $e .  "\n";
 }
 
+var_dump((new ReflectionClass("AMQPTimestamp"))->isFinal());
+
 ?>
 
 ==END==
@@ -35,5 +37,6 @@ AMQPValueException: The timestamp parameter must be greater than 0. in %s.php:%d
 Stack trace:
 #0 %s.php(%d): AMQPTimestamp->__construct(-1)
 #1 {main}
+bool(true)
 
 ==END==
