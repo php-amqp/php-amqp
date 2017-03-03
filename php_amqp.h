@@ -31,7 +31,8 @@ extern zend_class_entry *amqp_exception_class_entry,
 		*amqp_connection_exception_class_entry,
 		*amqp_channel_exception_class_entry,
 		*amqp_exchange_exception_class_entry,
-		*amqp_queue_exception_class_entry;
+		*amqp_queue_exception_class_entry,
+		*amqp_value_exception_class_entry;
 
 
 typedef struct _amqp_connection_resource amqp_connection_resource;
