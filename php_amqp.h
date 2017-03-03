@@ -20,9 +20,6 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-
-/* $Id: php_amqp.h 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifndef PHP_AMQP_H
 #define PHP_AMQP_H
 

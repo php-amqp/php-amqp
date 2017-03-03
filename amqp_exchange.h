@@ -20,9 +20,6 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-
-/* $Id: amqp_exchange.h 318206 2011-10-19 04:17:01Z pdezwart $ */
-
 extern zend_class_entry *amqp_exchange_class_entry;
 
 

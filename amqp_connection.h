@@ -20,9 +20,6 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-
-/* $Id: amqp_connection.h 326660 2012-07-17 05:32:34Z pdezwart $ */
-
 #include "php.h"
 
 extern zend_class_entry *amqp_connection_class_entry;

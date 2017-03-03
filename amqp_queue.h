@@ -20,9 +20,6 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-
-/* $Id: amqp_queue.h 321959 2012-01-09 17:56:10Z pdezwart $ */
-
 extern zend_class_entry *amqp_queue_class_entry;
 
 
