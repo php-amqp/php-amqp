@@ -28,6 +28,7 @@
 #include "php_ini.h"
 #include "zend_exceptions.h"
 #include "php_amqp.h"
+#include "ext/standard/php_math.h"
 
 zend_class_entry *amqp_timestamp_class_entry;
 #define this_ce amqp_timestamp_class_entry
@@ -48,11 +49,17 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 		return;
 	}
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &timestamp_value) == FAILURE) {
-		return;
+	{
+	#if PHP_MAJOR_VERSION >= 7
+		zend_string *str;
+		str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
+		zend_update_property_str(this_ce, getThis(), ZEND_STRL("timestamp"), str);
+	#else
+		char *str;
+		str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
+		zend_update_property_string(this_ce, getThis(), ZEND_STRL("timestamp"), str);
+	#endif
 	}
-
-	zend_update_property_str(this_ce, getThis(), ZEND_STRL("timestamp"), zval_get_string(timestamp_value));
 }
 /* }}} */
 
@@ -105,7 +112,7 @@ PHP_MINIT_FUNCTION(amqp_timestamp)
 
 	INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
 	this_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
+	this_ce->ce_flags = this_ce->ce_flags | PHP5to7_ZEND_ACC_FINAL_CLASS;
 
 	zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
 

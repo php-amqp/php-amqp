@@ -96,6 +96,8 @@ typedef zval PHP5to7_zend_resource_le_t;
 
 #define PHP5to7_PARENT_CLASS_NAME_C(name)
 
+#define PHP5to7_ZEND_ACC_FINAL_CLASS ZEND_ACC_FINAL
+
 #endif //PHP_AMQP_PHP7_SUPPORT_H
 
 /*
