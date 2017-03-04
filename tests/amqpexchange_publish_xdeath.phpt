@@ -48,31 +48,31 @@ function assert_xdeath(AMQPEnvelope $envelope, $exchangeName, $queueName) {
     $header = $envelope->getHeader('x-death');
 
     if (count($header) !== 1) {
-        return 'unexpected-number-of-headers-' . count($header);
+        return 'unexpected-number-of-headers-' . count($header) . ': ' . json_encode($header);
     }
 
     if (!isset($header[0]['reason']) || $header[0]['reason'] !== 'rejected') {
-        return 'unexpected-reason';
+        return 'unexpected-reason: ' . json_encode($header);
     }
 
     if (!isset($header[0]['time']) || !$header[0]['time'] instanceof AMQPTimestamp) {
-        return 'unexpected-time';
+        return 'unexpected-time: ' . json_encode($header);
     }
 
     if (!isset($header[0]['exchange']) || $header[0]['exchange'] !== $exchangeName) {
-        return 'unexpected-exchange';
+        return 'unexpected-exchange: ' . json_encode($header);
     }
 
     if (!isset($header[0]['queue']) || $header[0]['queue'] !== $queueName) {
-        return 'unexpected-queue';
+        return 'unexpected-queue: ' . json_encode($header);
     }
 
     if (!isset($header[0]['routing-keys']) || $header[0]['routing-keys'] !== ['']) {
-        return 'unexpected-routing-keys';
+        return 'unexpected-routing-keys: ' . json_encode($header);
     }
 
     if (!isset($header[0]['count'])) {
-        return 'count-missing';
+        return 'count-missing: ' . json_encode($header);
     }
 
     return $header[0]['count'];
