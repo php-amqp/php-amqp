@@ -20,7 +20,13 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
+#include "Zend/zend_interfaces.h"
 #include "amqp_type.h"
+#include "amqp_timestamp.h"
+
+#ifdef PHP_WIN32
+# define strtoimax _strtoi64
+#endif
 
 amqp_bytes_t php_amqp_type_char_to_amqp_long(char const *cstr, PHP5to7_param_str_len_type_t len)
 {
@@ -220,7 +226,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 			if (Z_STRLEN_P(value)) {
 				amqp_bytes_t bytes;
 				bytes.len = (size_t) Z_STRLEN_P(value);
-				bytes.bytes = estrndup(Z_STRVAL_P(value), (uint)Z_STRLEN_P(value));
+				bytes.bytes = estrndup(Z_STRVAL_P(value), (uint) Z_STRLEN_P(value));
 
 				field->value.bytes = bytes;
 			} else {
@@ -234,6 +240,16 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 		case IS_NULL:
 			field->kind = AMQP_FIELD_KIND_VOID;
 			break;
+		case IS_OBJECT:
+			if (instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry)) {
+				zval result;
+				zend_call_method_with_0_params(value, amqp_timestamp_class_entry, NULL, "gettimestamp", &result);
+
+				field->kind = AMQP_FIELD_KIND_TIMESTAMP;
+				field->value.u64 = strtoimax(Z_STRVAL(result), NULL, 10);
+				break;
+			}
+
 		default:
 			switch(Z_TYPE_P(value)) {
 				case IS_OBJECT:

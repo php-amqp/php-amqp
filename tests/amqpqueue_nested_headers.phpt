@@ -74,7 +74,10 @@ array(1) {
     ["queue"]=>
     string(%d) "queue-%f"
     ["time"]=>
-    float(%d)
+    object(AMQPTimestamp)#%d (1) {
+      ["timestamp":"AMQPTimestamp":private]=>
+      string(10) "%s"
+    }
     ["exchange"]=>
     string(%d) "exchange-%f"
     ["routing-keys"]=>
