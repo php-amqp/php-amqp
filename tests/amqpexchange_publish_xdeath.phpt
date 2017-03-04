@@ -45,7 +45,27 @@ function assert_xdeath(AMQPEnvelope $envelope, $exchangeName, $queueName) {
         return 'header-missing';
     }
 
-    $header = $envelope->getHeader('x-death');
+    $originalHeader = $envelope->getHeader('x-death');
+    /**
+     * RabbitMQ 3.5.1 handles x-death headers differently: instead of growing the table x-death
+     * headers indefinitely it introduces a count field indexed by queue and reason. We normalize
+     * the headers to match the new format and to test against that
+     *
+     * https://github.com/rabbitmq/rabbitmq-server/releases/tag/rabbitmq_v3_5_1
+     * https://github.com/rabbitmq/rabbitmq-server/issues/78
+     * https://github.com/rabbitmq/rabbitmq-server/pull/79
+     */
+    $header = [];
+    foreach ($originalHeader as $death) {
+        $index = $death['queue'] . $death['reason'];
+        if (!isset($header[$index])) {
+            $header[$index] = array_merge($death, ['count' => 1]);
+        } else {
+            $header[$index]['count'] += 1;
+        }
+    }
+    $header = array_values($header);
+
 
     if (count($header) !== 1) {
         return 'unexpected-number-of-headers-' . count($header) . ': ' . json_encode($header);
