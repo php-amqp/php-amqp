@@ -103,6 +103,7 @@ typedef zend_rsrc_list_entry PHP5to7_zend_resource_le_t;
 
 #define PHP5to7_PARENT_CLASS_NAME_C(name) , (name)
 
+#define ZEND_ULONG_FMT "%" PRIu64
 #define PHP5to7_ZEND_ACC_FINAL_CLASS ZEND_ACC_FINAL_CLASS
 
 #endif //PHP_AMQP_PHP5_SUPPORT_H

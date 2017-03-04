@@ -242,11 +242,18 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 			break;
 		case IS_OBJECT:
 			if (instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry)) {
-				zval result;
-				zend_call_method_with_0_params(value, amqp_timestamp_class_entry, NULL, "gettimestamp", &result);
+				#if PHP_MAJOR_VERSION >= 7
+					zval result;
+					zend_call_method_with_0_params(value, amqp_timestamp_class_entry, NULL, "gettimestamp", &result);
 
-				field->kind = AMQP_FIELD_KIND_TIMESTAMP;
-				field->value.u64 = strtoimax(Z_STRVAL(result), NULL, 10);
+					field->kind = AMQP_FIELD_KIND_TIMESTAMP;
+					field->value.u64 = strtoimax(Z_STRVAL(result), NULL, 10);
+				#else
+					zval *result = NULL;
+					zend_call_method_with_0_params(&value, amqp_timestamp_class_entry, NULL, "gettimestamp", &result);
+					field->kind = AMQP_FIELD_KIND_TIMESTAMP;
+					field->value.u64 = strtoimax(Z_STRVAL_P(result), NULL, 10);
+				#endif
 				break;
 			}
 
