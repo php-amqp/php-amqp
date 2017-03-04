@@ -40,13 +40,52 @@ $q->bind($ex->getName());
 
 $ex->publish('message');
 
+function assert_xdeath(AMQPEnvelope $envelope, $exchangeName, $queueName) {
+    if (!$envelope->hasHeader('x-death')) {
+        return 'header-missing';
+    }
+
+    $header = $envelope->getHeader('x-death');
+
+    if (count($header) !== 1) {
+        return 'unexpected-number-of-headers-' . count($header);
+    }
+
+    if (!isset($header[0]['reason']) || $header[0]['reason'] !== 'rejected') {
+        return 'unexpected-reason';
+    }
+
+    if (!isset($header[0]['time']) || !$header[0]['time'] instanceof AMQPTimestamp) {
+        return 'unexpected-time';
+    }
+
+    if (!isset($header[0]['exchange']) || $header[0]['exchange'] !== $exchangeName) {
+        return 'unexpected-exchange';
+    }
+
+    if (!isset($header[0]['queue']) || $header[0]['queue'] !== $queueName) {
+        return 'unexpected-queue';
+    }
+
+    if (!isset($header[0]['routing-keys']) || $header[0]['routing-keys'] !== ['']) {
+        return 'unexpected-routing-keys';
+    }
+
+    if (!isset($header[0]['count'])) {
+        return 'count-missing';
+    }
+
+    return $header[0]['count'];
+}
+
 $envelope = $q->get();
+var_dump(assert_xdeath($envelope, $ex->getName(), $q->getName()));
 $q->nack($envelope->getDeliveryTag());
 
 usleep(20000);
 
 $failed = $dq->get();
-var_dump($failed->getHeader('x-death'));
+var_dump(assert_xdeath($failed, $ex->getName(), $q->getName()));
 $dq->ack($failed->getDeliveryTag());
 
 $ex->publish(
@@ -74,88 +113,23 @@ usleep(20000);
 
 
 $envelope = $q->get();
-var_dump($envelope->getHeader('x-death'));
+var_dump(assert_xdeath($envelope, $ex->getName(), $q->getName()));
 $q->nack($envelope->getDeliveryTag());
 
 
 usleep(20000);
 
 $failedTwice = $dq->get();
-var_dump($failedTwice->getHeader('x-death'));
+var_dump(assert_xdeath($failedTwice, $ex->getName(), $q->getName()));
 $dq->ack($failedTwice->getDeliveryTag());
 
 ?>
 
 ==DONE==
 --EXPECTF--
-array(1) {
-  [0]=>
-  array(6) {
-    ["count"]=>
-    int(1)
-    ["reason"]=>
-    string(8) "rejected"
-    ["queue"]=>
-    string(%d) "dlx-test-queue-%s"
-    ["time"]=>
-    object(AMQPTimestamp)#%d (1) {
-      ["timestamp":"AMQPTimestamp":private]=>
-      string(%d) "%d"
-    }
-    ["exchange"]=>
-    string(%d) "exchange-%s"
-    ["routing-keys"]=>
-    array(1) {
-      [0]=>
-      string(0) ""
-    }
-  }
-}
-array(1) {
-  [0]=>
-  array(6) {
-    ["count"]=>
-    int(1)
-    ["reason"]=>
-    string(8) "rejected"
-    ["queue"]=>
-    string(%d) "dlx-test-queue-%s"
-    ["time"]=>
-    object(AMQPTimestamp)#%d (1) {
-      ["timestamp":"AMQPTimestamp":private]=>
-      string(%d) "%d"
-    }
-    ["exchange"]=>
-    string(%d) "exchange-%s"
-    ["routing-keys"]=>
-    array(1) {
-      [0]=>
-      string(0) ""
-    }
-  }
-}
-array(1) {
-  [0]=>
-  array(6) {
-    ["count"]=>
-    int(2)
-    ["exchange"]=>
-    string(%d) "exchange-%s"
-    ["queue"]=>
-    string(%d) "dlx-test-queue-%s"
-    ["reason"]=>
-    string(8) "rejected"
-    ["routing-keys"]=>
-    array(1) {
-      [0]=>
-      string(0) ""
-    }
-    ["time"]=>
-    object(AMQPTimestamp)#%d (1) {
-      ["timestamp":"AMQPTimestamp":private]=>
-      string(%d) "%d"
-    }
-  }
-}
+string(14) "header-missing"
+int(1)
+int(1)
+int(2)
 
 ==DONE==
