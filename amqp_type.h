@@ -33,6 +33,7 @@
 	#include "php5_support.h"
 #endif
 
+PHP_MINIT_FUNCTION(amqp_type);
 
 char *php_amqp_type_amqp_bytes_to_char(amqp_bytes_t bytes);
 amqp_bytes_t php_amqp_type_char_to_amqp_long(char const *cstr, PHP5to7_param_str_len_type_t len);

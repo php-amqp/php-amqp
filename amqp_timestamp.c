@@ -33,6 +33,9 @@
 zend_class_entry *amqp_timestamp_class_entry;
 #define this_ce amqp_timestamp_class_entry
 
+static const double AMQP_TIMESTAMP_MAX = 0xFFFFFFFFFFFFFFFF;
+static const double AMQP_TIMESTAMP_MIN = 0;
+
 /* {{{ proto AMQPTimestamp::__construct(string $timestamp)
  */
 static PHP_METHOD(amqp_timestamp_class, __construct)
@@ -44,8 +47,13 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 		return;
 	}
 
-	if (timestamp < 0) {
-		zend_throw_exception(amqp_value_exception_class_entry, "The timestamp parameter must be greater than 0.", 0 TSRMLS_CC);
+	if (timestamp < AMQP_TIMESTAMP_MIN) {
+		zend_throw_exception_ex(amqp_value_exception_class_entry, 0 TSRMLS_CC, "The timestamp parameter must be greater than %0.f.", AMQP_TIMESTAMP_MIN);
+		return;
+	}
+
+	if (timestamp > AMQP_TIMESTAMP_MAX) {
+		zend_throw_exception_ex(amqp_value_exception_class_entry, 0 TSRMLS_CC, "The timestamp parameter must be less than %0.f.", AMQP_TIMESTAMP_MAX);
 		return;
 	}
 
@@ -109,12 +117,20 @@ zend_function_entry amqp_timestamp_class_functions[] = {
 PHP_MINIT_FUNCTION(amqp_timestamp)
 {
 	zend_class_entry ce;
+	char min[1], max[20];
+	int min_len, max_len;
 
 	INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
 	this_ce = zend_register_internal_class(&ce TSRMLS_CC);
 	this_ce->ce_flags = this_ce->ce_flags | PHP5to7_ZEND_ACC_FINAL_CLASS;
 
 	zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
+
+	max_len = sprintf(max, "%.0f", AMQP_TIMESTAMP_MAX);
+	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MAX"), max, max_len);
+
+	min_len = sprintf(min, "%.0f", AMQP_TIMESTAMP_MIN);
+	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MIN"), min, min_len);
 
 	return SUCCESS;
 }

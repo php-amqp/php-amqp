@@ -20,6 +20,7 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
+#include <stdint.h>
 #include "Zend/zend_interfaces.h"
 #include "amqp_type.h"
 #include "amqp_timestamp.h"

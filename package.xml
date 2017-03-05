@@ -35,7 +35,7 @@
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
     <notes><![CDATA[
-     * TBD
+     * AMQP types are now better supported through value objects (see #271 and #265) (Bogdan Padalko, Lars Strojny)
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.8.1
