@@ -242,7 +242,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 			field->kind = AMQP_FIELD_KIND_VOID;
 			break;
 		case IS_OBJECT:
-			if (instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry)) {
+			if (instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry TSRMLS_CC)) {
 				#if PHP_MAJOR_VERSION >= 7
 					zval result;
 					zend_call_method_with_0_params(value, amqp_timestamp_class_entry, NULL, "gettimestamp", &result);
