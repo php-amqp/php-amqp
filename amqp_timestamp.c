@@ -65,7 +65,7 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 	#else
 		char *str;
 		str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
-		zend_update_property_string(this_ce, getThis(), ZEND_STRL("timestamp"), str);
+		zend_update_property_string(this_ce, getThis(), ZEND_STRL("timestamp"), str TSRMLS_CC);
 	#endif
 	}
 }
@@ -127,10 +127,10 @@ PHP_MINIT_FUNCTION(amqp_timestamp)
 	zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
 	max_len = sprintf(max, "%.0f", AMQP_TIMESTAMP_MAX);
-	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MAX"), max, max_len);
+	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MAX"), max, max_len TSRMLS_CC);
 
 	min_len = sprintf(min, "%.0f", AMQP_TIMESTAMP_MIN);
-	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MIN"), min, min_len);
+	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MIN"), min, min_len TSRMLS_CC);
 
 	return SUCCESS;
 }

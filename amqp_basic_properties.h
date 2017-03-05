@@ -26,7 +26,7 @@
 
 extern zend_class_entry *amqp_basic_properties_class_entry;
 
-void parse_amqp_table(amqp_table_t *table, zval *result);
+void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC);
 void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSRMLS_DC);
 
 

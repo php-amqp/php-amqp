@@ -44,6 +44,10 @@
 # include <unistd.h>
 #endif
 
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+
 #include "amqp_basic_properties.h"
 #include "php_amqp.h"
 #include "amqp_timestamp.h"
@@ -355,7 +359,7 @@ PHP_MINIT_FUNCTION (amqp_basic_properties) {
 }
 
 
-void parse_amqp_table(amqp_table_t *table, zval *result) {
+void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
     int i;
     zend_bool has_value = 0;
 
@@ -425,7 +429,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result) {
 
                             parse_amqp_table(
                                     &(entry->value.value.array.entries[j].value.table),
-                                    PHP5to7_MAYBE_PTR(subtable)
+                                    PHP5to7_MAYBE_PTR(subtable) TSRMLS_CC
                             );
                             add_next_index_zval(PHP5to7_MAYBE_PTR(value), PHP5to7_MAYBE_PTR(subtable));
                         }
@@ -438,7 +442,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result) {
                 break;
             case AMQP_FIELD_KIND_TABLE:
                 PHP5to7_ARRAY_INIT(value);
-                parse_amqp_table(&(entry->value.value.table), PHP5to7_MAYBE_PTR(value));
+                parse_amqp_table(&(entry->value.value.table), PHP5to7_MAYBE_PTR(value) TSRMLS_CC);
                 break;
 
             case AMQP_FIELD_KIND_TIMESTAMP: {
@@ -509,7 +513,7 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
     }
 
     if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
-        parse_amqp_table(&(p->headers), PHP5to7_MAYBE_PTR(headers));
+        parse_amqp_table(&(p->headers), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);
     }
 
     zend_update_property(this_ce, obj, ZEND_STRL("headers"), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);
