@@ -211,7 +211,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 	switch (Z_TYPE_P(value)) {
 		PHP5to7_CASE_IS_BOOL:
 			field->kind = AMQP_FIELD_KIND_BOOLEAN;
-			field->value.boolean = (amqp_boolean_t)!PHP5to7_IS_FALSE_P(value);
+			field->value.boolean = (amqp_boolean_t) !PHP5to7_IS_FALSE_P(value);
 			break;
 		case IS_DOUBLE:
 			field->kind = AMQP_FIELD_KIND_F64;

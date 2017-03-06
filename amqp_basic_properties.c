@@ -448,7 +448,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
             case AMQP_FIELD_KIND_TIMESTAMP: {
 				char timestamp_str[20];
 				PHP5to7_zval_t timestamp PHP5to7_MAYBE_SET_TO_NULL;
-                PHP5to7_MAYBE_INIT(timestamp);
+				PHP5to7_MAYBE_INIT(timestamp);
 
 				snprintf(timestamp_str, sizeof(timestamp_str), ZEND_ULONG_FMT, entry->value.value.u64);
 				#if PHP_MAJOR_VERSION >= 7
