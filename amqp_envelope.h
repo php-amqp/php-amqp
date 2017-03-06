@@ -20,9 +20,6 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-
-/* $Id: amqp_envelope.h 321054 2011-12-16 01:23:28Z pdezwart $ */
-
 extern zend_class_entry *amqp_envelope_class_entry;
 
 void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelope TSRMLS_DC);

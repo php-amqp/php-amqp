@@ -81,7 +81,6 @@ typedef zval PHP5to7_zval_t;
     (key_len) = ZSTR_LEN(real_key); \
     (key) = ZSTR_VAL(real_key);
 
-#define PHP5to7_ZEND_HASH_FOREACH_CONTINUE continue
 #define PHP5to7_ZEND_HASH_FOREACH_END() ZEND_HASH_FOREACH_END();
 
 /* Resources stuff */
@@ -96,6 +95,8 @@ typedef zval PHP5to7_zend_resource_le_t;
 #define PHP5to7_ZEND_REGISTER_RESOURCE(rsrc_pointer, rsrc_type) zend_register_resource((rsrc_pointer), (rsrc_type))
 
 #define PHP5to7_PARENT_CLASS_NAME_C(name)
+
+#define PHP5to7_ZEND_ACC_FINAL_CLASS ZEND_ACC_FINAL
 
 #endif //PHP_AMQP_PHP7_SUPPORT_H
 

@@ -29,30 +29,28 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "zend_exceptions.h"
-
-#ifdef PHP_WIN32
-# include "win32/php_stdint.h"
-# include "win32/signal.h"
-#else
-
-# include <signal.h>
-# include <stdint.h>
-
-#endif
+#include "Zend/zend_interfaces.h"
 
 #include <amqp.h>
 #include <amqp_framing.h>
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
+# include "win32/php_stdint.h"
+# include "win32/signal.h"
 #else
-
+# include <signal.h>
+# include <stdint.h>
 # include <unistd.h>
+#endif
 
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
 #endif
 
 #include "amqp_basic_properties.h"
 #include "php_amqp.h"
+#include "amqp_timestamp.h"
 
 zend_class_entry *amqp_basic_properties_class_entry;
 #define this_ce amqp_basic_properties_class_entry
@@ -361,7 +359,7 @@ PHP_MINIT_FUNCTION (amqp_basic_properties) {
 }
 
 
-void parse_amqp_table(amqp_table_t *table, zval *result) {
+void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
     int i;
     zend_bool has_value = 0;
 
@@ -378,25 +376,35 @@ void parse_amqp_table(amqp_table_t *table, zval *result) {
             case AMQP_FIELD_KIND_BOOLEAN:
                 ZVAL_BOOL(PHP5to7_MAYBE_PTR(value), entry->value.value.boolean);
                 break;
-            case AMQP_FIELD_KIND_I8: ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i8);
+            case AMQP_FIELD_KIND_I8:
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i8);
                 break;
-            case AMQP_FIELD_KIND_U8: ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.u8);
+            case AMQP_FIELD_KIND_U8:
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.u8);
                 break;
-            case AMQP_FIELD_KIND_I16: ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i16);
+            case AMQP_FIELD_KIND_I16:
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i16);
                 break;
-            case AMQP_FIELD_KIND_U16: ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.u16);
+            case AMQP_FIELD_KIND_U16:
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.u16);
                 break;
-            case AMQP_FIELD_KIND_I32: ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i32);
+            case AMQP_FIELD_KIND_I32:
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i32);
                 break;
-            case AMQP_FIELD_KIND_U32: ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.u32);
+            case AMQP_FIELD_KIND_U32:
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.u32);
                 break;
-            case AMQP_FIELD_KIND_I64: ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i64);
+            case AMQP_FIELD_KIND_I64:
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i64);
                 break;
-            case AMQP_FIELD_KIND_U64: ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i64);
+            case AMQP_FIELD_KIND_U64:
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i64);
                 break;
-            case AMQP_FIELD_KIND_F32: ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.f32);
+            case AMQP_FIELD_KIND_F32:
+                ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.f32);
                 break;
-            case AMQP_FIELD_KIND_F64: ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.f64);
+            case AMQP_FIELD_KIND_F64:
+                ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.f64);
                 break;
             case AMQP_FIELD_KIND_UTF8:
             case AMQP_FIELD_KIND_BYTES:
@@ -421,7 +429,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result) {
 
                             parse_amqp_table(
                                     &(entry->value.value.array.entries[j].value.table),
-                                    PHP5to7_MAYBE_PTR(subtable)
+                                    PHP5to7_MAYBE_PTR(subtable) TSRMLS_CC
                             );
                             add_next_index_zval(PHP5to7_MAYBE_PTR(value), PHP5to7_MAYBE_PTR(subtable));
                         }
@@ -434,11 +442,35 @@ void parse_amqp_table(amqp_table_t *table, zval *result) {
                 break;
             case AMQP_FIELD_KIND_TABLE:
                 PHP5to7_ARRAY_INIT(value);
-                parse_amqp_table(&(entry->value.value.table), PHP5to7_MAYBE_PTR(value));
+                parse_amqp_table(&(entry->value.value.table), PHP5to7_MAYBE_PTR(value) TSRMLS_CC);
                 break;
-            case AMQP_FIELD_KIND_TIMESTAMP: ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.u64);
-                break;
-            case AMQP_FIELD_KIND_VOID: ZVAL_NULL(PHP5to7_MAYBE_PTR(value));
+
+            case AMQP_FIELD_KIND_TIMESTAMP: {
+				char timestamp_str[20];
+				PHP5to7_zval_t timestamp PHP5to7_MAYBE_SET_TO_NULL;
+				PHP5to7_MAYBE_INIT(timestamp);
+
+				snprintf(timestamp_str, sizeof(timestamp_str), ZEND_ULONG_FMT, entry->value.value.u64);
+				#if PHP_MAJOR_VERSION >= 7
+				    ZVAL_STRING(PHP5to7_MAYBE_PTR(timestamp), (char *)timestamp_str);
+				#else
+				    ZVAL_STRING(PHP5to7_MAYBE_PTR(timestamp), (char *)timestamp_str, 0);
+				#endif
+				object_init_ex(PHP5to7_MAYBE_PTR(value), amqp_timestamp_class_entry);
+
+				zend_call_method_with_1_params(
+						&value,
+						amqp_timestamp_class_entry,
+						NULL,
+						"__construct",
+						NULL,
+						PHP5to7_MAYBE_PTR(timestamp)
+				);
+				break;
+			}
+
+            case AMQP_FIELD_KIND_VOID:
+                ZVAL_NULL(PHP5to7_MAYBE_PTR(value));
                 break;
             case AMQP_FIELD_KIND_DECIMAL:
                 /* TODO: add decimals support */
@@ -481,7 +513,7 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
     }
 
     if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
-        parse_amqp_table(&(p->headers), PHP5to7_MAYBE_PTR(headers));
+        parse_amqp_table(&(p->headers), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);
     }
 
     zend_update_property(this_ce, obj, ZEND_STRL("headers"), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);

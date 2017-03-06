@@ -20,9 +20,6 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-
-/* $Id: php_amqp.h 327551 2012-09-09 03:49:34Z pdezwart $ */
-
 #ifndef PHP_AMQP_H
 #define PHP_AMQP_H
 
@@ -31,7 +28,8 @@ extern zend_class_entry *amqp_exception_class_entry,
 		*amqp_connection_exception_class_entry,
 		*amqp_channel_exception_class_entry,
 		*amqp_exchange_exception_class_entry,
-		*amqp_queue_exception_class_entry;
+		*amqp_queue_exception_class_entry,
+		*amqp_value_exception_class_entry;
 
 
 typedef struct _amqp_connection_resource amqp_connection_resource;
@@ -49,7 +47,7 @@ typedef struct _amqp_callback_bucket amqp_callback_bucket;
 
 #include "amqp_connection_resource.h"
 
-#include "amqp.h"
+#include <amqp.h>
 
 extern zend_module_entry amqp_module_entry;
 #define phpext_amqp_ptr &amqp_module_entry
@@ -95,11 +93,6 @@ extern zend_module_entry amqp_module_entry;
 #define AMQP_EX_TYPE_HEADERS	"headers"
 
 #define PHP_AMQP_CONNECTION_RES_NAME "AMQP Connection Resource"
-
-amqp_table_t *convert_zval_to_amqp_table(zval *zvalArguments TSRMLS_DC);
-void php_amqp_free_amqp_table(amqp_table_t * table);
-
-char *stringify_bytes(amqp_bytes_t bytes);
 
 struct _amqp_channel_resource {
 	char is_connected;
@@ -376,12 +369,8 @@ int php_amqp_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_connect
  * @deprecated
  */
 void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, PHP5to7_param_long_type_t code TSRMLS_DC);
-
 void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entry *exception_ce TSRMLS_DC);
-
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_resource *connection_resource, amqp_channel_resource *channel_resource);
-
-amqp_bytes_t php_amqp_long_string(char const *cstr, PHP5to7_param_str_len_type_t len);
 
 #endif	/* PHP_AMQP_H */
 

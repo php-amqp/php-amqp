@@ -131,7 +131,7 @@ if test "$PHP_AMQP" != "no"; then
 	fi
 	PHP_SUBST(AMQP_SHARED_LIBADD)
 
-	AMQP_SOURCES="amqp.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c"
+	AMQP_SOURCES="amqp.c amqp_type.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c amqp_timestamp.c"
 
 	PHP_NEW_EXTENSION(amqp, $AMQP_SOURCES, $ext_shared)
 fi
