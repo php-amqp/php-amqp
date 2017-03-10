@@ -398,7 +398,11 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
                 ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i64);
                 break;
             case AMQP_FIELD_KIND_U64:
-                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i64);
+                if (entry->value.value.u64 > LONG_MAX) {
+                    ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.u64);
+                } else {
+                    ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.u64);
+                }
                 break;
             case AMQP_FIELD_KIND_F32:
                 ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.f32);
