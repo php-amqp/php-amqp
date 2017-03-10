@@ -454,12 +454,8 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
 				PHP5to7_zval_t timestamp PHP5to7_MAYBE_SET_TO_NULL;
 				PHP5to7_MAYBE_INIT(timestamp);
 
-				snprintf(timestamp_str, sizeof(timestamp_str), ZEND_ULONG_FMT, entry->value.value.u64);
-				#if PHP_MAJOR_VERSION >= 7
-				    ZVAL_STRING(PHP5to7_MAYBE_PTR(timestamp), (char *)timestamp_str);
-				#else
-				    ZVAL_STRING(PHP5to7_MAYBE_PTR(timestamp), (char *)timestamp_str, 0);
-				#endif
+				int length = snprintf(timestamp_str, sizeof(timestamp_str), ZEND_ULONG_FMT, entry->value.value.u64);
+                PHP5to7_ZVAL_STRINGL_DUP(PHP5to7_MAYBE_PTR(timestamp), (char *)timestamp_str, length);
 				object_init_ex(PHP5to7_MAYBE_PTR(value), amqp_timestamp_class_entry);
 
 				zend_call_method_with_1_params(
@@ -470,6 +466,8 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
 						NULL,
 						PHP5to7_MAYBE_PTR(timestamp)
 				);
+
+                PHP5to7_MAYBE_DESTROY(timestamp);
 				break;
 			}
 

@@ -42,6 +42,7 @@
 
 #include "php_amqp.h"
 #include "amqp_connection.h"
+#include "amqp_basic_properties.h"
 #include "amqp_connection_resource.h"
 #include "amqp_channel.h"
 #include "amqp_envelope.h"
