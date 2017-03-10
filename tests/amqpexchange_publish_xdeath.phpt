@@ -58,10 +58,11 @@ function assert_xdeath(AMQPEnvelope $envelope, $exchangeName, $queueName) {
     $header = [];
     foreach ($originalHeader as $death) {
         $index = $death['queue'] . $death['reason'];
+        $count = isset($death['count']) ? $death['count'] : 1;
         if (!isset($header[$index])) {
-            $header[$index] = array_merge($death, ['count' => 1]);
+            $header[$index] = array_merge($death, ['count' => $count]);
         } else {
-            $header[$index]['count'] += 1;
+            $header[$index]['count'] += $count;
         }
     }
     $header = array_values($header);
