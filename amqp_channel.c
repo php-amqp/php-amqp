@@ -57,7 +57,7 @@ zend_class_entry *amqp_channel_class_entry;
 
 zend_object_handlers amqp_channel_object_handlers;
 
-void php_amqp_close_channel(amqp_channel_resource *channel_resource TSRMLS_DC)
+void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool check_errors TSRMLS_DC)
 {
 	assert(channel_resource != NULL);
 
@@ -86,9 +86,8 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource TSRMLS_DC)
 
 		amqp_rpc_reply_t res = amqp_get_rpc_reply(connection_resource->connection_state);
 
-		if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+		if (check_errors && PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
 			php_amqp_zend_throw_exception_short(res, amqp_channel_exception_class_entry TSRMLS_CC);
-			php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 			return;
 		}
 
@@ -259,7 +258,7 @@ void amqp_channel_free(PHP5to7_obj_free_zend_object *object TSRMLS_DC)
 	amqp_channel_object *channel = PHP_AMQP_FETCH_CHANNEL(object);
 
 	if (channel->channel_resource != NULL) {
-		php_amqp_close_channel(channel->channel_resource TSRMLS_CC);
+		php_amqp_close_channel(channel->channel_resource, 0 TSRMLS_CC);
 
 		efree(channel->channel_resource);
 		channel->channel_resource = NULL;
@@ -437,7 +436,7 @@ static PHP_METHOD(amqp_channel_class, close)
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 
     if(channel_resource && channel_resource->is_connected) {
-        php_amqp_close_channel(channel_resource TSRMLS_CC);
+        php_amqp_close_channel(channel_resource, 1 TSRMLS_CC);
     }
 }
 /* }}} */

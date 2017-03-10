@@ -373,14 +373,12 @@ static PHP_METHOD(amqp_exchange_class, declareExchange)
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
 	php_amqp_type_free_amqp_table(arguments);
+	php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
 	if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
 		php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry TSRMLS_CC);
-		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 		return;
 	}
-
-	php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
 	RETURN_TRUE;
 }

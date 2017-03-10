@@ -108,6 +108,7 @@ int php_amqp_connection_resource_error(amqp_rpc_reply_t reply, char **message, a
 
 static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char **message, amqp_connection_resource *resource TSRMLS_DC) {
 	amqp_connection_close_t *m = (amqp_connection_close_t *)reply.reply.decoded;
+	int result;
 
 	PHP_AMQP_G(error_code) = m->reply_code;
 	spprintf(message, 0, "Server connection error: %d, message: %.*s",
@@ -125,12 +126,16 @@ static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char *
 
 	amqp_connection_close_ok_t *decoded = (amqp_connection_close_ok_t *) NULL;
 
-	amqp_send_method(
+	result = amqp_send_method(
 		resource->connection_state,
 		0, /* NOTE: 0-channel is reserved for things like this */
 		AMQP_CONNECTION_CLOSE_OK_METHOD,
 		&decoded
 	);
+
+	if (result != AMQP_STATUS_OK) {
+		zend_throw_exception(amqp_channel_exception_class_entry, "An error occurred while closing the connection.", 0 TSRMLS_CC);
+	}
 
 	/* Prevent finishing AMQP connection in connection resource destructor */
 	resource->is_connected = '\0';
@@ -158,14 +163,20 @@ static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **me
 	 *      and must be recreated before attempting to use them again.
 	 */
 
-	amqp_channel_close_ok_t *decoded = (amqp_channel_close_ok_t *) NULL;
+	if (resource) {
+		int result;
+		amqp_channel_close_ok_t *decoded = (amqp_channel_close_ok_t *) NULL;
 
-	amqp_send_method(
-		resource->connection_state,
-		channel_id,
-		AMQP_CHANNEL_CLOSE_OK_METHOD,
-		&decoded
-	);
+		result = amqp_send_method(
+				resource->connection_state,
+				channel_id,
+				AMQP_CHANNEL_CLOSE_OK_METHOD,
+				&decoded
+		);
+		if (result != AMQP_STATUS_OK) {
+			zend_throw_exception(amqp_channel_exception_class_entry, "An error occurred while closing channel.", 0 TSRMLS_CC);
+		}
+	}
 }
 
 
@@ -603,7 +614,7 @@ void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_D
 
 		for (slot = 0; slot < resource->max_slots; slot++) {
 			if (resource->slots[slot] != 0) {
-				php_amqp_close_channel(resource->slots[slot] TSRMLS_CC);
+				php_amqp_close_channel(resource->slots[slot], 0 TSRMLS_CC);
 			}
 		}
 	}

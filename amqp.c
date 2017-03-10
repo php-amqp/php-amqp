@@ -264,7 +264,7 @@ int php_amqp_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_connect
 				channel_resource->is_connected = '\0';
 
 				/* Close channel */
-				php_amqp_close_channel(channel_resource TSRMLS_CC);
+				php_amqp_close_channel(channel_resource, 1 TSRMLS_CC);
 			}
 			/* No more error handling necessary, returning. */
 			break;
