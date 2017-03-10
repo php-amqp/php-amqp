@@ -21,9 +21,11 @@
   +----------------------------------------------------------------------+
 */
 #include <stdint.h>
+#include <amqp.h>
 #include "Zend/zend_interfaces.h"
 #include "amqp_type.h"
 #include "amqp_timestamp.h"
+#include "amqp_decimal.h"
 
 #ifdef PHP_WIN32
 # define strtoimax _strtoi64
@@ -256,8 +258,21 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
                 PHP5to7_MAYBE_DESTROY(result_zv);
 
 				break;
-			}
+			} else if (instanceof_function(Z_OBJCE_P(value), amqp_decimal_class_entry TSRMLS_CC)) {
+				field->kind = AMQP_FIELD_KIND_DECIMAL;
+				PHP5to7_zval_t result_zv PHP5to7_MAYBE_SET_TO_NULL;
 
+				zend_call_method_with_0_params(PHP5to7_MAYBE_PARAM_PTR(value), amqp_decimal_class_entry, NULL, "getexponent", &result_zv);
+				field->value.decimal.decimals = (uint8_t)Z_LVAL(PHP5to7_MAYBE_DEREF(result_zv));
+				PHP5to7_MAYBE_DESTROY(result_zv);
+
+				zend_call_method_with_0_params(PHP5to7_MAYBE_PARAM_PTR(value), amqp_decimal_class_entry, NULL, "getsignificand", &result_zv);
+				field->value.decimal.value = (uint32_t)Z_LVAL(PHP5to7_MAYBE_DEREF(result_zv));
+
+				PHP5to7_MAYBE_DESTROY(result_zv);
+
+				break;
+			}
 		default:
 			switch(Z_TYPE_P(value)) {
 				case IS_OBJECT:
