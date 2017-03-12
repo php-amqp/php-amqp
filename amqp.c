@@ -42,12 +42,14 @@
 
 #include "php_amqp.h"
 #include "amqp_connection.h"
+#include "amqp_basic_properties.h"
 #include "amqp_connection_resource.h"
 #include "amqp_channel.h"
 #include "amqp_envelope.h"
 #include "amqp_exchange.h"
 #include "amqp_queue.h"
 #include "amqp_timestamp.h"
+#include "amqp_decimal.h"
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -117,6 +119,7 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
 	PHP_MINIT(amqp_basic_properties)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(amqp_envelope)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(amqp_timestamp)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(amqp_decimal)(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Class Exceptions */
 	INIT_CLASS_ENTRY(ce, "AMQPException", NULL);

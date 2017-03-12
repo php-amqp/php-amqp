@@ -16,8 +16,12 @@ matrix:
 
   include:
     - php: nightly
+      env: LIBRABBITMQ_VERSION=master
+    - php: nightly
       env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
 
+    - php: 7.1
+      env: LIBRABBITMQ_VERSION=master
     - php: 7.1
       env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
     - php: 7.1
@@ -28,6 +32,8 @@ matrix:
       env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
 
     - php: 7.0
+      env: LIBRABBITMQ_VERSION=master
+    - php: 7.0
       env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
     - php: 7.0
       env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
@@ -36,6 +42,8 @@ matrix:
     - php: 7.0
       env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
 
+    - php: 5.6
+      env: LIBRABBITMQ_VERSION=master
     - php: 5.6
       env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
     - php: 5.6

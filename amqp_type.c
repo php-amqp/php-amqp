@@ -21,13 +21,18 @@
   +----------------------------------------------------------------------+
 */
 #include <stdint.h>
+#include <amqp.h>
 #include "Zend/zend_interfaces.h"
 #include "amqp_type.h"
 #include "amqp_timestamp.h"
+#include "amqp_decimal.h"
 
 #ifdef PHP_WIN32
 # define strtoimax _strtoi64
 #endif
+
+static void php_amqp_type_internal_free_amqp_array(amqp_array_t *array);
+static void php_amqp_type_internal_free_amqp_table(amqp_table_t *object, zend_bool clear_root);
 
 amqp_bytes_t php_amqp_type_char_to_amqp_long(char const *cstr, PHP5to7_param_str_len_type_t len)
 {
@@ -243,21 +248,31 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 			break;
 		case IS_OBJECT:
 			if (instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry TSRMLS_CC)) {
-				#if PHP_MAJOR_VERSION >= 7
-					zval result;
-					zend_call_method_with_0_params(value, amqp_timestamp_class_entry, NULL, "gettimestamp", &result);
+                PHP5to7_zval_t result_zv PHP5to7_MAYBE_SET_TO_NULL;
 
-					field->kind = AMQP_FIELD_KIND_TIMESTAMP;
-					field->value.u64 = strtoimax(Z_STRVAL(result), NULL, 10);
-				#else
-					zval *result = NULL;
-					zend_call_method_with_0_params(&value, amqp_timestamp_class_entry, NULL, "gettimestamp", &result);
-					field->kind = AMQP_FIELD_KIND_TIMESTAMP;
-					field->value.u64 = strtoimax(Z_STRVAL_P(result), NULL, 10);
-				#endif
+                zend_call_method_with_0_params(PHP5to7_MAYBE_PARAM_PTR(value), amqp_timestamp_class_entry, NULL, "gettimestamp", &result_zv);
+
+                field->kind = AMQP_FIELD_KIND_TIMESTAMP;
+                field->value.u64 = strtoimax(Z_STRVAL(PHP5to7_MAYBE_DEREF(result_zv)), NULL, 10);
+
+                PHP5to7_MAYBE_DESTROY(result_zv);
+
+				break;
+			} else if (instanceof_function(Z_OBJCE_P(value), amqp_decimal_class_entry TSRMLS_CC)) {
+				field->kind = AMQP_FIELD_KIND_DECIMAL;
+				PHP5to7_zval_t result_zv PHP5to7_MAYBE_SET_TO_NULL;
+
+				zend_call_method_with_0_params(PHP5to7_MAYBE_PARAM_PTR(value), amqp_decimal_class_entry, NULL, "getexponent", &result_zv);
+				field->value.decimal.decimals = (uint8_t)Z_LVAL(PHP5to7_MAYBE_DEREF(result_zv));
+				PHP5to7_MAYBE_DESTROY(result_zv);
+
+				zend_call_method_with_0_params(PHP5to7_MAYBE_PARAM_PTR(value), amqp_decimal_class_entry, NULL, "getsignificand", &result_zv);
+				field->value.decimal.value = (uint32_t)Z_LVAL(PHP5to7_MAYBE_DEREF(result_zv));
+
+				PHP5to7_MAYBE_DESTROY(result_zv);
+
 				break;
 			}
-
 		default:
 			switch(Z_TYPE_P(value)) {
 				case IS_OBJECT:
@@ -290,7 +305,41 @@ amqp_table_t *php_amqp_type_convert_zval_to_amqp_table(zval *php_array TSRMLS_DC
 	return amqp_table;
 }
 
-void php_amqp_type_internal_free_amqp_table(amqp_table_t *object, zend_bool clear_root)
+
+static void php_amqp_type_internal_free_amqp_array(amqp_array_t *array) {
+	if (!array) {
+		return;
+	}
+
+	int macroEntryCounter;
+	for (macroEntryCounter = 0; macroEntryCounter < array->num_entries; macroEntryCounter++) {
+
+		amqp_field_value_t *entry = &array->entries[macroEntryCounter];
+
+		switch (entry->kind) {
+			case AMQP_FIELD_KIND_TABLE:
+				php_amqp_type_internal_free_amqp_table(&entry->value.table, 0);
+				break;
+			case AMQP_FIELD_KIND_ARRAY:
+				php_amqp_type_internal_free_amqp_array(&entry->value.array);
+				break;
+			case AMQP_FIELD_KIND_UTF8:
+				if (entry->value.bytes.bytes) {
+					efree(entry->value.bytes.bytes);
+				}
+				break;
+				//
+			default:
+				break;
+		}
+	}
+
+	if (array->entries) {
+		efree(array->entries);
+	}
+}
+
+static void php_amqp_type_internal_free_amqp_table(amqp_table_t *object, zend_bool clear_root)
 {
 	if (!object) {
 		return;
@@ -306,6 +355,9 @@ void php_amqp_type_internal_free_amqp_table(amqp_table_t *object, zend_bool clea
 			switch (entry->value.kind) {
 				case AMQP_FIELD_KIND_TABLE:
 					php_amqp_type_internal_free_amqp_table(&entry->value.value.table, 0);
+					break;
+				case AMQP_FIELD_KIND_ARRAY:
+					php_amqp_type_internal_free_amqp_array(&entry->value.value.array);
 					break;
 				case AMQP_FIELD_KIND_UTF8:
 					if (entry->value.value.bytes.bytes) {

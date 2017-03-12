@@ -51,6 +51,7 @@
 #include "amqp_basic_properties.h"
 #include "php_amqp.h"
 #include "amqp_timestamp.h"
+#include "amqp_decimal.h"
 
 zend_class_entry *amqp_basic_properties_class_entry;
 #define this_ce amqp_basic_properties_class_entry
@@ -398,7 +399,11 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
                 ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i64);
                 break;
             case AMQP_FIELD_KIND_U64:
-                ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.i64);
+                if (entry->value.value.u64 > LONG_MAX) {
+                    ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.u64);
+                } else {
+                    ZVAL_LONG(PHP5to7_MAYBE_PTR(value), entry->value.value.u64);
+                }
                 break;
             case AMQP_FIELD_KIND_F32:
                 ZVAL_DOUBLE(PHP5to7_MAYBE_PTR(value), entry->value.value.f32);
@@ -450,12 +455,8 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
 				PHP5to7_zval_t timestamp PHP5to7_MAYBE_SET_TO_NULL;
 				PHP5to7_MAYBE_INIT(timestamp);
 
-				snprintf(timestamp_str, sizeof(timestamp_str), ZEND_ULONG_FMT, entry->value.value.u64);
-				#if PHP_MAJOR_VERSION >= 7
-				    ZVAL_STRING(PHP5to7_MAYBE_PTR(timestamp), (char *)timestamp_str);
-				#else
-				    ZVAL_STRING(PHP5to7_MAYBE_PTR(timestamp), (char *)timestamp_str, 0);
-				#endif
+				int length = snprintf(timestamp_str, sizeof(timestamp_str), ZEND_ULONG_FMT, entry->value.value.u64);
+                PHP5to7_ZVAL_STRINGL_DUP(PHP5to7_MAYBE_PTR(timestamp), (char *)timestamp_str, length);
 				object_init_ex(PHP5to7_MAYBE_PTR(value), amqp_timestamp_class_entry);
 
 				zend_call_method_with_1_params(
@@ -466,15 +467,40 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
 						NULL,
 						PHP5to7_MAYBE_PTR(timestamp)
 				);
+
+                PHP5to7_MAYBE_DESTROY(timestamp);
 				break;
 			}
 
             case AMQP_FIELD_KIND_VOID:
                 ZVAL_NULL(PHP5to7_MAYBE_PTR(value));
                 break;
-            case AMQP_FIELD_KIND_DECIMAL:
-                /* TODO: add decimals support */
+            case AMQP_FIELD_KIND_DECIMAL: {
+
+                PHP5to7_zval_t e PHP5to7_MAYBE_SET_TO_NULL;
+                PHP5to7_zval_t n PHP5to7_MAYBE_SET_TO_NULL;
+                PHP5to7_MAYBE_INIT(e);
+                PHP5to7_MAYBE_INIT(n);
+
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(e), entry->value.value.decimal.decimals);
+                ZVAL_LONG(PHP5to7_MAYBE_PTR(n), entry->value.value.decimal.value);
+
+                object_init_ex(PHP5to7_MAYBE_PTR(value), amqp_decimal_class_entry);
+
+                zend_call_method_with_2_params(
+                        &value,
+                        amqp_decimal_class_entry,
+                        NULL,
+                        "__construct",
+                        NULL,
+                        PHP5to7_MAYBE_PTR(e),
+                        PHP5to7_MAYBE_PTR(n)
+                );
+
+                PHP5to7_MAYBE_DESTROY(e);
+                PHP5to7_MAYBE_DESTROY(n);
                 break;
+            }
             default:
                 has_value = 0;
                 break;
