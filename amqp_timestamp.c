@@ -119,7 +119,7 @@ zend_function_entry amqp_timestamp_class_functions[] = {
 PHP_MINIT_FUNCTION(amqp_timestamp)
 {
 	zend_class_entry ce;
-	char min[1], max[20];
+	char min[20], max[20];
 	int min_len, max_len;
 
 	INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
@@ -128,10 +128,10 @@ PHP_MINIT_FUNCTION(amqp_timestamp)
 
 	zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
-	max_len = sprintf(max, "%.0f", AMQP_TIMESTAMP_MAX);
+	max_len = snprintf(max, sizeof(max), "%.0f", AMQP_TIMESTAMP_MAX);
 	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MAX"), max, max_len TSRMLS_CC);
 
-	min_len = sprintf(min, "%.0f", AMQP_TIMESTAMP_MIN);
+	min_len = snprintf(min, sizeof(min), "%.0f", AMQP_TIMESTAMP_MIN);
 	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MIN"), min, min_len TSRMLS_CC);
 
 	return SUCCESS;
