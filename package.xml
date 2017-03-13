@@ -29,7 +29,7 @@
         <api>1.3.0</api>
     </version>
     <stability>
-        <release>stable</release>
+        <release>beta</release>
         <api>stable</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
