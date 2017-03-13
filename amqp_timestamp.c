@@ -119,7 +119,7 @@ zend_function_entry amqp_timestamp_class_functions[] = {
 PHP_MINIT_FUNCTION(amqp_timestamp)
 {
 	zend_class_entry ce;
-	char min[20], max[20];
+	char min[21], max[21];
 	int min_len, max_len;
 
 	INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
