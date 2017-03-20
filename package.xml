@@ -22,10 +22,10 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2017-03-13</date>
-    <time>13:00:00</time>
+    <date>2017-03-20</date>
+    <time>20:00:00</time>
     <version>
-        <release>1.9.0-dev</release>
+        <release>1.9.0</release>
         <api>1.3.0</api>
     </version>
     <stability>
@@ -37,7 +37,7 @@
      * AMQP types are now better supported through value objects (see #271, #269, #265) (Bogdan Padalko, Lars Strojny)
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0beta2
+https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0
  ]]></notes>
     <contents>
         <dir name="/">
