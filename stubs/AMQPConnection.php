@@ -178,7 +178,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If host is longer then 1024 characters.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setHost($host)
     {
@@ -192,7 +192,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If login is longer then 32 characters.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setLogin($login)
     {
@@ -206,7 +206,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If password is longer then 32characters.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setPassword($password)
     {
@@ -220,7 +220,7 @@ class AMQPConnection
      * @throws AMQPConnectionException If port is longer not between
      *                                 1 and 65535.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setPort($port)
     {
@@ -234,7 +234,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If host is longer then 32 characters.
      *
-     * @return boolean true on success or false on failure.
+     * @return void
      */
     public function setVhost($vhost)
     {
@@ -270,7 +270,7 @@ class AMQPConnection
      *
      * @param int $timeout
      *
-     * @return bool
+     * @return void
      */
     public function setReadTimeout($timeout)
     {
@@ -291,7 +291,7 @@ class AMQPConnection
      *
      * @param int $timeout
      *
-     * @return bool
+     * @return void
      */
     public function setWriteTimeout($timeout)
     {

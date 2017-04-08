@@ -186,7 +186,7 @@ class AMQPExchange
      * @param string         $key   Name of the argument to set.
      * @param string|integer $value Value of the argument to set.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setArgument($key, $value)
     {
@@ -197,7 +197,7 @@ class AMQPExchange
      *
      * @param array $arguments An array of key/value pairs of arguments.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setArguments(array $arguments)
     {

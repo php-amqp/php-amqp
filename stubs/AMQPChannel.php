@@ -77,7 +77,7 @@ class AMQPChannel
      *
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool TRUE on success or FALSE on failure.
+     * @return void
      */
     public function qos($size, $count)
     {
@@ -111,7 +111,7 @@ class AMQPChannel
      *
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setPrefetchCount($count)
     {
@@ -140,7 +140,7 @@ class AMQPChannel
      *
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setPrefetchSize($size)
     {
@@ -182,6 +182,7 @@ class AMQPChannel
      * Redeliver unacknowledged messages.
      *
      * @param bool $requeue
+     * @return void
      */
     public function basicRecover($requeue = true)
     {

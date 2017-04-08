@@ -284,7 +284,7 @@ class AMQPQueue
      * @param string $key   The key to set.
      * @param mixed  $value The value to set.
      *
-     * @return boolean
+     * @return void
      */
     public function setArgument($key, $value)
     {
@@ -297,7 +297,7 @@ class AMQPQueue
      *
      * @param array $arguments An array of key/value pairs of arguments.
      *
-     * @return boolean
+     * @return void
      */
     public function setArguments(array $arguments)
     {
@@ -321,7 +321,7 @@ class AMQPQueue
      *                       AMQP_DURABLE, AMQP_PASSIVE,
      *                       AMQP_EXCLUSIVE, AMQP_AUTODELETE.
      *
-     * @return boolean
+     * @return void
      */
     public function setFlags($flags)
     {
@@ -332,7 +332,7 @@ class AMQPQueue
      *
      * @param string $queue_name The name of the queue.
      *
-     * @return boolean
+     * @return void
      */
     public function setName($queue_name)
     {

@@ -123,9 +123,6 @@ static PHP_METHOD(amqp_queue_class, setName)
 
 	/* Set the queue name */
 	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("name"), name, name_len TSRMLS_CC);
-
-	/* BC */
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -179,9 +176,6 @@ static PHP_METHOD(amqp_queue_class, setFlags)
 	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("durable"), IS_DURABLE(flagBitmask) TSRMLS_CC);
 	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("exclusive"), IS_EXCLUSIVE(flagBitmask) TSRMLS_CC);
 	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("auto_delete"), IS_AUTODELETE(flagBitmask) TSRMLS_CC);
-
-	/* BC */
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -287,8 +281,6 @@ static PHP_METHOD(amqp_queue_class, setArgument)
 			zend_throw_exception(amqp_exchange_exception_class_entry, "The value parameter must be of type NULL, int, double or string.", 0 TSRMLS_CC);
 			return;
 	}
-
-	RETURN_TRUE;
 }
 /* }}} */
 

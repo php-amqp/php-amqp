@@ -274,8 +274,6 @@ static PHP_METHOD(amqp_exchange_class, setArguments)
 	}
 
 	zend_update_property(this_ce, getThis(), ZEND_STRL("arguments"), zvalArguments TSRMLS_CC);
-
-	RETURN_TRUE;
 }
 /* }}} */
 
@@ -309,8 +307,6 @@ static PHP_METHOD(amqp_exchange_class, setArgument)
 			zend_throw_exception(amqp_exchange_exception_class_entry, "The value parameter must be of type NULL, int, double or string.", 0 TSRMLS_CC);
 			return;
 	}
-
-	RETURN_TRUE;
 }
 /* }}} */
 
