@@ -160,7 +160,11 @@ class AMQPExchange
      * @param string  $routing_key The optional routing key to which to
      *                             publish to.
      * @param integer $flags       One or more of AMQP_MANDATORY and
-     *                             AMQP_IMMEDIATE.
+     *                             AMQP_IMMEDIATE. Note: AMQP_MANDATORY does
+     *                             not currently work and WILL cause undefined
+     *                             behavior if you use it. See
+     *                             https://bugs.php.net/bug.php?id=62786 and
+     *                             https://github.com/pdezwart/php-amqp/issues/23
      * @param array   $attributes  One of content_type, content_encoding,
      *                             message_id, user_id, app_id, delivery_mode,
      *                             priority, timestamp, expiration, type
