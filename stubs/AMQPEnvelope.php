@@ -28,6 +28,15 @@ class AMQPEnvelope extends AMQPBasicProperties
     }
 
     /**
+     * Get the consumer tag of the message.
+     *
+     * @return string The consumer tag of the message.
+     */
+    public function getConsumerTag()
+    {
+    }
+
+    /**
      * Get the delivery tag of the message.
      *
      * @return string The delivery tag of the message.

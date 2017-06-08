@@ -31,8 +31,8 @@ $ex->publish('message', 'routing.1', AMQP_NOPARAM, array("headers" => array("tes
 $q->consume("consumeThings");
 $q->consume("consumeThings");
 ?>
---EXPECT--
-object(AMQPEnvelope)#5 (19) {
+--EXPECTF--
+object(AMQPEnvelope)#5 (20) {
   ["content_type":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
   ["content_encoding":"AMQPBasicProperties":private]=>
@@ -64,6 +64,8 @@ object(AMQPEnvelope)#5 (19) {
   string(0) ""
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
+  ["consumer_tag":"AMQPEnvelope":private]=>
+  string(31) "amq.ctag-%s"
   ["delivery_tag":"AMQPEnvelope":private]=>
   int(1)
   ["is_redelivery":"AMQPEnvelope":private]=>
@@ -73,7 +75,7 @@ object(AMQPEnvelope)#5 (19) {
   ["routing_key":"AMQPEnvelope":private]=>
   string(9) "routing.1"
 }
-object(AMQPEnvelope)#5 (19) {
+object(AMQPEnvelope)#5 (20) {
   ["content_type":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
   ["content_encoding":"AMQPBasicProperties":private]=>
@@ -107,6 +109,8 @@ object(AMQPEnvelope)#5 (19) {
   string(0) ""
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
+  ["consumer_tag":"AMQPEnvelope":private]=>
+  string(31) "amq.ctag-%s"
   ["delivery_tag":"AMQPEnvelope":private]=>
   int(2)
   ["is_redelivery":"AMQPEnvelope":private]=>
