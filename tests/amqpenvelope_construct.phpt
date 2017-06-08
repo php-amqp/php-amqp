@@ -10,7 +10,7 @@ if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
 var_dump(new AMQPEnvelope());
 ?>
 --EXPECT--
-object(AMQPEnvelope)#1 (19) {
+object(AMQPEnvelope)#1 (20) {
   ["content_type":"AMQPBasicProperties":private]=>
   string(0) ""
   ["content_encoding":"AMQPBasicProperties":private]=>
@@ -41,6 +41,8 @@ object(AMQPEnvelope)#1 (19) {
   ["cluster_id":"AMQPBasicProperties":private]=>
   string(0) ""
   ["body":"AMQPEnvelope":private]=>
+  NULL
+  ["consumer_tag":"AMQPEnvelope":private]=>
   NULL
   ["delivery_tag":"AMQPEnvelope":private]=>
   NULL

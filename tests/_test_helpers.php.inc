@@ -29,6 +29,8 @@ function dump_message($msg) {
     var_dump($msg->getContentType());
     echo "    getRoutingKey:", PHP_EOL, "        ";
     var_dump($msg->getRoutingKey());
+    echo "    getConsumerTag:", PHP_EOL, "        ";
+    var_dump($msg->getConsumerTag());
     echo "    getDeliveryTag:", PHP_EOL, "        ";
     var_dump($msg->getDeliveryTag());
     echo "    getDeliveryMode:", PHP_EOL, "        ";

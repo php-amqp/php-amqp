@@ -77,7 +77,7 @@ object(AMQPExchange)#3 (9) {
     bool(true)
   }
   ["channel":"AMQPExchange":private]=>
-  object(AMQPChannel)#2 (3) {
+  object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
     object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
@@ -115,6 +115,9 @@ object(AMQPExchange)#3 (9) {
     int(3)
     ["prefetch_size":"AMQPChannel":private]=>
     int(0)
+    ["consumers":"AMQPChannel":private]=>
+    array(0) {
+    }
   }
   ["name":"AMQPExchange":private]=>
   string(%d) "test.exchange.ae.%f"
@@ -167,7 +170,7 @@ object(AMQPExchange)#4 (9) {
     bool(true)
   }
   ["channel":"AMQPExchange":private]=>
-  object(AMQPChannel)#2 (3) {
+  object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
     object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
@@ -205,6 +208,9 @@ object(AMQPExchange)#4 (9) {
     int(3)
     ["prefetch_size":"AMQPChannel":private]=>
     int(0)
+    ["consumers":"AMQPChannel":private]=>
+    array(0) {
+    }
   }
   ["name":"AMQPExchange":private]=>
   string(%d) "test.exchange.%f"
@@ -267,7 +273,7 @@ object(AMQPExchange)#4 (9) {
     bool(true)
   }
   ["channel":"AMQPExchange":private]=>
-  object(AMQPChannel)#2 (3) {
+  object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
     object(AMQPConnection)#1 (15) {
       ["login":"AMQPConnection":private]=>
@@ -305,6 +311,9 @@ object(AMQPExchange)#4 (9) {
     int(3)
     ["prefetch_size":"AMQPChannel":private]=>
     int(0)
+    ["consumers":"AMQPChannel":private]=>
+    array(0) {
+    }
   }
   ["name":"AMQPExchange":private]=>
   string(%d) "test.exchange.%f"
