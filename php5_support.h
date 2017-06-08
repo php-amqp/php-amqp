@@ -32,6 +32,7 @@ typedef zval* PHP5to7_zval_t;
 
 #define PHP5to7_MAYBE_DEREF(zv) (*(zv))
 #define PHP5to7_MAYBE_PTR(zv) (zv)
+#define PHP5to7_MAYBE_PTR_TYPE PHP5to7_zval_t
 #define PHP5to7_MAYBE_PARAM_PTR(zv) (&(zv))
 
 #define PHP5to7_MAYBE_INIT(zv) MAKE_STD_ZVAL(zv);

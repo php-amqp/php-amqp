@@ -32,9 +32,10 @@ typedef zval PHP5to7_zval_t;
 
 #define PHP5to7_MAYBE_DEREF(zv) (zv)
 #define PHP5to7_MAYBE_PTR(zv) (&(zv))
+#define PHP5to7_MAYBE_PTR_TYPE PHP5to7_zval_t *
 #define PHP5to7_MAYBE_PARAM_PTR(zv) (zv)
 
-#define PHP5to7_MAYBE_INIT(zv)
+#define PHP5to7_MAYBE_INIT(zv) ZVAL_UNDEF(&(zv))
 #define PHP5to7_ARRAY_INIT(zv) array_init(&(zv));
 #define PHP5to7_MAYBE_DESTROY(zv) if (!Z_ISUNDEF(zv)) { zval_ptr_dtor(&(zv)); }
 #define PHP5to7_MAYBE_DESTROY2(zv, pzv) if (!Z_ISUNDEF(zv)) { zval_ptr_dtor(pzv); }

@@ -273,6 +273,10 @@ void amqp_channel_free(PHP5to7_obj_free_zend_object *object TSRMLS_DC)
 	zend_object_std_dtor(&channel->zo TSRMLS_CC);
 
 #if PHP_MAJOR_VERSION < 7
+    if (channel->this_ptr) {
+        channel->this_ptr = NULL;
+    }
+
 	efree(object);
 #endif
 }
@@ -324,7 +328,19 @@ static PHP_METHOD(amqp_channel_class, __construct)
 		RETURN_NULL();
 	}
 
+	PHP5to7_zval_t consumers PHP5to7_MAYBE_SET_TO_NULL;
+
+	PHP5to7_MAYBE_INIT(consumers);
+	PHP5to7_ARRAY_INIT(consumers);
+
+	zend_update_property(this_ce, getThis(), ZEND_STRL("consumers"), PHP5to7_MAYBE_PTR(consumers) TSRMLS_CC);
+
+	PHP5to7_MAYBE_DESTROY(consumers);
+
 	channel = PHP_AMQP_GET_CHANNEL(getThis());
+#if PHP_MAJOR_VERSION < 7
+    channel->this_ptr = getThis();
+#endif
 
 	/* Set the prefetch count */
 	zend_update_property_long(this_ce, getThis(), ZEND_STRL("prefetch_count"), INI_INT("amqp.prefetch_count") TSRMLS_CC);
@@ -347,6 +363,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 
 	channel_resource = (amqp_channel_resource*)ecalloc(1, sizeof(amqp_channel_resource));
 	channel->channel_resource = channel_resource;
+    channel_resource->parent = channel;
 
 	/* Figure out what the next available channel is on this connection */
 	channel_resource->channel_id = php_amqp_connection_resource_get_available_channel_id(connection->connection_resource);
@@ -1058,6 +1075,15 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
 }
 /* }}} */
 
+/* {{{ proto amqp::getConsumers() */
+static PHP_METHOD(amqp_channel_class, getConsumers)
+{
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	PHP_AMQP_NOPARAMS();
+	PHP_AMQP_RETURN_THIS_PROP("consumers");
+}
+/* }}} */
+
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 				ZEND_ARG_OBJ_INFO(0, amqp_connection, AMQPConnection, 0)
@@ -1127,7 +1153,11 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_waitForBasicReturn, ZEND_SEND_
 				ZEND_ARG_INFO(0, timeout)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_channel_class_getConsumers, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 //setConfirmsCallback
+
 
 zend_function_entry amqp_channel_class_functions[] = {
 		PHP_ME(amqp_channel_class, __construct, 	arginfo_amqp_channel_class__construct,		ZEND_ACC_PUBLIC)
@@ -1157,6 +1187,8 @@ zend_function_entry amqp_channel_class_functions[] = {
 		PHP_ME(amqp_channel_class, setReturnCallback, arginfo_amqp_channel_class_setReturnCallback, ZEND_ACC_PUBLIC)
 		PHP_ME(amqp_channel_class, waitForBasicReturn, arginfo_amqp_channel_class_waitForBasicReturn, ZEND_ACC_PUBLIC)
 
+		PHP_ME(amqp_channel_class, getConsumers, 	arginfo_amqp_channel_class_getConsumers,		ZEND_ACC_PUBLIC)
+
 		{NULL, NULL, NULL}
 };
 
@@ -1172,6 +1204,8 @@ PHP_MINIT_FUNCTION(amqp_channel)
 
 	zend_declare_property_null(this_ce, ZEND_STRL("prefetch_count"), ZEND_ACC_PRIVATE TSRMLS_CC);
 	zend_declare_property_long(this_ce, ZEND_STRL("prefetch_size"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+
+	zend_declare_property_null(this_ce, ZEND_STRL("consumers"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
 #if PHP_MAJOR_VERSION >=7
 	memcpy(&amqp_channel_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
