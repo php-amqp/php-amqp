@@ -29,6 +29,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 		*amqp_channel_exception_class_entry,
 		*amqp_exchange_exception_class_entry,
 		*amqp_queue_exception_class_entry,
+		*amqp_envelope_exception_class_entry,
 		*amqp_value_exception_class_entry;
 
 
