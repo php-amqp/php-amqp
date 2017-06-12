@@ -246,7 +246,7 @@ static PHP_METHOD(amqp_queue_class, setArguments)
 {
 	zval *zvalArguments;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &zvalArguments) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a/", &zvalArguments) == FAILURE) {
 		return;
 	}
 
