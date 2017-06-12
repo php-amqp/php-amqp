@@ -25,7 +25,7 @@
     <date>2017-06-12</date>
     <time>16:00:00</time>
     <version>
-        <release>1.9.1</release>
+        <release>1.9.2-dev</release>
         <api>1.3.0</api>
     </version>
     <stability>
@@ -34,11 +34,11 @@
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
     <notes><![CDATA[
-     * Separate queue and exchange args to prevent segfault with opcache enabled (Bogdan Padalko)
+     * TBD
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.9.0...v1.9.1
- ]]></notes>
+https://github.com/pdezwart/php-amqp/compare/v1.9.1...v1.9.2
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -256,6 +256,23 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.0...v1.9.1
     <changelog>
         <release>
             <version>
+                <release>1.9.1</release>
+                <api>1.3.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[
+             * Separate queue and exchange args to prevent segfault with opcache enabled (Bogdan Padalko)
+
+        For a complete list of changes see:
+        https://github.com/pdezwart/php-amqp/compare/v1.9.0...v1.9.1
+]]></notes>
+        </release>
+        <release>
+            <version>
                 <release>1.9.0</release>
                 <api>1.3.0</api>
             </version>
@@ -269,7 +286,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.0...v1.9.1
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0
- ]]></notes>
+]]></notes>
         </release>
         <release>
             <version>
@@ -286,7 +303,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0beta2
- ]]></notes>
+]]></notes>
         </release>
         <release>
             <version>
@@ -303,7 +320,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0beta2
 
             For a complete list of changes see:
             https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0beta1
-             ]]></notes>
+]]></notes>
         </release>
         <release>
             <version>
@@ -327,7 +344,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0beta2
 
         For a complete list of changes see:
         https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0
-         ]]></notes>
+]]></notes>
         </release>
         <release>
             <version>
@@ -352,7 +369,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0beta2
 
         For a complete list of changes see:
         https://github.com/pdezwart/php-amqp/compare/v1.7.1...v1.8.0beta2
-         ]]></notes>
+]]></notes>
         </release>
         <release>
             <version>
@@ -370,7 +387,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.8.0...v1.9.0beta2
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.7.0...v1.7.1
- ]]></notes>
+]]></notes>
         </release>
         <release>
             <version>
@@ -422,7 +439,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
   For a complete list of changes see:
   https://github.com/pdezwart/php-amqp/compare/v1.7.0alpha1...v1.7.0alpha2
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -445,7 +462,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
       For a complete list of changes see:
       https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0alpha1
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -466,7 +483,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
   For a complete list of changes see:
   https://github.com/pdezwart/php-amqp/compare/v1.6.0beta4...v1.6.0
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -490,7 +507,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.6.0beta3...v1.6.0beta4
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -510,7 +527,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.6.0beta2...v1.6.0beta3
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -538,7 +555,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
      For a complete list of changes see:
      https://github.com/pdezwart/php-amqp/compare/v1.4.0...v1.6.0beta2
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -567,7 +584,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.4.0beta2...v1.4.0
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -586,7 +603,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.4.0beta1...v1.4.0beta2
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -605,7 +622,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.3.0...v1.4.0beta1
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -625,7 +642,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.2.0...v1.3.0
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -647,7 +664,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 
     For a complete list of changes see:
     https://github.com/pdezwart/php-amqp/compare/v1.0.10...v1.2.0
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -676,7 +693,8 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
     * fix memory (Bernhard Weisshuhn)
 
     For a complete list of changes see:
-    https://github.com/pdezwart/php-amqp/compare/v1.0.9...v1.0.10   ]]></notes>
+    https://github.com/pdezwart/php-amqp/compare/v1.0.9...v1.0.10 
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -692,7 +710,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
             <notes><![CDATA[
 1.0.9 Release:
     * Fix pecl relase
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -712,7 +730,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
     * Support connection time outs
     * Adding consumer_tag parameter to AMQPQueue::cancel
     * Clean up error code handling
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -728,7 +746,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
             <notes><![CDATA[
 1.0.7 Release:
     * Adding missing macros
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -748,7 +766,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
     * Fixing release number in PHP information
     * Adding .gitignore info for Git users
     * Cleaning up debug handling
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -767,7 +785,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
     * Handles server connections being closed during consume and publish correctly
     * 62628: Exception thrown in consume will lock PHP
     * 61533: Segmentation fault when instantiating channel, queue or exchange with wrong object, then using it
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -791,7 +809,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
     * 62087: Adding appropriate version information
     * 62354: Enabling debugging dumping of objects
     * 61351: Updating min PHP version requirements to 5.2.0
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -808,7 +826,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 1.0.3 Release:
     * Fixing compilation issue with PHP 5.4
     * Memory leak when using AMQPQueue::get from a queue with no messages
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -826,7 +844,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
 Fixed bug:
     * 61247: Allow queue creation with empty queue name, and return auto generated name
     * 61127: Segmentation fault when cleaning up an AMQPChannel without calling AMQPConnection::connect first
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -849,7 +867,7 @@ Changed/finalized API signature:
 Added persistent connections
 Cleaned up codebase
 Fixed memory leaks and segmentation faults
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -866,7 +884,7 @@ Fixed memory leaks and segmentation faults
 0.3.1 Release:
 Fixed bug:
     * 24323: Cannot get the name for auto-named reply-to queues
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -887,7 +905,7 @@ Cleaned up variable usage
 Fixed bugs:
     * 22638: Unexpected exit code 1 with AMQPQueue::consume()
     * 22698: AMQPQueue::consume
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -904,7 +922,7 @@ Fixed bugs:
 0.2.2 Release:
 Made extension compatible with PHP lt 5.3 (courtesy John Skopis)
 Fixed wrong typing of message properties (courtesy John Skopis)
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -920,7 +938,7 @@ Fixed wrong typing of message properties (courtesy John Skopis)
             <notes><![CDATA[
 0.2.1 Release:
 Fixed refcount decrementing bug causing segfaults.
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -947,7 +965,7 @@ Fixed bugs:
     * 17831: Segmentation fault when the exchange doesn't exists
     * 19707: AMQPQueue::get() doesn't return the message
     * 19840: Connection Exception
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -962,7 +980,7 @@ Fixed bugs:
             <date>2010-08-19</date>
             <notes><![CDATA[
 Updating extension to work with new rabbitmq-c library
-   ]]></notes>
+]]></notes>
         </release>
         <!-- -->
         <release>
@@ -977,7 +995,7 @@ Updating extension to work with new rabbitmq-c library
             <date>2010-06-19</date>
             <notes><![CDATA[
 - Initial release
-   ]]></notes>
+]]></notes>
         </release>
     </changelog>
 </package>
