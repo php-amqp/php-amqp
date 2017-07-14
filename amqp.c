@@ -64,6 +64,7 @@ zend_class_entry *amqp_exception_class_entry,
 				 *amqp_channel_exception_class_entry,
 				 *amqp_queue_exception_class_entry,
 				 *amqp_exchange_exception_class_entry,
+				 *amqp_envelope_exception_class_entry,
 				 *amqp_value_exception_class_entry;
 
 /* {{{ amqp_functions[]
@@ -133,6 +134,10 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
 
 	INIT_CLASS_ENTRY(ce, "AMQPQueueException", NULL);
 	amqp_queue_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+
+	INIT_CLASS_ENTRY(ce, "AMQPEnvelopeException", NULL);
+	amqp_envelope_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+	zend_declare_property_null(amqp_envelope_exception_class_entry, ZEND_STRL("envelope"), ZEND_ACC_PUBLIC TSRMLS_CC);
 
 	INIT_CLASS_ENTRY(ce, "AMQPExchangeException", NULL);
 	amqp_exchange_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
