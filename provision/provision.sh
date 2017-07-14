@@ -7,14 +7,13 @@ sudo apt-get -y autoremove
 # Make sure these tools installed
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git htop curl tshark pkgconf
 # Add PPA with fresh PHP 5:
-sudo add-apt-repository -u -y ppa:ondrej/php5-5.6
+sudo add-apt-repository -u -y ppa:ondrej/php
 
 # Install available php from packages
-sudo apt-get install -y php5 php5-cli php5-dev php5-fpm
+sudo apt-get install -y php7.0 php7.0-cli php7.0-dev php7.0-fpm
 
-# Configure php-fpm
-sudo cp ~/php-amqp/provision/php/www.conf /etc/php5/fpm/pool.d/www.conf
-sudo service php5-fpm restart
+sudo cp ~/php-amqp/provision/php/www.conf /etc/php/7.0/fpm/pool.d/www.conf
+sudo service php7.0-fpm restart
 
 # Install phpbrew to manage php versions
 
@@ -52,7 +51,7 @@ sudo apt-get install -y \
 # Benchmarking...
 sudo apt-get install -y apache2-utils
 # For Apache-based installation
-sudo apt-get install -y apache2 libapache2-mod-php5
+sudo apt-get install -y apache2 libapache2-mod-php7.0
 
 # Move Apache to port 8080
 sudo cp ~/php-amqp/provision/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
@@ -69,7 +68,6 @@ sudo cp ~/php-amqp/provision/nginx/default /etc/nginx/sites-available/default
 sudo service nginx restart
 sudo cp -f /usr/share/nginx/html/index.html /var/www/html/index-nginx.html
 
-#http://www.rabbitmq.com/releases/rabbitmq-server/v3.5.1/rabbitmq-server_3.5.1-1_all.deb
 # Install and configure RabbitMQ
 wget -qO - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | sudo apt-key add -
 sudo add-apt-repository 'deb http://www.rabbitmq.com/debian/ testing main'
@@ -90,9 +88,9 @@ cd rabbitmq-c && autoreconf -i && ./configure && make && sudo make install
 # Do it manually when you need it,
 #cd ~/php-amqp
 #phpize --clean && phpize && ./configure && sudo make install
-#sudo cp ~/php-amqp/provision/php/amqp.ini /etc/php5/mods-available/
-#sudo php5enmod amqp
-#sudo service php5-fpm restart
+#sudo cp ~/php-amqp/provision/php/amqp.ini /etc/php/7.0/mods-available/
+#sudo phpenmod amqp
+#sudo service php7.0-fpm restart
 
 # For debugging segfault when amqp fails in php-fpm mode:
 #sudo sh -c "echo '/home/vagrant/php-amqp/coredump-%e.%p' > /proc/sys/kernel/core_pattern"
