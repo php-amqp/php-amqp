@@ -45,6 +45,10 @@ Finally, check out the [tests](https://github.com/pdezwart/php-amqp/tree/master/
   
   - You can't share none of AMQP API objects (none of `AMQPConnection`, `AMQPChannel`, `AMQPQueue`, `AMQPExchange`) between threads.
     You have to use separate connection and so on per thread.
+    
+### Related libraries
+
+* [enqueue/amqp-ext](https://github.com/php-enqueue/amqp-ext) is a [amqp interop](https://github.com/queue-interop/queue-interop#amqp-interop) compatible wrapper.
 
 #### Persistent connection
 
