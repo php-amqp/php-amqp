@@ -22,10 +22,10 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2017-06-12</date>
+    <date>2017-10-19</date>
     <time>16:00:00</time>
     <version>
-        <release>1.9.2-dev</release>
+        <release>1.9.2</release>
         <api>1.3.0</api>
     </version>
     <stability>
@@ -34,7 +34,7 @@
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
     <notes><![CDATA[
-     * TBD
+        * Fix handling channel consumers (#284) (Bogdan Padalko)
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.9.1...v1.9.2
@@ -74,6 +74,9 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.1...v1.9.2
             <file name="php5_support.h" role="src"/>
             <file name="php7_support.h" role="src"/>
             <file name="php_amqp.h" role="src"/>
+            <file name="tests/003-channel-consumers.phpt" role="test"/>
+            <file name="tests/004-queue-consume-nested.phpt" role="test"/>
+            <file name="tests/004-queue-consume-orphaned.phpt" role="test"/>
             <file name="tests/amqpbasicproperties.phpt" role="test"/>
             <file name="tests/amqpchannel_basicRecover.phpt" role="test"/>
             <file name="tests/amqpchannel_close.phpt" role="test"/>
@@ -229,6 +232,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.1...v1.9.2
             <file name="stubs/AMQPConnectionException.php" role="doc"/>
             <file name="stubs/AMQPDecimal.php" role="doc"/>
             <file name="stubs/AMQPEnvelope.php" role="doc"/>
+            <file name="stubs/AMQPEnvelopeException.php" role="doc"/>
             <file name="stubs/AMQPException.php" role="doc"/>
             <file name="stubs/AMQPExchange.php" role="doc"/>
             <file name="stubs/AMQPExchangeException.php" role="doc"/>
