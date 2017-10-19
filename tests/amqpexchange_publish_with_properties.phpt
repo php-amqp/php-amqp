@@ -79,6 +79,8 @@ AMQPEnvelope
         string(1) "1"
     getRoutingKey:
         string(11) "routing.key"
+    getConsumerTag:
+        string(0) ""
     getDeliveryTag:
         int(1)
     getDeliveryMode:

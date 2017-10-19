@@ -110,13 +110,21 @@ static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char *
 	amqp_connection_close_t *m = (amqp_connection_close_t *)reply.reply.decoded;
 	int result;
 
-	PHP_AMQP_G(error_code) = m->reply_code;
-	spprintf(message, 0, "Server connection error: %d, message: %.*s",
-		m->reply_code,
-		(PHP5to7_param_str_len_type_t) m->reply_text.len,
-		(char *) m->reply_text.bytes
-	);
-
+	if (!reply.reply.id) {
+		PHP_AMQP_G(error_code) = -1;
+		spprintf(message, 0, "Server connection error: %d, message: %s",
+				 PHP_AMQP_G(error_code),
+				 "unexpected response"
+		);
+	} else {
+		PHP_AMQP_G(error_code) = m->reply_code;
+		spprintf(message, 0, "Server connection error: %d, message: %.*s",
+				 m->reply_code,
+				 (PHP5to7_param_str_len_type_t) m->reply_text.len,
+				 (char *) m->reply_text.bytes
+		);
+	}
+		
 	/*
 	 *    - If r.reply.id == AMQP_CONNECTION_CLOSE_METHOD a connection exception
 	 *      occurred, cast r.reply.decoded to amqp_connection_close_t* to see
@@ -146,12 +154,20 @@ static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **me
 
 	amqp_channel_close_t *m = (amqp_channel_close_t *) reply.reply.decoded;
 
-	PHP_AMQP_G(error_code) = m->reply_code;
-	spprintf(message, 0, "Server channel error: %d, message: %.*s",
-		m->reply_code,
-		(PHP5to7_param_str_len_type_t) m->reply_text.len,
-		(char *)m->reply_text.bytes
-	);
+	if (!reply.reply.id) {
+		PHP_AMQP_G(error_code) = -1;
+		spprintf(message, 0, "Server channel error: %d, message: %s",
+				 PHP_AMQP_G(error_code),
+				 "unexpected response"
+		);
+	} else {
+		PHP_AMQP_G(error_code) = m->reply_code;
+		spprintf(message, 0, "Server channel error: %d, message: %.*s",
+			m->reply_code,
+			(PHP5to7_param_str_len_type_t) m->reply_text.len,
+			(char *)m->reply_text.bytes
+		);
+	}
 
 	/*
 	 *    - If r.reply.id == AMQP_CHANNEL_CLOSE_METHOD a channel exception
@@ -531,7 +547,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 	}
 
 	/* Allocate space for the channel slots in the ring buffer */
-    resource->max_slots = (amqp_channel_t) amqp_get_channel_max(resource->connection_state);
+	resource->max_slots = (amqp_channel_t) amqp_get_channel_max(resource->connection_state);
 	assert(resource->max_slots > 0);
 
 	resource->slots = (amqp_channel_resource **)pecalloc(resource->max_slots + 1, sizeof(amqp_channel_object*), persistent);

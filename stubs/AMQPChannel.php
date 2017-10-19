@@ -255,4 +255,13 @@ class AMQPChannel
     public function waitForBasicReturn($timeout = 0.0)
     {
     }
+
+    /**
+     * Return array of current consumers where key is consumer and value is AMQPQueue consumer is running on
+     *
+     * @return AMQPQueue[]
+     */
+    public function getConsumers()
+    {
+    }
 }

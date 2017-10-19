@@ -29,6 +29,7 @@ extern zend_class_entry *amqp_exception_class_entry,
 		*amqp_channel_exception_class_entry,
 		*amqp_exchange_exception_class_entry,
 		*amqp_queue_exception_class_entry,
+		*amqp_envelope_exception_class_entry,
 		*amqp_value_exception_class_entry;
 
 
@@ -98,6 +99,7 @@ struct _amqp_channel_resource {
 	char is_connected;
 	amqp_channel_t channel_id;
 	amqp_connection_resource *connection_resource;
+    amqp_channel_object *parent;
 };
 
 struct _amqp_callback_bucket {
@@ -122,6 +124,7 @@ struct _amqp_channel_object {
 	zend_object zo;
 #else
 	zend_object zo;
+	zval *this_ptr;
 	amqp_channel_resource *channel_resource;
 	amqp_channel_callbacks callbacks;
 	zval  **gc_data;

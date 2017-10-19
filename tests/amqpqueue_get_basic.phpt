@@ -47,6 +47,8 @@ AMQPEnvelope
         string(10) "plain/test"
     getRoutingKey:
         string(9) "routing.1"
+    getConsumerTag:
+        string(0) ""
     getDeliveryTag:
         int(1)
     getDeliveryMode:
@@ -89,6 +91,8 @@ AMQPEnvelope
         string(10) "text/plain"
     getRoutingKey:
         string(9) "routing.2"
+    getConsumerTag:
+        string(0) ""
     getDeliveryTag:
         int(2)
     getDeliveryMode:
@@ -129,6 +133,8 @@ AMQPEnvelope
         string(10) "text/plain"
     getRoutingKey:
         string(9) "routing.3"
+    getConsumerTag:
+        string(0) ""
     getDeliveryTag:
         int(3)
     getDeliveryMode:

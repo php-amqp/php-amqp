@@ -32,6 +32,7 @@ typedef zval* PHP5to7_zval_t;
 
 #define PHP5to7_MAYBE_DEREF(zv) (*(zv))
 #define PHP5to7_MAYBE_PTR(zv) (zv)
+#define PHP5to7_MAYBE_PTR_TYPE PHP5to7_zval_t
 #define PHP5to7_MAYBE_PARAM_PTR(zv) (&(zv))
 
 #define PHP5to7_MAYBE_INIT(zv) MAKE_STD_ZVAL(zv);
@@ -46,6 +47,7 @@ typedef zval* PHP5to7_zval_t;
 #define PHP5to7_ZEND_HASH_FIND(ht, str, len, res) \
         (zend_hash_find((ht), (str), (uint)(len), (void **) &(res)) != FAILURE)
 
+#define PHP5to7_ZEND_HASH_STRLEN(len) (uint)((len) + 1)
 #define PHP5to7_ZEND_HASH_DEL(ht, key, len) zend_hash_del_key_or_index((ht), (key), (uint)(len), 0, HASH_DEL_KEY);
 #define PHP5to7_ZEND_HASH_ADD(ht, key, len, pData, nDataSize) (zend_hash_add((ht), (key), (uint)(len), &(pData), nDataSize, NULL) != FAILURE)
 #define PHP5to7_ZEND_HASH_STR_UPD_MEM(ht, key, len, pData, nDataSize) PHP5to7_ZEND_HASH_ADD((ht), (key), (len), (pData), (nDataSize))
