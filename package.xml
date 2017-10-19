@@ -35,6 +35,7 @@
     <license uri="http://www.php.net/license">PHP License</license>
     <notes><![CDATA[
         * Fix handling channel consumers (#284) (Bogdan Padalko)
+        * Add support for consumer tags (#282) (Bogdan Padalko)
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.9.1...v1.9.2
