@@ -69,7 +69,7 @@ sudo service nginx restart
 sudo cp -f /usr/share/nginx/html/index.html /var/www/html/index-nginx.html
 
 # Install and configure RabbitMQ
-wget -qO - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | sudo apt-key add -
+wget -qO - https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | sudo apt-key add -
 sudo add-apt-repository 'deb http://www.rabbitmq.com/debian/ testing main'
 sudo apt-get update
 #sudo apt-get install --only-upgrade -y rabbitmq-server
@@ -81,7 +81,11 @@ sudo service rabbitmq-server restart
 # Note: it may be good idea to checkout latest stable rabbitmq-c version, but master branch for dev reasons also good
 cd ~
 git clone -q git://github.com/alanxz/rabbitmq-c.git
-cd rabbitmq-c && autoreconf -i && ./configure && make && sudo make install
+cd rabbitmq-c
+sudo apt-get install -y cmake
+mkdir build && cd build
+cmake ..
+sudo cmake --build . --target install
 # or install packaged version:
 #sudo apt-get install -y librabbitmq1 librabbitmq-dev librabbitmq-dbg
 

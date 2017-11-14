@@ -54,8 +54,8 @@ matrix:
       env: LIBRABBITMQ_VERSION=v0.5.2 TEST_PHP_ARGS=-m
 
 before_install:
-  - sh provision/install_rabbitmq-c.sh ${LIBRABBITMQ_VERSION}
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then phpize && ./configure  --with-librabbitmq-dir=$HOME/rabbitmq-c && make ; fi
+  - sudo ./provision/install_rabbitmq-c.sh ${LIBRABBITMQ_VERSION}
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then phpize && ./configure && make ; fi
 
 install:
 
