@@ -1,25 +1,15 @@
 /*
-  +----------------------------------------------------------------------+
-  | PHP Version 5                                                        |
-  +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2007 The PHP Group                                |
-  +----------------------------------------------------------------------+
-  | This source file is subject to version 3.01 of the PHP license,      |
-  | that is bundled with this package in the file LICENSE, and is        |
-  | available through the world-wide-web at the following url:           |
-  | http://www.php.net/license/3_01.txt                                  |
-  | If you did not receive a copy of the PHP license and are unable to   |
-  | obtain it through the world-wide-web, please send a note to          |
-  | license@php.net so we can mail you a copy immediately.               |
-  +----------------------------------------------------------------------+
-  | Author: Alexandre Kalendarev akalend@mail.ru Copyright (c) 2009-2010 |
-  | Lead:                                                                |
-  | - Pieter de Zwart                                                    |
-  | Maintainers:                                                         |
-  | - Brad Rodriguez                                                     |
-  | - Jonathan Tansavatdi                                                |
-  +----------------------------------------------------------------------+
-*/
+ * This file is part of the pdezwart/php-amqp PHP extension.
+ *
+ * Copyright (c) php-amqp contributors
+ *
+ * Licensed under the MIT license: http://opensource.org/licenses/MIT
+ *
+ * For the full copyright and license information, please view the
+ * LICENSE file that was distributed with this source or visit
+ * http://opensource.org/licenses/MIT
+ */
+
 extern zend_class_entry *amqp_queue_class_entry;
 
 
