@@ -1097,11 +1097,9 @@ static PHP_METHOD(amqp_connection_class, getMaxFrameSize)
 	/* Get the connection object out of the store */
 	connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH > 52
 	if (connection->connection_resource && connection->connection_resource->is_connected) {
 		RETURN_LONG(amqp_get_frame_max(connection->connection_resource->connection_state));
 	}
-#endif
 
 	PHP_AMQP_RETURN_THIS_PROP("frame_max");
 }
@@ -1119,12 +1117,10 @@ static PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
 	/* Get the connection object out of the store */
 	connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH > 52
 	if (connection->connection_resource != NULL
 		&& connection->connection_resource->is_connected != '\0') {
 		RETURN_LONG(amqp_get_heartbeat(connection->connection_resource->connection_state));
 	}
-#endif
 
 	PHP_AMQP_RETURN_THIS_PROP("heartbeat");
 }

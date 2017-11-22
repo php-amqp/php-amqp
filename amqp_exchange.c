@@ -346,7 +346,6 @@ static PHP_METHOD(amqp_exchange_class, declareExchange)
 
 	arguments = php_amqp_type_convert_zval_to_amqp_table(PHP_AMQP_READ_THIS_PROP("arguments") TSRMLS_CC);
 
-#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH > 52
 	amqp_exchange_declare(
 		channel_resource->connection_resource->connection_state,
 		channel_resource->channel_id,
@@ -358,17 +357,6 @@ static PHP_METHOD(amqp_exchange_class, declareExchange)
 		PHP_AMQP_READ_THIS_PROP_BOOL("internal"),
 		*arguments
 	);
-#else
-	amqp_exchange_declare(
-		channel_resource->connection_resource->connection_state,
-		channel_resource->channel_id,
-		amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("name")),
-		amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("type")),
-		PHP_AMQP_READ_THIS_PROP_BOOL("passive"),
-		PHP_AMQP_READ_THIS_PROP_BOOL("durable"),
-		*arguments
-	);
-#endif
 
 	amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
