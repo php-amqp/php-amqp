@@ -102,6 +102,6 @@ With prefetch = 1
 2: ex2-%f [message 2 - 0] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
 2: ex2-%f [message 2 - 1] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
 1: ex2-%f [message 2 - 2] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
-2: ex1-%f [message 1 - 2] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue
-1: ex2-%f [message 2 - 3] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
+2: ex%d-%f [message %d - %d] amq.ctag-%s - amq.ctag-%s (q%d-%f): valid queue
+1: ex%d-%f [message %d - %d] amq.ctag-%s - amq.ctag-%s (q%d-%f): valid queue
 2: ex1-%f [message 1 - 3] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue

@@ -947,6 +947,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
 
 	zval *channel_zv = PHP_AMQP_READ_THIS_PROP("channel");
 	zval *consumers = zend_read_property(amqp_channel_class_entry, channel_zv, ZEND_STRL("consumers"), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC);
+	zend_bool has_consumer_tag = (zend_bool) (IS_STRING == Z_TYPE_P(PHP_AMQP_READ_THIS_PROP("consumer_tag")));
 
 	if (IS_ARRAY != Z_TYPE_P(consumers)) {
 		zend_throw_exception(amqp_queue_exception_class_entry, "Invalid channel consumers, forgot to call channel constructor?", 0 TSRMLS_CC);
@@ -956,7 +957,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
 	channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(channel_zv);
 	PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not cancel queue.");
 
-	if (!consumer_tag_len && !PHP_AMQP_READ_THIS_PROP_STRLEN("consumer_tag")) {
+	if (!consumer_tag_len && (!has_consumer_tag || !PHP_AMQP_READ_THIS_PROP_STRLEN("consumer_tag"))) {
 		return;
 	}
 
@@ -976,7 +977,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
 		return;
 	}
 
-	if (!consumer_tag_len || strcmp(consumer_tag, PHP_AMQP_READ_THIS_PROP_STR("consumer_tag")) != 0) {
+	if (!consumer_tag_len || has_consumer_tag && strcmp(consumer_tag, PHP_AMQP_READ_THIS_PROP_STR("consumer_tag")) != 0) {
 		zend_update_property_null(this_ce, getThis(), ZEND_STRL("consumer_tag") TSRMLS_CC);
 	}
 
