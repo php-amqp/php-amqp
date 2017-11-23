@@ -148,3 +148,7 @@ To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_
  so it will work even if blocking method was executed.
  Some use cases are presented on extension's github page and examples are available [here](https://github.com/pdezwart/php-amqp/pull/89).
  Note, PHP 5 only.
+
+## License 
+
+This project is licensed under the terms of the [MIT license](http://opensource.org/licenses/MIT).

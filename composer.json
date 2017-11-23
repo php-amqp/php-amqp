@@ -4,7 +4,7 @@
     "description": "PHP AMQP Binding Library",
     "keywords": ["rabbitmq", "amqp", "message", "queue"],
     "homepage": "https://github.com/pdezwart/php-amqp",
-    "license": "PHP-3.01",
+    "license": "MIT",
     "authors": [
         {
             "name": "Pieter de Zwart",
