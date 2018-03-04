@@ -74,7 +74,7 @@ $ex->delete();
 --EXPECTF--
 true
 bool(false)
-Unhandled basic.return method from server received. Use AMQPChannel::setBasicReturnCallback() to process it.
+Unhandled basic.return method from server received. Use AMQPChannel::setReturnCallback() to process it.
 AMQPQueueException(0): Consumer timeout exceed
 true
 Message returned
