@@ -78,7 +78,7 @@ AMQPQueueException(0): Wait timeout exceed
 true
 true
 bool(false)
-Unhandled basic.return method from server received. Use AMQPChannel::setBasicReturnCallback() to process it.
+Unhandled basic.return method from server received. Use AMQPChannel::setReturnCallback() to process it.
 Message returned
 array(6) {
   [0]=>

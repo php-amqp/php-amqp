@@ -121,7 +121,7 @@ int php_amqp_handle_basic_return(char **message, amqp_connection_resource *resou
 	if (channel->callbacks.basic_return.fci.size > 0) {
 		status = php_amqp_call_basic_return_callback(m, &msg, &channel->callbacks.basic_return TSRMLS_CC);
 	} else {
-		zend_error(E_NOTICE, "Unhandled basic.return method from server received. Use AMQPChannel::setBasicReturnCallback() to process it.");
+		zend_error(E_NOTICE, "Unhandled basic.return method from server received. Use AMQPChannel::setReturnCallback() to process it.");
 		status = PHP_AMQP_RESOURCE_RESPONSE_BREAK;
 	}
 
