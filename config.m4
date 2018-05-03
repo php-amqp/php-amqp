@@ -19,6 +19,16 @@ PHP_ARG_WITH(librabbitmq-dir,	for amqp,
 if test "$PHP_AMQP" != "no"; then
 	dnl Write more examples of tests here...
 
+	AC_MSG_CHECKING([for supported PHP versions])
+	PHP_REF_FOUND_VERSION=`${PHP_CONFIG} --version`
+	PHP_REF_FOUND_VERNUM=`${PHP_CONFIG} --vernum`
+
+	if test "$PHP_REF_FOUND_VERNUM" -lt "50600"; then
+		AC_MSG_ERROR([PHP version not supported, >= 5.6 required, but $PHP_REF_FOUND_VERSION found])
+	else
+		AC_MSG_RESULT([supported ($PHP_REF_FOUND_VERSION)])
+	fi
+
 	AC_MSG_RESULT($PHP_AMQP)
 
 	dnl # --with-amqp -> check with-path

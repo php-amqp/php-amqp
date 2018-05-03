@@ -40,6 +40,11 @@ typedef struct _amqp_channel_resource amqp_channel_resource;
 typedef struct _amqp_channel_callbacks amqp_channel_callbacks;
 typedef struct _amqp_callback_bucket amqp_callback_bucket;
 
+#if PHP_VERSION_ID < 50600
+// should never get her, but just in case
+#error PHP >= 5.6 required
+#endif
+
 #if PHP_MAJOR_VERSION >= 7
 	#include "php7_support.h"
 #else
