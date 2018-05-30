@@ -1270,7 +1270,7 @@ static PHP_METHOD(amqp_connection_class, setSaslMethod)
 		return;
 	}
 
-	/* Parse out the port*/
+	/* Parse out the method */
 	switch (Z_TYPE_P(zvalMethod)) {
 		case IS_DOUBLE:
 			method = (int)Z_DVAL_P(zvalMethod);
@@ -1283,7 +1283,8 @@ static PHP_METHOD(amqp_connection_class, setSaslMethod)
 			method = (int)Z_LVAL_P(zvalMethod);
 			break;
 		default:
-			method = 0;
+			/* defaulting to plain authentication */
+			method = AMQP_SASL_METHOD_PLAIN;
 	}
 
 	/* Check the method value */
