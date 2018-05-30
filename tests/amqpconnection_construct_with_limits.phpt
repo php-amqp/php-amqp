@@ -46,4 +46,6 @@ object(AMQPConnection)#1 (15) {
   string(0) ""
   ["verify":"AMQPConnection":private]=>
   bool(true)
+  ["sasl_method":"AMQPConnection":private]=>
+  int(0)
 }

@@ -54,6 +54,8 @@ object(AMQPConnection)#1 (15) {
   string(0) ""
   ["verify":"AMQPConnection":private]=>
   bool(true)
+  ["sasl_method":"AMQPConnection":private]=>
+  int(0)
 }
 bool(true)
 bool(true)
@@ -88,6 +90,8 @@ object(AMQPConnection)#1 (15) {
   string(0) ""
   ["verify":"AMQPConnection":private]=>
   bool(true)
+  ["sasl_method":"AMQPConnection":private]=>
+  int(0)
 }
 bool(false)
 object(AMQPConnection)#1 (15) {
@@ -121,4 +125,6 @@ object(AMQPConnection)#1 (15) {
   string(0) ""
   ["verify":"AMQPConnection":private]=>
   bool(true)
+  ["sasl_method":"AMQPConnection":private]=>
+  int(0)
 }

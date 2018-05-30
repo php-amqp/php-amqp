@@ -51,6 +51,8 @@ object(AMQPChannel)#2 (4) {
     string(0) ""
     ["verify":"AMQPConnection":private]=>
     bool(true)
+    private $sasl_method =>
+    int(0)
   }
   ["prefetch_count":"AMQPChannel":private]=>
   int(3)
@@ -93,6 +95,8 @@ object(AMQPChannel)#2 (4) {
     string(0) ""
     ["verify":"AMQPConnection":private]=>
     bool(true)
+    ["sasl_method":"AMQPConnection":private]=>
+    int(0)
   }
   ["prefetch_count":"AMQPChannel":private]=>
   int(3)

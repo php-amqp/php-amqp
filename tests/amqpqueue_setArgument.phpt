@@ -69,6 +69,8 @@ object(AMQPQueue)#3 (9) {
     string(0) ""
     ["verify":"AMQPConnection":private]=>
     bool(true)
+    ["sasl_method":"AMQPConnection":private]=>
+    int(0)
   }
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (4) {
@@ -104,6 +106,8 @@ object(AMQPQueue)#3 (9) {
       string(0) ""
       ["verify":"AMQPConnection":private]=>
       bool(true)
+      ["sasl_method":"AMQPConnection":private]=>
+      int(0)
     }
     ["prefetch_count":"AMQPChannel":private]=>
     int(3)
@@ -162,6 +166,8 @@ object(AMQPQueue)#4 (9) {
     string(0) ""
     ["verify":"AMQPConnection":private]=>
     bool(true)
+    ["sasl_method":"AMQPConnection":private]=>
+    int(0)
   }
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (4) {
@@ -197,6 +203,8 @@ object(AMQPQueue)#4 (9) {
       string(0) ""
       ["verify":"AMQPConnection":private]=>
       bool(true)
+      ["sasl_method":"AMQPConnection":private]=>
+      int(0)
     }
     ["prefetch_count":"AMQPChannel":private]=>
     int(3)
@@ -261,6 +269,8 @@ object(AMQPQueue)#4 (9) {
     string(0) ""
     ["verify":"AMQPConnection":private]=>
     bool(true)
+    ["sasl_method":"AMQPConnection":private]=>
+    int(0)
   }
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (4) {
@@ -296,6 +306,8 @@ object(AMQPQueue)#4 (9) {
       string(0) ""
       ["verify":"AMQPConnection":private]=>
       bool(true)
+      ["sasl_method":"AMQPConnection":private]=>
+      int(0)
     }
     ["prefetch_count":"AMQPChannel":private]=>
     int(3)

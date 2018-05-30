@@ -91,6 +91,8 @@ object(AMQPConnection)#1 (15) {
   string(0) ""
   ["verify":"AMQPConnection":private]=>
   bool(true)
+  ["sasl_method":"AMQPConnection":private]=>
+  int(0)
 }
 Consumed: test message 1 (should be dead lettered)
 Consuming took: %fsec
