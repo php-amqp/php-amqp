@@ -54,8 +54,6 @@ object(AMQPExchange)#3 (9) {
     bool(true)
     ["sasl_method":"AMQPConnection":private]=>
     int(0)
-    ["sasl_method":"AMQPConnection":private]=>
-    int(0)
   }
   ["channel":"AMQPExchange":private]=>
   object(AMQPChannel)#2 (4) {
