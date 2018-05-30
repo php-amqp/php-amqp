@@ -1262,29 +1262,11 @@ static PHP_METHOD(amqp_connection_class, getSaslMethod)
 set sasl method */
 static PHP_METHOD(amqp_connection_class, setSaslMethod)
 {
-	zval *zvalMethod;
-	int method;
+	long method;
 
 	/* Get the port from the method params */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &zvalMethod) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &method) == FAILURE) {
 		return;
-	}
-
-	/* Parse out the method */
-	switch (Z_TYPE_P(zvalMethod)) {
-		case IS_DOUBLE:
-			method = (int)Z_DVAL_P(zvalMethod);
-			break;
-		case IS_LONG:
-			method = (int)Z_LVAL_P(zvalMethod);
-			break;
-		case IS_STRING:
-			convert_to_long(zvalMethod);
-			method = (int)Z_LVAL_P(zvalMethod);
-			break;
-		default:
-			/* defaulting to plain authentication */
-			method = AMQP_SASL_METHOD_PLAIN;
 	}
 
 	/* Check the method value */
