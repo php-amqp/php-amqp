@@ -38,7 +38,7 @@ var_dump($q_dead);
 --EXPECTF--
 object(AMQPQueue)#3 (9) {
   ["connection":"AMQPQueue":private]=>
-  object(AMQPConnection)#1 (15) {
+  object(AMQPConnection)#1 (16) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -75,7 +75,7 @@ object(AMQPQueue)#3 (9) {
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (15) {
+    object(AMQPConnection)#1 (16) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -135,7 +135,7 @@ object(AMQPQueue)#3 (9) {
 }
 object(AMQPQueue)#4 (9) {
   ["connection":"AMQPQueue":private]=>
-  object(AMQPConnection)#1 (15) {
+  object(AMQPConnection)#1 (16) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -172,7 +172,7 @@ object(AMQPQueue)#4 (9) {
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (15) {
+    object(AMQPConnection)#1 (16) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -238,7 +238,7 @@ object(AMQPQueue)#4 (9) {
 }
 object(AMQPQueue)#4 (9) {
   ["connection":"AMQPQueue":private]=>
-  object(AMQPConnection)#1 (15) {
+  object(AMQPConnection)#1 (16) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -275,7 +275,7 @@ object(AMQPQueue)#4 (9) {
   ["channel":"AMQPQueue":private]=>
   object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (15) {
+    object(AMQPConnection)#1 (16) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
