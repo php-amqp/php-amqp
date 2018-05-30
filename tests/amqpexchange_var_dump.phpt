@@ -151,7 +151,7 @@ object(AMQPExchange)#3 (9) {
     string(0) ""
     ["verify":"AMQPConnection":private]=>
     bool(true)
-   ["sasl_method":"AMQPConnection":private]=>
+    ["sasl_method":"AMQPConnection":private]=>
    int(0)
   }
   ["channel":"AMQPExchange":private]=>
