@@ -21,7 +21,7 @@ var_dump($ex);
 --EXPECTF--
 object(AMQPExchange)#3 (9) {
   ["connection":"AMQPExchange":private]=>
-  object(AMQPConnection)#1 (15) {
+  object(AMQPConnection)#1 (16) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -52,11 +52,13 @@ object(AMQPExchange)#3 (9) {
     string(0) ""
     ["verify":"AMQPConnection":private]=>
     bool(true)
+    ["sasl_method":"AMQPConnection":private]=>
+    int(0)
   }
   ["channel":"AMQPExchange":private]=>
   object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (15) {
+    object(AMQPConnection)#1 (16) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -87,6 +89,8 @@ object(AMQPExchange)#3 (9) {
       string(0) ""
       ["verify":"AMQPConnection":private]=>
       bool(true)
+      ["sasl_method":"AMQPConnection":private]=>
+      int(0)
     }
     ["prefetch_count":"AMQPChannel":private]=>
     int(3)
@@ -114,7 +118,7 @@ object(AMQPExchange)#3 (9) {
 }
 object(AMQPExchange)#3 (9) {
   ["connection":"AMQPExchange":private]=>
-  object(AMQPConnection)#1 (15) {
+  object(AMQPConnection)#1 (16) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -145,11 +149,13 @@ object(AMQPExchange)#3 (9) {
     string(0) ""
     ["verify":"AMQPConnection":private]=>
     bool(true)
+    ["sasl_method":"AMQPConnection":private]=>
+    int(0)
   }
   ["channel":"AMQPExchange":private]=>
   object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (15) {
+    object(AMQPConnection)#1 (16) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -180,6 +186,8 @@ object(AMQPExchange)#3 (9) {
       string(0) ""
       ["verify":"AMQPConnection":private]=>
       bool(true)
+      ["sasl_method":"AMQPConnection":private]=>
+      int(0)
     }
     ["prefetch_count":"AMQPChannel":private]=>
     int(3)

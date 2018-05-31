@@ -434,4 +434,20 @@ class AMQPConnection
     public function setVerify($verify)
     {
     }
+
+    /**
+     * set authentication method
+     *
+     * @param int $method AMQP_SASL_METHOD_PLAIN | AMQP_SASL_METHOD_EXTERNAL
+     */
+    public function setSasslMethod($method)
+    {
+    }
+
+    /**
+     * @return int
+     */
+    public function getSaslMethod()
+    {
+    }
 }
