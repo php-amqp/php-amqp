@@ -514,10 +514,10 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
 	zend_update_property_long(this_ce, getThis(), ZEND_STRL("sasl_method"), INI_INT("amqp.sasl_method") TSRMLS_CC);
 
-		if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), "sasl_method", sizeof("sasl_method"), zdata)) {
-			convert_to_long(PHP5to7_MAYBE_DEREF(zdata));
-			zend_update_property_long(this_ce, getThis(), ZEND_STRL("sasl_method"), Z_LVAL_P(PHP5to7_MAYBE_DEREF(zdata)) TSRMLS_CC);
-		}
+	if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), "sasl_method", sizeof("sasl_method"), zdata)) {
+		convert_to_long(PHP5to7_MAYBE_DEREF(zdata));
+		zend_update_property_long(this_ce, getThis(), ZEND_STRL("sasl_method"), Z_LVAL_P(PHP5to7_MAYBE_DEREF(zdata)) TSRMLS_CC);
+	}
 
 
 	PHP_AMQP_EXTRACT_CONNECTION_STR("cacert");
