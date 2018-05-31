@@ -8,11 +8,11 @@ $cnn = new AMQPConnection();
 $cnn->setSaslMethod(0);
 var_dump($cnn->getPort());
 $cnn->setSaslMethod(1);
-var_dump($cnn->getPort());
+var_dump($cnn->getSaslMethod());
 $cnn->setSaslMethod(AMQP_SASL_METHOD_PLAIN);
-var_dump($cnn->getPort());
+var_dump($cnn->getSaslMethod());
 $cnn->setSaslMethod(AMQP_SASL_METHOD_EXTERNAL);
-var_dump($cnn->getPort());
+var_dump($cnn->getSaslMethod());
 ?>
 --EXPECT--
 int(0)
