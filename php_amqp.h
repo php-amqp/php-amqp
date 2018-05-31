@@ -171,6 +171,7 @@ struct _amqp_connection_object {
 #define DEFAULT_PASSWORD					"guest"
 #define DEFAULT_AUTOACK						"0"			/* These are all strings to facilitate setting default ini values */
 #define DEFAULT_PREFETCH_COUNT				"3"
+#define DEFAULT_SASL_METHOD                 "0"
 
 /* Usually, default is 0 which means 65535, but underlying rabbitmq-c library pool allocates minimal pool for each channel,
  * so it takes a lot of memory to keep all that channels. Even after channel closing that buffer still keep memory allocation.

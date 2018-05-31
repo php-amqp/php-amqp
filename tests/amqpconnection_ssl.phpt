@@ -60,7 +60,7 @@ echo ($cnn->isConnected() ? 'connected' : 'disconnected'), PHP_EOL;
 
 ?>
 --EXPECT--
-object(AMQPConnection)#1 (15) {
+object(AMQPConnection)#1 (16) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -91,6 +91,8 @@ object(AMQPConnection)#1 (15) {
   string(59) "/home/vagrant/php-amqp/provision/test_certs/client/cert.pem"
   ["verify":"AMQPConnection":private]=>
   bool(false)
+  ["sasl_method":"AMQPConnection":private]=>
+  int(0)
 }
 connected
 
@@ -125,5 +127,7 @@ object(AMQPConnection)#2 (15) {
   string(59) "/home/vagrant/php-amqp/provision/test_certs/client/cert.pem"
   ["verify":"AMQPConnection":private]=>
   bool(false)
+  ["sasl_method":"AMQPConnection":private]=>
+  int(0)
 }
 connected

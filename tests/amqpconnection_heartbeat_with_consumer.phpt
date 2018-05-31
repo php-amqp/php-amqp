@@ -60,7 +60,7 @@ echo 'Done', PHP_EOL
 
 ?>
 --EXPECTF--
-object(AMQPConnection)#1 (15) {
+object(AMQPConnection)#1 (16) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -91,6 +91,8 @@ object(AMQPConnection)#1 (15) {
   string(0) ""
   ["verify":"AMQPConnection":private]=>
   bool(true)
+  ["sasl_method":"AMQPConnection":private]=>
+  int(0)
 }
 Consumed: test message 1 (should be dead lettered)
 Consuming took: %fsec
