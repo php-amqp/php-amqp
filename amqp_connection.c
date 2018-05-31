@@ -1271,7 +1271,7 @@ static PHP_METHOD(amqp_connection_class, setSaslMethod)
 
 	/* Check the method value */
 	if (method != AMQP_SASL_METHOD_PLAIN && method != AMQP_SASL_METHOD_EXTERNAL) {
-		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid sasl method given. Value must be AMQP_SASL_METHOD_PLAIN or AMQP_SASL_METHOD_EXTERNAL .", 0 TSRMLS_CC);
+		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid sasl method given. Method must be AMQP_SASL_METHOD_PLAIN or AMQP_SASL_METHOD_EXTERNAL.", 0 TSRMLS_CC);
 		return;
 	}
 
