@@ -514,7 +514,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 		params->frame_max,
 		params->heartbeat,
 		&custom_properties_table,
-		AMQP_SASL_METHOD_PLAIN,
+		params->sasl_method,
 		params->login,
 		params->password
 	);
