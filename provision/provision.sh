@@ -68,6 +68,9 @@ sudo cp ~/php-amqp/provision/nginx/default /etc/nginx/sites-available/default
 sudo service nginx restart
 sudo cp -f /usr/share/nginx/html/index.html /var/www/html/index-nginx.html
 
+# add hosts entry for rabbitmq.example.org
+sudo bash -c 'grep -q rabbitmq.example.org /etc/hosts ||  echo "127.0.0.1    rabbitmq.example.org rabbitmq" >> /etc/hosts'
+
 # Install and configure RabbitMQ
 wget -qO - https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | sudo apt-key add -
 sudo add-apt-repository 'deb http://www.rabbitmq.com/debian/ testing main'
@@ -75,6 +78,11 @@ sudo apt-get update
 #sudo apt-get install --only-upgrade -y rabbitmq-server
 sudo apt-get install -y rabbitmq-server
 sudo rabbitmq-plugins enable rabbitmq_management
+sudo rabbitmq-plugins enable rabbitmq_auth_mechanism_ssl
+sudo rabbitmqctl add_user "sasl-client.example.org" dummy
+sudo rabbitmqctl set_permissions -p / "sasl-client.example.org" ".*" ".*" ".*"
+sudo rabbitmqctl clear_password "sasl-client.example.org"
+
 sudo cp ~/php-amqp/provision/rabbitmq.config /etc/rabbitmq/
 sudo service rabbitmq-server restart
 

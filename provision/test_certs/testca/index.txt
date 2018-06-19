@@ -1,2 +1,0 @@
-V	260225205319Z		01	unknown	/CN=vagrant-ubuntu-wily-64/O=client
-V	260225205320Z		02	unknown	/CN=vagrant-ubuntu-wily-64/O=server

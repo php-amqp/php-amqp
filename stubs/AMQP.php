@@ -123,3 +123,13 @@ define('AMQP_OS_SOCKET_TIMEOUT_ERRNO', 536870947);
  *
  */
 define('PHP_AMQP_MAX_CHANNELS', 256);
+
+/**
+ *
+ */
+define('AMQP_SASL_METHOD_PLAIN', 0);
+
+/**
+ *
+ */
+define('AMQP_SASL_METHOD_EXTERNAL', 1);

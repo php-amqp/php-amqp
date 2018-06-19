@@ -85,9 +85,9 @@ zend_object_handlers amqp_connection_object_handlers;
 
 static int php_amqp_connection_resource_deleter(PHP5to7_zend_resource_le_t *el, amqp_connection_resource *connection_resource TSRMLS_DC)
 {
-    if (Z_RES_P(el)->ptr == connection_resource) {
+	if (Z_RES_P(el)->ptr == connection_resource) {
 		return ZEND_HASH_APPLY_REMOVE | ZEND_HASH_APPLY_STOP;
-    }
+	}
 
 	return ZEND_HASH_APPLY_KEEP;
 }
@@ -95,7 +95,7 @@ static int php_amqp_connection_resource_deleter(PHP5to7_zend_resource_le_t *el, 
 static PHP5to7_param_str_len_type_t php_amqp_get_connection_hash(amqp_connection_params *params, char **hash) {
 	return spprintf(hash,
 					0,
-					"amqp_conn_res_h:%s_p:%d_v:%s_l:%s_p:%s_f:%d_c:%d_h:%d_cacert:%s_cert:%s_key:%s",
+					"amqp_conn_res_h:%s_p:%d_v:%s_l:%s_p:%s_f:%d_c:%d_h:%d_cacert:%s_cert:%s_key:%s_sasl_method:%d",
 					params->host,
 					params->port,
 					params->vhost,
@@ -106,7 +106,8 @@ static PHP5to7_param_str_len_type_t php_amqp_get_connection_hash(amqp_connection
 					params->heartbeat,
 					params->cacert,
 					params->cert,
-					params->key
+					params->key,
+					params->sasl_method
 	);
 }
 
@@ -188,6 +189,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 	connection_params.cert = PHP_AMQP_READ_THIS_PROP_STRLEN("cert") ? PHP_AMQP_READ_THIS_PROP_STR("cert") : NULL;
 	connection_params.key = PHP_AMQP_READ_THIS_PROP_STRLEN("key") ? PHP_AMQP_READ_THIS_PROP_STR("key") : NULL;
 	connection_params.verify = (int) PHP_AMQP_READ_THIS_PROP_BOOL("verify");
+	connection_params.sasl_method = (int) PHP_AMQP_READ_THIS_PROP_LONG("sasl_method");
 
 	if (persistent) {
 		PHP5to7_zend_resource_store_t *le = PHP5to7_ZEND_RESOURCE_EMPTY;
@@ -220,7 +222,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
 			/* Set desired timeouts */
 			if (php_amqp_set_resource_read_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout") TSRMLS_CC) == 0
-			    || php_amqp_set_resource_write_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout") TSRMLS_CC) == 0) {
+				|| php_amqp_set_resource_write_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout") TSRMLS_CC) == 0) {
 
 				php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 			   return 0;
@@ -509,6 +511,14 @@ static PHP_METHOD(amqp_connection_class, __construct)
 			zend_update_property_long(this_ce, getThis(), ZEND_STRL("heartbeat"), Z_LVAL_P(PHP5to7_MAYBE_DEREF(zdata)) TSRMLS_CC);
 		}
 	}
+
+	zend_update_property_long(this_ce, getThis(), ZEND_STRL("sasl_method"), INI_INT("amqp.sasl_method") TSRMLS_CC);
+
+	if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), "sasl_method", sizeof("sasl_method"), zdata)) {
+		convert_to_long(PHP5to7_MAYBE_DEREF(zdata));
+		zend_update_property_long(this_ce, getThis(), ZEND_STRL("sasl_method"), Z_LVAL_P(PHP5to7_MAYBE_DEREF(zdata)) TSRMLS_CC);
+	}
+
 
 	PHP_AMQP_EXTRACT_CONNECTION_STR("cacert");
 	PHP_AMQP_EXTRACT_CONNECTION_STR("key");
@@ -1238,6 +1248,39 @@ static PHP_METHOD(amqp_connection_class, setVerify)
 }
 /* }}} */
 
+/* {{{ proto amqp::getSaslMethod()
+get sasl method */
+static PHP_METHOD(amqp_connection_class, getSaslMethod)
+{
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	PHP_AMQP_NOPARAMS();
+	PHP_AMQP_RETURN_THIS_PROP("sasl_method");
+}
+/* }}} */
+
+/* {{{ proto amqp::setSaslMethod(mixed method)
+set sasl method */
+static PHP_METHOD(amqp_connection_class, setSaslMethod)
+{
+	long method;
+
+	/* Get the port from the method params */
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &method) == FAILURE) {
+		return;
+	}
+
+	/* Check the method value */
+	if (method != AMQP_SASL_METHOD_PLAIN && method != AMQP_SASL_METHOD_EXTERNAL) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid SASL method given. Method must be AMQP_SASL_METHOD_PLAIN or AMQP_SASL_METHOD_EXTERNAL.", 0 TSRMLS_CC);
+		return;
+	}
+
+	zend_update_property_long(this_ce, getThis(), ZEND_STRL("sasl_method"), method TSRMLS_CC);
+
+	RETURN_TRUE;
+}
+/* }}} */
+
 /* amqp_connection_class ARG_INFO definition */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 				ZEND_ARG_ARRAY_INFO(0, credentials, 0)
@@ -1363,6 +1406,13 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setVerify, ZEND_SEND_BY_VAL
 				ZEND_ARG_INFO(0, verify)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getSaslMethod, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setSaslMethod, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+				ZEND_ARG_INFO(0, sasl_method)
+ZEND_END_ARG_INFO()
+
 
 zend_function_entry amqp_connection_class_functions[] = {
 		PHP_ME(amqp_connection_class, __construct, 	arginfo_amqp_connection_class__construct,	ZEND_ACC_PUBLIC)
@@ -1416,6 +1466,9 @@ zend_function_entry amqp_connection_class_functions[] = {
 		PHP_ME(amqp_connection_class, getVerify, 	arginfo_amqp_connection_class_getVerify,		ZEND_ACC_PUBLIC)
 		PHP_ME(amqp_connection_class, setVerify, 	arginfo_amqp_connection_class_setVerify,		ZEND_ACC_PUBLIC)
 
+		PHP_ME(amqp_connection_class, getSaslMethod, 	arginfo_amqp_connection_class_getSaslMethod,		ZEND_ACC_PUBLIC)
+		PHP_ME(amqp_connection_class, setSaslMethod, 	arginfo_amqp_connection_class_setSaslMethod,		ZEND_ACC_PUBLIC)
+
 		{NULL, NULL, NULL}
 };
 
@@ -1446,6 +1499,8 @@ PHP_MINIT_FUNCTION(amqp_connection)
 	zend_declare_property_null(this_ce, ZEND_STRL("key"), ZEND_ACC_PRIVATE TSRMLS_CC);
 	zend_declare_property_null(this_ce, ZEND_STRL("cert"), ZEND_ACC_PRIVATE TSRMLS_CC);
 	zend_declare_property_null(this_ce, ZEND_STRL("verify"), ZEND_ACC_PRIVATE TSRMLS_CC);
+
+	zend_declare_property_null(this_ce, ZEND_STRL("sasl_method"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
 #if PHP_MAJOR_VERSION >=7
 	memcpy(&amqp_connection_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
