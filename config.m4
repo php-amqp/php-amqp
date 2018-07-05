@@ -1,4 +1,3 @@
-dnl $Id: config.m4 322428 2012-01-17 21:42:40Z pdezwart $
 dnl config.m4 for extension amqp
 
 dnl Comments in this file start with the string 'dnl'.
