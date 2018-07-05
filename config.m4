@@ -93,7 +93,7 @@ if test "$PHP_AMQP" != "no"; then
 		CFLAGS="$CFLAGS -I$AMQP_DIR/include"
 
 		AC_CACHE_CHECK(for librabbitmq version, ac_cv_librabbitmq_version, [
-			AC_TRY_RUN([
+			AC_RUN_IFELSE([AC_LANG_SOURCE([[
 				#include "amqp.h"
 				#include <stdio.h>
 
@@ -110,7 +110,7 @@ if test "$PHP_AMQP" != "no"; then
 
 					return 0;
 				}
-			], [ac_cv_librabbitmq_version=`cat ./conftestval`], [ac_cv_librabbitmq_version=NONE], [ac_cv_librabbitmq_version=NONE])
+			]])],[ac_cv_librabbitmq_version=`cat ./conftestval`],[ac_cv_librabbitmq_version=NONE],[ac_cv_librabbitmq_version=NONE])
 		])
 
 		CFLAGS=$old_CFLAGS
