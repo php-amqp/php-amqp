@@ -222,7 +222,8 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
 			/* Set desired timeouts */
 			if (php_amqp_set_resource_read_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout") TSRMLS_CC) == 0
-				|| php_amqp_set_resource_write_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout") TSRMLS_CC) == 0) {
+				|| (php_amqp_set_resource_write_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout") TSRMLS_CC) == 0
+					|| php_amqp_set_resource_rpc_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("rpc_timeout") TSRMLS_CC) == 0)) {
 
 				php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 			   return 0;
@@ -241,6 +242,11 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 	connection->connection_resource = connection_resource_constructor(&connection_params, persistent TSRMLS_CC);
 
 	if (connection->connection_resource == NULL) {
+		return 0;
+	}
+
+	if(php_amqp_set_resource_rpc_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("rpc_timeout") TSRMLS_CC) == 0) {
+		php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 		return 0;
 	}
 
@@ -457,6 +463,17 @@ static PHP_METHOD(amqp_connection_class, __construct)
 			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'write_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
 		} else {
 			zend_update_property_double(this_ce, getThis(), ZEND_STRL("write_timeout"), Z_DVAL_P(PHP5to7_MAYBE_DEREF(zdata)) TSRMLS_CC);
+		}
+	}
+
+	zend_update_property_double(this_ce, getThis(), ZEND_STRL("rpc_timeout"), INI_FLT("amqp.rpc_timeout") TSRMLS_CC);
+
+	if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), "rpc_timeout", sizeof("rpc_timeout"), zdata)) {
+		convert_to_double(PHP5to7_MAYBE_DEREF(zdata));
+		if (Z_DVAL_P(PHP5to7_MAYBE_DEREF(zdata)) < 0) {
+			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'rpc_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		} else {
+			zend_update_property_double(this_ce, getThis(), ZEND_STRL("rpc_timeout"), Z_DVAL_P(PHP5to7_MAYBE_DEREF(zdata)) TSRMLS_CC);
 		}
 	}
 

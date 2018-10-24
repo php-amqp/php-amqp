@@ -64,6 +64,9 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
 int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double read_timeout TSRMLS_DC);
 int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double write_timeout TSRMLS_DC);
 
+/*Not socket-related rpc timeout function */
+int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double read_timeout TSRMLS_DC);
+
 /* Channel-related functions */
 amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connection_resource *resource);
 int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *resource, amqp_channel_t channel_id);

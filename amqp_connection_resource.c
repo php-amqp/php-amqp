@@ -298,6 +298,22 @@ int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, doubl
 	return 1;
 }
 
+int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC) {
+
+	struct timeval read_timeout;
+
+	assert(timeout >= 0.0);
+
+	if(timeout == 0.) return 1;
+
+	read_timeout.tv_sec = (int) floor(timeout);
+	read_timeout.tv_usec = (int) ((timeout - floor(timeout)) * 1.e+6);
+
+	if(AMQP_STATUS_OK!=amqp_set_rpc_timeout(resource->connection_state, &read_timeout))
+		return 0;
+	return 1;
+}
+
 int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC)
 {
 	assert(timeout >= 0.0);
