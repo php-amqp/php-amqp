@@ -300,17 +300,19 @@ int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, doubl
 
 int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC) {
 
-	struct timeval read_timeout;
+	struct timeval rpc_timeout;
 
 	assert(timeout >= 0.0);
 
-	if(timeout == 0.) return 1;
+	if (timeout == 0.) return 1;
 
-	read_timeout.tv_sec = (int) floor(timeout);
-	read_timeout.tv_usec = (int) ((timeout - floor(timeout)) * 1.e+6);
+	rpc_timeout.tv_sec = (int) floor(timeout);
+	rpc_timeout.tv_usec = (int) ((timeout - floor(timeout)) * 1.e+6);
 
-	if(AMQP_STATUS_OK!=amqp_set_rpc_timeout(resource->connection_state, &read_timeout))
+	if (AMQP_STATUS_OK != amqp_set_rpc_timeout(resource->connection_state, &rpc_timeout)) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Library error: cannot set rpc_timeout", 0 TSRMLS_CC);
 		return 0;
+	}
 	return 1;
 }
 
