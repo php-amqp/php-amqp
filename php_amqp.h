@@ -166,7 +166,7 @@ struct _amqp_connection_object {
 #define DEFAULT_READ_TIMEOUT				"0"
 #define DEFAULT_WRITE_TIMEOUT				"0"
 #define DEFAULT_CONNECT_TIMEOUT				"0"
-#define DEFAULT_RPC_TIMEOUT					""
+#define DEFAULT_RPC_TIMEOUT					"0"
 #define DEFAULT_VHOST						"/"
 #define DEFAULT_LOGIN						"guest"
 #define DEFAULT_PASSWORD					"guest"
