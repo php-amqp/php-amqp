@@ -147,4 +147,3 @@ To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_
  [php-signal-handler](https://github.com/RST-com-pl/php-signal-handler) extension uses <i>signal</i> syscall,
  so it will work even if blocking method was executed.
  Some use cases are presented on extension's github page and examples are available [here](https://github.com/pdezwart/php-amqp/pull/89).
- Note, PHP 5 only.
