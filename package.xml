@@ -25,7 +25,7 @@
     <date>2019-01-02</date>
     <time>15:00:00</time>
     <version>
-        <release>1.9.4</release>
+        <release>1.9.5-dev</release>
         <api>1.3.0</api>
     </version>
     <stability>
@@ -34,12 +34,10 @@
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
     <notes><![CDATA[
-        * Improved build environment (Olivier Dolbeau)
-        * Various bug fixes and improvements (Bogdan Padalko, yjqg6666)
-        * Support for PHP 7.3 (Remi Collet)
+        * TBD
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
+https://github.com/pdezwart/php-amqp/compare/v1.9.4...v1.9.5
 ]]></notes>
     <contents>
         <dir name="/">
@@ -263,6 +261,27 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2017-10-19</date>
+            <time>16:00:00</time>
+            <version>
+                <release>1.9.4</release>
+                <api>1.3.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[
+        * Improved build environment (Olivier Dolbeau)
+        * Various bug fixes and improvements (Bogdan Padalko, yjqg6666)
+        * Support for PHP 7.3 (Remi Collet)
+
+For a complete list of changes see:
+https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
+]]></notes>
+        </release>
         <release>
            <date>2017-10-19</date>
             <time>16:00:00</time>
