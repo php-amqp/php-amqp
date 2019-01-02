@@ -22,10 +22,10 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2017-10-19</date>
-    <time>16:00:00</time>
+    <date>2019-01-02</date>
+    <time>15:00:00</time>
     <version>
-        <release>1.9.4-dev</release>
+        <release>1.9.4</release>
         <api>1.3.0</api>
     </version>
     <stability>
@@ -34,7 +34,9 @@
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
     <notes><![CDATA[
-        * TBD
+        * Improved build environment (Olivier Dolbeau)
+        * Various bug fixes and improvements (Bogdan Padalko, yjqg6666)
+        * Support for PHP 7.3 (Remi Collet)
 
 For a complete list of changes see:
 https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
@@ -46,8 +48,6 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
             <file name="benchmark.php" role="doc"/>
             <file name="CREDITS" role="doc"/>
             <file name="LICENSE" role="doc"/>
-            <file name="tests/_test_helpers.php.inc" role="test"/>
-            <file name="tests/amqpexchange_publish_timeout.disabled" role="test"/>
             <file name="amqp.c" role="src"/>
             <file name="amqp_basic_properties.c" role="src"/>
             <file name="amqp_basic_properties.h" role="src"/>
@@ -77,6 +77,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
             <file name="tests/003-channel-consumers.phpt" role="test"/>
             <file name="tests/004-queue-consume-nested.phpt" role="test"/>
             <file name="tests/004-queue-consume-orphaned.phpt" role="test"/>
+            <file name="tests/_test_helpers.php.inc" role="test"/>
             <file name="tests/amqpbasicproperties.phpt" role="test"/>
             <file name="tests/amqpchannel_basicRecover.phpt" role="test"/>
             <file name="tests/amqpchannel_close.phpt" role="test"/>
@@ -116,6 +117,8 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
             <file name="tests/amqpconnection_setReadTimeout_int.phpt" role="test"/>
             <file name="tests/amqpconnection_setReadTimeout_out_of_range.phpt" role="test"/>
             <file name="tests/amqpconnection_setReadTimeout_string.phpt" role="test"/>
+            <file name="tests/amqpconnection_setSaslMethod.phpt" role="test"/>
+            <file name="tests/amqpconnection_setSaslMethod_invalid.phpt" role="test"/>
             <file name="tests/amqpconnection_setTimeout_deprecated.phpt" role="test"/>
             <file name="tests/amqpconnection_setTimeout_float.phpt" role="test"/>
             <file name="tests/amqpconnection_setTimeout_int.phpt" role="test"/>
@@ -127,6 +130,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
             <file name="tests/amqpconnection_setWriteTimeout_out_of_range.phpt" role="test"/>
             <file name="tests/amqpconnection_setWriteTimeout_string.phpt" role="test"/>
             <file name="tests/amqpconnection_ssl.phpt" role="test"/>
+            <file name="tests/amqpconnection_ssl_by_cert.phpt" role="test"/>
             <file name="tests/amqpconnection_toomanychannels.phpt" role="test"/>
             <file name="tests/amqpconnection_var_dump.phpt" role="test"/>
             <file name="tests/amqpdecimal.phpt" role="test"/>
@@ -174,6 +178,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.3...v1.9.4
             <file name="tests/amqpexchange_unbind_without_key.phpt" role="test"/>
             <file name="tests/amqpexchange_unbind_without_key_with_arguments.phpt" role="test"/>
             <file name="tests/amqpexchange_var_dump.phpt" role="test"/>
+            <file name="tests/amqpqueue-cancel-no-consumers.phpt" role="test"/>
             <file name="tests/amqpqueue_attributes.phpt" role="test"/>
             <file name="tests/amqpqueue_bind_basic.phpt" role="test"/>
             <file name="tests/amqpqueue_bind_basic_empty_routing_key.phpt" role="test"/>
@@ -717,7 +722,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.6.0...v1.7.0
     * fix memory (Bernhard Weisshuhn)
 
     For a complete list of changes see:
-    https://github.com/pdezwart/php-amqp/compare/v1.0.9...v1.0.10 
+    https://github.com/pdezwart/php-amqp/compare/v1.0.9...v1.0.10
 ]]></notes>
         </release>
         <!-- -->
