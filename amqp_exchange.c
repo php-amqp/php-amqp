@@ -439,7 +439,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
 
 	amqp_basic_properties_t props;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|sla/",
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!la/",
 							  &msg, &msg_len,
 							  &key_name, &key_len,
 							  &flags,
