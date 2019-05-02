@@ -329,10 +329,11 @@ static PHP_METHOD(amqp_connection_class, __construct)
 		return;
 	}
 
+	SEPARATE_ARRAY(ini_arr);
+
 	/* Pull the login out of the $params array */
 	zdata = NULL;
 	if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), "login", sizeof("login"), zdata)) {
-		// TODO: check whether we need separate zval
 		convert_to_string(PHP5to7_MAYBE_DEREF(zdata));
 	}
 	/* Validate the given login */
