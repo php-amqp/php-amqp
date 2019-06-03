@@ -872,7 +872,7 @@ static PHP_METHOD(amqp_connection_class, setPort)
 	int port;
 
 	/* Get the port from the method params */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &zvalPort) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z/", &zvalPort) == FAILURE) {
 		return;
 	}
 
@@ -885,7 +885,6 @@ static PHP_METHOD(amqp_connection_class, setPort)
 			port = (int)Z_LVAL_P(zvalPort);
 			break;
 		case IS_STRING:
-			SEPARATE_ZVAL(zvalPort);
 			convert_to_long(zvalPort);
 			port = (int)Z_LVAL_P(zvalPort);
 			break;

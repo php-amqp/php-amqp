@@ -5,7 +5,12 @@ AMQPConnection setPort with string
 --FILE--
 <?php
 $cnn = new AMQPConnection();
-echo $cnn->setPort('12345');
+$port = '12345';
+echo $cnn->setPort($port), PHP_EOL;
+var_dump($cnn->getPort());
+var_dump($port);
 ?>
 --EXPECT--
 1
+int(12345)
+string(5) "12345"
