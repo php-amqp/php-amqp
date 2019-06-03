@@ -185,6 +185,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 	connection_params.read_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout");
 	connection_params.write_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout");
 	connection_params.connect_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("connect_timeout");
+	connection_params.rpc_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("rpc_timeout");
 	connection_params.cacert = PHP_AMQP_READ_THIS_PROP_STRLEN("cacert") ? PHP_AMQP_READ_THIS_PROP_STR("cacert") : NULL;
 	connection_params.cert = PHP_AMQP_READ_THIS_PROP_STRLEN("cert") ? PHP_AMQP_READ_THIS_PROP_STR("cert") : NULL;
 	connection_params.key = PHP_AMQP_READ_THIS_PROP_STRLEN("key") ? PHP_AMQP_READ_THIS_PROP_STR("key") : NULL;
@@ -222,11 +223,11 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
 			/* Set desired timeouts */
 			if (php_amqp_set_resource_read_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout") TSRMLS_CC) == 0
-				|| (php_amqp_set_resource_write_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout") TSRMLS_CC) == 0
-					|| php_amqp_set_resource_rpc_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("rpc_timeout") TSRMLS_CC) == 0)) {
+				|| php_amqp_set_resource_write_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout") TSRMLS_CC) == 0
+				|| php_amqp_set_resource_rpc_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("rpc_timeout") TSRMLS_CC) == 0) {
 
 				php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-			   return 0;
+				return 0;
 			}
 
 			/* Set connection status to connected */
@@ -242,11 +243,6 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 	connection->connection_resource = connection_resource_constructor(&connection_params, persistent TSRMLS_CC);
 
 	if (connection->connection_resource == NULL) {
-		return 0;
-	}
-
-	if(php_amqp_set_resource_rpc_timeout(connection->connection_resource, PHP_AMQP_READ_THIS_PROP_DOUBLE("rpc_timeout") TSRMLS_CC) == 0) {
-		php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 		return 0;
 	}
 
@@ -322,7 +318,7 @@ PHP5to7_zend_object_value amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
 
 
 /* {{{ proto AMQPConnection::__construct([array optional])
- * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'read_timeout', 'write_timeout', 'connect_timeout' and 'timeout' (deprecated) indexes
+ * The array can contain 'host', 'port', 'login', 'password', 'vhost', 'read_timeout', 'write_timeout', 'connect_timeout', 'rpc_timeout' and 'timeout' (deprecated) indexes
  */
 static PHP_METHOD(amqp_connection_class, __construct)
 {
@@ -1508,6 +1504,7 @@ PHP_MINIT_FUNCTION(amqp_connection)
 	zend_declare_property_null(this_ce, ZEND_STRL("read_timeout"), ZEND_ACC_PRIVATE TSRMLS_CC);
 	zend_declare_property_null(this_ce, ZEND_STRL("write_timeout"), ZEND_ACC_PRIVATE TSRMLS_CC);
 	zend_declare_property_null(this_ce, ZEND_STRL("connect_timeout"), ZEND_ACC_PRIVATE TSRMLS_CC);
+	zend_declare_property_null(this_ce, ZEND_STRL("rpc_timeout"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
 	zend_declare_property_null(this_ce, ZEND_STRL("channel_max"), ZEND_ACC_PRIVATE TSRMLS_CC);
 	zend_declare_property_null(this_ce, ZEND_STRL("frame_max"), ZEND_ACC_PRIVATE TSRMLS_CC);

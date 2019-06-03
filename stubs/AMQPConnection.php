@@ -33,6 +33,7 @@ class AMQPConnection
      *      'read_timeout'  => Timeout in for income activity. Note: 0 or greater seconds. May be fractional.
      *      'write_timeout' => Timeout in for outcome activity. Note: 0 or greater seconds. May be fractional.
      *      'connect_timeout' => Connection timeout. Note: 0 or greater seconds. May be fractional.
+     *      'rpc_timeout' => RPC timeout. Note: 0 or greater seconds. May be fractional.
      *
      *      Connection tuning options (see http://www.rabbitmq.com/amqp-0-9-1-reference.html#connection.tune for details):
      *      'channel_max' => Specifies highest channel number that the server permits. 0 means standard extension limit

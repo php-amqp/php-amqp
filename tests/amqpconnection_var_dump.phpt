@@ -23,7 +23,7 @@ var_dump($cnn);
 ?>
 --EXPECT--
 bool(false)
-object(AMQPConnection)#1 (16) {
+object(AMQPConnection)#1 (17) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -39,6 +39,8 @@ object(AMQPConnection)#1 (16) {
   ["write_timeout":"AMQPConnection":private]=>
   float(0)
   ["connect_timeout":"AMQPConnection":private]=>
+  float(0)
+  ["rpc_timeout":"AMQPConnection":private]=>
   float(0)
   ["channel_max":"AMQPConnection":private]=>
   int(256)
@@ -59,7 +61,7 @@ object(AMQPConnection)#1 (16) {
 }
 bool(true)
 bool(true)
-object(AMQPConnection)#1 (16) {
+object(AMQPConnection)#1 (17) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -75,6 +77,8 @@ object(AMQPConnection)#1 (16) {
   ["write_timeout":"AMQPConnection":private]=>
   float(0)
   ["connect_timeout":"AMQPConnection":private]=>
+  float(0)
+  ["rpc_timeout":"AMQPConnection":private]=>
   float(0)
   ["channel_max":"AMQPConnection":private]=>
   int(256)
@@ -94,7 +98,7 @@ object(AMQPConnection)#1 (16) {
   int(0)
 }
 bool(false)
-object(AMQPConnection)#1 (16) {
+object(AMQPConnection)#1 (17) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -110,6 +114,8 @@ object(AMQPConnection)#1 (16) {
   ["write_timeout":"AMQPConnection":private]=>
   float(0)
   ["connect_timeout":"AMQPConnection":private]=>
+  float(0)
+  ["rpc_timeout":"AMQPConnection":private]=>
   float(0)
   ["channel_max":"AMQPConnection":private]=>
   int(256)

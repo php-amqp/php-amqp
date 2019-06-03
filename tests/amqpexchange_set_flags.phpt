@@ -22,7 +22,7 @@ var_dump($ex);
 --EXPECTF--
 object(AMQPExchange)#3 (9) {
   ["connection":"AMQPExchange":private]=>
-  object(AMQPConnection)#1 (16) {
+  object(AMQPConnection)#1 (17) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -38,6 +38,8 @@ object(AMQPExchange)#3 (9) {
     ["write_timeout":"AMQPConnection":private]=>
     float(0)
     ["connect_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["rpc_timeout":"AMQPConnection":private]=>
     float(0)
     ["channel_max":"AMQPConnection":private]=>
     int(256)
@@ -59,7 +61,7 @@ object(AMQPExchange)#3 (9) {
   ["channel":"AMQPExchange":private]=>
   object(AMQPChannel)#2 (4) {
     ["connection":"AMQPChannel":private]=>
-    object(AMQPConnection)#1 (16) {
+    object(AMQPConnection)#1 (17) {
       ["login":"AMQPConnection":private]=>
       string(5) "guest"
       ["password":"AMQPConnection":private]=>
@@ -75,6 +77,8 @@ object(AMQPExchange)#3 (9) {
       ["write_timeout":"AMQPConnection":private]=>
       float(0)
       ["connect_timeout":"AMQPConnection":private]=>
+      float(0)
+      ["rpc_timeout":"AMQPConnection":private]=>
       float(0)
       ["channel_max":"AMQPConnection":private]=>
       int(256)
