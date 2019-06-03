@@ -327,11 +327,9 @@ static PHP_METHOD(amqp_connection_class, __construct)
 	PHP5to7_zval_t *zdata = NULL;
 
 	/* Parse out the method parameters */
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a", &ini_arr) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a/", &ini_arr) == FAILURE) {
 		return;
 	}
-
-	SEPARATE_ARRAY(ini_arr);
 
 	/* Pull the login out of the $params array */
 	zdata = NULL;
