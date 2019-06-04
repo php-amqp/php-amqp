@@ -309,6 +309,27 @@ class AMQPConnection
     }
 
     /**
+     * Sets the interval of time to wait for RPC activity to AMQP broker
+     *
+     * @param int $timeout
+     *
+     * @return bool
+     */
+    public function setRpcTimeout($timeout)
+    {
+    }
+
+    /**
+     * Get the configured interval of time to wait for RPC activity
+     * to AMQP broker
+     *
+     * @return float
+     */
+    public function getRpcTimeout()
+    {
+    }
+
+    /**
      * Return last used channel id during current connection session.
      *
      * @return int

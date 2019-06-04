@@ -1081,6 +1081,52 @@ static PHP_METHOD(amqp_connection_class, setWriteTimeout)
 }
 /* }}} */
 
+/* {{{ proto amqp::getRpcTimeout()
+get rpc timeout */
+static PHP_METHOD(amqp_connection_class, getRpcTimeout)
+{
+	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	PHP_AMQP_NOPARAMS();
+	PHP_AMQP_RETURN_THIS_PROP("rpc_timeout");
+}
+/* }}} */
+
+/* {{{ proto amqp::setRpcTimeout(double timeout)
+set rpc timeout */
+static PHP_METHOD(amqp_connection_class, setRpcTimeout)
+{
+	amqp_connection_object *connection;
+	double rpc_timeout;
+
+	/* Get the timeout from the method params */
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &rpc_timeout) == FAILURE) {
+		return;
+	}
+
+	/* Validate timeout */
+	if (rpc_timeout < 0) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'rpc_timeout' must be greater than or equal to zero.", 0 TSRMLS_CC);
+		return;
+	}
+
+	/* Get the connection object out of the store */
+	connection = PHP_AMQP_GET_CONNECTION(getThis());
+
+	zend_update_property_double(this_ce, getThis(), ZEND_STRL("rpc_timeout"), rpc_timeout TSRMLS_CC);
+
+	if (connection->connection_resource && connection->connection_resource->is_connected) {
+		if (php_amqp_set_resource_rpc_timeout(connection->connection_resource, rpc_timeout TSRMLS_CC) == 0) {
+
+			php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+
+			RETURN_FALSE;
+		}
+	}
+
+	RETURN_TRUE;
+}
+/* }}} */
+
 /* {{{ proto amqp::getUsedChannels()
 Get max used channels number */
 static PHP_METHOD(amqp_connection_class, getUsedChannels)
@@ -1391,6 +1437,13 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setWriteTimeout, ZEND_SEND_
 				ZEND_ARG_INFO(0, timeout)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getRpcTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setRpcTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+				ZEND_ARG_INFO(0, timeout)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getUsedChannels, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
@@ -1475,6 +1528,9 @@ zend_function_entry amqp_connection_class_functions[] = {
 
 		PHP_ME(amqp_connection_class, getWriteTimeout, 	arginfo_amqp_connection_class_getWriteTimeout,	ZEND_ACC_PUBLIC)
 		PHP_ME(amqp_connection_class, setWriteTimeout, 	arginfo_amqp_connection_class_setWriteTimeout,	ZEND_ACC_PUBLIC)
+
+		PHP_ME(amqp_connection_class, getRpcTimeout, 	arginfo_amqp_connection_class_getRpcTimeout,	ZEND_ACC_PUBLIC)
+		PHP_ME(amqp_connection_class, setRpcTimeout, 	arginfo_amqp_connection_class_setRpcTimeout,	ZEND_ACC_PUBLIC)
 
 		PHP_ME(amqp_connection_class, getUsedChannels, arginfo_amqp_connection_class_getUsedChannels,	ZEND_ACC_PUBLIC)
 		PHP_ME(amqp_connection_class, getMaxChannels,  arginfo_amqp_connection_class_getMaxChannels,	ZEND_ACC_PUBLIC)
