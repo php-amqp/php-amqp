@@ -17,22 +17,24 @@ matrix:
   include:
     - php: nightly
       env: LIBRABBITMQ_VERSION=master
-    - php: nightly
-      env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
 
     - php: 7.3
       env: LIBRABBITMQ_VERSION=master
     - php: 7.3
-      env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+      env: LIBRABBITMQ_VERSION=v0.8.0
     - php: 7.3
-      env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
-    - php: 7.3
-      env: LIBRABBITMQ_VERSION=v0.7.1 TEST_PHP_ARGS=-m
+      env: LIBRABBITMQ_VERSION=v0.7.1
 
     - php: 7.2
       env: LIBRABBITMQ_VERSION=master
     - php: 7.2
       env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+
+    - php: 7.1
+      env: LIBRABBITMQ_VERSION=master
+    - php: 7.1
+      env: LIBRABBITMQ_VERSION=master TEST_PHP_ARGS=-m
+
     - php: 7.0
       env: LIBRABBITMQ_VERSION=v0.8.0 TEST_PHP_ARGS=-m
     - php: 7.0
