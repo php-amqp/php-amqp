@@ -1,7 +1,7 @@
 --TEST--
 AMQPExchange::publish() - publish unroutable with mandatory flag and handle them with AMQPQueue::consume() method
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '7.3', '>')) print "skip"; ?>
 --FILE--
 <?php
 

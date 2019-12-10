@@ -1,7 +1,7 @@
 --TEST--
 #147 Segfault when catchable fatal error happens in consumer
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '7.3', '>')) print "skip"; ?>
 --FILE--
 <?php
 $time = microtime(true);
