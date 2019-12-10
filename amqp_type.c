@@ -84,7 +84,7 @@ void php_amqp_type_internal_convert_zval_array(zval *php_array, amqp_field_value
 	char *key;
 	uint key_len;
 
-	ulong index;
+	zend_ulong index;
 	ht = Z_ARRVAL_P(php_array);
 
 	zend_bool is_amqp_array = 1;
@@ -119,7 +119,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(zval *php_array, amqp_tab
 	char *key;
 	uint key_len;
 
-	ulong index;
+	zend_ulong index;
 
 
 	ht = Z_ARRVAL_P(php_array);
@@ -182,7 +182,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zvalArguments, amqp
 	char *key;
 	uint key_len;
 
-	ulong index;
+	zend_ulong index;
 
 	char type[16];
 
