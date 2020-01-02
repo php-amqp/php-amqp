@@ -42,14 +42,14 @@ typedef zval* PHP5to7_zval_t;
 
 #define PHP5to7_ZVAL_STRINGL_DUP(z, s, l) ZVAL_STRINGL((z), (s), (l), 1)
 
-#define PHP5to7_ADD_NEXT_INDEX_STRINGL_DUP(arg, str, length) add_next_index_stringl((arg), (str), (uint)(length), 1)
+#define PHP5to7_ADD_NEXT_INDEX_STRINGL_DUP(arg, str, length) add_next_index_stringl((arg), (str), (unsigned)(length), 1)
 
 #define PHP5to7_ZEND_HASH_FIND(ht, str, len, res) \
-        (zend_hash_find((ht), (str), (uint)(len), (void **) &(res)) != FAILURE)
+        (zend_hash_find((ht), (str), (unsigned)(len), (void **) &(res)) != FAILURE)
 
-#define PHP5to7_ZEND_HASH_STRLEN(len) (uint)((len) + 1)
-#define PHP5to7_ZEND_HASH_DEL(ht, key, len) zend_hash_del_key_or_index((ht), (key), (uint)(len), 0, HASH_DEL_KEY);
-#define PHP5to7_ZEND_HASH_ADD(ht, key, len, pData, nDataSize) (zend_hash_add((ht), (key), (uint)(len), &(pData), nDataSize, NULL) != FAILURE)
+#define PHP5to7_ZEND_HASH_STRLEN(len) (unsigned)((len) + 1)
+#define PHP5to7_ZEND_HASH_DEL(ht, key, len) zend_hash_del_key_or_index((ht), (key), (unsigned)(len), 0, HASH_DEL_KEY);
+#define PHP5to7_ZEND_HASH_ADD(ht, key, len, pData, nDataSize) (zend_hash_add((ht), (key), (unsigned)(len), &(pData), nDataSize, NULL) != FAILURE)
 #define PHP5to7_ZEND_HASH_STR_UPD_MEM(ht, key, len, pData, nDataSize) PHP5to7_ZEND_HASH_ADD((ht), (key), (len), (pData), (nDataSize))
 #define PHP5to7_ZEND_HASH_STR_FIND_PTR(ht, key, len, res) PHP5to7_ZEND_HASH_FIND((ht), (key), (len), (res))
 #define PHP5to7_ZEND_HASH_STR_DEL(ht, key, len) PHP5to7_ZEND_HASH_DEL((ht), (key), (len))

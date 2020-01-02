@@ -82,9 +82,9 @@ void php_amqp_type_internal_convert_zval_array(zval *php_array, amqp_field_value
 	PHP5to7_ZEND_REAL_HASH_KEY_T *real_key;
 
 	char *key;
-	uint key_len;
+	unsigned key_len;
 
-	ulong index;
+	zend_ulong index;
 	ht = Z_ARRVAL_P(php_array);
 
 	zend_bool is_amqp_array = 1;
@@ -117,9 +117,9 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(zval *php_array, amqp_tab
 	PHP5to7_ZEND_REAL_HASH_KEY_T *real_key;
 
 	char *key;
-	uint key_len;
+	unsigned key_len;
 
-	ulong index;
+	zend_ulong index;
 
 
 	ht = Z_ARRVAL_P(php_array);
@@ -180,9 +180,9 @@ void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zvalArguments, amqp
 	PHP5to7_ZEND_REAL_HASH_KEY_T *real_key;
 
 	char *key;
-	uint key_len;
+	unsigned key_len;
 
-	ulong index;
+	zend_ulong index;
 
 	char type[16];
 
@@ -232,7 +232,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 			if (Z_STRLEN_P(value)) {
 				amqp_bytes_t bytes;
 				bytes.len = (size_t) Z_STRLEN_P(value);
-				bytes.bytes = estrndup(Z_STRVAL_P(value), (uint) Z_STRLEN_P(value));
+				bytes.bytes = estrndup(Z_STRVAL_P(value), (unsigned) Z_STRLEN_P(value));
 
 				field->value.bytes = bytes;
 			} else {
