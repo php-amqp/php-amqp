@@ -244,7 +244,7 @@ static PHP_METHOD(amqp_exchange_class, hasArgument)
 		return;
 	}
 
-	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (uint)(key_len + 1), tmp)) {
+	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned)(key_len + 1), tmp)) {
 		RETURN_FALSE;
 	}
 
@@ -296,13 +296,13 @@ static PHP_METHOD(amqp_exchange_class, setArgument)
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
-			PHP5to7_ZEND_HASH_DEL(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (uint) (key_len + 1));
+			PHP5to7_ZEND_HASH_DEL(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned) (key_len + 1));
 			break;
 		PHP5to7_CASE_IS_BOOL:
 		case IS_LONG:
 		case IS_DOUBLE:
 		case IS_STRING:
-			PHP5to7_ZEND_HASH_ADD(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (uint) (key_len + 1), value, sizeof(zval *));
+			PHP5to7_ZEND_HASH_ADD(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned) (key_len + 1), value, sizeof(zval *));
 			Z_TRY_ADDREF_P(value);
 			break;
 		default:

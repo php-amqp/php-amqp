@@ -200,7 +200,7 @@ static PHP_METHOD(amqp_queue_class, getArgument)
 		return;
 	}
 
-	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (uint)(key_len + 1), tmp)) {
+	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned)(key_len + 1), tmp)) {
 		RETURN_FALSE;
 	}
 
@@ -221,7 +221,7 @@ static PHP_METHOD(amqp_queue_class, hasArgument)
 		return;
 	}
 
-	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (uint)(key_len + 1), tmp)) {
+	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned)(key_len + 1), tmp)) {
 		RETURN_FALSE;
 	}
 
@@ -274,13 +274,13 @@ static PHP_METHOD(amqp_queue_class, setArgument)
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
-			PHP5to7_ZEND_HASH_DEL(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (uint) (key_len + 1));
+			PHP5to7_ZEND_HASH_DEL(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned) (key_len + 1));
 			break;
 		PHP5to7_CASE_IS_BOOL:
 		case IS_LONG:
 		case IS_DOUBLE:
 		case IS_STRING:
-			PHP5to7_ZEND_HASH_ADD(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (uint) (key_len + 1), value, sizeof(zval *));
+			PHP5to7_ZEND_HASH_ADD(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned) (key_len + 1), value, sizeof(zval *));
 			Z_TRY_ADDREF_P(value);
 			break;
 		default:
@@ -565,7 +565,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 		}
 
 		char *key;
-		key = estrndup((char *) r->consumer_tag.bytes, (uint) r->consumer_tag.len);
+		key = estrndup((char *) r->consumer_tag.bytes, (unsigned) r->consumer_tag.len);
 
 		if (PHP5to7_ZEND_HASH_FIND(Z_ARRVAL_P(consumers), (const char *) key, PHP5to7_ZEND_HASH_STRLEN(r->consumer_tag.len), consumer_tag_zv)) {
 			// This should never happen as AMQP server guarantees that consumer tag is unique within channel
@@ -683,7 +683,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 		}
 
 		char *key;
-		key = estrndup((char *)envelope.consumer_tag.bytes, (uint) envelope.consumer_tag.len);
+		key = estrndup((char *)envelope.consumer_tag.bytes, (unsigned) envelope.consumer_tag.len);
 
 		if (!PHP5to7_ZEND_HASH_FIND(Z_ARRVAL_P(consumers), key, PHP5to7_ZEND_HASH_STRLEN(envelope.consumer_tag.len), current_queue_zv)) {
 			PHP5to7_zval_t exception PHP5to7_MAYBE_SET_TO_NULL;
@@ -982,7 +982,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
 	}
 
     char *key;
-    key = estrndup((char *)r->consumer_tag.bytes, (uint) r->consumer_tag.len);
+    key = estrndup((char *)r->consumer_tag.bytes, (unsigned) r->consumer_tag.len);
     PHP5to7_ZEND_HASH_DEL(Z_ARRVAL_P(consumers), (const char *) key, PHP5to7_ZEND_HASH_STRLEN(r->consumer_tag.len));
     efree(key);
 

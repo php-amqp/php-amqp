@@ -424,7 +424,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
                             PHP5to7_ADD_NEXT_INDEX_STRINGL_DUP(
                                     PHP5to7_MAYBE_PTR(value),
                                     entry->value.value.array.entries[j].value.bytes.bytes,
-                                    (uint) entry->value.value.array.entries[j].value.bytes.len
+                                    (unsigned) entry->value.value.array.entries[j].value.bytes.len
                             );
                             break;
                         case AMQP_FIELD_KIND_TABLE: {
@@ -507,7 +507,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
         }
 
         if (has_value) {
-            char *key = estrndup(entry->key.bytes, (uint) entry->key.len);
+            char *key = estrndup(entry->key.bytes, (unsigned) entry->key.len);
             add_assoc_zval(result, key, PHP5to7_MAYBE_PTR(value));
             efree(key);
         } else {
