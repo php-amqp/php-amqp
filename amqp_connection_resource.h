@@ -55,6 +55,7 @@ typedef struct _amqp_connection_params {
   char *key;
   int verify;
   int sasl_method;
+  char *connection_name;
 } amqp_connection_params;
 
 /* Figure out what's going on connection and handle protocol exceptions, if any */
