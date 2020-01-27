@@ -58,6 +58,8 @@ object(AMQPConnection)#1 (17) {
   bool(true)
   ["sasl_method":"AMQPConnection":private]=>
   int(0)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }
 bool(true)
 bool(true)
@@ -96,6 +98,8 @@ object(AMQPConnection)#1 (17) {
   bool(true)
   ["sasl_method":"AMQPConnection":private]=>
   int(0)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }
 bool(false)
 object(AMQPConnection)#1 (17) {
@@ -133,4 +137,6 @@ object(AMQPConnection)#1 (17) {
   bool(true)
   ["sasl_method":"AMQPConnection":private]=>
   int(0)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }

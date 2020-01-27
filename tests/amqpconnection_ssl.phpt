@@ -95,6 +95,8 @@ object(AMQPConnection)#1 (17) {
   bool(false)
   ["sasl_method":"AMQPConnection":private]=>
   int(0)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }
 connected
 
@@ -133,5 +135,7 @@ object(AMQPConnection)#2 (17) {
   bool(false)
   ["sasl_method":"AMQPConnection":private]=>
   int(0)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }
 connected

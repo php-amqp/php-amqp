@@ -117,6 +117,8 @@ object(AMQPConnection)#1 (17) {
   bool(true)
   ["sasl_method":"AMQPConnection":private]=>
   int(1)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }
 connected
 
@@ -155,6 +157,8 @@ object(AMQPConnection)#2 (17) {
   bool(true)
   ["sasl_method":"AMQPConnection":private]=>
   int(1)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }
 AMQPConnectionException(0): Socket error: could not connect to host.
 disconnected
