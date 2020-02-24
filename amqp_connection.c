@@ -1375,16 +1375,20 @@ static PHP_METHOD(amqp_connection_class, getConnectionName)
 }
 /* }}} */
 
-/* {{{ proto amqp::setConnectionName(string cert) */
+/* {{{ proto amqp::setConnectionName(string connectionName) */
 static PHP_METHOD(amqp_connection_class, setConnectionName)
 {
 	char *str = NULL;	PHP5to7_param_str_len_type_t str_len = 0;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s!", &str, &str_len) == FAILURE) {
 		return;
 	}
+	if (str == NULL) {
+		zend_update_property_null(this_ce, getThis(), ZEND_STRL("connection_name") TSRMLS_CC);
+	} else {
+		zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("connection_name"), str, str_len TSRMLS_CC);
+	}
 
-	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("connection_name"), str, str_len TSRMLS_CC);
 
 	RETURN_TRUE;
 }
