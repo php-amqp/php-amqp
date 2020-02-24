@@ -298,6 +298,27 @@ int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, doubl
 	return 1;
 }
 
+int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC)
+{
+	assert(timeout >= 0.0);
+
+#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH >= 90
+	struct timeval rpc_timeout;
+
+	if (timeout == 0.) return 1;
+
+	rpc_timeout.tv_sec = (int) floor(timeout);
+	rpc_timeout.tv_usec = (int) ((timeout - floor(timeout)) * 1.e+6);
+
+	if (AMQP_STATUS_OK != amqp_set_rpc_timeout(resource->connection_state, &rpc_timeout)) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Library error: cannot set rpc_timeout", 0 TSRMLS_CC);
+		return 0;
+	}
+#endif
+
+	return 1;
+}
+
 int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC)
 {
 	assert(timeout >= 0.0);
@@ -467,6 +488,11 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 	}
 
 	if (!php_amqp_set_resource_write_timeout(resource, params->write_timeout TSRMLS_CC)) {
+		connection_resource_destructor(resource, persistent TSRMLS_CC);
+		return NULL;
+	}
+
+	if (!php_amqp_set_resource_rpc_timeout(resource, params->rpc_timeout TSRMLS_CC)) {
 		connection_resource_destructor(resource, persistent TSRMLS_CC);
 		return NULL;
 	}

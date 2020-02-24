@@ -98,6 +98,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.4...v1.9.5
             <file name="tests/amqpconnection_construct_with_timeout.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_timeout_and_read_timeout.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_write_timeout.phpt" role="test"/>
+            <file name="tests/amqpconnection_construct_with_rpc_timeout.phpt" role="test"/>
             <file name="tests/amqpconnection_getUsedChannels.phpt" role="test"/>
             <file name="tests/amqpconnection_heartbeat.phpt" role="test"/>
             <file name="tests/amqpconnection_heartbeat_with_consumer.phpt" role="test"/>
@@ -115,6 +116,10 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.4...v1.9.5
             <file name="tests/amqpconnection_setReadTimeout_int.phpt" role="test"/>
             <file name="tests/amqpconnection_setReadTimeout_out_of_range.phpt" role="test"/>
             <file name="tests/amqpconnection_setReadTimeout_string.phpt" role="test"/>
+            <file name="tests/amqpconnection_setRpcTimeout_float.phpt" role="test"/>
+            <file name="tests/amqpconnection_setRpcTimeout_int.phpt" role="test"/>
+            <file name="tests/amqpconnection_setRpcTimeout_out_of_range.phpt" role="test"/>
+            <file name="tests/amqpconnection_setRpcTimeout_string.phpt" role="test"/>
             <file name="tests/amqpconnection_setSaslMethod.phpt" role="test"/>
             <file name="tests/amqpconnection_setSaslMethod_invalid.phpt" role="test"/>
             <file name="tests/amqpconnection_setTimeout_deprecated.phpt" role="test"/>

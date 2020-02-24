@@ -20,7 +20,7 @@ var_dump($ch);
 --EXPECT--
 object(AMQPChannel)#2 (4) {
   ["connection":"AMQPChannel":private]=>
-  object(AMQPConnection)#1 (16) {
+  object(AMQPConnection)#1 (17) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -36,6 +36,8 @@ object(AMQPChannel)#2 (4) {
     ["write_timeout":"AMQPConnection":private]=>
     float(0)
     ["connect_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["rpc_timeout":"AMQPConnection":private]=>
     float(0)
     ["channel_max":"AMQPConnection":private]=>
     int(256)
@@ -64,7 +66,7 @@ object(AMQPChannel)#2 (4) {
 }
 object(AMQPChannel)#2 (4) {
   ["connection":"AMQPChannel":private]=>
-  object(AMQPConnection)#1 (16) {
+  object(AMQPConnection)#1 (17) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -80,6 +82,8 @@ object(AMQPChannel)#2 (4) {
     ["write_timeout":"AMQPConnection":private]=>
     float(0)
     ["connect_timeout":"AMQPConnection":private]=>
+    float(0)
+    ["rpc_timeout":"AMQPConnection":private]=>
     float(0)
     ["channel_max":"AMQPConnection":private]=>
     int(256)

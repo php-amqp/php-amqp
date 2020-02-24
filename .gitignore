@@ -21,6 +21,7 @@ config.status
 config.sub
 configure
 configure.in
+configure.ac
 install-sh
 libtool
 ltmain.sh
@@ -34,3 +35,10 @@ tests/*
 php_test_results_*
 tmp-php.ini
 *.tgz
+
+# CMake
+cmake-build-*/
+CMakeLists.txt
+
+# CLion
+.idea/

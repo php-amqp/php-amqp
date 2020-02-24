@@ -49,6 +49,7 @@ typedef struct _amqp_connection_params {
   double read_timeout;
   double write_timeout;
   double connect_timeout;
+  double rpc_timeout;
   char *cacert;
   char *cert;
   char *key;
@@ -63,6 +64,9 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
 /* Socket-related functions */
 int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double read_timeout TSRMLS_DC);
 int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double write_timeout TSRMLS_DC);
+
+/*Not socket-related rpc timeout function */
+int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double rpc_timeout TSRMLS_DC);
 
 /* Channel-related functions */
 amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connection_resource *resource);
