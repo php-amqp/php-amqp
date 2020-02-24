@@ -559,6 +559,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 	/* Pull the connection_name out of the $params array */
 	zdata = NULL;
 	if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), "connection_name", sizeof("connection_name"), zdata)) {
+		SEPARATE_ZVAL(zdata);
 		convert_to_string(PHP5to7_MAYBE_DEREF(zdata));
 	}
 	if (zdata && Z_STRLEN_P(PHP5to7_MAYBE_DEREF(zdata)) > 0) {
