@@ -23,7 +23,7 @@ var_dump($cnn);
 ?>
 --EXPECT--
 bool(false)
-object(AMQPConnection)#1 (17) {
+object(AMQPConnection)#1 (18) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -63,7 +63,7 @@ object(AMQPConnection)#1 (17) {
 }
 bool(true)
 bool(true)
-object(AMQPConnection)#1 (17) {
+object(AMQPConnection)#1 (18) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -102,7 +102,7 @@ object(AMQPConnection)#1 (17) {
   NULL
 }
 bool(false)
-object(AMQPConnection)#1 (17) {
+object(AMQPConnection)#1 (18) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>

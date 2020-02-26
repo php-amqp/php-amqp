@@ -60,7 +60,7 @@ echo 'Done', PHP_EOL
 
 ?>
 --EXPECTF--
-object(AMQPConnection)#1 (17) {
+object(AMQPConnection)#1 (18) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
