@@ -20,7 +20,7 @@ var_dump($ch);
 --EXPECT--
 object(AMQPChannel)#2 (4) {
   ["connection":"AMQPChannel":private]=>
-  object(AMQPConnection)#1 (17) {
+  object(AMQPConnection)#1 (18) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -55,6 +55,8 @@ object(AMQPChannel)#2 (4) {
     bool(true)
     ["sasl_method":"AMQPConnection":private]=>
     int(0)
+    ["connection_name":"AMQPConnection":private]=>
+    NULL
   }
   ["prefetch_count":"AMQPChannel":private]=>
   int(3)
@@ -66,7 +68,7 @@ object(AMQPChannel)#2 (4) {
 }
 object(AMQPChannel)#2 (4) {
   ["connection":"AMQPChannel":private]=>
-  object(AMQPConnection)#1 (17) {
+  object(AMQPConnection)#1 (18) {
     ["login":"AMQPConnection":private]=>
     string(5) "guest"
     ["password":"AMQPConnection":private]=>
@@ -101,6 +103,8 @@ object(AMQPChannel)#2 (4) {
     bool(true)
     ["sasl_method":"AMQPConnection":private]=>
     int(0)
+    ["connection_name":"AMQPConnection":private]=>
+    NULL
   }
   ["prefetch_count":"AMQPChannel":private]=>
   int(3)

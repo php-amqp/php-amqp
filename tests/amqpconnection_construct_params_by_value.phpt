@@ -16,6 +16,7 @@ $params = [
     'write_timeout'   => 10,
     'connect_timeout' => 10,
     'rpc_timeout'     => 10,
+    'connection_name' => 'custom_connection_name'
 ];
 
 $conn = new \AMQPConnection($params);
@@ -29,6 +30,7 @@ echo gettype($params['read_timeout']) . PHP_EOL;
 echo gettype($params['write_timeout']) . PHP_EOL;
 echo gettype($params['connect_timeout']) . PHP_EOL;
 echo gettype($params['rpc_timeout']) . PHP_EOL;
+echo gettype($params['connection_name']) . PHP_EOL;
 
 --EXPECT--
 string
@@ -39,3 +41,4 @@ integer
 integer
 integer
 integer
+string

@@ -414,7 +414,13 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 	amqp_table_entry_t client_properties_entries[5];
 	amqp_table_t       client_properties_table;
 
-	amqp_table_entry_t custom_properties_entries[1];
+	int custom_properties_entries_len;
+	if (params->connection_name) {
+		custom_properties_entries_len = 2;
+	} else {
+		custom_properties_entries_len = 1;
+	}
+	amqp_table_entry_t custom_properties_entries[custom_properties_entries_len];
 	amqp_table_t       custom_properties_table;
 
 	amqp_connection_resource *resource;
@@ -525,6 +531,13 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 	custom_properties_entries[0].key               = amqp_cstring_bytes("client");
 	custom_properties_entries[0].value.kind        = AMQP_FIELD_KIND_TABLE;
 	custom_properties_entries[0].value.value.table = client_properties_table;
+
+
+	if (params->connection_name) {
+		custom_properties_entries[1].key               = amqp_cstring_bytes("connection_name");
+		custom_properties_entries[1].value.kind        = AMQP_FIELD_KIND_UTF8;
+		custom_properties_entries[1].value.value.bytes = amqp_cstring_bytes(params->connection_name);
+	}
 
 	custom_properties_table.entries     = custom_properties_entries;
 	custom_properties_table.num_entries = sizeof(custom_properties_entries) / sizeof(amqp_table_entry_t);

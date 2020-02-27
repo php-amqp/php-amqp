@@ -93,6 +93,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.4...v1.9.5
             <file name="tests/amqpconnection_construct_ini_timeout.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_ini_timeout_and_read_timeout.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_ini_timeout_default.phpt" role="test"/>
+            <file name="tests/amqpconnection_construct_with_connection_name.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_connect_timeout.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_limits.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_timeout.phpt" role="test"/>
@@ -106,6 +107,7 @@ https://github.com/pdezwart/php-amqp/compare/v1.9.4...v1.9.5
             <file name="tests/amqpconnection_persistent_construct_basic.phpt" role="test"/>
             <file name="tests/amqpconnection_persistent_in_use.phpt" role="test"/>
             <file name="tests/amqpconnection_persistent_reusable.phpt" role="test"/>
+            <file name="tests/amqpconnection_setConnectionName.phpt" role="test"/>
             <file name="tests/amqpconnection_setHost.phpt" role="test"/>
             <file name="tests/amqpconnection_setLogin.phpt" role="test"/>
             <file name="tests/amqpconnection_setPassword.phpt" role="test"/>

@@ -15,7 +15,7 @@ $cnn->connect();
 var_dump($cnn);
 ?>
 --EXPECT--
-object(AMQPConnection)#1 (17) {
+object(AMQPConnection)#1 (18) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -50,4 +50,6 @@ object(AMQPConnection)#1 (17) {
   bool(true)
   ["sasl_method":"AMQPConnection":private]=>
   int(0)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }

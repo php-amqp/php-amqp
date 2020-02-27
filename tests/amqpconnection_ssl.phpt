@@ -60,7 +60,7 @@ echo ($cnn->isConnected() ? 'connected' : 'disconnected'), PHP_EOL;
 
 ?>
 --EXPECTF--
-object(AMQPConnection)#1 (17) {
+object(AMQPConnection)#1 (18) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -95,10 +95,12 @@ object(AMQPConnection)#1 (17) {
   bool(false)
   ["sasl_method":"AMQPConnection":private]=>
   int(0)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }
 connected
 
-object(AMQPConnection)#2 (17) {
+object(AMQPConnection)#2 (18) {
   ["login":"AMQPConnection":private]=>
   string(5) "guest"
   ["password":"AMQPConnection":private]=>
@@ -133,5 +135,7 @@ object(AMQPConnection)#2 (17) {
   bool(false)
   ["sasl_method":"AMQPConnection":private]=>
   int(0)
+  ["connection_name":"AMQPConnection":private]=>
+  NULL
 }
 connected
