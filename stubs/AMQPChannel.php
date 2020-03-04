@@ -72,14 +72,15 @@ class AMQPChannel
      * flag set, the client will not do any prefetching of data, regardless of
      * the QOS settings.
      *
-     * @param integer $size  The window size, in octets, to prefetch.
-     * @param integer $count The number of messages to prefetch.
+     * @param integer $size   The window size, in octets, to prefetch.
+     * @param integer $count  The number of messages to prefetch.
+     * @param bool    $global TRUE for global, FALSE for consumer. FALSE by default.
      *
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function qos($size, $count)
+    public function qos($size, $count, $global)
     {
     }
 
@@ -100,12 +101,10 @@ class AMQPChannel
     }
 
     /**
-     * Set the number of messages to prefetch from the broker.
+     * Set the number of messages to prefetch from the broker for each consumer.
      *
      * Set the number of messages to prefetch from the broker during a call to
-     * AMQPQueue::consume() or AMQPQueue::get(). Any call to this method will
-     * automatically set the prefetch window size to 0, meaning that the
-     * prefetch window size setting will be ignored.
+     * AMQPQueue::consume() or AMQPQueue::get().
      *
      * @param integer $count The number of messages to prefetch.
      *
@@ -118,7 +117,7 @@ class AMQPChannel
     }
 
     /**
-     * Get the number of messages to prefetch from the broker.
+     * Get the number of messages to prefetch from the broker for each consumer.
      *
      * @return integer
      */
@@ -127,7 +126,7 @@ class AMQPChannel
     }
 
     /**
-     * Set the window size to prefetch from the broker.
+     * Set the window size to prefetch from the broker for each consumer.
      *
      * Set the prefetch window size, in octets, during a call to
      * AMQPQueue::consume() or AMQPQueue::get(). Any call to this method will
@@ -147,11 +146,65 @@ class AMQPChannel
     }
 
     /**
-     * Get the window size to prefetch from the broker.
+     * Get the window size to prefetch from the broker for each consumer.
      *
      * @return integer
      */
     public function getPrefetchSize()
+    {
+    }
+
+    /**
+     * Set the number of messages to prefetch from the broker across all consumers.
+     *
+     * Set the number of messages to prefetch from the broker during a call to
+     * AMQPQueue::consume() or AMQPQueue::get().
+     *
+     * @param integer $count The number of messages to prefetch.
+     *
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @return boolean TRUE on success or FALSE on failure.
+     */
+    public function setGlobalPrefetchCount($count)
+    {
+    }
+
+    /**
+     * Get the number of messages to prefetch from the broker across all consumers.
+     *
+     * @return integer
+     */
+    public function getGlobalPrefetchCount()
+    {
+    }
+
+    /**
+     * Set the window size to prefetch from the broker for all consumers.
+     *
+     * Set the prefetch window size, in octets, during a call to
+     * AMQPQueue::consume() or AMQPQueue::get(). Any call to this method will
+     * automatically set the prefetch message count to 0, meaning that the
+     * prefetch message count setting will be ignored. If the call to either
+     * AMQPQueue::consume() or AMQPQueue::get() is done with the AMQP_AUTOACK
+     * flag set, this setting will be ignored.
+     *
+     * @param integer $size The window size, in octets, to prefetch.
+     *
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @return bool TRUE on success or FALSE on failure.
+     */
+    public function setGlobalPrefetchSize($size)
+    {
+    }
+
+    /**
+     * Get the window size to prefetch from the broker for all consumers.
+     *
+     * @return integer
+     */
+    public function getGlobalPrefetchSize()
     {
     }
 
