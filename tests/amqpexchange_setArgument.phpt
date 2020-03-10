@@ -83,7 +83,7 @@ object(AMQPExchange)#3 (9) {
     NULL
   }
   ["channel":"AMQPExchange":private]=>
-  object(AMQPChannel)#2 (4) {
+  object(AMQPChannel)#2 (6) {
     ["connection":"AMQPChannel":private]=>
     object(AMQPConnection)#1 (18) {
       ["login":"AMQPConnection":private]=>
@@ -126,6 +126,10 @@ object(AMQPExchange)#3 (9) {
     ["prefetch_count":"AMQPChannel":private]=>
     int(3)
     ["prefetch_size":"AMQPChannel":private]=>
+    int(0)
+    ["global_prefetch_count":"AMQPChannel":private]=>
+    int(0)
+    ["global_prefetch_size":"AMQPChannel":private]=>
     int(0)
     ["consumers":"AMQPChannel":private]=>
     array(0) {
@@ -188,7 +192,7 @@ object(AMQPExchange)#4 (9) {
     NULL
   }
   ["channel":"AMQPExchange":private]=>
-  object(AMQPChannel)#2 (4) {
+  object(AMQPChannel)#2 (6) {
     ["connection":"AMQPChannel":private]=>
     object(AMQPConnection)#1 (18) {
       ["login":"AMQPConnection":private]=>
@@ -231,6 +235,10 @@ object(AMQPExchange)#4 (9) {
     ["prefetch_count":"AMQPChannel":private]=>
     int(3)
     ["prefetch_size":"AMQPChannel":private]=>
+    int(0)
+    ["global_prefetch_count":"AMQPChannel":private]=>
+    int(0)
+    ["global_prefetch_size":"AMQPChannel":private]=>
     int(0)
     ["consumers":"AMQPChannel":private]=>
     array(0) {
@@ -303,7 +311,7 @@ object(AMQPExchange)#4 (9) {
     NULL
   }
   ["channel":"AMQPExchange":private]=>
-  object(AMQPChannel)#2 (4) {
+  object(AMQPChannel)#2 (6) {
     ["connection":"AMQPChannel":private]=>
     object(AMQPConnection)#1 (18) {
       ["login":"AMQPConnection":private]=>
@@ -346,6 +354,10 @@ object(AMQPExchange)#4 (9) {
     ["prefetch_count":"AMQPChannel":private]=>
     int(3)
     ["prefetch_size":"AMQPChannel":private]=>
+    int(0)
+    ["global_prefetch_count":"AMQPChannel":private]=>
+    int(0)
+    ["global_prefetch_size":"AMQPChannel":private]=>
     int(0)
     ["consumers":"AMQPChannel":private]=>
     array(0) {
