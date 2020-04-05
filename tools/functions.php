@@ -11,13 +11,15 @@ use function exec;
 use function file_get_contents;
 use function file_put_contents;
 use function ini_set;
+use function preg_match;
 use function realpath;
 use function simplexml_import_dom;
 use function strpos;
 use function trim;
 
 const BASE_DIR = __DIR__ . '/../';
-const VERSION_REGEX = '\d+\.\d+\.\d+(?:-(?:alpha|beta|dev))?';
+const STABILITY_REGEX = '(?:alpha|beta|dev)\d*';
+const VERSION_REGEX = '\d+\.\d+\.\d+(?:' . STABILITY_REGEX . ')?';
 const HEADER_VERSION_FILE = BASE_DIR . '/php_amqp.h';
 const PACKAGE_XML = BASE_DIR . '/package.xml';
 const ISSUE_URL_TEMPLATE = 'https://github.com/pdezwart/php-amqp/issues/%d';
@@ -76,6 +78,7 @@ function setPackageVersion(string $nextVersion): void
     $xml = simplexml_import_dom(packageXml());
 
     $xml->version->release = $nextVersion;
+    $xml->version->api = $nextVersion;
 }
 
 function setChangelog(string $changelog): void
@@ -186,12 +189,11 @@ function isIgnoredMessage(string $message): bool
     return false;
 }
 
-function buildChangelog(string $nextVersion, string $previousVersion): string
+function buildChangelog(string $nextTag, string $previousTag): string
 {
-    $previousTag = versionToTag($previousVersion);
-    $nextTag = versionToTag($nextVersion);
-
-    $commits = explode("\n", trim(`git log --oneline ${previousTag}..origin/master --pretty=%h --no-merges`));
+    $commits = array_filter(
+        explode("\n", trim(`git log --oneline ${previousTag}..origin/master --pretty=%h --no-merges`))
+    );
 
     $changeLines = [];
 
@@ -230,6 +232,35 @@ EOT;
     return $changelog;
 }
 
+function archiveRelease(): void {
+    $dom = packageXml();
+    $xml = simplexml_import_dom($dom);
+
+    $release = $dom->createElementNS('http://pear.php.net/dtd/package-2.0', 'release');
+
+    $elements = ['date', 'time', 'version', 'stability', 'license', 'notes'];
+    foreach ($elements as $element) {
+        $release->appendChild(dom_import_simplexml($xml->{$element})->cloneNode(true));
+    }
+
+    $changelogDom = dom_import_simplexml($xml->changelog);
+    $changelogDom->insertBefore($release, $changelogDom->firstChild);
+}
+
+function setStability(string $nextVersion): void
+{
+    $dom = packageXml();
+    $xml = simplexml_import_dom($dom);
+
+    $stability = preg_match(re('.*(?<stability>' . STABILITY_REGEX . ')'), $nextVersion, $matches)
+        ? $matches['stability']
+        : 'stable';
+    $stability = $stability === 'dev' ? 'devel' : $stability;
+
+    $xml->stability->release = $stability;
+    $xml->stability->api = $stability;
+}
+
 function executeCommand(string $command): void {
     exec($command, $output, $returnCode);
     if ($returnCode !== 0) {
@@ -256,9 +287,9 @@ function peclPackage(int $step, string $nextVersion): void {
     printf("%d) Upload %s to PECL\n", $step, $archive);
 }
 
-function gitCommit(int $step, string $nextVersion): void {
+function gitCommit(int $step, string $nextVersion, string $message): void {
     executeCommand(
-        sprintf('git commit -m "[RM] releasing version %s" %s %s', $nextVersion, HEADER_VERSION_FILE, PACKAGE_XML)
+        sprintf('git commit -m "[RM] %s %s" %s %s', $message, $nextVersion, HEADER_VERSION_FILE, PACKAGE_XML)
     );
 
     printf("%d) Run \"git push origin master\"\n", $step);

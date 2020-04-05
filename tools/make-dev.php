@@ -9,15 +9,12 @@ $nextVersion = $_SERVER['argv'][1];
 
 assert(preg_match(re(VERSION_REGEX), $nextVersion));
 
-gitFetch();
+archiveRelease();
 setPackageVersion($nextVersion);
 setSourceVersion($nextVersion);
-setChangelog(buildChangelog(versionToTag($nextVersion), versionToTag(getPreviousVersion())));
-setDate(new DateTimeImmutable('NOW'));
 setStability($nextVersion);
-updateFiles();
+setDate(new DateTimeImmutable('NOW'));
+setChangelog(buildChangelog('master', versionToTag(getPreviousVersion())));
 savePackageXml();
 validatePackage();
-peclPackage(1, $nextVersion);
-gitCommit(2, $nextVersion, 'releasing version');
-gitTag(3, $nextVersion);
+gitCommit(1, $nextVersion, 'back to dev');
