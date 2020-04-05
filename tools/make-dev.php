@@ -7,7 +7,7 @@ require_once __DIR__ . '/functions.php';
 
 $nextVersion = $_SERVER['argv'][1];
 
-assert(preg_match(re(VERSION_REGEX), $nextVersion));
+assert(preg_match(re(VERSION_REGEX_DEV), $nextVersion), 'Must be version ending with dev');
 
 archiveRelease();
 setPackageVersion($nextVersion);

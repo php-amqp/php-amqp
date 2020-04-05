@@ -23,7 +23,9 @@ use function trim;
 
 const BASE_DIR = __DIR__ . '/../';
 const STABILITY_REGEX = '(?:alpha|beta|dev)\d*';
-const VERSION_REGEX = '\d+\.\d+\.\d+(?:' . STABILITY_REGEX . ')?';
+const MAJOR_MINOR_PATCH = '\d+\.\d+\.\d+';
+const VERSION_REGEX = MAJOR_MINOR_PATCH . '(?:' . STABILITY_REGEX . ')?';
+const VERSION_REGEX_DEV = MAJOR_MINOR_PATCH . 'dev';
 const HEADER_VERSION_FILE = BASE_DIR . '/php_amqp.h';
 const PACKAGE_XML = BASE_DIR . '/package.xml';
 const ISSUE_URL_TEMPLATE = 'https://github.com/pdezwart/php-amqp/issues/%d';
