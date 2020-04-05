@@ -15,5 +15,6 @@ if ('x64' -eq $env:ARCH) { $dir = $dir + 'x64\' }
 $dir = $dir + 'Release'
 if ('1' -eq $env:TS) { $dir = $dir + '_TS' }
 cp $dir\php_amqp.dll $dir\$dll_bname
-& 7z a c:\$zip_bname $dir\$dll_bname $dir\php_amqp.pdb c:\projects\amqp\LICENSE
+cp c:\build-cache\deps\LICENSE-MIT $dir\LICENSE-MIT.LIBRABBITMQ
+& 7z a c:\$zip_bname $dir\$dll_bname $dir\php_amqp.pdb c:\projects\amqp\LICENSE c:\build-cache\deps\bin\rabbitmq.4.* $dir\LICENSE-MIT.LIBRABBITMQ
 Push-AppveyorArtifact c:\$zip_bname
