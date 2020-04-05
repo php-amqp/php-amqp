@@ -23,22 +23,20 @@
         <active>yes</active>
     </developer>
     <date>2020-04-05</date>
-    <time>15:45:55</time>
+    <time>16:04:23</time>
     <version>
-        <release>1.10.1dev</release>
-        <api>1.10.1dev</api>
+        <release>1.10.1</release>
+        <api>1.10.1</api>
     </version>
     <stability>
-        <release>devel</release>
-        <api>devel</api>
+        <release>stable</release>
+        <api>stable</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[
-
+    <notes><![CDATA[- Fix Windows compatibility: avoid variable lengths arrays (Christoph M. Becker <cmbecker69@gmx.de>) (https://github.com/pdezwart/php-amqp/issues/368)
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.10.0...master
-]]></notes>
+https://github.com/pdezwart/php-amqp/compare/v1.10.0...v1.10.1]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
