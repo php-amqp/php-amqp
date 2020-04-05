@@ -534,7 +534,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 	}
 
 	custom_properties_table.entries     = custom_properties_entries;
-	custom_properties_table.num_entries = sizeof(custom_properties_entries) / sizeof(amqp_table_entry_t);
+	custom_properties_table.num_entries = params->connection_name ? 2 : 1;
 
 	/* We can assume that connection established here but it is not true, real handshake goes during login */
 
