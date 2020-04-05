@@ -414,7 +414,13 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 	amqp_table_entry_t client_properties_entries[5];
 	amqp_table_t       client_properties_table;
 
-	amqp_table_entry_t custom_properties_entries[2];
+	int custom_properties_entries_len;
+	if (params->connection_name) {
+		custom_properties_entries_len = 2;
+	} else {
+		custom_properties_entries_len = 1;
+	}
+	amqp_table_entry_t custom_properties_entries[custom_properties_entries_len];
 	amqp_table_t       custom_properties_table;
 
 	amqp_connection_resource *resource;
