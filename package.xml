@@ -23,20 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2020-04-05</date>
-    <time>16:04:23</time>
+    <time>16:08:45</time>
     <version>
-        <release>1.10.1</release>
-        <api>1.10.1</api>
+        <release>1.10.2dev</release>
+        <api>1.10.2dev</api>
     </version>
     <stability>
-        <release>stable</release>
-        <api>stable</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- Fix Windows compatibility: avoid variable lengths arrays (Christoph M. Becker <cmbecker69@gmx.de>) (https://github.com/pdezwart/php-amqp/issues/368)
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.10.0...v1.10.1]]></notes>
+https://github.com/pdezwart/php-amqp/compare/v1.10.1...master
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -279,6 +280,23 @@ https://github.com/pdezwart/php-amqp/compare/v1.10.0...v1.10.1]]></notes>
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2020-04-05</date>
+            <time>16:04:23</time>
+            <version>
+                <release>1.10.1</release>
+                <api>1.10.1</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- Fix Windows compatibility: avoid variable lengths arrays (Christoph M. Becker <cmbecker69@gmx.de>) (https://github.com/pdezwart/php-amqp/issues/368)
+
+For a complete list of changes see:
+https://github.com/pdezwart/php-amqp/compare/v1.10.0...v1.10.1]]></notes>
+        </release>
         <release>
             <date>2020-04-03</date>
             <time>19:17:00</time>
