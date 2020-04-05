@@ -16,6 +16,18 @@ environment:
       ARCH: x64
       TS: 1
       VC: vc15
+    - PHP_VER: 7.4.0
+      ARCH: x64
+      TS: 0
+      VC: vc15
+    - PHP_VER: 7.4.0
+      ARCH: x86
+      TS: 1
+      VC: vc15
+    - PHP_VER: 7.4.0
+      ARCH: x86
+      TS: 1
+      VC: vc15
 
 build_script:
   - ps: appveyor\build.ps1
