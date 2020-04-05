@@ -147,3 +147,16 @@ To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_
  [php-signal-handler](https://github.com/RST-com-pl/php-signal-handler) extension uses <i>signal</i> syscall,
  so it will work even if blocking method was executed.
  Some use cases are presented on extension's github page and examples are available [here](https://github.com/pdezwart/php-amqp/pull/89).
+
+
+#### Rolling a release
+Say we want to release "1.1000.0" next. We first run `php tools/make-release.php 1.1000.0`. This will update the version
+numbers and pre-populate the changelog with the latest git commits between the previous version and now. Open 
+`package.xml` and adjust the changelog under `package -> notes`. Maybe remove trivial changes, maybe edit the changes
+to be better understandable. This will show up on https://pecl.php.net, so it’s content matters. Run `git commit --amend`
+to include the changelog. 
+After editing the changelog, follow the rest of the instructions:
+ - Upload the fresh package to PECL
+ - Push master
+ - Push the tag
+Run `php tools/make-dev 1.1000.1` to bring master back into development mode afterwards.
