@@ -23,20 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2020-04-05</date>
-    <time>17:40:42</time>
+    <time>17:41:44</time>
     <version>
-        <release>1.10.2</release>
-        <api>1.10.2</api>
+        <release>1.10.3dev</release>
+        <api>1.10.3dev</api>
     </version>
     <stability>
-        <release>stable</release>
-        <api>stable</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- Windows build: avoid variable lengths arrays (Christoph M. Becker) (https://github.com/pdezwart/php-amqp/issues/368)
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/v1.10.1...v1.10.2]]></notes>
+https://github.com/pdezwart/php-amqp/compare/v1.10.2...master
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -279,6 +280,23 @@ https://github.com/pdezwart/php-amqp/compare/v1.10.1...v1.10.2]]></notes>
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2020-04-05</date>
+            <time>17:40:42</time>
+            <version>
+                <release>1.10.2</release>
+                <api>1.10.2</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- Windows build: avoid variable lengths arrays (Christoph M. Becker) (https://github.com/pdezwart/php-amqp/issues/368)
+
+For a complete list of changes see:
+https://github.com/pdezwart/php-amqp/compare/v1.10.1...v1.10.2]]></notes>
+        </release>
         <release>
             <date>2020-04-05</date>
             <time>16:04:23</time>
