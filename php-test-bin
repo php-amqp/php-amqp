@@ -1,0 +1,3 @@
+#!/bin/sh
+# Isolate tests better by running PHP without any ini files during test
+`which php` -n $@

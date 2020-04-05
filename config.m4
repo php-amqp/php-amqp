@@ -1,23 +1,15 @@
 dnl config.m4 for extension amqp
 
-dnl Comments in this file start with the string 'dnl'.
-dnl Remove where necessary. This file will not work
-dnl without editing.
-dnl amqp
-dnl If your extension references something external, use with:
-
-
-dnl Make sure that the comment is aligned:
 PHP_ARG_WITH(amqp, for amqp support,
 [	--with-amqp						 Include amqp support])
 
 PHP_ARG_WITH(librabbitmq-dir,	for amqp,
 [	--with-librabbitmq-dir[=DIR]	 Set the path to librabbitmq install prefix.], yes)
 
+dnl Set test wrapper binary to ignore any local ini settings
+PHP_EXECUTABLE="$PWD/php-test-bin"
 
 if test "$PHP_AMQP" != "no"; then
-	dnl Write more examples of tests here...
-
 	AC_MSG_CHECKING([for supported PHP versions])
 	PHP_REF_FOUND_VERSION=`${PHP_CONFIG} --version`
 	PHP_REF_FOUND_VERNUM=`${PHP_CONFIG} --vernum`
