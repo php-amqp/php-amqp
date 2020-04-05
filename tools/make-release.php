@@ -12,7 +12,7 @@ assert(preg_match(re(VERSION_REGEX), $nextVersion));
 gitFetch();
 setPackageVersion($nextVersion);
 setSourceVersion($nextVersion);
-setChangelog(buildChangelog(versionToTag($nextVersion), versionToTag(getPreviousVersion())));
+setChangelog(modifyInteractive(buildChangelog(versionToTag($nextVersion), versionToTag(getPreviousVersion()))));
 setDate(new DateTimeImmutable('NOW'));
 setStability($nextVersion);
 updateFiles();

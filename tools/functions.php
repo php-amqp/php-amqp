@@ -7,6 +7,8 @@ use DateTimeImmutable;
 use DOMDocument;
 use SimpleXMLElement;
 use function dom_import_simplexml;
+use function escapeshellarg;
+use function escapeshellcmd;
 use function exec;
 use function file_get_contents;
 use function file_put_contents;
@@ -15,6 +17,8 @@ use function preg_match;
 use function realpath;
 use function simplexml_import_dom;
 use function strpos;
+use function sys_get_temp_dir;
+use function tempnam;
 use function trim;
 
 const BASE_DIR = __DIR__ . '/../';
@@ -90,6 +94,26 @@ function setChangelog(string $changelog): void
         $noteNode->removeChild($child);
     }
     $noteNode->appendChild(packageXml()->createCDATASection($changelog));
+}
+
+function modifyInteractive(string $text): string
+{
+    $file = tempnam(sys_get_temp_dir(), __FUNCTION__);
+    file_put_contents($file, $text);
+
+
+    $editor = $_SERVER['EDITOR'] ?? 'vim';
+    $command = sprintf('%s %s > `tty`', escapeshellcmd($editor), escapeshellarg($file));
+
+    system($command);
+
+    $updatedText = trim(file_get_contents($file));
+
+    if ($updatedText === '') {
+        modifyInteractive($text);
+    }
+
+    return $updatedText;
 }
 
 function setDate(DateTimeImmutable $now): void
@@ -221,7 +245,6 @@ function buildChangelog(string $nextTag, string $previousTag): string
 
     $changes = implode(PHP_EOL, $changeLines);
     $changelog = <<<EOT
-
 $changes
 
 For a complete list of changes see:

@@ -151,12 +151,6 @@ To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_
 
 #### Rolling a release
 Say we want to release "1.1000.0" next. We first run `php tools/make-release.php 1.1000.0`. This will update the version
-numbers and pre-populate the changelog with the latest git commits between the previous version and now. Open 
-`package.xml` and adjust the changelog under `package -> notes`. Maybe remove trivial changes, maybe edit the changes
-to be better understandable. This will show up on https://pecl.php.net, so it’s content matters. Run `git commit --amend`
-to include the changelog. 
-After editing the changelog, follow the rest of the instructions:
- - Upload the fresh package to PECL
- - Push master
- - Push the tag
+numbers and pre-populate the changelog with the latest git commits between the previous version and now. It will prompt
+you to edit the changelog in between. Once the release is done it tells you what to do next.
 Run `php tools/make-dev 1.1000.1` to bring master back into development mode afterwards.
