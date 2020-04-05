@@ -1,0 +1,24 @@
+image: Visual Studio 2017
+version: '{branch}.{build}'
+
+clone_folder: c:\projects\amqp
+
+install:
+  - ps: appveyor\install.ps1
+
+cache:
+  - c:\build-cache -> .appveyor.yml, appveyor\*
+
+environment:
+  BIN_SDK_VER: 2.2.0
+  matrix:
+    - PHP_VER: 7.4.0
+      ARCH: x64
+      TS: 1
+      VC: vc15
+
+build_script:
+  - ps: appveyor\build.ps1
+
+after_build:
+  - ps: appveyor\package.ps1
