@@ -153,4 +153,4 @@ To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_
 Say we want to release "1.1000.0" next. We first run `php tools/make-release.php 1.1000.0`. This will update the version
 numbers and pre-populate the changelog with the latest git commits between the previous version and now. It will prompt
 you to edit the changelog in between. Once the release is done it tells you what to do next.
-Run `php tools/make-dev 1.1000.1` to bring master back into development mode afterwards.
+Run `php tools/make-dev.php 1.1000.1` to bring master back into development mode afterwards.
