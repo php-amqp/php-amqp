@@ -29,7 +29,7 @@ if (-not (Test-Path c:\build-cache\$dname1)) {
     }
 }
 $env:PATH = 'c:\build-cache\' + $dname1 + ';' + $env:PATH
-$bname = 'librabbitmq-0.9.0-' + $env:VC.toUpper() + '-' + $env:ARCH + '.zip'
+$bname = $env:DEP + '-' + $env:VC.toUpper() + '-' + $env:ARCH + '.zip'
 if (-not (Test-Path c:\build-cache\$bname)) {
     Invoke-WebRequest "http://windows.php.net/downloads/pecl/deps/$bname" -OutFile "c:\build-cache\$bname"
     7z x c:\build-cache\$bname -oc:\build-cache\deps
