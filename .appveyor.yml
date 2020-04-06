@@ -7,7 +7,7 @@ install:
   - ps: appveyor\install.ps1
 
 cache:
-  - c:\build-cache -> .appveyor.yml, appveyor\*
+  - c:\build-cache -> .appveyor.yml, appveyor\install.ps1
 
 environment:
   BIN_SDK_VER: 2.2.0
