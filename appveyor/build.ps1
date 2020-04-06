@@ -14,3 +14,6 @@ $here = (Get-Item -Path "." -Verbose).FullName
 $runner = 'c:\build-cache\php-sdk-' + $env:BIN_SDK_VER + '\phpsdk' + '-' + $env:VC + '-' + $env:ARCH + '.bat'
 $task = $here + '\task.bat'
 & $runner -t $task
+if (-not $?) {
+    throw "build failed with errorlevel $LastExitCode"
+}
