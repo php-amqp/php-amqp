@@ -11,3 +11,26 @@ if (-not (Test-Path c:\build-cache\$dname1)) {
     7z x c:\build-cache\$bname -oc:\build-cache
     move c:\build-cache\$dname0 c:\build-cache\$dname1
 }
+$ts_part = ''
+if ('0' -eq $env:TS) { $ts_part = '-nts' }
+$bname = 'php-devel-pack-' + $env:PHP_VER + $ts_part + '-Win32-' + $env:VC.toUpper() + '-' + $env:ARCH + '.zip'
+if (-not (Test-Path c:\build-cache\$bname)) {
+    Invoke-WebRequest "http://windows.php.net/downloads/releases/archives/$bname" -OutFile "c:\build-cache\$bname"
+    if (-not (Test-Path c:\build-cache\$bname)) {
+        Invoke-WebRequest "http://windows.php.net/downloads/releases/$bname" -OutFile "c:\build-cache\$bname"
+    }
+}
+$dname0 = 'php-' + $env:PHP_VER + '-devel-' + $env:VC.toUpper() + '-' + $env:ARCH
+$dname1 = 'php-' + $env:PHP_VER + $ts_part + '-devel-' + $env:VC.toUpper() + '-' + $env:ARCH
+if (-not (Test-Path c:\build-cache\$dname1)) {
+    7z x c:\build-cache\$bname -oc:\build-cache
+    if ($dname0 -ne $dname1) {
+        move c:\build-cache\$dname0 c:\build-cache\$dname1
+    }
+}
+$env:PATH = 'c:\build-cache\' + $dname1 + ';' + $env:PATH
+$bname = 'librabbitmq-0.9.0-' + $env:VC.toUpper() + '-' + $env:ARCH + '.zip'
+if (-not (Test-Path c:\build-cache\$bname)) {
+    Invoke-WebRequest "http://windows.php.net/downloads/pecl/deps/$bname" -OutFile "c:\build-cache\$bname"
+    7z x c:\build-cache\$bname -oc:\build-cache\deps
+}
