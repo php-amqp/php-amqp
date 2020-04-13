@@ -78,3 +78,6 @@ build_script:
 
 after_build:
   - ps: appveyor\package.ps1
+
+notifications:
+  - provider: GitHubPullRequest
