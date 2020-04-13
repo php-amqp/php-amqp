@@ -1,4 +1,4 @@
-# PHP AMQP bindings [![Build Status](https://travis-ci.org/pdezwart/php-amqp.svg?branch=master)](http://travis-ci.org/pdezwart/php-amqp)
+# PHP AMQP bindings [![Build Status](https://travis-ci.org/php-amqp/php-amqp.svg?branch=master)](http://travis-ci.org/php-amqp/php-amqp)
 
 Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/rabbitmq-c)
 
@@ -31,10 +31,10 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
 View [RabbitMQ official tutorials](http://www.rabbitmq.com/getstarted.html) 
 and [php-amqp specific examples](https://github.com/rabbitmq/rabbitmq-tutorials/tree/master/php-amqp).
 
-There are also available [stub files](https://github.com/pdezwart/php-amqp/tree/master/stubs) with accurate PHPDoc which
+There are also available [stub files](https://github.com/php-amqp/php-amqp/tree/master/stubs) with accurate PHPDoc which
 may be also used in your IDE for code completion, navigation and documentation in-place.
 
-Finally, check out the [tests](https://github.com/pdezwart/php-amqp/tree/master/tests) to see typical usage and edge cases.
+Finally, check out the [tests](https://github.com/php-amqp/php-amqp/tree/master/tests) to see typical usage and edge cases.
  
 ### Notes
 
@@ -146,7 +146,7 @@ To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_
  
  [php-signal-handler](https://github.com/RST-com-pl/php-signal-handler) extension uses <i>signal</i> syscall,
  so it will work even if blocking method was executed.
- Some use cases are presented on extension's github page and examples are available [here](https://github.com/pdezwart/php-amqp/pull/89).
+ Some use cases are presented on extension's github page and examples are available [here](https://github.com/php-amqp/php-amqp/pull/89).
 
 
 #### Rolling a release
