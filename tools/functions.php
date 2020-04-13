@@ -28,8 +28,8 @@ const VERSION_REGEX = MAJOR_MINOR_PATCH . '(?:' . STABILITY_REGEX . ')?';
 const VERSION_REGEX_DEV = MAJOR_MINOR_PATCH . 'dev';
 const HEADER_VERSION_FILE = BASE_DIR . '/php_amqp.h';
 const PACKAGE_XML = BASE_DIR . '/package.xml';
-const ISSUE_URL_TEMPLATE = 'https://github.com/pdezwart/php-amqp/issues/%d';
-const COMMIT_URL_TEMPLATE = 'https://github.com/pdezwart/php-amqp/issues/%d';
+const ISSUE_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/issues/%d';
+const COMMIT_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/issues/%d';
 const COMMIT_MESSAGE_CHANGELOG_IGNORED = [
     '[RM]',
     'Back to dev',
@@ -250,7 +250,7 @@ function buildChangelog(string $nextTag, string $previousTag): string
 $changes
 
 For a complete list of changes see:
-https://github.com/pdezwart/php-amqp/compare/${previousTag}...${nextTag}
+https://github.com/php-amqp/php-amqp/compare/${previousTag}...${nextTag}
 
 EOT;
 
