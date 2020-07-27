@@ -27,7 +27,10 @@
 #include "php.h"
 
 #include <amqp.h>
-#if PHP_MAJOR_VERSION >= 7
+#if PHP_MAJOR_VERSION >= 8
+  #include "php8_support.h"
+  #include "php7_support.h"
+#elif PHP_MAJOR_VERSION >= 7
 	#include "php7_support.h"
 #else
 	#include "php5_support.h"

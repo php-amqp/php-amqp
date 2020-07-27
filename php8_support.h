@@ -21,16 +21,14 @@
   +----------------------------------------------------------------------+
 */
 
-#if PHP_MAJOR_VERSION >= 8
-#include "php8_support.h"
-#endif
+#ifndef PHP_AMQP_PHP8_SUPPORT_H
+#define PHP_AMQP_PHP8_SUPPORT_H
 
-extern zend_class_entry *amqp_envelope_class_entry;
+#define TSRMLS_CC
+#define TSRMLS_DC
+#define TSRMLS_C
 
-void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelope TSRMLS_DC);
-
-PHP_MINIT_FUNCTION(amqp_envelope);
-
+#endif //PHP_AMQP_PHP8_SUPPORT_H
 
 /*
 *Local variables:

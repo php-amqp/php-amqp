@@ -45,10 +45,13 @@ typedef struct _amqp_callback_bucket amqp_callback_bucket;
 #error PHP >= 5.6 required
 #endif
 
-#if PHP_MAJOR_VERSION >= 7
-	#include "php7_support.h"
+#if PHP_MAJOR_VERSION >= 8
+#include "php8_support.h"
+#include "php7_support.h"
+#elif PHP_MAJOR_VERSION >= 7
+#include "php7_support.h"
 #else
-	#include "php5_support.h"
+#include "php5_support.h"
 #endif
 
 #include "amqp_connection_resource.h"
