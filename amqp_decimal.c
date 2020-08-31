@@ -53,7 +53,7 @@ static PHP_METHOD(amqp_decimal_class, __construct)
 	}
 
 	if (exponent > AMQP_DECIMAL_EXPONENT_MAX) {
-		zend_throw_exception_ex(amqp_value_exception_class_entry, 0 TSRMLS_CC, "Decimal exponent value must be less than %u.", AMQP_DECIMAL_EXPONENT_MAX);
+		zend_throw_exception_ex(amqp_value_exception_class_entry, 0 TSRMLS_CC, "Decimal exponent value must be less than %u.", (unsigned)AMQP_DECIMAL_EXPONENT_MAX);
 		return;
 	}
     if (significand < AMQP_DECIMAL_SIGNIFICAND_MIN) {
@@ -62,12 +62,12 @@ static PHP_METHOD(amqp_decimal_class, __construct)
     }
 
     if (significand > AMQP_DECIMAL_SIGNIFICAND_MAX) {
-        zend_throw_exception_ex(amqp_value_exception_class_entry, 0 TSRMLS_CC, "Decimal significand value must be less than %u.", AMQP_DECIMAL_SIGNIFICAND_MAX);
+        zend_throw_exception_ex(amqp_value_exception_class_entry, 0 TSRMLS_CC, "Decimal significand value must be less than %u.", (unsigned)AMQP_DECIMAL_SIGNIFICAND_MAX);
         return;
     }
 
-    zend_update_property_long(this_ce, getThis(), ZEND_STRL("exponent"), exponent TSRMLS_CC);
-    zend_update_property_long(this_ce, getThis(), ZEND_STRL("significand"), significand TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("exponent"), exponent TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("significand"), significand TSRMLS_CC);
 }
 /* }}} */
 

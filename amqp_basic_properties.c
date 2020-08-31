@@ -70,7 +70,7 @@ void php_amqp_basic_properties_set_empty_headers(zval *obj TSRMLS_DC) {
     PHP5to7_MAYBE_INIT(headers);
     PHP5to7_ARRAY_INIT(headers);
 
-    zend_update_property(this_ce, obj, ZEND_STRL("headers"), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);
+    zend_update_property(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("headers"), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);
 
     PHP5to7_MAYBE_DESTROY(headers);
 }
@@ -118,29 +118,29 @@ static PHP_METHOD(AMQPBasicProperties, __construct) {
                              ) == FAILURE) {
         return;
     }
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("content_type"), content_type, content_type_len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("content_encoding"), content_encoding, content_encoding_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("content_type"), content_type, content_type_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("content_encoding"), content_encoding, content_encoding_len TSRMLS_CC);
 
     if (headers != NULL) {
-        zend_update_property(this_ce, getThis(), ZEND_STRL("headers"), headers TSRMLS_CC);
+        zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("headers"), headers TSRMLS_CC);
     } else {
         php_amqp_basic_properties_set_empty_headers(getThis() TSRMLS_CC);
     }
 
-    zend_update_property_long(this_ce, getThis(), ZEND_STRL("delivery_mode"), delivery_mode TSRMLS_CC);
-    zend_update_property_long(this_ce, getThis(), ZEND_STRL("priority"), priority TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("delivery_mode"), delivery_mode TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("priority"), priority TSRMLS_CC);
 
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("correlation_id"), correlation_id, correlation_id_len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("reply_to"), reply_to, reply_to_len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("expiration"), expiration, expiration_len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("message_id"), message_id, message_id_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("correlation_id"), correlation_id, correlation_id_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("reply_to"), reply_to, reply_to_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("expiration"), expiration, expiration_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("message_id"), message_id, message_id_len TSRMLS_CC);
 
-    zend_update_property_long(this_ce, getThis(), ZEND_STRL("timestamp"), timestamp TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("timestamp"), timestamp TSRMLS_CC);
 
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("type"), type, type_len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("user_id"), user_id, user_id_len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("app_id"), app_id, app_id_len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("cluster_id"), cluster_id, cluster_id_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("type"), type, type_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("user_id"), user_id, user_id_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("app_id"), app_id, app_id_len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("cluster_id"), cluster_id, cluster_id_len TSRMLS_CC);
 }
 /* }}} */
 
@@ -460,7 +460,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
 				object_init_ex(PHP5to7_MAYBE_PTR(value), amqp_timestamp_class_entry);
 
 				zend_call_method_with_1_params(
-						&value,
+						PHP5to8_OBJ_PROP(&value),
 						amqp_timestamp_class_entry,
 						NULL,
 						"__construct",
@@ -488,7 +488,7 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC) {
                 object_init_ex(PHP5to7_MAYBE_PTR(value), amqp_decimal_class_entry);
 
                 zend_call_method_with_2_params(
-                        &value,
+                        PHP5to8_OBJ_PROP(&value),
                         amqp_decimal_class_entry,
                         NULL,
                         "__construct",
@@ -525,93 +525,93 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
     PHP5to7_ARRAY_INIT(headers);
 
     if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("content_type"), (const char *) p->content_type.bytes, (PHP5to7_param_str_len_type_t) p->content_type.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("content_type"), (const char *) p->content_type.bytes, (PHP5to7_param_str_len_type_t) p->content_type.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("content_type"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("content_type"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_CONTENT_ENCODING_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("content_encoding"), (const char *) p->content_encoding.bytes, (PHP5to7_param_str_len_type_t) p->content_encoding.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("content_encoding"), (const char *) p->content_encoding.bytes, (PHP5to7_param_str_len_type_t) p->content_encoding.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("content_encoding"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("content_encoding"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
         parse_amqp_table(&(p->headers), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);
     }
 
-    zend_update_property(this_ce, obj, ZEND_STRL("headers"), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);
+    zend_update_property(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("headers"), PHP5to7_MAYBE_PTR(headers) TSRMLS_CC);
 
     if (p->_flags & AMQP_BASIC_DELIVERY_MODE_FLAG) {
-        zend_update_property_long(this_ce, obj, ZEND_STRL("delivery_mode"), (PHP5to7_param_long_type_t) p->delivery_mode TSRMLS_CC);
+        zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("delivery_mode"), (PHP5to7_param_long_type_t) p->delivery_mode TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_long(this_ce, obj, ZEND_STRL("delivery_mode"), AMQP_DELIVERY_NONPERSISTENT TSRMLS_CC);
+        zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("delivery_mode"), AMQP_DELIVERY_NONPERSISTENT TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_PRIORITY_FLAG) {
-        zend_update_property_long(this_ce, obj, ZEND_STRL("priority"), (PHP5to7_param_long_type_t) p->priority TSRMLS_CC);
+        zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("priority"), (PHP5to7_param_long_type_t) p->priority TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_long(this_ce, obj, ZEND_STRL("priority"), 0 TSRMLS_CC);
+        zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("priority"), 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_CORRELATION_ID_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("correlation_id"), (const char *) p->correlation_id.bytes, (PHP5to7_param_str_len_type_t) p->correlation_id.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("correlation_id"), (const char *) p->correlation_id.bytes, (PHP5to7_param_str_len_type_t) p->correlation_id.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("correlation_id"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("correlation_id"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_REPLY_TO_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("reply_to"), (const char *) p->reply_to.bytes, (PHP5to7_param_str_len_type_t) p->reply_to.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("reply_to"), (const char *) p->reply_to.bytes, (PHP5to7_param_str_len_type_t) p->reply_to.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("reply_to"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("reply_to"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_EXPIRATION_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("expiration"), (const char *) p->expiration.bytes, (PHP5to7_param_str_len_type_t) p->expiration.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("expiration"), (const char *) p->expiration.bytes, (PHP5to7_param_str_len_type_t) p->expiration.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("expiration"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("expiration"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_MESSAGE_ID_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("message_id"), (const char *) p->message_id.bytes, (PHP5to7_param_str_len_type_t) p->message_id.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("message_id"), (const char *) p->message_id.bytes, (PHP5to7_param_str_len_type_t) p->message_id.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("message_id"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("message_id"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_TIMESTAMP_FLAG) {
-        zend_update_property_long(this_ce, obj, ZEND_STRL("timestamp"), (PHP5to7_param_long_type_t) p->timestamp TSRMLS_CC);
+        zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("timestamp"), (PHP5to7_param_long_type_t) p->timestamp TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_long(this_ce, obj, ZEND_STRL("timestamp"), 0 TSRMLS_CC);
+        zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("timestamp"), 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_TYPE_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("type"), (const char *) p->type.bytes, (PHP5to7_param_str_len_type_t) p->type.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("type"), (const char *) p->type.bytes, (PHP5to7_param_str_len_type_t) p->type.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("type"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("type"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_USER_ID_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("user_id"), (const char *) p->user_id.bytes, (PHP5to7_param_str_len_type_t) p->user_id.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("user_id"), (const char *) p->user_id.bytes, (PHP5to7_param_str_len_type_t) p->user_id.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("user_id"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("user_id"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_APP_ID_FLAG) {
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("app_id"), (const char *) p->app_id.bytes, (PHP5to7_param_str_len_type_t) p->app_id.len TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("app_id"), (const char *) p->app_id.bytes, (PHP5to7_param_str_len_type_t) p->app_id.len TSRMLS_CC);
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, obj, ZEND_STRL("app_id"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(obj), ZEND_STRL("app_id"), "", 0 TSRMLS_CC);
     }
 
     PHP5to7_MAYBE_DESTROY(headers);

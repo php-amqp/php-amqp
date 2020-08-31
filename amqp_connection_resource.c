@@ -112,15 +112,15 @@ static void php_amqp_close_connection_from_server(amqp_rpc_reply_t reply, char *
 
 	if (!reply.reply.id) {
 		PHP_AMQP_G(error_code) = -1;
-		spprintf(message, 0, "Server connection error: %d, message: %s",
-				 PHP_AMQP_G(error_code),
+		spprintf(message, 0, "Server connection error: %ld, message: %s",
+				 (long)PHP_AMQP_G(error_code),
 				 "unexpected response"
 		);
 	} else {
 		PHP_AMQP_G(error_code) = m->reply_code;
 		spprintf(message, 0, "Server connection error: %d, message: %.*s",
 				 m->reply_code,
-				 (PHP5to7_param_str_len_type_t) m->reply_text.len,
+				 (int) m->reply_text.len,
 				 (char *) m->reply_text.bytes
 		);
 	}
@@ -156,15 +156,15 @@ static void php_amqp_close_channel_from_server(amqp_rpc_reply_t reply, char **me
 
 	if (!reply.reply.id) {
 		PHP_AMQP_G(error_code) = -1;
-		spprintf(message, 0, "Server channel error: %d, message: %s",
-				 PHP_AMQP_G(error_code),
+		spprintf(message, 0, "Server channel error: %ld, message: %s",
+				 (long)PHP_AMQP_G(error_code),
 				 "unexpected response"
 		);
 	} else {
 		PHP_AMQP_G(error_code) = m->reply_code;
 		spprintf(message, 0, "Server channel error: %d, message: %.*s",
 			m->reply_code,
-			(PHP5to7_param_str_len_type_t) m->reply_text.len,
+			(int) m->reply_text.len,
 			(char *)m->reply_text.bytes
 		);
 	}

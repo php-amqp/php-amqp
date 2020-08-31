@@ -101,15 +101,24 @@ typedef zval PHP5to7_zend_resource_le_t;
 
 #define PHP5to7_ZEND_ACC_FINAL_CLASS ZEND_ACC_FINAL
 
+
 /* Small change to let it build after a major internal change for php8.0
  * More info:
  * https://github.com/php/php-src/blob/php-8.0.0alpha3/UPGRADING.INTERNALS#L47
  */
 #if PHP_MAJOR_VERSION >= 8
+
 # define TSRMLS_DC
 # define TSRMLS_D
 # define TSRMLS_CC
 # define TSRMLS_C
+
+#define PHP5to8_OBJ_PROP(zv) Z_OBJ_P(zv)
+
+#else
+
+#define PHP5to8_OBJ_PROP(zv) (zv)
+
 # endif
 
 #endif //PHP_AMQP_PHP7_SUPPORT_H

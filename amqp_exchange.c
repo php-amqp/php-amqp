@@ -65,20 +65,20 @@ static PHP_METHOD(amqp_exchange_class, __construct)
 	zval *channelObj;
 	amqp_channel_resource *channel_resource;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "o", &channelObj) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &channelObj, amqp_channel_class_entry) == FAILURE) {
 		return;
 	}
 
 	PHP5to7_MAYBE_INIT(arguments);
 	PHP5to7_ARRAY_INIT(arguments);
-	zend_update_property(this_ce, getThis(), ZEND_STRL("arguments"), PHP5to7_MAYBE_PTR(arguments) TSRMLS_CC);
+	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("arguments"), PHP5to7_MAYBE_PTR(arguments) TSRMLS_CC);
 	PHP5to7_MAYBE_DESTROY(arguments);
 
 	channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(channelObj);
 	PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not create exchange.");
 
-	zend_update_property(this_ce, getThis(), ZEND_STRL("channel"), channelObj TSRMLS_CC);
-	zend_update_property(this_ce, getThis(), ZEND_STRL("connection"), PHP_AMQP_READ_OBJ_PROP(amqp_channel_class_entry, channelObj, "connection") TSRMLS_CC);
+	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("channel"), channelObj TSRMLS_CC);
+	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("connection"), PHP_AMQP_READ_OBJ_PROP(amqp_channel_class_entry, channelObj, "connection") TSRMLS_CC);
 }
 /* }}} */
 
@@ -119,7 +119,7 @@ static PHP_METHOD(amqp_exchange_class, setName)
 	}
 
 	/* Set the exchange name */
-	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("name"), name, name_len TSRMLS_CC);
+	zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("name"), name, name_len TSRMLS_CC);
 }
 /* }}} */
 
@@ -168,10 +168,10 @@ static PHP_METHOD(amqp_exchange_class, setFlags)
 	/* Set the flags based on the bitmask we were given */
 	flagBitmask = flagBitmask ? flagBitmask & PHP_AMQP_EXCHANGE_FLAGS : flagBitmask;
 
-	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("passive"), IS_PASSIVE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("durable"), IS_DURABLE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("auto_delete"), IS_AUTODELETE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, getThis(), ZEND_STRL("internal"), IS_INTERNAL(flagBitmask) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flagBitmask) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("durable"), IS_DURABLE(flagBitmask) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("auto_delete"), IS_AUTODELETE(flagBitmask) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("internal"), IS_INTERNAL(flagBitmask) TSRMLS_CC);
 }
 /* }}} */
 
@@ -204,7 +204,7 @@ static PHP_METHOD(amqp_exchange_class, setType)
 		return;
 	}
 
-	zend_update_property_stringl(this_ce, getThis(), ZEND_STRL("type"), type, type_len TSRMLS_CC);
+	zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("type"), type, type_len TSRMLS_CC);
 }
 /* }}} */
 
@@ -273,7 +273,7 @@ static PHP_METHOD(amqp_exchange_class, setArguments)
 		return;
 	}
 
-	zend_update_property(this_ce, getThis(), ZEND_STRL("arguments"), zvalArguments TSRMLS_CC);
+	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("arguments"), zvalArguments TSRMLS_CC);
 
 	RETURN_TRUE;
 }

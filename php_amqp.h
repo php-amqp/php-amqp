@@ -221,14 +221,14 @@ struct _amqp_connection_object {
 #define PHP_AMQP_NOPARAMS() if (zend_parse_parameters_none() == FAILURE) { return; }
 
 #define PHP_AMQP_RETURN_THIS_PROP(prop_name) \
-    zval * _zv = zend_read_property(this_ce, getThis(), ZEND_STRL(prop_name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC); \
+    zval * _zv = zend_read_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(prop_name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC); \
     RETURN_ZVAL(_zv, 1, 0);
 
-#define PHP_AMQP_READ_OBJ_PROP(cls, obj, name) zend_read_property((cls), (obj), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
+#define PHP_AMQP_READ_OBJ_PROP(cls, obj, name) zend_read_property((cls), PHP5to8_OBJ_PROP(obj), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
 #define PHP_AMQP_READ_OBJ_PROP_DOUBLE(cls, obj, name) Z_DVAL_P(PHP_AMQP_READ_OBJ_PROP((cls), (obj), (name)))
 
-#define PHP_AMQP_READ_THIS_PROP_CE(name, ce) zend_read_property((ce), getThis(), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
-#define PHP_AMQP_READ_THIS_PROP(name) zend_read_property(this_ce, getThis(), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
+#define PHP_AMQP_READ_THIS_PROP_CE(name, ce) zend_read_property((ce), PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
+#define PHP_AMQP_READ_THIS_PROP(name) zend_read_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
 #define PHP_AMQP_READ_THIS_PROP_BOOL(name) Z_BVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 #define PHP_AMQP_READ_THIS_PROP_STR(name) Z_STRVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 #define PHP_AMQP_READ_THIS_PROP_STRLEN(name) (Z_TYPE_P(PHP_AMQP_READ_THIS_PROP(name)) == IS_STRING ? Z_STRLEN_P(PHP_AMQP_READ_THIS_PROP(name)) : 0)

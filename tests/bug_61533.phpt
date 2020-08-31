@@ -21,4 +21,4 @@ try {
 
 ?>
 --EXPECTF--
-%s: Argument 1 passed to AMQPQueue::__construct() must be an instance of AMQPChannel, instance of AMQPConnection given%s
+%s AMQPChannel%s AMQPConnection%s
