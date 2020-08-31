@@ -2,7 +2,7 @@
 AMQPTimestamp
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<') || version_compare(PHP_VERSION, '8.0', '>')) {
+if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '8.0', '<')) {
   print "skip";
 }
 --FILE--
@@ -14,9 +14,16 @@ var_dump($timestamp->getTimestamp(), (string) $timestamp);
 $timestamp = new AMQPTimestamp(100000.1);
 var_dump($timestamp->getTimestamp(), (string) $timestamp);
 
-new AMQPTimestamp();
-
-new AMQPTimestamp("string");
+try {
+	new AMQPTimestamp();
+} catch(ArgumentCountError $e) {
+	echo $e->getMessage() . "\n";
+}
+try {
+	new AMQPTimestamp("string");
+} catch(TypeError $e) {
+	echo $e->getMessage() . "\n";
+}
 
 try {
     new AMQPTimestamp(AMQPTimestamp::MIN - 1);
@@ -42,10 +49,8 @@ string(6) "100000"
 string(6) "100000"
 string(6) "100000"
 string(6) "100000"
-
-Warning: AMQPTimestamp::__construct() expects exactly 1 parameter, 0 given in %s on line %d
-
-Warning: AMQPTimestamp::__construct() expects parameter 1 to be %s, string given in %s on line %d
+AMQPTimestamp::__construct() expects exactly 1 parameter, 0 given
+AMQPTimestamp::__construct(): Argument #1 ($timestamp) must be of type float, string given
 The timestamp parameter must be greater than 0.
 The timestamp parameter must be less than 18446744073709551616.
 bool(true)
