@@ -61,7 +61,7 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 	#if PHP_MAJOR_VERSION >= 7
 		zend_string *str;
 		str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
-		zend_update_property_str(this_ce, getThis(), ZEND_STRL("timestamp"), str);
+		zend_update_property_str(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("timestamp"), str);
         zend_string_delref(str);
 	#else
 		char *str;
@@ -104,7 +104,11 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_getTimestamp, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+#if PHP_MAJOR_VERSION < 8
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_toString, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+#else
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_timestamp_class_toString, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, IS_STRING, 0)
+#endif
 ZEND_END_ARG_INFO()
 
 zend_function_entry amqp_timestamp_class_functions[] = {

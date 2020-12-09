@@ -109,6 +109,8 @@ typedef zend_rsrc_list_entry PHP5to7_zend_resource_le_t;
 #define ZEND_ULONG_FMT "%" PRIu64
 #define PHP5to7_ZEND_ACC_FINAL_CLASS ZEND_ACC_FINAL_CLASS
 
+#define PHP5to8_OBJ_PROP(zv) (zv)
+
 #endif //PHP_AMQP_PHP5_SUPPORT_H
 
 /*
