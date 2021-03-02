@@ -269,7 +269,7 @@ class AMQPConnection
     /**
      * Sets the interval of time to wait for income activity from AMQP broker
      *
-     * @param int $timeout
+     * @param float $timeout
      *
      * @return bool
      */
