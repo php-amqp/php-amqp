@@ -1,0 +1,160 @@
+name: Test
+
+on:
+    push:
+    pull_request:
+        types: [opened, synchronize, edited, reopened]
+
+env:
+    ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    TEST_TIMEOUT: 120
+
+jobs:
+    test:
+        name: PHP ${{ matrix.php-version }} + librabbitmq ${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args }}
+
+        runs-on: ubuntu-18.04
+
+        continue-on-error: ${{ matrix.experimental }}
+
+        env:
+            TEST_PHP_ARGS: ${{ matrix.test-php-args }}
+
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - php-version: '8.0'
+                      librabbitmq-version: 'master'
+                      experimental: false
+                    - php-version: '8.0'
+                      librabbitmq-version: 'master'
+                      test-php-args: '-m'
+                      experimental: true
+                    - php-version: '8.0'
+                      librabbitmq-version: 'v0.8.0'
+                      experimental: false
+                    - php-version: '8.0'
+                      librabbitmq-version: 'v0.7.1'
+                      experimental: false
+
+                    - php-version: '7.4'
+                      librabbitmq-version: 'master'
+                      experimental: false
+                    - php-version: '7.4'
+                      librabbitmq-version: 'v0.8.0'
+                      experimental: false
+                    - php-version: '7.4'
+                      librabbitmq-version: 'v0.8.0'
+                      test-php-args: '-m'
+                      experimental: true
+                    - php-version: '7.4'
+                      librabbitmq-version: 'v0.7.1'
+                      experimental: false
+
+                    - php-version: '7.3'
+                      librabbitmq-version: 'master'
+                      experimental: false
+                    - php-version: '7.3'
+                      librabbitmq-version: 'v0.8.0'
+                      experimental: false
+                    - php-version: '7.3'
+                      librabbitmq-version: 'v0.7.1'
+                      experimental: false
+                    - php-version: '7.3'
+                      librabbitmq-version: 'v0.7.1'
+                      test-php-args: '-m'
+                      experimental: true
+
+                    - php-version: '7.2'
+                      librabbitmq-version: 'master'
+                      experimental: false
+                    - php-version: '7.2'
+                      librabbitmq-version: 'master'
+                      test-php-args: '-m'
+                      experimental: true
+                    - php-version: '7.2'
+                      librabbitmq-version: 'v0.8.0'
+                      experimental: false
+                    - php-version: '7.2'
+                      librabbitmq-version: 'v0.7.1'
+                      experimental: false
+
+                    - php-version: '7.1'
+                      librabbitmq-version: 'master'
+                      experimental: false
+                    - php-version: '7.1'
+                      librabbitmq-version: 'v0.8.0'
+                      experimental: false
+                    - php-version: '7.1'
+                      librabbitmq-version: 'v0.8.0'
+                      test-php-args: '-m'
+                      experimental: true
+                    - php-version: '7.1'
+                      librabbitmq-version: 'v0.7.1'
+                      experimental: false
+
+                    - php-version: '7.0'
+                      librabbitmq-version: 'master'
+                      experimental: false
+                    - php-version: '7.0'
+                      librabbitmq-version: 'v0.8.0'
+                      experimental: false
+                    - php-version: '7.0'
+                      librabbitmq-version: 'v0.7.1'
+                      experimental: false
+                    - php-version: '7.0'
+                      librabbitmq-version: 'v0.7.1'
+                      test-php-args: '-m'
+                      experimental: true
+
+                    - php-version: '5.6'
+                      librabbitmq-version: 'master'
+                      experimental: false
+                    - php-version: '5.6'
+                      librabbitmq-version: 'master'
+                      test-php-args: '-m'
+                      experimental: true
+                    - php-version: '5.6'
+                      librabbitmq-version: 'v0.8.0'
+                      experimental: false
+                    - php-version: '5.6'
+                      librabbitmq-version: 'v0.7.1'
+                      experimental: false
+
+        services:
+            rabbitmq:
+                image: rabbitmq:3
+                ports:
+                    - 5671:5671
+                    - 5672:5672
+                    - 15671:15671
+                    - 15672:15672
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Install packages
+              run: sudo apt-get install -y cmake valgrind
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  coverage: none
+
+            - name: Build librabbitmq
+              run: sudo ./provision/install_rabbitmq-c.sh ${{ matrix.librabbitmq-version }}
+
+            - name: Build PHP extension
+              run: phpize && ./configure && make
+
+            - name: Test PHP extension
+              run: make test | tee result.txt
+
+            - name: Benchmark PHP extension
+              run: php -n -c './tmp-php.ini' -d "extension_dir=./modules/" -d "extension=amqp.so" benchmark.php
+
+            - name: Dump report
+              run: sh test-report.sh

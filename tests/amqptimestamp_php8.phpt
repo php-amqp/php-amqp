@@ -49,7 +49,7 @@ string(6) "100000"
 string(6) "100000"
 string(6) "100000"
 string(6) "100000"
-AMQPTimestamp::__construct() expects exactly 1 parameter, 0 given
+AMQPTimestamp::__construct() expects exactly 1 argument, 0 given
 AMQPTimestamp::__construct(): Argument #1 ($timestamp) must be of type float, string given
 The timestamp parameter must be greater than 0.
 The timestamp parameter must be less than 18446744073709551616.
