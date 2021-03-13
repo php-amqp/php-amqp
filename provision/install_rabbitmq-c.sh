@@ -20,9 +20,9 @@ printf 'Installing rabbitmq-c version %s...\n' "$LIBRABBITMQ_VERSION"
 
 # Let's build in /dev/shm if available (it's a ramdisk - much faster)
 if test -d /dev/shm; then
-    BUILD_TMP=/dev/shm/php-amqb-build
+    BUILD_TMP=/dev/shm/php-amqp-build
 else
-    BUILD_TMP=/tmp/shm/php-amqb-build
+    BUILD_TMP=/tmp/shm/php-amqp-build
 fi
 
 # Prepare the build directory
