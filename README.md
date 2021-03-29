@@ -26,17 +26,12 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
  [PECL](http://pecl.php.net/package/amqp) or compile from sources
  (follow [PHP official docs instruction](http://us1.php.net/manual/en/install.pecl.phpize.php)).
  
-#### Windows Users
-Before download, check if your PHP installation is thread safe or non-thread safe typing this on Terminal:
-
-`php -i|findstr "Thread"`
-
-Next, proceed:
-
-- Download the right version of the extension https://pecl.php.net/package/amqp
-- After download, copy rabbitmq.4.dll and rabbitmq.4.pdb files to PHP root folder and copy php_amqp.dll and php_amqp.pdb files to PHP\ext folder
-- Add extension=amqp to the php.ini file
-- Check if is everything OK with php -m
+#### Windows users
+ - Before download, check if your PHP installation is thread safe or non-thread safe by entering <kbd>php -i|findstr "Thread"</kbd> in your terminal
+ - Download thread safe or non-thread safe version of the extension from https://pecl.php.net/package/amqp
+ - After download, copy the `rabbitmq.4.dll` and `rabbitmq.4.pdb` files to the PHP root folder and copy `php_amqp.dll` and `php_amqp.pdb` files to `PHP\ext` folder
+ - Add `extension=amqp` to the `php.ini` file
+ - Check if is everything OK with <kbd>php -m</kbd>
 
 ### Documentation
 
