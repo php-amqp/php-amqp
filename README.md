@@ -13,7 +13,8 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
 
 
 ### Installation
- 
+
+#### Linux
  Some systems has php-amqp extension in their repo or available via external repositories, so it is MAY be the preferable
  way to install.
 
@@ -25,6 +26,13 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
  If you want to stay on the bleeding edge and have the latest version, install php-amqp extension from
  [PECL](http://pecl.php.net/package/amqp) or compile from sources
  (follow [PHP official docs instruction](http://us1.php.net/manual/en/install.pecl.phpize.php)).
+ 
+#### Windows
+ - Before download, check if your PHP installation is thread safe or non-thread safe by entering <kbd>php -i|findstr "Thread"</kbd> in your terminal
+ - Download thread safe or non-thread safe version of the extension for your PHP version from https://pecl.php.net/package/amqp. Look for the "DLL" link next to each release in the list of available releases
+ - After download, copy the `rabbitmq.4.dll` and `rabbitmq.4.pdb` files to the PHP root folder and copy `php_amqp.dll` and `php_amqp.pdb` files to `PHP\ext` folder
+ - Add `extension=amqp` to the `php.ini` file
+ - Check if the module is properly installed with <kbd>php -m</kbd>
 
 ### Documentation
 
