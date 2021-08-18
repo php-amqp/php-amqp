@@ -29,7 +29,7 @@ if (-not (Test-Path c:\build-cache\$dname1)) {
     }
 }
 $env:PATH = 'c:\build-cache\' + $dname1 + ';' + $env:PATH
-$bname = $env:DEP + '-' + 'vc15' + '-' + $env:ARCH + '.zip'
+$bname = $env:DEP + '-' + $env:VC + '-' + $env:ARCH + '.zip'
 if (-not (Test-Path c:\build-cache\$bname)) {
     Invoke-WebRequest "http://windows.php.net/downloads/pecl/deps/$bname" -OutFile "c:\build-cache\$bname"
     7z x c:\build-cache\$bname -oc:\build-cache\deps
