@@ -244,7 +244,7 @@ class AMQPConnection
     /**
      * Sets the interval of time to wait for income activity from AMQP broker
      *
-     * @deprecated use AMQPConnection::setReadTimout($timeout) instead
+     * @deprecated use AMQPConnection::setReadTimeout($timeout) instead
      *
      * @param int $timeout
      *
