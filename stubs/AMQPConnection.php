@@ -258,7 +258,7 @@ class AMQPConnection
      * Get the configured interval of time to wait for income activity
      * from AMQP broker
      *
-     * @deprecated use AMQPConnection::getReadTimout() instead
+     * @deprecated use AMQPConnection::getReadTimeout() instead
      *
      * @return float
      */
