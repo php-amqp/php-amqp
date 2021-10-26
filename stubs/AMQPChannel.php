@@ -274,6 +274,8 @@ class AMQPChannel
      * Note, this method also catch all basic.return message from server.
      *
      * @param float $timeout Timeout in seconds. May be fractional.
+     *
+     * @throws AMQPQueueException If timeout occurs.
      */
     public function waitForConfirm($timeout = 0.0)
     {
@@ -304,6 +306,8 @@ class AMQPChannel
      * Start wait loop for basic.return AMQP server methods
      *
      * @param float $timeout Timeout in seconds. May be fractional.
+     *
+     * @throws AMQPQueueException If timeout occurs.
      */
     public function waitForBasicReturn($timeout = 0.0)
     {

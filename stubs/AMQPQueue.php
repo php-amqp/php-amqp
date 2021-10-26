@@ -111,6 +111,7 @@ class AMQPQueue
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPEnvelopeException   When no queue found for envelope.
+     * @throws AMQPQueueException      If timeout occurs or queue is not exists.
      *
      * @return void
      */
@@ -126,6 +127,7 @@ class AMQPQueue
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
+     * @throws AMQPQueueException      On failure.
      *
      * @return integer the message count.
      */
@@ -171,6 +173,7 @@ class AMQPQueue
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
+     * @throws AMQPQueueException      If queue is not exist.
      *
      * @return AMQPEnvelope|boolean
      */
