@@ -246,7 +246,7 @@ class AMQPConnection
      *
      * @deprecated use AMQPConnection::setReadTimout($timeout) instead
      *
-     * @param int $timeout
+     * @param float $timeout
      *
      * @throws AMQPConnectionException If timeout is less than 0.
      *
@@ -294,7 +294,7 @@ class AMQPConnection
     /**
      * Sets the interval of time to wait for outcome activity to AMQP broker
      *
-     * @param int $timeout
+     * @param float $timeout
      *
      * @throws AMQPConnectionException If timeout is less than 0.
      *
@@ -317,7 +317,7 @@ class AMQPConnection
     /**
      * Sets the interval of time to wait for RPC activity to AMQP broker
      *
-     * @param int $timeout
+     * @param float $timeout
      *
      * @throws AMQPConnectionException If timeout is less than 0.
      *
