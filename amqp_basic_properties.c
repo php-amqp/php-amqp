@@ -36,7 +36,11 @@
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
-# include "win32/php_stdint.h"
+# if PHP_VERSION_ID >= 80000
+#  include "main/php_stdint.h"
+# else
+#  include "win32/php_stdint.h"
+# endif
 # include "win32/signal.h"
 #else
 # include <signal.h>
