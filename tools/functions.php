@@ -103,7 +103,6 @@ function modifyInteractive(string $text): string
     $file = tempnam(sys_get_temp_dir(), __FUNCTION__);
     file_put_contents($file, $text);
 
-
     $editor = $_SERVER['EDITOR'] ?? 'vim';
     $command = sprintf('%s %s > `tty`', escapeshellcmd($editor), escapeshellarg($file));
 
@@ -194,7 +193,7 @@ function setSourceVersion(string $nextVersion): void
 
 function getPreviousVersion(): string
 {
-    $previousVersion = ltrim(trim(`git tag -l --sort=-v:refname | head -n1`), 'v');
+    $previousVersion = ltrim(trim(executeCommand('git tag -l --sort=-v:refname | head -n1')), 'v');
 
     assert(preg_match(re(VERSION_REGEX), $previousVersion));
 
@@ -218,15 +217,18 @@ function isIgnoredMessage(string $message): bool
 function buildChangelog(string $nextTag, string $previousTag): string
 {
     $commits = array_filter(
-        explode("\n", trim(`git log --oneline ${previousTag}..origin/master --pretty=%h --no-merges`))
+        explode(
+            "\n",
+            trim(executeCommand(sprintf('git log --oneline %s..origin/master --pretty=%%h --no-merges', $previousTag)))
+        )
     );
 
     $changeLines = [];
 
     foreach ($commits as $commit) {
-        $committerName = trim(`git log $commit^..$commit --pretty=%an`);
-        $committerEmail = trim(`git log $commit^..$commit --pretty=%ae`);
-        $message = trim(`git log $commit^..$commit --pretty=%s`);
+        $committerName = trim(executeCommand(sprintf('git log %1$s^..%1$s --pretty=%%an', $commit)));
+        $committerEmail = trim(executeCommand(sprintf('git log %1$s^..%1$s --pretty=%%ae', $commit)));
+        $message = trim(executeCommand(sprintf('git log %1$s^..%1$s --pretty=%%s', $commit)));
 
         if (isIgnoredMessage($message)) {
             continue;
@@ -260,15 +262,19 @@ EOT;
 function archiveRelease(): void {
     $dom = packageXml();
     $xml = simplexml_import_dom($dom);
+    assert($xml !== null);
 
     $release = $dom->createElementNS('http://pear.php.net/dtd/package-2.0', 'release');
 
     $elements = ['date', 'time', 'version', 'stability', 'license', 'notes'];
     foreach ($elements as $element) {
-        $release->appendChild(dom_import_simplexml($xml->{$element})->cloneNode(true));
+        $elementXml = dom_import_simplexml($xml->{$element});
+        assert($elementXml !== null);
+        $release->appendChild($elementXml->cloneNode(true));
     }
 
     $changelogDom = dom_import_simplexml($xml->changelog);
+    assert($changelogDom !== null);
     $changelogDom->insertBefore($release, $changelogDom->firstChild);
 }
 
@@ -276,6 +282,7 @@ function setStability(string $nextVersion): void
 {
     $dom = packageXml();
     $xml = simplexml_import_dom($dom);
+    assert($xml !== null);
 
     $stability = preg_match(re('.*(?<stability>' . STABILITY_REGEX . ')'), $nextVersion, $matches)
         ? $matches['stability']
@@ -289,6 +296,7 @@ function setStability(string $nextVersion): void
 
 function executeCommand(string $command): string {
     exec($command, $output, $returnCode);
+
     if ($returnCode !== 0) {
         printf("Could not execute command \"%s\"\n", $command);
         echo implode(PHP_EOL, $output);
