@@ -22,7 +22,7 @@ use function tempnam;
 use function trim;
 
 const BASE_DIR = __DIR__ . '/../';
-const STABILITY_REGEX = '(?:alpha|beta|dev)\d*';
+const STABILITY_REGEX = '(?:alpha|beta|dev|RC)\d*';
 const MAJOR_MINOR_PATCH = '\d+\.\d+\.\d+';
 const VERSION_REGEX = MAJOR_MINOR_PATCH . '(?:' . STABILITY_REGEX . ')?';
 const VERSION_REGEX_DEV = MAJOR_MINOR_PATCH . 'dev';
@@ -281,6 +281,7 @@ function setStability(string $nextVersion): void
         ? $matches['stability']
         : 'stable';
     $stability = $stability === 'dev' ? 'devel' : $stability;
+    $stability = strpos($stability, 'RC') === 0 ? 'beta' : $stability;
 
     $xml->stability->release = $stability;
     $xml->stability->api = $stability;
