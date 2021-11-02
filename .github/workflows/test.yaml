@@ -24,6 +24,20 @@ jobs:
             fail-fast: false
             matrix:
                 include:
+                    - php-version: '8.1'
+                      librabbitmq-version: 'master'
+                      experimental: true
+                    - php-version: '8.1'
+                      librabbitmq-version: 'master'
+                      test-php-args: '-m'
+                      experimental: true
+                    - php-version: '8.1'
+                      librabbitmq-version: 'v0.8.0'
+                      experimental: true
+                    - php-version: '8.1'
+                      librabbitmq-version: 'v0.7.1'
+                      experimental: true
+
                     - php-version: '8.0'
                       librabbitmq-version: 'master'
                       experimental: false
