@@ -71,6 +71,7 @@ function savePackageXml(): void
 function getPackageVersion(): string
 {
     $xml = simplexml_import_dom(packageXml());
+    assert($xml !== null);
 
     $release = $xml->version->release;
 
@@ -82,6 +83,7 @@ function getPackageVersion(): string
 function setPackageVersion(string $nextVersion): void
 {
     $xml = simplexml_import_dom(packageXml());
+    assert($xml !== null);
 
     $xml->version->release = $nextVersion;
     $xml->version->api = $nextVersion;
@@ -90,6 +92,7 @@ function setPackageVersion(string $nextVersion): void
 function setChangelog(string $changelog): void
 {
     $xml = simplexml_import_dom(packageXml());
+    assert($xml !== null);
 
     $noteNode = dom_import_simplexml($xml->notes);
     foreach ($noteNode->childNodes as $child) {
@@ -120,6 +123,7 @@ function modifyInteractive(string $text): string
 function setDate(DateTimeImmutable $now): void
 {
     $xml = simplexml_import_dom(packageXml());
+    assert($xml !== null);
 
     $xml->date = $now->format('Y-m-d');
     $xml->time = $now->format('H:i:s');
@@ -157,6 +161,7 @@ function removeFromPackageXmlNodes(SimpleXMLElement $el, string $expression): vo
 
 function updateFiles(): void {
     $xml = simplexml_import_dom(packageXml());
+    assert($xml !== null);
     $sourceExpression = '*.[ch]';
     $testsExpression = '*.phpt';
     $stubExpression = 'stubs/*.php';
