@@ -650,7 +650,7 @@ static PHP_METHOD(amqp_exchange_class, bind)
 
 	amqp_table_t *arguments = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|sa",
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!a",
 							  &src_name, &src_name_len,
 							  &keyname, &keyname_len,
 							  &zvalArguments) == FAILURE) {
@@ -707,7 +707,7 @@ static PHP_METHOD(amqp_exchange_class, unbind)
 
 	amqp_table_t *arguments = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|sa",
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!a",
 							  &src_name, &src_name_len,
 							  &keyname, &keyname_len,
 							  &zvalArguments) == FAILURE) {
