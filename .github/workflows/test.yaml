@@ -13,7 +13,7 @@ jobs:
     test:
         name: PHP ${{ matrix.php-version }} + librabbitmq ${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args }}
 
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-latest
 
         continue-on-error: ${{ matrix.experimental }}
 
