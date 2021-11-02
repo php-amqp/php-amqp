@@ -161,6 +161,9 @@ jobs:
             - name: Build librabbitmq
               run: sudo ./provision/install_rabbitmq-c.sh ${{ matrix.librabbitmq-version }}
 
+            - name: Debug librabbitmq
+              run: pkg-config librabbitmq --debug
+
             - name: Build PHP extension
               run: phpize && ./configure && make
 
