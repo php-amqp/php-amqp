@@ -206,10 +206,10 @@ class AMQPExchange
     /**
      * Set the flags on an exchange.
      *
-     * @param integer $flags A bitmask of flags. This call currently only
-     *                       considers the following flags:
-     *                       AMQP_DURABLE, AMQP_PASSIVE
-     *                       (and AMQP_DURABLE, if librabbitmq version >= 0.5.3)
+     * @param integer|null $flags A bitmask of flags. This call currently only
+     *                            considers the following flags:
+     *                            AMQP_DURABLE, AMQP_PASSIVE
+     *                            (and AMQP_DURABLE, if librabbitmq version >= 0.5.3)
      *
      * @return void
      */

@@ -172,7 +172,7 @@ static PHP_METHOD(amqp_queue_class, setFlags)
 {
 	PHP5to7_param_long_type_t flagBitmask;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flagBitmask) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l!", &flagBitmask) == FAILURE) {
 		return;
 	}
 
