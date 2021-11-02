@@ -11,9 +11,6 @@ if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
 $decimal = new AMQPDecimal(1, 2);
 var_dump($decimal->getExponent(), $decimal->getSignificand());
 
-$decimal = new AMQPDecimal(1.1, 2.2);
-var_dump($decimal->getExponent(), $decimal->getSignificand());
-
 
 try {
     new AMQPDecimal(-1, 1);
@@ -51,8 +48,6 @@ var_dump(AMQPDecimal::SIGNIFICAND_MAX);
 
 ==END==
 --EXPECT--
-int(1)
-int(2)
 int(1)
 int(2)
 Decimal exponent value must be unsigned.
