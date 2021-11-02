@@ -43,7 +43,7 @@ function re(string ...$regex): string
 
 function gitFetch(): void
 {
-    `git fetch --all`;
+    executeCommand('git fetch --all');
 }
 
 function packageXml(): DOMDocument
@@ -64,7 +64,7 @@ function savePackageXml(): void
 {
     packageXml()->save(PACKAGE_XML);
     $packageXml = PACKAGE_XML;
-    $pretty = `XMLLINT_INDENT="    " xmllint --format $packageXml`;
+    $pretty = executeCommand(sprintf('XMLLINT_INDENT="    " xmllint --format %s', $packageXml));
     file_put_contents(PACKAGE_XML, $pretty);
 }
 
@@ -286,7 +286,7 @@ function setStability(string $nextVersion): void
     $xml->stability->api = $stability;
 }
 
-function executeCommand(string $command): void {
+function executeCommand(string $command): string {
     exec($command, $output, $returnCode);
     if ($returnCode !== 0) {
         printf("Could not execute command \"%s\"\n", $command);
@@ -294,6 +294,8 @@ function executeCommand(string $command): void {
         echo "\n";
         exit(1);
     }
+
+    return implode('', $output);
 }
 
 function validatePackage(): void {
