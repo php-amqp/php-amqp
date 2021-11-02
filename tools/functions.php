@@ -296,7 +296,7 @@ function executeCommand(string $command): string {
         exit(1);
     }
 
-    return implode('', $output);
+    return implode("\n", $output);
 }
 
 function validatePackage(): void {
