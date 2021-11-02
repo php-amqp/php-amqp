@@ -95,6 +95,7 @@ function setChangelog(string $changelog): void
     assert($xml !== null);
 
     $noteNode = dom_import_simplexml($xml->notes);
+    assert($noteNode !== null);
     foreach ($noteNode->childNodes as $child) {
         $noteNode->removeChild($child);
     }
@@ -155,6 +156,7 @@ function removeFromPackageXmlNodes(SimpleXMLElement $el, string $expression): vo
 
     foreach ($nodesToDelete as $node) {
         $dom = dom_import_simplexml($node);
+        assert($dom !== null);
         $dom->parentNode->removeChild($dom);
     }
 }
