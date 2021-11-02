@@ -141,27 +141,27 @@ static PHP_METHOD(amqp_queue_class, getFlags)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
-	PHP5to7_param_long_type_t flagBitmask = 0;
+	PHP5to7_param_long_type_t flags = 0;
 
 	PHP_AMQP_NOPARAMS();
 
 	if (PHP_AMQP_READ_THIS_PROP_BOOL("passive")) {
-		flagBitmask |= AMQP_PASSIVE;
+		flags |= AMQP_PASSIVE;
 	}
 
 	if (PHP_AMQP_READ_THIS_PROP_BOOL("durable")) {
-		flagBitmask |= AMQP_DURABLE;
+		flags |= AMQP_DURABLE;
 	}
 
 	if (PHP_AMQP_READ_THIS_PROP_BOOL("exclusive")) {
-		flagBitmask |= AMQP_EXCLUSIVE;
+		flags |= AMQP_EXCLUSIVE;
 	}
 
 	if (PHP_AMQP_READ_THIS_PROP_BOOL("auto_delete")) {
-		flagBitmask |= AMQP_AUTODELETE;
+		flags |= AMQP_AUTODELETE;
 	}
 
-	RETURN_LONG(flagBitmask);
+	RETURN_LONG(flags);
 }
 /* }}} */
 
@@ -170,19 +170,20 @@ static PHP_METHOD(amqp_queue_class, getFlags)
 Set the queue parameters */
 static PHP_METHOD(amqp_queue_class, setFlags)
 {
-	PHP5to7_param_long_type_t flagBitmask;
+	PHP5to7_param_long_type_t flags;
+	zend_bool flags_is_null = 1;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l!", &flagBitmask) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l!", &flags, &flags_is_null) == FAILURE) {
 		return;
 	}
 
 	/* Set the flags based on the bitmask we were given */
-	flagBitmask = flagBitmask ? flagBitmask & PHP_AMQP_QUEUE_FLAGS : flagBitmask;
+	flags = flags ? flags & PHP_AMQP_QUEUE_FLAGS : flags;
 
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("durable"), IS_DURABLE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("exclusive"), IS_EXCLUSIVE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("auto_delete"), IS_AUTODELETE(flagBitmask) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("durable"), IS_DURABLE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("exclusive"), IS_EXCLUSIVE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("auto_delete"), IS_AUTODELETE(flags) TSRMLS_CC);
 
 	/* BC */
 	RETURN_TRUE;

@@ -164,8 +164,9 @@ Set the exchange parameters */
 static PHP_METHOD(amqp_exchange_class, setFlags)
 {
 	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
+	zend_bool flags_is_null = 1;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l!", &flags) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l!", &flags, &flags_is_null) == FAILURE) {
 		return;
 	}
 
