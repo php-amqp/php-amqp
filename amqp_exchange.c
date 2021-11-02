@@ -645,8 +645,10 @@ static PHP_METHOD(amqp_exchange_class, bind)
 
 	amqp_channel_resource *channel_resource;
 
-	char *src_name;		PHP5to7_param_str_len_type_t src_name_len = 0;
-	char *keyname;		PHP5to7_param_str_len_type_t keyname_len = 0;
+	char *src_name;
+	PHP5to7_param_str_len_type_t src_name_len = 0;
+	char *keyname = NULL;
+	PHP5to7_param_str_len_type_t keyname_len = 0;
 
 	amqp_table_t *arguments = NULL;
 
@@ -669,7 +671,7 @@ static PHP_METHOD(amqp_exchange_class, bind)
 		channel_resource->channel_id,
 		amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("name")),
 		(src_name_len > 0 ? amqp_cstring_bytes(src_name) : amqp_empty_bytes),
-		(keyname_len  > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
+		(keyname != NULL && keyname_len > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
 		(arguments ? *arguments : amqp_empty_table)
 	);
 
@@ -702,8 +704,10 @@ static PHP_METHOD(amqp_exchange_class, unbind)
 
 	amqp_channel_resource *channel_resource;
 
-	char *src_name; 	PHP5to7_param_str_len_type_t src_name_len = 0;
-	char *keyname;		PHP5to7_param_str_len_type_t keyname_len = 0;
+	char *src_name;
+	PHP5to7_param_str_len_type_t src_name_len = 0;
+	char *keyname = NULL;
+	PHP5to7_param_str_len_type_t keyname_len = 0;
 
 	amqp_table_t *arguments = NULL;
 
@@ -726,7 +730,7 @@ static PHP_METHOD(amqp_exchange_class, unbind)
 		channel_resource->channel_id,
 		amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("name")),
 		(src_name_len > 0 ? amqp_cstring_bytes(src_name) : amqp_empty_bytes),
-		(keyname_len  > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
+		(keyname != NULL && keyname_len > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
 		(arguments ? *arguments : amqp_empty_table)
 	);
 
