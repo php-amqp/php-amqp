@@ -134,27 +134,27 @@ static PHP_METHOD(amqp_exchange_class, getFlags)
 {
 	PHP5to7_READ_PROP_RV_PARAM_DECL;
 
-	PHP5to7_param_long_type_t flagBitmask = 0;
+	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
 
 	PHP_AMQP_NOPARAMS();
 
 	if (PHP_AMQP_READ_THIS_PROP_BOOL("passive")) {
-		flagBitmask |= AMQP_PASSIVE;
+		flags |= AMQP_PASSIVE;
 	}
 
 	if (PHP_AMQP_READ_THIS_PROP_BOOL("durable")) {
-		flagBitmask |= AMQP_DURABLE;
+		flags |= AMQP_DURABLE;
 	}
 
 	if (PHP_AMQP_READ_THIS_PROP_BOOL("auto_delete")) {
-		flagBitmask |= AMQP_AUTODELETE;
+		flags |= AMQP_AUTODELETE;
 	}
 
 	if (PHP_AMQP_READ_THIS_PROP_BOOL("internal")) {
-		flagBitmask |= AMQP_INTERNAL;
+		flags |= AMQP_INTERNAL;
 	}
 
-	RETURN_LONG(flagBitmask);
+	RETURN_LONG(flags);
 }
 /* }}} */
 
@@ -163,19 +163,20 @@ static PHP_METHOD(amqp_exchange_class, getFlags)
 Set the exchange parameters */
 static PHP_METHOD(amqp_exchange_class, setFlags)
 {
-	PHP5to7_param_long_type_t flagBitmask;
+	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
+	zend_bool flags_is_null = 1;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flagBitmask) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l!", &flags, &flags_is_null) == FAILURE) {
 		return;
 	}
 
 	/* Set the flags based on the bitmask we were given */
-	flagBitmask = flagBitmask ? flagBitmask & PHP_AMQP_EXCHANGE_FLAGS : flagBitmask;
+	flags = flags ? flags & PHP_AMQP_EXCHANGE_FLAGS : flags;
 
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("durable"), IS_DURABLE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("auto_delete"), IS_AUTODELETE(flagBitmask) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("internal"), IS_INTERNAL(flagBitmask) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("durable"), IS_DURABLE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("auto_delete"), IS_AUTODELETE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("internal"), IS_INTERNAL(flags) TSRMLS_CC);
 }
 /* }}} */
 
@@ -386,8 +387,9 @@ static PHP_METHOD(amqp_exchange_class, delete)
 
 	amqp_channel_resource *channel_resource;
 
-	char *name = NULL;  PHP5to7_param_str_len_type_t name_len = 0;
-	PHP5to7_param_long_type_t flags = 0;
+	char *name = NULL;
+	PHP5to7_param_str_len_type_t name_len = 0;
+	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|sl",
 							  &name, &name_len,
@@ -432,8 +434,10 @@ static PHP_METHOD(amqp_exchange_class, publish)
 
 	amqp_channel_resource *channel_resource;
 
-	char *key_name = NULL;  PHP5to7_param_str_len_type_t key_len = 0;
-	char *msg 	   = NULL;  PHP5to7_param_str_len_type_t msg_len = 0;
+	char *key_name = NULL;
+	PHP5to7_param_str_len_type_t key_len = 0;
+	char *msg = NULL;
+	PHP5to7_param_str_len_type_t msg_len = 0;
 	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
 
 #ifndef PHP_WIN32
@@ -645,12 +649,14 @@ static PHP_METHOD(amqp_exchange_class, bind)
 
 	amqp_channel_resource *channel_resource;
 
-	char *src_name;		PHP5to7_param_str_len_type_t src_name_len = 0;
-	char *keyname;		PHP5to7_param_str_len_type_t keyname_len = 0;
+	char *src_name;
+	PHP5to7_param_str_len_type_t src_name_len = 0;
+	char *keyname = NULL;
+	PHP5to7_param_str_len_type_t keyname_len = 0;
 
 	amqp_table_t *arguments = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|sa",
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!a",
 							  &src_name, &src_name_len,
 							  &keyname, &keyname_len,
 							  &zvalArguments) == FAILURE) {
@@ -669,7 +675,7 @@ static PHP_METHOD(amqp_exchange_class, bind)
 		channel_resource->channel_id,
 		amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("name")),
 		(src_name_len > 0 ? amqp_cstring_bytes(src_name) : amqp_empty_bytes),
-		(keyname_len  > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
+		(keyname != NULL && keyname_len > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
 		(arguments ? *arguments : amqp_empty_table)
 	);
 
@@ -702,12 +708,14 @@ static PHP_METHOD(amqp_exchange_class, unbind)
 
 	amqp_channel_resource *channel_resource;
 
-	char *src_name; 	PHP5to7_param_str_len_type_t src_name_len = 0;
-	char *keyname;		PHP5to7_param_str_len_type_t keyname_len = 0;
+	char *src_name;
+	PHP5to7_param_str_len_type_t src_name_len = 0;
+	char *keyname = NULL;
+	PHP5to7_param_str_len_type_t keyname_len = 0;
 
 	amqp_table_t *arguments = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|sa",
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!a",
 							  &src_name, &src_name_len,
 							  &keyname, &keyname_len,
 							  &zvalArguments) == FAILURE) {
@@ -726,7 +734,7 @@ static PHP_METHOD(amqp_exchange_class, unbind)
 		channel_resource->channel_id,
 		amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("name")),
 		(src_name_len > 0 ? amqp_cstring_bytes(src_name) : amqp_empty_bytes),
-		(keyname_len  > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
+		(keyname != NULL && keyname_len > 0 ? amqp_cstring_bytes(keyname)  : amqp_empty_bytes),
 		(arguments ? *arguments : amqp_empty_table)
 	);
 

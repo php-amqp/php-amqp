@@ -32,8 +32,9 @@ mkdir -p $BUILD_TMP
 # Download and extract the source code
 curl -sSLf "https://codeload.github.com/alanxz/rabbitmq-c/tar.gz/$LIBRABBITMQ_VERSION" | tar xz --directory=$BUILD_TMP
 
-# Prepare for building
+
 cd $BUILD_TMP/rabbitmq-c-*
+sed -e "s:@VERSION@:@RMQ_VERSION@:g" -i librabbitmq.pc.in
 mkdir -p build
 cd build
 cmake ..

@@ -16,22 +16,22 @@ environment:
       ARCH: x64
       TS: 1
       VC: vs16
-      DEP: librabbitmq-0.9.0
+      DEP: librabbitmq-0.11.0
     - PHP_VER: 8.0.8
       ARCH: x64
       TS: 0
       VC: vs16
-      DEP: librabbitmq-0.9.0
+      DEP: librabbitmq-0.11.0
     - PHP_VER: 8.0.8
       ARCH: x86
       TS: 1
       VC: vs16
-      DEP: librabbitmq-0.9.0
+      DEP: librabbitmq-0.11.0
     - PHP_VER: 8.0.8
       ARCH: x86
       TS: 1
       VC: vs16
-      DEP: librabbitmq-0.9.0
+      DEP: librabbitmq-0.11.0
 
 build_script:
   - ps: appveyor\build.ps1
