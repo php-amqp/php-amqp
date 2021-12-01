@@ -200,11 +200,10 @@ function setSourceVersion(string $nextVersion): void
 
 function getPreviousVersion(): string
 {
-    $previousVersion = ltrim(trim(executeCommand('git tag -l --sort=-v:refname | head -n1')), 'v');
+    $versions = array_map(static fn (string $v) => ltrim($v, 'v'), explode("\n", `git tag -l`));
+    usort($versions, static fn (string $l, string $r) => version_compare($l, $r));
 
-    assert(preg_match(re(VERSION_REGEX), $previousVersion));
-
-    return $previousVersion;
+    return end($versions);
 }
 
 function versionToTag(string $version): string

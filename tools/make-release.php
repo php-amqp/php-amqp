@@ -8,7 +8,7 @@ require_once __DIR__ . '/functions.php';
 $nextVersion = $_SERVER['argv'][1] ?? null;
 
 if ($nextVersion === null) {
-    printf("%1\$s <nextVersion>\ne.g. %1\$s v9.9.9\n", basename($_SERVER['argv'][0]));
+    printf("%1\$s <nextVersion>\ne.g. %1\$s 9.9.9\n", basename($_SERVER['argv'][0]));
     exit(1);
 }
 
