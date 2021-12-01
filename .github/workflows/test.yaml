@@ -11,7 +11,7 @@ env:
 
 jobs:
     test:
-        name: PHP ${{ matrix.php-version }} + librabbitmq ${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args }}
+        name: php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
 
         runs-on: ubuntu-latest
 
@@ -26,17 +26,17 @@ jobs:
                 include:
                     - php-version: '8.1'
                       librabbitmq-version: 'master'
-                      experimental: true
+                      experimental: false
                     - php-version: '8.1'
                       librabbitmq-version: 'master'
                       test-php-args: '-m'
                       experimental: true
                     - php-version: '8.1'
                       librabbitmq-version: 'v0.11.0'
-                      experimental: true
+                      experimental: false
                     - php-version: '8.1'
                       librabbitmq-version: 'v0.9.0'
-                      experimental: true
+                      experimental: false
 
                     - php-version: '8.0'
                       librabbitmq-version: 'master'
