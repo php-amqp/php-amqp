@@ -1,28 +1,48 @@
-#!/bin/bash
+#!/bin/sh
 
-set -e
+# Setup a sane environment
+set -o errexit
+set -o nounset
 
-if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 LIBRABBITMQ_VERSION" >&2
-  exit 1
+# Parse arguments
+LIBRABBITMQ_VERSION="${1:-}"
+if test -z "$LIBRABBITMQ_VERSION"; then
+    printf 'Usage: %s LIBRABBITMQ_VERSION\n' "$0" >&2
+    exit 1
 fi
 
-LIBRABBITMQ_VERSION=$1
+# Be sure that non-master versions start with 'v' (eg. from '0.8.0' to 'v0.8.0') 
+if printf '%s' "$LIBRABBITMQ_VERSION" | grep -Eq '^[0-9]+\.'; then
+    LIBRABBITMQ_VERSION="v$LIBRABBITMQ_VERSION"
+fi
 
-echo "Installing rabbitmq-c ..."
+printf 'Installing rabbitmq-c version %s...\n' "$LIBRABBITMQ_VERSION"
 
-if [ ! -d "$HOME/rabbitmq-c" ]; then
-  cd $HOME
-  git clone git://github.com/alanxz/rabbitmq-c.git
-  cd $HOME/rabbitmq-c
+# Let's build in /dev/shm if available (it's a ramdisk - much faster)
+if test -d /dev/shm; then
+    BUILD_TMP=/dev/shm/php-amqp-build
 else
-  echo 'Using cached directory.';
-  cd $HOME/rabbitmq-c
-  git fetch
+    BUILD_TMP=/tmp/shm/php-amqp-build
 fi
 
-git checkout ${LIBRABBITMQ_VERSION}
+# Prepare the build directory
+rm -rf $BUILD_TMP
+mkdir -p $BUILD_TMP
 
-mkdir build && cd build
+# Download and extract the source code
+curl -sSLf "https://codeload.github.com/alanxz/rabbitmq-c/tar.gz/$LIBRABBITMQ_VERSION" | tar xz --directory=$BUILD_TMP
+
+# Prepare for building
+cd $BUILD_TMP/rabbitmq-c-*
+mkdir -p build
+cd build
 cmake ..
-cmake --build . --target install
+
+# Compile
+cmake --build . --parallel $(nproc)
+
+# Install
+sudo cmake --build . --target install
+
+# Cleanup
+rm -rf $BUILD_TMP
