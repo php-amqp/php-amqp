@@ -23,22 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2021-12-01</date>
-    <time>11:13:57</time>
+    <time>11:14:28</time>
     <version>
-        <release>1.11.0</release>
-        <api>1.11.0</api>
+        <release>1.12.0dev</release>
+        <api>1.12.0dev</api>
     </version>
     <stability>
-        <release>stable</release>
-        <api>stable</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- PHP 8.1 compatibility (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/405)
- - Install RabbitMQ from tarball instead of git to improve speed (Michele Locati <michele@locati.it>) (https://github.com/php-amqp/php-amqp/issues/392)
- - Improve release tooling (Lars Strojny <lars.strojny@internations.org>)
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v1.11.0RC1...v1.11.0]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v1.11.0...master
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -282,6 +281,25 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0RC1...v1.11.0]]></notes>
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2021-12-01</date>
+            <time>11:13:57</time>
+            <version>
+                <release>1.11.0</release>
+                <api>1.11.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- PHP 8.1 compatibility (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/405)
+ - Install RabbitMQ from tarball instead of git to improve speed (Michele Locati <michele@locati.it>) (https://github.com/php-amqp/php-amqp/issues/392)
+ - Improve release tooling (Lars Strojny <lars.strojny@internations.org>)
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v1.11.0RC1...v1.11.0]]></notes>
+        </release>
         <release>
             <date>2021-11-02</date>
             <time>11:56:51</time>
