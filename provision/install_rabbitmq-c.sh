@@ -34,13 +34,9 @@ curl -sSLf "https://codeload.github.com/alanxz/rabbitmq-c/tar.gz/$LIBRABBITMQ_VE
 
 
 cd $BUILD_TMP/rabbitmq-c-*
+sed -e "s:@VERSION@:@RMQ_VERSION@:g" -i librabbitmq.pc.in
 mkdir -p build
 cd build
-
-# Prepare for building
-if [ "${LIBRABBITMQ_VERSION}" == "master" ]; then
-    export VERSION=99.99.99
-fi
 cmake ..
 
 # Compile
