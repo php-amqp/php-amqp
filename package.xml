@@ -22,30 +22,23 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2021-11-02</date>
-    <time>11:00:28</time>
+    <date>2021-12-01</date>
+    <time>11:13:57</time>
     <version>
-        <release>1.11.0dev</release>
-        <api>1.11.0dev</api>
+        <release>1.11.0</release>
+        <api>1.11.0</api>
     </version>
     <stability>
-        <release>devel</release>
-        <api>devel</api>
+        <release>stable</release>
+        <api>stable</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[ - Release tooling: preserve newlines in XML (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/288)
- - Release tooling: handle RC stability properly (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/71)
- - More robust release tooling (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/0)
- - Fixes AMQPConnection Stub typo (Grégoire Pineau <lyrixx@lyrixx.info>) (https://github.com/php-amqp/php-amqp/issues/401)
- - Fix AMQPQueue stub (Gocha Ossinkine <ossinkine@ya.ru>) (https://github.com/php-amqp/php-amqp/issues/404)
- - PHP 8 support for Windows (Jan Ehrhardt <github@ehrhardt.nl>) (https://github.com/php-amqp/php-amqp/issues/396)
- - Add installation instructions for Windows (Marcos Rezende <rezehnde@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/394)
- - Move from Travis CI to Github Actions (Vadim Borodavko <vadim.borodavko@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/391)
- - SetReadTimeout accepts float param (Andrii Dembitskyi <andrew.dembitskiy@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/388)
+    <notes><![CDATA[- PHP 8.1 compatibility (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/405)
+ - Install RabbitMQ from tarball instead of git to improve speed (Michele Locati <michele@locati.it>) (https://github.com/php-amqp/php-amqp/issues/392)
+ - Improve release tooling (Lars Strojny <lars.strojny@internations.org>)
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v1.11.0beta...master
-]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v1.11.0RC1...v1.11.0]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
