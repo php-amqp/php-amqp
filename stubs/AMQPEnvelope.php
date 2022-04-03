@@ -39,7 +39,7 @@ class AMQPEnvelope extends AMQPBasicProperties
     /**
      * Get the delivery tag of the message.
      *
-     * @return string The delivery tag of the message.
+     * @return integer The delivery tag of the message.
      */
     public function getDeliveryTag()
     {
