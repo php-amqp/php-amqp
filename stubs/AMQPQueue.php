@@ -12,7 +12,7 @@ class AMQPQueue
      * without the AMQP_AUTOACK flag through AMQPQueue::get() or
      * AMQPQueue::consume()
      *
-     * @param string  $delivery_tag The message delivery tag of which to
+     * @param integer $delivery_tag The message delivery tag of which to
      *                              acknowledge receipt.
      * @param integer $flags        The only valid flag that can be passed is
      *                              AMQP_MULTIPLE.
@@ -235,7 +235,7 @@ class AMQPQueue
      * behavior of calling this method while connected to any other broker is
      * undefined.
      *
-     * @param string  $delivery_tag Delivery tag of last message to reject.
+     * @param integer $delivery_tag Delivery tag of last message to reject.
      * @param integer $flags        AMQP_REQUEUE to requeue the message(s),
      *                              AMQP_MULTIPLE to nack all previous
      *                              unacked messages as well.
@@ -258,7 +258,7 @@ class AMQPQueue
      * AMQPQueue::consume() and AMQPQueue::get() and using the AMQP_AUTOACK
      * flag are not eligible.
      *
-     * @param string  $delivery_tag Delivery tag of the message to reject.
+     * @param integer $delivery_tag Delivery tag of the message to reject.
      * @param integer $flags        AMQP_REQUEUE to requeue the message(s).
      *
      * @throws AMQPChannelException    If the channel is not open.
