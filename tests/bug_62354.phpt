@@ -4,7 +4,9 @@ Constructing AMQPQueue with AMQPConnection segfaults
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
 <?php
-class Amqptest {};
+class Amqptest {
+	public $conn = NULL;
+};
 $o = new Amqptest();
 $o->conn = new AMQPConnection();
 $funcs = array(
