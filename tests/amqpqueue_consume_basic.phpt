@@ -27,7 +27,7 @@ $q->bind($ex->getName(), 'routing.*');
 
 // Publish a message to the exchange with a routing key
 $ex->publish('message1', 'routing.1', AMQP_NOPARAM, array('content_type' => 'plain/test', 'headers' => array('foo' => 'bar')));
-$ex->publish('message2', 'routing.2', AMQP_NOPARAM, array('delivery_mode' => AMQP_DURABLE));
+$ex->publish('message2', 'routing.2', AMQP_NOPARAM, array('delivery_mode' => AMQP_DELIVERY_MODE_PERSISTENT));
 $ex->publish('message3', 'routing.3', AMQP_DURABLE); // this is wrong way to make messages persistent
 
 $count = 0;

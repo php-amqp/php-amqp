@@ -133,3 +133,11 @@ define('AMQP_SASL_METHOD_PLAIN', 0);
  *
  */
 define('AMQP_SASL_METHOD_EXTERNAL', 1);
+/**
+ * Default delivery mode, keeps the message in memory when the message is placed in a queue.
+ */
+define('AMQP_DELIVERY_MODE_TRANSIENT', 1);
+/**
+ * Writes the message to the disk when the message is placed in a durable queue.
+ */
+define('AMQP_DELIVERY_MODE_PERSISTENT', 2)
