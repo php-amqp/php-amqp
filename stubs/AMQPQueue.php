@@ -105,7 +105,7 @@ class AMQPQueue
      *                              `basic.consume` request and just run $callback
      *                              if it provided. Calling method with empty $callback
      *                              and AMQP_JUST_CONSUME makes no sense.
-     * @param string   $consumerTag A string describing this consumer. Used
+     * @param string | null $consumerTag     A string describing this consumer. Used
      *                              for canceling subscriptions with cancel().
      *
      * @throws AMQPChannelException    If the channel is not open.
@@ -118,7 +118,7 @@ class AMQPQueue
     public function consume(
         callable $callback = null,
         $flags = AMQP_NOPARAM,
-        $consumerTag = null
+        ?$consumerTag = null
     ) {
     }
 
