@@ -13,7 +13,7 @@ if test "$PHP_AMQP" != "no"; then
 	AC_MSG_CHECKING([for supported PHP versions])        
 	PHP_REF_FOUND_VERSION=$PHP_VERSION
         PHP_REF_FOUND_VERNUM=$PHP_VERSION_ID
-        if test -z "PHP_REF_FOUND_VERNUM"; then
+        if test -z "$PHP_REF_FOUND_VERNUM"; then
                 if test -z "$PHP_CONFIG"; then
                         AC_MSG_ERROR([php-config not found])
                 fi
