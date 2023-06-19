@@ -25,7 +25,7 @@ class AMQPBasicProperties
         $content_type = "",
         $content_encoding = "",
         array $headers = [],
-        $delivery_mode = 2,
+        $delivery_mode = AMQP_DELIVERY_MODE_TRANSIENT,
         $priority = 0,
         $correlation_id = "",
         $reply_to = "",
