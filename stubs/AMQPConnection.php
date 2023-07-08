@@ -50,6 +50,8 @@ class AMQPConnection
      *      'key'    => Path to the client key in PEM format.
      *      'verify' => Enable or disable peer verification. If peer verification is enabled then the common name in the
      *                  server certificate must match the server name. Peer verification is enabled by default.
+     *
+     *      'connection_name' => A user determined name for the connection
      * )
      *
      * @param array $credentials Optional array of credential information for
@@ -478,6 +480,20 @@ class AMQPConnection
      * @return int
      */
     public function getSaslMethod()
+    {
+    }
+
+    /**
+     * @param string|null $connection_name
+     */
+    public function setConnectionName($connection_name)
+    {
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getConnectionName()
     {
     }
 }
