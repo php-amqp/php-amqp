@@ -1,8 +1,8 @@
 <?php
 
 /**
- * stub class representing AMQPExchangeValue from pecl-amqp
+ * stub class representing AMQPValueException from pecl-amqp
  */
-class AMQPExchangeValue extends AMQPException
+class AMQPValueException extends AMQPException
 {
 }

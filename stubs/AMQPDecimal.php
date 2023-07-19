@@ -14,7 +14,7 @@ final class AMQPDecimal
      * @param $exponent
      * @param $significand
      *
-     * @throws AMQPExchangeValue
+     * @throws AMQPValueException
      */
     public function __construct($exponent, $significand)
     {

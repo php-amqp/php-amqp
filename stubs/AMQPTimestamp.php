@@ -11,7 +11,7 @@ final class AMQPTimestamp
     /**
      * @param string $timestamp
      *
-     * @throws AMQPExchangeValue
+     * @throws AMQPValueException
      */
     public function __construct($timestamp)
     {
