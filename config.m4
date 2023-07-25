@@ -43,7 +43,7 @@ if test "$PHP_AMQP" != "no"; then
 			AC_MSG_ERROR([librabbitmq must be version 0.10.0 or greater])
 		fi
 
-		if $PKG_CONFIG librabbitmq --atleast-version 0.13.0; then
+		if test -r `$PKG_CONFIG librabbitmq --variable=includedir`/rabbit-c/$SEARCH_FOR; then
 		    HAVE_LIBRABBITMQ_NEW_LAYOUT=1
 		fi
 
