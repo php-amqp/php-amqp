@@ -24,7 +24,8 @@ if test "$PHP_AMQP" != "no"; then
 
 	dnl # --with-amqp -> check with-path
 
-	SEARCH_FOR="amqp_framing.h"
+	NEW_LAYOUT=rabbit-c/framing.h
+	OLD_LAYOUT=amqp_framing.h
 	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 
 	HAVE_LIBRABBITMQ_NEW_LAYOUT=0
@@ -43,7 +44,7 @@ if test "$PHP_AMQP" != "no"; then
 			AC_MSG_ERROR([librabbitmq must be version 0.10.0 or greater])
 		fi
 
-		if test -r `$PKG_CONFIG librabbitmq --variable=includedir`/rabbit-c/$SEARCH_FOR; then
+		if test -r `$PKG_CONFIG librabbitmq --variable=includedir`/$NEW_LAYOUT; then
 		    HAVE_LIBRABBITMQ_NEW_LAYOUT=1
 		fi
 
@@ -57,14 +58,14 @@ if test "$PHP_AMQP" != "no"; then
 		AC_MSG_CHECKING([for amqp files in default path])
 		if test "$PHP_LIBRABBITMQ_DIR" != "no" && test "$PHP_LIBRABBITMQ_DIR" != "yes"; then
 			for i in $PHP_LIBRABBITMQ_DIR; do
-			    if test -r $i/include/rabbit-c/$SEARCH_FOR;
+			    if test -r $i/include/$NEW_LAYOUT;
                     then
                     AMQP_DIR=$i
                     HAVE_LIBRABBITMQ_NEW_LAYOUT=1
                     AC_MSG_RESULT(found in $i)
                     break
                 fi
-				if test -r $i/include/$SEARCH_FOR; then
+				if test -r $i/include/$OLD_LAYOUT; then
 					AMQP_DIR=$i
 					AC_MSG_RESULT(found in $i)
 					break
@@ -72,13 +73,13 @@ if test "$PHP_AMQP" != "no"; then
 			done
 		else
 			for i in $PHP_AMQP /usr/local /usr ; do
-			    if test -r $i/include/rabbit-c/$SEARCH_FOR; then
+			    if test -r $i/include/$NEW_LAYOUT; then
                     AMQP_DIR=$i
                     HAVE_LIBRABBITMQ_NEW_LAYOUT=1
                     AC_MSG_RESULT(found in $i)
                     break
                 fi
-				if test -r $i/include/$SEARCH_FOR; then
+				if test -r $i/include/$OLD_LAYOUT; then
 					AMQP_DIR=$i
 					AC_MSG_RESULT(found in $i)
 					break
