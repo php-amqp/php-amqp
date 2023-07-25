@@ -10,9 +10,16 @@ dnl Set test wrapper binary to ignore any local ini settings
 PHP_EXECUTABLE="$PWD/php-test-bin"
 
 if test "$PHP_AMQP" != "no"; then
-	AC_MSG_CHECKING([for supported PHP versions])
-	PHP_REF_FOUND_VERSION=`${PHP_CONFIG} --version`
-	PHP_REF_FOUND_VERNUM=`${PHP_CONFIG} --vernum`
+	AC_MSG_CHECKING([for supported PHP versions])        
+	PHP_REF_FOUND_VERSION=$PHP_VERSION
+        PHP_REF_FOUND_VERNUM=$PHP_VERSION_ID
+        if test -z "$PHP_REF_FOUND_VERNUM"; then
+                if test -z "$PHP_CONFIG"; then
+                        AC_MSG_ERROR([php-config not found])
+                fi
+                PHP_REF_FOUND_VERSION=`${PHP_CONFIG} --version`
+                PHP_REF_FOUND_VERNUM=`${PHP_CONFIG} --vernum`
+        fi
 
 	if test "$PHP_REF_FOUND_VERNUM" -lt "50600"; then
 		AC_MSG_ERROR([PHP version not supported, >= 5.6 required, but $PHP_REF_FOUND_VERSION found])
