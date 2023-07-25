@@ -223,7 +223,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 			if (instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry TSRMLS_CC)) {
                 zval result_zv;
 
-                zend_call_method_with_0_params(PHP5to8_OBJ_PROP(value), amqp_timestamp_class_entry, NULL, "gettimestamp", &result_zv);
+                zend_call_method_with_0_params(PHP_AMQP_COMPAT_OBJ_P(value), amqp_timestamp_class_entry, NULL, "gettimestamp", &result_zv);
 
                 field->kind = AMQP_FIELD_KIND_TIMESTAMP;
                 field->value.u64 = strtoimax(Z_STRVAL(result_zv), NULL, 10);
@@ -235,11 +235,11 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 				field->kind = AMQP_FIELD_KIND_DECIMAL;
 				zval result_zv;
 
-				zend_call_method_with_0_params(PHP5to8_OBJ_PROP(value), amqp_decimal_class_entry, NULL, "getexponent", &result_zv);
+				zend_call_method_with_0_params(PHP_AMQP_COMPAT_OBJ_P(value), amqp_decimal_class_entry, NULL, "getexponent", &result_zv);
 				field->value.decimal.decimals = (uint8_t)Z_LVAL(result_zv);
 				zval_ptr_dtor(&result_zv);
 
-				zend_call_method_with_0_params(PHP5to8_OBJ_PROP(value), amqp_decimal_class_entry, NULL, "getsignificand", &result_zv);
+				zend_call_method_with_0_params(PHP_AMQP_COMPAT_OBJ_P(value), amqp_decimal_class_entry, NULL, "getsignificand", &result_zv);
 				field->value.decimal.value = (uint32_t)Z_LVAL(result_zv);
 				zval_ptr_dtor(&result_zv);
 

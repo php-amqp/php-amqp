@@ -66,8 +66,8 @@ static PHP_METHOD(amqp_decimal_class, __construct)
         return;
     }
 
-    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("exponent"), exponent TSRMLS_CC);
-    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("significand"), significand TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("exponent"), exponent TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("significand"), significand TSRMLS_CC);
 }
 /* }}} */
 

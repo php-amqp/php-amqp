@@ -71,13 +71,13 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
     amqp_basic_properties_t *p = &amqp_envelope->message.properties;
     amqp_message_t *message = &amqp_envelope->message;
 
-    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("body"), (const char *) message->body.bytes, (size_t) message->body.len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("body"), (const char *) message->body.bytes, (size_t) message->body.len TSRMLS_CC);
 
-    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("consumer_tag"), (const char *) amqp_envelope->consumer_tag.bytes, (size_t) amqp_envelope->consumer_tag.len TSRMLS_CC);
-    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("delivery_tag"), (zend_long) amqp_envelope->delivery_tag TSRMLS_CC);
-    zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("is_redelivery"), (zend_long) amqp_envelope->redelivered TSRMLS_CC);
-    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("exchange_name"), (const char *) amqp_envelope->exchange.bytes, (size_t) amqp_envelope->exchange.len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("routing_key"), (const char *) amqp_envelope->routing_key.bytes, (size_t) amqp_envelope->routing_key.len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("consumer_tag"), (const char *) amqp_envelope->consumer_tag.bytes, (size_t) amqp_envelope->consumer_tag.len TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("delivery_tag"), (zend_long) amqp_envelope->delivery_tag TSRMLS_CC);
+    zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("is_redelivery"), (zend_long) amqp_envelope->redelivered TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("exchange_name"), (const char *) amqp_envelope->exchange.bytes, (size_t) amqp_envelope->exchange.len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("routing_key"), (const char *) amqp_envelope->routing_key.bytes, (size_t) amqp_envelope->routing_key.len TSRMLS_CC);
 
     php_amqp_basic_properties_extract(p, envelope TSRMLS_CC);
 }

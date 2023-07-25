@@ -265,7 +265,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 	ZVAL_UNDEF(&consumers);
 	array_init(&consumers);
 
-	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("consumers"), &consumers TSRMLS_CC);
+	zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("consumers"), &consumers TSRMLS_CC);
 
 	zval_ptr_dtor(&consumers);
 
@@ -275,16 +275,16 @@ static PHP_METHOD(amqp_channel_class, __construct)
 #endif
 
 	/* Set the prefetch count */
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("prefetch_count"), INI_INT("amqp.prefetch_count") TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_count"), INI_INT("amqp.prefetch_count") TSRMLS_CC);
 
 	/* Set the prefetch size */
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("prefetch_size"), INI_INT("amqp.prefetch_size") TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_size"), INI_INT("amqp.prefetch_size") TSRMLS_CC);
 
 	/* Set the global prefetch count */
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("global_prefetch_count"), INI_INT("amqp.global_prefetch_count") TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_count"), INI_INT("amqp.global_prefetch_count") TSRMLS_CC);
 
 	/* Set the global prefetch size */
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("global_prefetch_size"), INI_INT("amqp.global_prefetch_size") TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_size"), INI_INT("amqp.global_prefetch_size") TSRMLS_CC);
 
 	/* Pull out and verify the connection */
 	connection = PHP_AMQP_GET_CONNECTION(connection_object);
@@ -300,7 +300,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 		return;
 	}
 
-	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("connection"), connection_object TSRMLS_CC);
+	zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("connection"), connection_object TSRMLS_CC);
 
 	channel_resource = (amqp_channel_resource*)ecalloc(1, sizeof(amqp_channel_resource));
 	channel->channel_resource = channel_resource;
@@ -504,8 +504,8 @@ static PHP_METHOD(amqp_channel_class, setPrefetchCount)
 	}
 
 	/* Set the prefetch count - the implication is to disable the size */
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("prefetch_count"), prefetch_count TSRMLS_CC);
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("prefetch_size"), 0 TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_count"), prefetch_count TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_size"), 0 TSRMLS_CC);
 
 	RETURN_TRUE;
 }
@@ -583,8 +583,8 @@ static PHP_METHOD(amqp_channel_class, setPrefetchSize)
 	}
 
 	/* Set the prefetch size - the implication is to disable the count */
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("prefetch_count"), 0 TSRMLS_CC);
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("prefetch_size"), prefetch_size TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_count"), 0 TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_size"), prefetch_size TSRMLS_CC);
 
 	RETURN_TRUE;
 }
@@ -637,8 +637,8 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchCount)
 	}
 
 	/* Set the global prefetch count - the implication is to disable the size */
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("global_prefetch_count"), global_prefetch_count TSRMLS_CC);
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("global_prefetch_size"), 0 TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_count"), global_prefetch_count TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_size"), 0 TSRMLS_CC);
 
 	RETURN_TRUE;
 }
@@ -691,8 +691,8 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchSize)
 	}
 
 	/* Set the global prefetch size - the implication is to disable the count */
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("global_prefetch_count"), 0 TSRMLS_CC);
-	zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("global_prefetch_size"), global_prefetch_size TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_count"), 0 TSRMLS_CC);
+	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_size"), global_prefetch_size TSRMLS_CC);
 
 	RETURN_TRUE;
 }
@@ -728,11 +728,11 @@ static PHP_METHOD(amqp_channel_class, qos)
 
 	/* Set the prefetch size and prefetch count */
 	if (global) {
-		zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("global_prefetch_size"), prefetch_size TSRMLS_CC);
-		zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("global_prefetch_count"), prefetch_count TSRMLS_CC);
+		zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_size"), prefetch_size TSRMLS_CC);
+		zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_count"), prefetch_count TSRMLS_CC);
 	} else {
-		zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("prefetch_size"), prefetch_size TSRMLS_CC);
-		zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("prefetch_count"), prefetch_count TSRMLS_CC);
+		zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_size"), prefetch_size TSRMLS_CC);
+		zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_count"), prefetch_count TSRMLS_CC);
 	}
 
 	/* If we are already connected, set the new prefetch count */

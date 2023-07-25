@@ -58,7 +58,7 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 
 	zend_string *str;
 	str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
-	zend_update_property_str(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("timestamp"), str);
+	zend_update_property_str(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), str);
 	zend_string_delref(str);
 }
 /* }}} */
