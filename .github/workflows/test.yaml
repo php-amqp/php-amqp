@@ -127,7 +127,7 @@ jobs:
               run: sudo apt-get install -y cmake valgrind
 
             - name: Setup PHP
-              uses: shivammathur/setup-php@v2.25.4
+              uses: shivammathur/setup-php@2.25.3
               with:
                   php-version: ${{ matrix.php-version }}
                   coverage: none
