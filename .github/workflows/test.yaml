@@ -13,7 +13,6 @@ jobs:
     test:
         name: php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         runs-on: ${{ matrix.os }}
-        continue-on-error: ${{ matrix.experimental }}
 
         env:
             TEST_PHP_ARGS: ${{ matrix.test-php-args }}
@@ -151,3 +150,4 @@ jobs:
 
             - name: Dump report
               run: sh test-report.sh
+              continue-on-error: ${{ matrix.experimental }}
