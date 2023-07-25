@@ -570,7 +570,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 		char *key;
 		key = estrndup((char *) r->consumer_tag.bytes, (unsigned) r->consumer_tag.len);
 
-		if (zend_hash_str_find(Z_ARRVAL_P(consumers), key, r->consumer_tag.len) == NULL) {
+		if (zend_hash_str_find(Z_ARRVAL_P(consumers), key, r->consumer_tag.len) != NULL) {
 			// This should never happen as AMQP server guarantees that consumer tag is unique within channel
 			zend_throw_exception(amqp_exception_class_entry, "Duplicate consumer tag", 0 TSRMLS_CC);
 		    efree(key);
