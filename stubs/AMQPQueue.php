@@ -45,14 +45,17 @@ class AMQPQueue
     /**
      * Cancel a queue that is already bound to an exchange and routing key.
      *
-     * @param string $consumer_tag The consumer tag cancel. If no tag provided,
+     * @param string $consumer_tag The consumer tag to cancel. If no tag is provided,
      *                             or it is empty string, the latest consumer
-     *                             tag on this queue will be used and after
-     *                             successful request it will set to null.
-     *                             If it also empty, no `basic.cancel`
-     *                             request will be sent. When consumer_tag give
-     *                             and it equals to latest consumer_tag on queue,
-     *                             it will be interpreted as latest consumer_tag usage.
+     *                             tag on this queue will be taken and after
+     *                             the successful cancellation request it will set to null.
+     *                             If the consumer_tag parameter is empty and the latest
+     *                             consumer tag is empty, no `basic.cancel` request will be
+     *                             sent.
+     *                             If either the consumer tag passed matches the latest tag
+     *                             or no consumer tag was passed and the latest tag was used
+     *                             the internal consumer tag will be set to null, so that
+     *                             `AMQPQueue::getConsumerTag()` will return null afterwards.
      *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
