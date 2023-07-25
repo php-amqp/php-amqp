@@ -24,7 +24,7 @@ if test "$PHP_AMQP" != "no"; then
 
 	dnl # --with-amqp -> check with-path
 
-	NEW_LAYOUT=rabbit-c/framing.h
+	NEW_LAYOUT=rabbitmq-c/framing.h
 	OLD_LAYOUT=amqp_framing.h
 	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 
@@ -58,8 +58,7 @@ if test "$PHP_AMQP" != "no"; then
 		AC_MSG_CHECKING([for amqp files in default path])
 		if test "$PHP_LIBRABBITMQ_DIR" != "no" && test "$PHP_LIBRABBITMQ_DIR" != "yes"; then
 			for i in $PHP_LIBRABBITMQ_DIR; do
-			    if test -r $i/include/$NEW_LAYOUT;
-                    then
+			    if test -r $i/include/$NEW_LAYOUT; then
                     AMQP_DIR=$i
                     HAVE_LIBRABBITMQ_NEW_LAYOUT=1
                     AC_MSG_RESULT(found in $i)
