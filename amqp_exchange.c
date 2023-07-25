@@ -301,14 +301,14 @@ static PHP_METHOD(amqp_exchange_class, setArgument)
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
-			PHP5to7_ZEND_HASH_DEL(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned) (key_len + 1));
+			zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
 			break;
 		case IS_TRUE:
 		case IS_FALSE:
 		case IS_LONG:
 		case IS_DOUBLE:
 		case IS_STRING:
-			PHP5to7_ZEND_HASH_ADD(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned) (key_len + 1), value, sizeof(zval *));
+			zend_hash_str_add(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len, value);
 			Z_TRY_ADDREF_P(value);
 			break;
 		default:

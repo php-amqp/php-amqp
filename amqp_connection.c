@@ -67,7 +67,7 @@ zend_object_handlers amqp_connection_object_handlers;
 
 #define PHP_AMQP_EXTRACT_CONNECTION_STR(name) \
 	zdata = NULL; \
-	if (ini_arr && PHP5to7_ZEND_HASH_FIND(HASH_OF(ini_arr), (name), sizeof(name), zdata)) { \
+	if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), (name), sizeof(name))) != NULL) { \
 		SEPARATE_ZVAL(zdata); \
 		convert_to_string(zdata); \
 	} \
@@ -206,7 +206,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 		/* Look for an established resource */
 		key_len = php_amqp_get_connection_hash(&connection_params, &key);
 
-		if (PHP5to7_ZEND_HASH_STR_FIND_PTR(&EG(persistent_list), key, key_len, le)) {
+		if ((le = zend_hash_str_find_ptr(&EG(persistent_list), key, key_len)) != NULL) {
 			efree(key);
 
 			if (le->type != le_amqp_connection_resource_persistent) {
@@ -271,7 +271,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 		new_le.ptr  = connection->connection_resource;
 		new_le.type = persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource;
 
-		if (!PHP5to7_ZEND_HASH_STR_UPD_MEM(&EG(persistent_list), key, key_len, new_le, sizeof(zend_resource))) {
+		if (!zend_hash_str_update_mem(&EG(persistent_list), key, key_len, &new_le, sizeof(zend_resource))) {
 			efree(key);
 			php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 			return 0;

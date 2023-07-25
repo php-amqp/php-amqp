@@ -28,11 +28,6 @@
 		((res = zend_hash_str_find((ht), (str), (size_t)(len - 1))) != NULL)
 
 #define PHP5to7_ZEND_HASH_STRLEN(len) (size_t)((len) + 1)
-#define PHP5to7_ZEND_HASH_DEL(ht, key, len) zend_hash_str_del_ind((ht), (key), (unsigned)(len - 1))
-#define PHP5to7_ZEND_HASH_ADD(ht, key, len, pData, nDataSize) zend_hash_str_add((ht), (key), (unsigned)(len - 1), (pData))
-#define PHP5to7_ZEND_HASH_STR_UPD_MEM(ht, key, len, pData, nDataSize) zend_hash_str_update_mem((ht), (key), (size_t)(len), &(pData), (nDataSize))
-#define PHP5to7_ZEND_HASH_STR_FIND_PTR(ht, key, len, res) ((res = zend_hash_str_find_ptr((ht), (key), (size_t)(len))) != NULL)
-#define PHP5to7_ZEND_HASH_STR_DEL(ht, key, len) zend_hash_str_del_ind((ht), (key), (unsigned)(len))
 
 
 
