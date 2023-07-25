@@ -25,7 +25,6 @@ jobs:
                     - php-version: '8.2'
                       librabbitmq-version: 'master'
                       experimental: false
-                      runs-on: ${{ matrix.os }}
                       os: ubuntu-22.04
                     - php-version: '8.2'
                       librabbitmq-version: 'master'
