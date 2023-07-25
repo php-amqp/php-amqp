@@ -72,7 +72,7 @@ if test "$PHP_AMQP" != "no"; then
 			done
 		else
 			for i in $PHP_AMQP /usr/local /usr ; do
-			    if test -r $i/include/$SEARCH_FOR; then
+			    if test -r $i/include/rabbit-c/$SEARCH_FOR; then
                     AMQP_DIR=$i
                     HAVE_LIBRABBITMQ_NEW_LAYOUT=1
                     AC_MSG_RESULT(found in $i)
