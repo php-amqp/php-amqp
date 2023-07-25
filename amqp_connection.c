@@ -291,10 +291,6 @@ void amqp_connection_free(zend_object *object TSRMLS_DC)
 	}
 
 	zend_object_std_dtor(&connection->zo TSRMLS_CC);
-
-#if PHP_MAJOR_VERSION < 7
-	efree(object);
-#endif
 }
 
 zend_object *amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
@@ -1643,12 +1639,10 @@ PHP_MINIT_FUNCTION(amqp_connection)
 
 	zend_declare_property_null(this_ce, ZEND_STRL("connection_name"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
-#if PHP_MAJOR_VERSION >=7
 	memcpy(&amqp_connection_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
 	amqp_connection_object_handlers.offset = XtOffsetOf(amqp_connection_object, zo);
 	amqp_connection_object_handlers.free_obj = amqp_connection_free;
-#endif
 
 	return SUCCESS;
 }

@@ -21,11 +21,7 @@
   +----------------------------------------------------------------------+
 */
 
-#if PHP_MAJOR_VERSION >= 7
-        #include "php7_support.h"
-#else
-        #include "php5_support.h"
-#endif
+#include "php_amqp.h"
 
 extern zend_class_entry *amqp_envelope_class_entry;
 

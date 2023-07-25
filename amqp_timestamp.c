@@ -56,19 +56,10 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 		return;
 	}
 
-	{
-	#if PHP_MAJOR_VERSION >= 7
-		zend_string *str;
-		str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
-		zend_update_property_str(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("timestamp"), str);
-        zend_string_delref(str);
-	#else
-		char *str;
-		str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
-		zend_update_property_string(this_ce, getThis(), ZEND_STRL("timestamp"), str TSRMLS_CC);
-		efree(str);
-	#endif
-	}
+	zend_string *str;
+	str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
+	zend_update_property_str(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("timestamp"), str);
+	zend_string_delref(str);
 }
 /* }}} */
 

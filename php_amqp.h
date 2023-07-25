@@ -45,14 +45,6 @@ typedef struct _amqp_callback_bucket amqp_callback_bucket;
 #error PHP >= 5.6 required
 #endif
 
-#if PHP_MAJOR_VERSION >= 7
-	#include "php7_support.h"
-#else
-	#include "php5_support.h"
-#endif
-
-#include "amqp_connection_resource.h"
-
 #include <amqp.h>
 
 extern zend_module_entry amqp_module_entry;
@@ -67,6 +59,22 @@ extern zend_module_entry amqp_module_entry;
 #ifdef ZTS
 #include "TSRM.h"
 #endif
+
+/* Small change to let it build after a major internal change for php8.0
+ * More info:
+ * https://github.com/php/php-src/blob/php-8.0.0alpha3/UPGRADING.INTERNALS#L47
+ */
+#if PHP_MAJOR_VERSION >= 8
+#define TSRMLS_DC
+#define TSRMLS_D
+#define TSRMLS_CC
+#define TSRMLS_C
+#define PHP5to8_OBJ_PROP(zv) Z_OBJ_P(zv)
+#else
+#define PHP5to8_OBJ_PROP(zv) (zv)
+#endif
+
+#include "amqp_connection_resource.h"
 
 #define AMQP_NOPARAM		0
 /* Where is 1?*/
@@ -121,20 +129,11 @@ struct _amqp_channel_callbacks {
 
 /* NOTE: due to how internally PHP works with custom object, zend_object position in structure matters */
 struct _amqp_channel_object {
-#if PHP_MAJOR_VERSION >= 7
 	amqp_channel_callbacks callbacks;
 	zval *gc_data;
     int   gc_data_count;
 	amqp_channel_resource *channel_resource;
 	zend_object zo;
-#else
-	zend_object zo;
-	zval *this_ptr;
-	amqp_channel_resource *channel_resource;
-	amqp_channel_callbacks callbacks;
-	zval  **gc_data;
-	long    gc_data_count;
-#endif
 };
 
 struct _amqp_connection_resource {
@@ -237,29 +236,19 @@ struct _amqp_connection_object {
 #define PHP_AMQP_READ_THIS_PROP_DOUBLE(name) Z_DVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 
 
-#if PHP_MAJOR_VERSION >= 7
-	static inline amqp_connection_object *php_amqp_connection_object_fetch(zend_object *obj) {
-		return (amqp_connection_object *)((char *)obj - XtOffsetOf(amqp_connection_object, zo));
-	}
+static inline amqp_connection_object *php_amqp_connection_object_fetch(zend_object *obj) {
+	return (amqp_connection_object *)((char *)obj - XtOffsetOf(amqp_connection_object, zo));
+}
 
-	static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *obj) {
-		return (amqp_channel_object *)((char *)obj - XtOffsetOf(amqp_channel_object, zo));
-	}
+static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *obj) {
+	return (amqp_channel_object *)((char *)obj - XtOffsetOf(amqp_channel_object, zo));
+}
 
-	#define PHP_AMQP_GET_CONNECTION(obj) php_amqp_connection_object_fetch(Z_OBJ_P(obj))
-	#define PHP_AMQP_GET_CHANNEL(obj) php_amqp_channel_object_fetch(Z_OBJ_P(obj))
+#define PHP_AMQP_GET_CONNECTION(obj) php_amqp_connection_object_fetch(Z_OBJ_P(obj))
+#define PHP_AMQP_GET_CHANNEL(obj) php_amqp_channel_object_fetch(Z_OBJ_P(obj))
 
-	#define PHP_AMQP_FETCH_CONNECTION(obj) php_amqp_connection_object_fetch(obj)
-	#define PHP_AMQP_FETCH_CHANNEL(obj) php_amqp_channel_object_fetch(obj)
-
-#else
-	#define PHP_AMQP_GET_CONNECTION(obj) (amqp_connection_object *)zend_object_store_get_object((obj) TSRMLS_CC)
-	#define PHP_AMQP_GET_CHANNEL(obj) (amqp_channel_object *)zend_object_store_get_object((obj) TSRMLS_CC)
-
-	#define PHP_AMQP_FETCH_CONNECTION(obj) (amqp_connection_object*)(obj)
-	#define PHP_AMQP_FETCH_CHANNEL(obj) (amqp_channel_object*)(obj)
-#endif
-
+#define PHP_AMQP_FETCH_CONNECTION(obj) php_amqp_connection_object_fetch(obj)
+#define PHP_AMQP_FETCH_CHANNEL(obj) php_amqp_channel_object_fetch(obj)
 
 #define PHP_AMQP_GET_CHANNEL_RESOURCE(obj) (IS_OBJECT == Z_TYPE_P(obj) ? (PHP_AMQP_GET_CHANNEL(obj))->channel_resource : NULL)
 

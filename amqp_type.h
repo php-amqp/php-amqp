@@ -27,11 +27,7 @@
 #include "php.h"
 
 #include <amqp.h>
-#if PHP_MAJOR_VERSION >= 7
-	#include "php7_support.h"
-#else
-	#include "php5_support.h"
-#endif
+#include "php_amqp.h"
 
 PHP_MINIT_FUNCTION(amqp_type);
 

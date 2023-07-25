@@ -69,8 +69,6 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...master
             <file name="amqp_timestamp.h" role="src"/>
             <file name="amqp_type.c" role="src"/>
             <file name="amqp_type.h" role="src"/>
-            <file name="php5_support.h" role="src"/>
-            <file name="php7_support.h" role="src"/>
             <file name="php_amqp.h" role="src"/>
             <file name="tests/003-channel-consumers.phpt" role="test"/>
             <file name="tests/004-queue-consume-nested.phpt" role="test"/>

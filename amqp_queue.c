@@ -579,13 +579,8 @@ static PHP_METHOD(amqp_queue_class, consume)
 
 		zval tmp;
 
-#if PHP_MAJOR_VERSION >= 7
 		ZVAL_UNDEF(&tmp);
 		ZVAL_COPY(&tmp, getThis());
-#else
-		tmp = getThis();
-		Z_ADDREF_P(tmp);
-#endif
 
 		zend_hash_str_add(Z_ARRVAL_P(consumers), key, r->consumer_tag.len, &tmp);
 		efree(key);

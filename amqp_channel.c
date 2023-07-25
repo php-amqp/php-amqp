@@ -99,17 +99,11 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool c
 	}
 }
 
-#if PHP_MAJOR_VERSION >= 7
-
 static void php_amqp_destroy_fci(zend_fcall_info *fci) {
     if (fci->size > 0) {
         zval_ptr_dtor(&fci->function_name);
         if (fci->object != NULL) {
-#if PHP_VERSION_ID >= 70300
             GC_DELREF(fci->object);
-#else
-            GC_REFCOUNT(fci->object)--;
-#endif
         }
         fci->size = 0;
     }
@@ -120,11 +114,7 @@ static void php_amqp_duplicate_fci(zend_fcall_info *source) {
 
         zval_add_ref(&source->function_name);
         if (source->object != NULL) {
-#if PHP_VERSION_ID >= 70300
             GC_ADDREF(source->object);
-#else
-            GC_REFCOUNT(source->object)++;
-#endif
         }
     }
 }
@@ -187,81 +177,6 @@ static HashTable *amqp_channel_gc(zend_object *object, zval **table, int *n) /* 
 
 	return zend_std_get_properties(object TSRMLS_CC);
 } /* }}} */
-
-#else
-static void php_amqp_destroy_fci(zend_fcall_info *fci) {
-	if (fci->size > 0) {
-		zval_ptr_dtor(&fci->function_name);
-		if (fci->object_ptr != NULL) {
-			zval_ptr_dtor(&fci->object_ptr);
-		}
-		fci->size = 0;
-	}
-}
-
-static void php_amqp_duplicate_fci(zend_fcall_info *source) {
-	if (source->size > 0) {
-
-		zval_add_ref(&source->function_name);
-		if (source->object_ptr != NULL) {
-			zval_add_ref(&source->object_ptr);
-		}
-	}
-}
-
-static int php_amqp_get_fci_gc_data_count(zend_fcall_info *fci) {
-	int cnt = 0;
-
-	if (fci->size > 0) {
-		cnt ++;
-
-		if (fci->object_ptr != NULL) {
-			cnt++;
-		}
-	}
-
-	return cnt;
-}
-
-static int php_amqp_get_fci_gc_data(zend_fcall_info *fci, zval **gc_data, int offset) {
-
-	if (ZEND_FCI_INITIALIZED(*fci)) {
-		gc_data[offset++] = fci->function_name;
-
-		if (fci->object_ptr != NULL) {
-			gc_data[offset++] = fci->object_ptr;
-		}
-	}
-
-	return offset;
-}
-
-static HashTable *amqp_channel_gc(zval *object, zval ***table, int *n TSRMLS_DC) /* {{{ */
-{
-	amqp_channel_object *channel = PHP_AMQP_GET_CHANNEL(object);
-
-	int basic_return_cnt = php_amqp_get_fci_gc_data_count(&channel->callbacks.basic_return.fci);
-	int basic_ack_cnt    = php_amqp_get_fci_gc_data_count(&channel->callbacks.basic_ack.fci);
-	int basic_nack_cnt   = php_amqp_get_fci_gc_data_count(&channel->callbacks.basic_nack.fci);
-
-	int cnt = basic_return_cnt + basic_ack_cnt + basic_nack_cnt;
-
-	if (cnt > channel->gc_data_count) {
-		channel->gc_data_count = cnt;
-		channel->gc_data = (zval **) erealloc(channel->gc_data, sizeof(zval *) * channel->gc_data_count);
-	}
-
-	php_amqp_get_fci_gc_data(&channel->callbacks.basic_return.fci, channel->gc_data, 0);
-	php_amqp_get_fci_gc_data(&channel->callbacks.basic_ack.fci, channel->gc_data, basic_return_cnt);
-	php_amqp_get_fci_gc_data(&channel->callbacks.basic_nack.fci, channel->gc_data, basic_return_cnt + basic_ack_cnt);
-
-	*table = channel->gc_data;
-	*n     = cnt;
-
-	return zend_std_get_properties(PHP5to8_OBJ_PROP(object) TSRMLS_CC);
-} /* }}} */
-
-#endif
 
 static void php_amqp_clean_callbacks(amqp_channel_callbacks *callbacks) {
 	php_amqp_destroy_fci(&callbacks->basic_return.fci);
