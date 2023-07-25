@@ -140,7 +140,6 @@ int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *
 }
 
 int php_amqp_handle_basic_ack(char **message, amqp_connection_resource *resource, amqp_channel_t channel_id, amqp_channel_object *channel, amqp_method_t *method TSRMLS_DC) {
-	amqp_rpc_reply_t ret;
 	int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
 
 	assert(AMQP_BASIC_ACK_METHOD == method->id);
@@ -171,7 +170,6 @@ int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *
 }
 
 int php_amqp_handle_basic_nack(char **message, amqp_connection_resource *resource, amqp_channel_t channel_id, amqp_channel_object *channel, amqp_method_t *method TSRMLS_DC) {
-	amqp_rpc_reply_t ret;
 	int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
 
 	assert(AMQP_BASIC_NACK_METHOD == method->id);

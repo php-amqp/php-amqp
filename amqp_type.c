@@ -74,20 +74,17 @@ char *php_amqp_type_amqp_bytes_to_char(amqp_bytes_t bytes)
 void php_amqp_type_internal_convert_zval_array(zval *php_array, amqp_field_value_t **field, zend_bool allow_int_keys TSRMLS_DC)
 {
 	HashTable *ht;
-	zval *value;
 	zend_string *key;
-	zend_ulong index;
 
 	ht = Z_ARRVAL_P(php_array);
 
 	zend_bool is_amqp_array = 1;
 
-	ZEND_HASH_FOREACH_KEY_VAL(ht, index, key, value) {
+	ZEND_HASH_FOREACH_STR_KEY(ht, key) {
 		if (key) {
 			is_amqp_array = 0;
 			break;
 		}
-
 	} ZEND_HASH_FOREACH_END();
 
 	if (is_amqp_array) {
@@ -153,25 +150,21 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(zval *php_array, amqp_tab
 	} ZEND_HASH_FOREACH_END();
 }
 
-void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zvalArguments, amqp_array_t *arguments TSRMLS_DC)
+void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amqp_array_t *arguments TSRMLS_DC)
 {
 	HashTable *ht;
-	HashPosition pos;
 
 	zval *value;
-	zval **data;
 
 	zend_string *zkey;
 
-	zend_ulong index;
-
-	ht = Z_ARRVAL_P(zvalArguments);
+	ht = Z_ARRVAL_P(zval_arguments);
 
 	/* Allocate all the memory necessary for storing the arguments */
 	arguments->entries = (amqp_field_value_t *)ecalloc((size_t)zend_hash_num_elements(ht), sizeof(amqp_field_value_t));
 	arguments->num_entries = 0;
 
-	ZEND_HASH_FOREACH_KEY_VAL(ht, index, zkey, value) {
+	ZEND_HASH_FOREACH_STR_KEY_VAL(ht, zkey, value) {
 		amqp_field_value_t *field = &arguments->entries[arguments->num_entries++];
 
 		if (!php_amqp_type_internal_convert_php_to_amqp_field_value(value, &field, ZSTR_VAL(zkey) TSRMLS_CC)) {

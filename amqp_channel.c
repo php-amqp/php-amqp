@@ -689,8 +689,6 @@ static PHP_METHOD(amqp_channel_class, getPrefetchSize)
 set the number of prefetches */
 static PHP_METHOD(amqp_channel_class, setGlobalPrefetchCount)
 {
-	zval rv;
-
 	amqp_channel_resource *channel_resource;
 	zend_long global_prefetch_count;
 
@@ -745,8 +743,6 @@ static PHP_METHOD(amqp_channel_class, getGlobalPrefetchCount)
 set the number of prefetches */
 static PHP_METHOD(amqp_channel_class, setGlobalPrefetchSize)
 {
-	zval rv;
-
 	amqp_channel_resource *channel_resource;
 	zend_long global_prefetch_size;
 

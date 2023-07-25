@@ -427,7 +427,6 @@ static PHP_METHOD(amqp_queue_class, get)
 	amqp_channel_resource *channel_resource;
 
 	zval message;
-	zval retval;
 
 	zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
 
@@ -943,7 +942,6 @@ static PHP_METHOD(amqp_queue_class, cancel)
 	zval rv;
 
 	amqp_channel_resource *channel_resource;
-	zval *tmp = NULL;
 
 	char *consumer_tag = NULL;  size_t consumer_tag_len = 0;
 
