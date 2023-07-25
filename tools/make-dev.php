@@ -14,7 +14,7 @@ setPackageVersion($nextVersion);
 setSourceVersion($nextVersion);
 setStability($nextVersion);
 setDate(new DateTimeImmutable('NOW'));
-setChangelog(buildChangelog('master', versionToTag(getPreviousVersion())));
+setChangelog(buildChangelog('latest', versionToTag(getPreviousVersion())));
 savePackageXml();
 validatePackage();
 gitCommit(1, $nextVersion, 'back to dev');

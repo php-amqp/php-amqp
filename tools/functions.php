@@ -225,7 +225,7 @@ function buildChangelog(string $nextTag, string $previousTag): string
     $commits = array_filter(
         explode(
             "\n",
-            trim(executeCommand(sprintf('git log --oneline %s..origin/master --pretty=%%h --no-merges', $previousTag)))
+            trim(executeCommand(sprintf('git log --oneline %s..origin/latest --pretty=%%h --no-merges', $previousTag)))
         )
     );
 
@@ -334,7 +334,7 @@ function gitCommit(int $step, string $nextVersion, string $message): void {
         sprintf('git commit -m "[RM] %s %s" %s %s', $message, $nextVersion, HEADER_VERSION_FILE, PACKAGE_XML)
     );
 
-    printf("%d) Run \"git push origin master\"\n", $step);
+    printf("%d) Run \"git push origin latest\"\n", $step);
 }
 
 function gitTag(int $step, string $nextVersion): void {

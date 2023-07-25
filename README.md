@@ -1,4 +1,4 @@
-# PHP AMQP bindings [![Build Status](https://travis-ci.org/php-amqp/php-amqp.svg?branch=master)](https://travis-ci.org/php-amqp/php-amqp) [![Build status](https://ci.appveyor.com/api/projects/status/sv5o1id5oj63w9hu/branch/master?svg=true)](https://ci.appveyor.com/project/lstrojny/php-amqp-7lf47/branch/master)
+# PHP AMQP bindings [![Test](https://github.com/php-amqp/php-amqp/actions/workflows/test.yaml/badge.svg)](https://github.com/php-amqp/php-amqp/actions/workflows/test.yaml) [![Build status](https://ci.appveyor.com/api/projects/status/sv5o1id5oj63w9hu/branch/latest?svg=true)](https://ci.appveyor.com/project/lstrojny/php-amqp-7lf47/branch/latest)
 
 Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/rabbitmq-c)
 
@@ -37,12 +37,12 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
 ### Documentation
 
 View [RabbitMQ official tutorials](http://www.rabbitmq.com/getstarted.html) 
-and [php-amqp specific examples](https://github.com/rabbitmq/rabbitmq-tutorials/tree/master/php-amqp).
+and [php-amqp specific examples](https://github.com/rabbitmq/rabbitmq-tutorials/tree/main/php-amqp).
 
-There are also available [stub files](https://github.com/php-amqp/php-amqp/tree/master/stubs) with accurate PHPDoc which
+There are also available [stub files](https://github.com/php-amqp/php-amqp/tree/latest/stubs) with accurate PHPDoc which
 may be also used in your IDE for code completion, navigation and documentation in-place.
 
-Finally, check out the [tests](https://github.com/php-amqp/php-amqp/tree/master/tests) to see typical usage and edge cases.
+Finally, check out the [tests](https://github.com/php-amqp/php-amqp/tree/latest/tests) to see typical usage and edge cases.
  
 ### Notes
 
@@ -140,11 +140,11 @@ using `-Y amqp` attribute, just give a try - `tshark -i lo -Y amqp`.
 
 #### Configuring a RabbitMQ server
 
-If you need to tweek RabbitMQ server params use default config
-[rabbitmq.config.example](https://github.com/rabbitmq/rabbitmq-server/blob/master/docs/rabbitmq.config.example)
-([raw](https://raw.githubusercontent.com/rabbitmq/rabbitmq-server/master/docs/rabbitmq.config.example))
-from [official RabbitmMQ repo](https://github.com/rabbitmq/rabbitmq-server), so it may looks like 
-`sudo curl https://raw.githubusercontent.com/rabbitmq/rabbitmq-server/master/docs/rabbitmq.config.example /etc/rabbitmq/rabbitmq.config`
+If you need to tweak RabbitMQ server params use default config
+[rabbitmq.conf.example](https://github.com/rabbitmq/rabbitmq-server/blob/main/deps/rabbit/docs/rabbitmq.conf.example)
+([raw](https://raw.githubusercontent.com/rabbitmq/rabbitmq-server/main/deps/rabbit/docs/rabbitmq.conf.example))
+from [official RabbitmMQ repo](https://github.com/rabbitmq/rabbitmq-server), so it may look like
+`sudo curl https://raw.githubusercontent.com/rabbitmq/rabbitmq-server/main/deps/rabbit/docs/rabbitmq.conf.example /etc/rabbitmq/rabbitmq.config`
  
 To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_app && rabbitmqctl reset && rabbitmqctl start_app`.
 
@@ -161,4 +161,4 @@ To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_
 Say we want to release "1.1000.0" next. We first run `php tools/make-release.php 1.1000.0`. This will update the version
 numbers and pre-populate the changelog with the latest git commits between the previous version and now. It will prompt
 you to edit the changelog in between. Once the release is done it tells you what to do next.
-Run `php tools/make-dev.php 1.1000.1` to bring master back into development mode afterwards.
+Run `php tools/make-dev.php 1.1000.1` to bring latest back into development mode afterwards.

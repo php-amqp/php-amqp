@@ -36,7 +36,7 @@
     <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v1.11.0...master
+https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
 ]]></notes>
     <contents>
         <dir name="/">
