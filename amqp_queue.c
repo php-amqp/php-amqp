@@ -196,16 +196,15 @@ Get the queue argument referenced by key */
 static PHP_METHOD(amqp_queue_class, getArgument)
 {
 	zval rv;
-
 	zval *tmp = NULL;
-
-	char *key;	size_t key_len;
+	char *key;
+	size_t key_len;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
 		return;
 	}
 
-	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned)(key_len + 1), tmp)) {
+	if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -226,7 +225,7 @@ static PHP_METHOD(amqp_queue_class, hasArgument)
 		return;
 	}
 
-	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned)(key_len + 1), tmp)) {
+	if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -506,7 +505,6 @@ static PHP_METHOD(amqp_queue_class, consume)
 {
 	zval rv;
 
-	zval *consumer_tag_zv = NULL;
 	zval current_channel_zv;
 
 	zval *current_queue_zv = NULL;
@@ -572,7 +570,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 		char *key;
 		key = estrndup((char *) r->consumer_tag.bytes, (unsigned) r->consumer_tag.len);
 
-		if (PHP5to7_ZEND_HASH_FIND(Z_ARRVAL_P(consumers), (const char *) key, PHP5to7_ZEND_HASH_STRLEN(r->consumer_tag.len), consumer_tag_zv)) {
+		if (zend_hash_str_find(Z_ARRVAL_P(consumers), key, r->consumer_tag.len) == NULL) {
 			// This should never happen as AMQP server guarantees that consumer tag is unique within channel
 			zend_throw_exception(amqp_exception_class_entry, "Duplicate consumer tag", 0 TSRMLS_CC);
 		    efree(key);
@@ -684,7 +682,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 		char *key;
 		key = estrndup((char *)envelope.consumer_tag.bytes, (unsigned) envelope.consumer_tag.len);
 
-		if (!PHP5to7_ZEND_HASH_FIND(Z_ARRVAL_P(consumers), key, PHP5to7_ZEND_HASH_STRLEN(envelope.consumer_tag.len), current_queue_zv)) {
+		if ((current_queue_zv = zend_hash_str_find(Z_ARRVAL_P(consumers), key, envelope.consumer_tag.len)) == NULL) {
 			zval exception;
 			ZVAL_UNDEF(&exception);
 			object_init_ex(&exception, amqp_envelope_exception_class_entry);

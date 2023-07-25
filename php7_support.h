@@ -24,12 +24,6 @@
 #ifndef PHP_AMQP_PHP7_SUPPORT_H
 #define PHP_AMQP_PHP7_SUPPORT_H
 
-#define PHP5to7_ZEND_HASH_FIND(ht, str, len, res) \
-		((res = zend_hash_str_find((ht), (str), (size_t)(len - 1))) != NULL)
-
-#define PHP5to7_ZEND_HASH_STRLEN(len) (size_t)((len) + 1)
-
-
 
 /* Small change to let it build after a major internal change for php8.0
  * More info:

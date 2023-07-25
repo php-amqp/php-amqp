@@ -154,7 +154,8 @@ static PHP_METHOD(amqp_envelope_class, isRedelivery) {
 static PHP_METHOD(amqp_envelope_class, getHeader) {
     zval rv;
 
-    char *key;  size_t key_len;
+	char *key;
+	size_t key_len;
     zval *tmp = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
@@ -162,10 +163,9 @@ static PHP_METHOD(amqp_envelope_class, getHeader) {
     }
 
     zval* zv = PHP_AMQP_READ_THIS_PROP_CE("headers", amqp_basic_properties_class_entry);
-	//zval* zv = PHP_AMQP_READ_THIS_PROP("headers");
 
     /* Look for the hash key */
-    if (!PHP5to7_ZEND_HASH_FIND(HASH_OF(zv), key, key_len + 1, tmp)) {
+    if ((tmp = zend_hash_str_find(HASH_OF(zv), key, key_len)) == NULL) {
         RETURN_FALSE;
     }
 
@@ -178,18 +178,17 @@ static PHP_METHOD(amqp_envelope_class, getHeader) {
 static PHP_METHOD(amqp_envelope_class, hasHeader) {
     zval rv;
 
-    char *key;  size_t key_len;
-    zval *tmp = NULL;
+	char *key;
+	size_t key_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
         return;
     }
 
     zval* zv = PHP_AMQP_READ_THIS_PROP_CE("headers", amqp_basic_properties_class_entry);
-    //zval* zv = PHP_AMQP_READ_THIS_PROP("headers");
 
     /* Look for the hash key */
-    if (!PHP5to7_ZEND_HASH_FIND(HASH_OF(zv), key, key_len + 1, tmp)) {
+	if (zend_hash_str_find(HASH_OF(zv), key, key_len) == NULL) {
         RETURN_FALSE;
     }
 
