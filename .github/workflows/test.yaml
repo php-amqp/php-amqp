@@ -79,6 +79,9 @@ jobs:
                     - php-version: '7.4'
                       librabbitmq-version: 'v0.11.0'
                       experimental: false
+                    - php-version: '7.4'
+                      librabbitmq-version: 'v0.10.0'
+                      experimental: false
 
         services:
             rabbitmq:
