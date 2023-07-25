@@ -300,24 +300,9 @@ zend_object *amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
 	zend_object_std_init(&connection->zo, ce TSRMLS_CC);
 	AMQP_OBJECT_PROPERTIES_INIT(connection->zo, ce);
 
-#if PHP_MAJOR_VERSION >=7
 	connection->zo.handlers = &amqp_connection_object_handlers;
 
 	return &connection->zo;
-#else
-	zend_object *new_value;
-
-	new_value.handle = zend_objects_store_put(
-			connection,
-			NULL,
-			(zend_objects_free_object_storage_t) amqp_connection_free,
-			NULL TSRMLS_CC
-	);
-
-	new_value.handlers = zend_get_std_object_handlers();
-
-	return new_value;
-#endif
 }
 
 

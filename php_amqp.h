@@ -150,13 +150,8 @@ struct _amqp_connection_resource {
 };
 
 struct _amqp_connection_object {
-#if PHP_MAJOR_VERSION >= 7
 	amqp_connection_resource *connection_resource;
 	zend_object zo;
-#else
-	zend_object zo;
-	amqp_connection_resource *connection_resource;
-#endif
 };
 
 #define DEFAULT_PORT					"5672"		/* default AMQP port */

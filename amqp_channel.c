@@ -203,14 +203,6 @@ void amqp_channel_free(zend_object *object TSRMLS_DC)
 	php_amqp_clean_callbacks(&channel->callbacks);
 
 	zend_object_std_dtor(&channel->zo TSRMLS_CC);
-
-#if PHP_MAJOR_VERSION < 7
-    if (channel->this_ptr) {
-        channel->this_ptr = NULL;
-    }
-
-	efree(object);
-#endif
 }
 
 
@@ -270,9 +262,6 @@ static PHP_METHOD(amqp_channel_class, __construct)
 	zval_ptr_dtor(&consumers);
 
 	channel = PHP_AMQP_GET_CHANNEL(getThis());
-#if PHP_MAJOR_VERSION < 7
-    channel->this_ptr = getThis();
-#endif
 
 	/* Set the prefetch count */
 	zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("prefetch_count"), INI_INT("amqp.prefetch_count") TSRMLS_CC);

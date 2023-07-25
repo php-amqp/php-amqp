@@ -659,12 +659,8 @@ static PHP_METHOD(amqp_queue_class, consume)
 			break;
 		}
 
-#if PHP_MAJOR_VERSION >= 7
 		ZVAL_UNDEF(&current_channel_zv);
 		ZVAL_OBJ(&current_channel_zv, &current_channel_resource->parent->zo);
-#else
-		current_channel_zv = current_channel_resource->parent->this_ptr;
-#endif
 
 		consumers = zend_read_property(amqp_channel_class_entry, PHP_AMQP_COMPAT_OBJ_P(&current_channel_zv), ZEND_STRL("consumers"), 0 , &rv TSRMLS_CC);
 
