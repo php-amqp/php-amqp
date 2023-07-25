@@ -66,6 +66,8 @@
 #define E_DEPRECATED E_WARNING
 #endif
 
+#define PHP_AMQP_INI_STR_MAX(name, length) (strlen(INI_STR((name))) > length ? length : strlen(INI_STR((name))))
+
 zend_class_entry *amqp_connection_class_entry;
 #define this_ce amqp_connection_class_entry
 
@@ -334,14 +336,14 @@ static PHP_METHOD(amqp_connection_class, __construct)
 	}
 	/* Validate the given login */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
-		if (Z_STRLEN_P(zdata) < 128) {
+		if (Z_STRLEN_P(zdata) < PHP_AMQP_MAX_CREDENTIALS_LENGTH) {
 			zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("login"), zdata TSRMLS_CC);
 		} else {
-			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'login' exceeds 128 character limit.", 0 TSRMLS_CC);
+			zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'login' exceeds %d character limit.", PHP_AMQP_MAX_CREDENTIALS_LENGTH);
 			return;
 		}
 	} else {
-		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("login"), INI_STR("amqp.login"), (size_t) (strlen(INI_STR("amqp.login")) > 128 ? 128 : strlen(INI_STR("amqp.login"))) TSRMLS_CC);
+		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("login"), INI_STR("amqp.login"), PHP_AMQP_INI_STR_MAX("amqp.login", PHP_AMQP_MAX_CREDENTIALS_LENGTH) TSRMLS_CC);
 	}
 
 	/* Pull the password out of the $params array */
@@ -352,14 +354,14 @@ static PHP_METHOD(amqp_connection_class, __construct)
 	}
 	/* Validate the given password */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
-		if (Z_STRLEN_P(zdata) < 128) {
+		if (Z_STRLEN_P(zdata) < PHP_AMQP_MAX_CREDENTIALS_LENGTH) {
 			zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("password"), Z_STRVAL_P(zdata), Z_STRLEN_P(zdata) TSRMLS_CC);
 		} else {
-			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'password' exceeds 128 character limit.", 0 TSRMLS_CC);
+			zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'password' exceeds %d character limit.", PHP_AMQP_MAX_CREDENTIALS_LENGTH);
 			return;
 		}
 	} else {
-		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("password"), INI_STR("amqp.password"), (size_t) (strlen(INI_STR("amqp.password")) > 128 ? 128 : strlen(INI_STR("amqp.password"))) TSRMLS_CC);
+		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("password"), INI_STR("amqp.password"), PHP_AMQP_INI_STR_MAX("amqp.password", PHP_AMQP_MAX_CREDENTIALS_LENGTH) TSRMLS_CC);
 	}
 
 	/* Pull the host out of the $params array */
@@ -370,14 +372,14 @@ static PHP_METHOD(amqp_connection_class, __construct)
 	}
 	/* Validate the given host */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
-		if (Z_STRLEN_P(zdata) < 128) {
+		if (Z_STRLEN_P(zdata) < PHP_AMQP_MAX_IDENTIFIER_LENGTH) {
 			zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), Z_STRVAL_P(zdata), Z_STRLEN_P(zdata) TSRMLS_CC);
 		} else {
-			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'host' exceeds 128 character limit.", 0 TSRMLS_CC);
+			zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'host' exceeds %d character limit.", PHP_AMQP_MAX_IDENTIFIER_LENGTH);
 			return;
 		}
 	} else {
-		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), INI_STR("amqp.host"), (size_t) (strlen(INI_STR("amqp.host")) > 128 ? 128 : strlen(INI_STR("amqp.host"))) TSRMLS_CC);
+		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), INI_STR("amqp.host"), PHP_AMQP_INI_STR_MAX("amqp.host" , PHP_AMQP_MAX_IDENTIFIER_LENGTH) TSRMLS_CC);
 	}
 
 	/* Pull the vhost out of the $params array */
@@ -388,14 +390,14 @@ static PHP_METHOD(amqp_connection_class, __construct)
 	}
 	/* Validate the given vhost */
 	if (zdata && Z_STRLEN_P(zdata) > 0) {
-		if (Z_STRLEN_P(zdata) < 128) {
+		if (Z_STRLEN_P(zdata) < PHP_AMQP_MAX_IDENTIFIER_LENGTH) {
 			zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("vhost"), Z_STRVAL_P(zdata), Z_STRLEN_P(zdata) TSRMLS_CC);
 		} else {
-			zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'vhost' exceeds 128 character limit.", 0 TSRMLS_CC);
+			zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'vhost' exceeds %d character limit.", PHP_AMQP_MAX_IDENTIFIER_LENGTH);
 			return;
 		}
 	} else {
-		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("vhost"), INI_STR("amqp.vhost"), (size_t) (strlen(INI_STR("amqp.vhost")) > 128 ? 128 : strlen(INI_STR("amqp.vhost"))) TSRMLS_CC);
+		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("vhost"), INI_STR("amqp.vhost"), PHP_AMQP_INI_STR_MAX("amqp.vhost", PHP_AMQP_MAX_IDENTIFIER_LENGTH) TSRMLS_CC);
 
 	}
 
@@ -775,8 +777,8 @@ static PHP_METHOD(amqp_connection_class, setLogin)
 	}
 
 	/* Validate login length */
-	if (login_len > 128) {
-		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid 'login' given, exceeds 128 characters limit.", 0 TSRMLS_CC);
+	if (login_len > PHP_AMQP_MAX_CREDENTIALS_LENGTH) {
+		zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Invalid 'login' given, exceeds %d characters limit.", PHP_AMQP_MAX_CREDENTIALS_LENGTH);
 		return;
 	}
 
@@ -809,8 +811,8 @@ static PHP_METHOD(amqp_connection_class, setPassword)
 	}
 
 	/* Validate password length */
-	if (password_len > 128) {
-		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid 'password' given, exceeds 128 characters limit.", 0 TSRMLS_CC);
+	if (password_len > 1024) {
+		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid 'password' given, exceeds 1024 characters limit.", 0 TSRMLS_CC);
 		return;
 	}
 
@@ -929,8 +931,8 @@ static PHP_METHOD(amqp_connection_class, setVhost)
 	}
 
 	/* Validate vhost length */
-	if (vhost_len > 128) {
-		zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'vhost' exceeds 128 characters limit.", 0 TSRMLS_CC);
+	if (vhost_len > PHP_AMQP_MAX_IDENTIFIER_LENGTH) {
+		zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'vhost' exceeds %d characters limit.", PHP_AMQP_MAX_IDENTIFIER_LENGTH);
 		return;
 	}
 
