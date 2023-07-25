@@ -109,6 +109,8 @@ jobs:
               run: pkg-config librabbitmq --debug
 
             - name: Build PHP extension
+              env:
+                CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
               run: phpize && ./configure && make
 
             - name: Test PHP extension
