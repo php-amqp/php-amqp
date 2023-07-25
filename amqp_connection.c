@@ -769,7 +769,8 @@ static PHP_METHOD(amqp_connection_class, getLogin)
 set the login */
 static PHP_METHOD(amqp_connection_class, setLogin)
 {
-	char *login = NULL;	size_t login_len = 0;
+	char *login = NULL;
+	size_t login_len = 0;
 
 	/* Get the login from the method params */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &login, &login_len) == FAILURE) {
@@ -803,7 +804,8 @@ static PHP_METHOD(amqp_connection_class, getPassword)
 set the password */
 static PHP_METHOD(amqp_connection_class, setPassword)
 {
-	char *password = NULL;	size_t password_len = 0;
+	char *password = NULL;
+	size_t password_len = 0;
 
 	/* Get the password from the method params */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &password, &password_len) == FAILURE) {
@@ -811,8 +813,8 @@ static PHP_METHOD(amqp_connection_class, setPassword)
 	}
 
 	/* Validate password length */
-	if (password_len > 1024) {
-		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid 'password' given, exceeds 1024 characters limit.", 0 TSRMLS_CC);
+	if (password_len > PHP_AMQP_MAX_CREDENTIALS_LENGTH) {
+		zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Invalid 'password' given, exceeds %d characters limit.", PHP_AMQP_MAX_CREDENTIALS_LENGTH);
 		return;
 	}
 
@@ -838,7 +840,8 @@ static PHP_METHOD(amqp_connection_class, getHost)
 set the host */
 static PHP_METHOD(amqp_connection_class, setHost)
 {
-	char *host = NULL;	size_t host_len = 0;
+	char *host = NULL;
+	size_t host_len = 0;
 
 	/* Get the host from the method params */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &host, &host_len) == FAILURE) {
@@ -846,8 +849,8 @@ static PHP_METHOD(amqp_connection_class, setHost)
 	}
 
 	/* Validate host length */
-	if (host_len > 1024) {
-		zend_throw_exception(amqp_connection_exception_class_entry, "Invalid 'host' given, exceeds 1024 character limit.", 0 TSRMLS_CC);
+	if (host_len > PHP_AMQP_MAX_IDENTIFIER_LENGTH) {
+		zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Invalid 'host' given, exceeds %d character limit.", PHP_AMQP_MAX_IDENTIFIER_LENGTH);
 		return;
 	}
 
@@ -924,7 +927,8 @@ static PHP_METHOD(amqp_connection_class, getVhost)
 set the vhost */
 static PHP_METHOD(amqp_connection_class, setVhost)
 {
-	char *vhost = NULL;	size_t vhost_len = 0;
+	char *vhost = NULL;
+	size_t vhost_len = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &vhost, &vhost_len) == FAILURE) {
 		return;
