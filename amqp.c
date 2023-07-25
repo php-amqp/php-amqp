@@ -41,9 +41,10 @@
 # include <stdint.h>
 # include <signal.h>
 #endif
-#if AMQP_VERSION_MINOR >= 13
+
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
 #include <rabbitmq-c/amqp.h>
-#include <rabbitmq-c/amqp_framing.h>
+#include <rabbitmq-c/framing.h>
 #else
 #include <amqp.h>
 #include <amqp_framing.h>
@@ -191,6 +192,7 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
 
 	REGISTER_LONG_CONSTANT("AMQP_DELIVERY_MODE_TRANSIENT",		AMQP_DELIVERY_NONPERSISTENT,	CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("AMQP_DELIVERY_MODE_PERSISTENT",		AMQP_DELIVERY_PERSISTENT,	CONST_CS | CONST_PERSISTENT);
+
 	return SUCCESS;
 } /* }}} */
 

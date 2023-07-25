@@ -33,7 +33,11 @@ extern int le_amqp_connection_resource;
 extern int le_amqp_connection_resource_persistent;
 
 #include "php_amqp.h"
-#include "amqp.h"
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
+#include <rabbitmq-c/amqp.h>
+#else
+#include <amqp.h>
+#endif
 
 void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_DC);
 

@@ -23,6 +23,10 @@
 #ifndef PHP_AMQP_H
 #define PHP_AMQP_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 /* True global resources - no need for thread safety here */
 extern zend_class_entry *amqp_exception_class_entry,
 		*amqp_connection_exception_class_entry,
@@ -45,7 +49,7 @@ typedef struct _amqp_callback_bucket amqp_callback_bucket;
 #error PHP >= 5.6 required
 #endif
 
-#if AMQP_VERSION_MINOR >= 13
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
 #include <rabbitmq-c/amqp.h>
 #else
 #include <amqp.h>

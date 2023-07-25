@@ -20,8 +20,12 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdint.h>
-#if AMQP_VERSION_MINOR >= 13
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
 #include <rabbitmq-c/amqp.h>
 #else
 #include <amqp.h>

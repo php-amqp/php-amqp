@@ -24,7 +24,11 @@
 #define PHP_AMQP_METHODS_HANDLING_H
 
 #include "php_amqp.h"
-#include "amqp.h"
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
+#include <rabbitmq-c/amqp.h>
+#else
+#include <amqp.h>
+#endif
 #include "php.h"
 
 int amqp_simple_wait_method_list_noblock(amqp_connection_state_t state,

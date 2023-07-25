@@ -31,9 +31,9 @@
 #include "zend_exceptions.h"
 #include "Zend/zend_interfaces.h"
 
-#if AMQP_VERSION_MINOR >= 13
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
 #include <rabbitmq-c/amqp.h>
-#include <rabbitmq-c/amqp_framing.h>
+#include <rabbitmq-c/framing.h>
 #else
 #include <amqp.h>
 #include <amqp_framing.h>
