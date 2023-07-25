@@ -270,7 +270,7 @@ static void php_amqp_clean_callbacks(amqp_channel_callbacks *callbacks) {
 }
 
 
-void amqp_channel_free(PHP5to7_obj_free_zend_object *object TSRMLS_DC)
+void amqp_channel_free(zend_object *object TSRMLS_DC)
 {
 	amqp_channel_object *channel = PHP_AMQP_FETCH_CHANNEL(object);
 
@@ -299,9 +299,9 @@ void amqp_channel_free(PHP5to7_obj_free_zend_object *object TSRMLS_DC)
 }
 
 
-PHP5to7_zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object *amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 {
-	amqp_channel_object *channel = PHP5to7_ECALLOC_CHANNEL_OBJECT(ce);
+	amqp_channel_object *channel = (amqp_channel_object*) ecalloc(1, sizeof(amqp_channel_object) + zend_object_properties_size(ce));
 
 	zend_object_std_init(&channel->zo, ce TSRMLS_CC);
 	AMQP_OBJECT_PROPERTIES_INIT(channel->zo, ce);
@@ -311,7 +311,7 @@ PHP5to7_zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
 
 	return &channel->zo;
 #else
-	PHP5to7_zend_object_value new_value;
+	zend_object *new_value;
 
 	new_value.handle = zend_objects_store_put(
 			channel,
@@ -331,7 +331,7 @@ PHP5to7_zend_object_value amqp_channel_ctor(zend_class_entry *ce TSRMLS_DC)
  */
 static PHP_METHOD(amqp_channel_class, __construct)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	zval *connection_object = NULL;
 
@@ -345,14 +345,14 @@ static PHP_METHOD(amqp_channel_class, __construct)
 		RETURN_NULL();
 	}
 
-	PHP5to7_zval_t consumers PHP5to7_MAYBE_SET_TO_NULL;
+	zval consumers;
 
-	PHP5to7_MAYBE_INIT(consumers);
-	PHP5to7_ARRAY_INIT(consumers);
+	ZVAL_UNDEF(&consumers);
+	array_init(&consumers);
 
-	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("consumers"), PHP5to7_MAYBE_PTR(consumers) TSRMLS_CC);
+	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("consumers"), &consumers TSRMLS_CC);
 
-	PHP5to7_MAYBE_DESTROY(consumers);
+	zval_ptr_dtor(&consumers);
 
 	channel = PHP_AMQP_GET_CHANNEL(getThis());
 #if PHP_MAJOR_VERSION < 7
@@ -530,10 +530,10 @@ static PHP_METHOD(amqp_channel_class, getChannelId)
 set the number of prefetches */
 static PHP_METHOD(amqp_channel_class, setPrefetchCount)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	
 	amqp_channel_resource *channel_resource;
-	PHP5to7_param_long_type_t prefetch_count;
+	zend_long prefetch_count;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &prefetch_count) == FAILURE) {
 		return;
@@ -600,7 +600,7 @@ static PHP_METHOD(amqp_channel_class, setPrefetchCount)
 get the number of prefetches */
 static PHP_METHOD(amqp_channel_class, getPrefetchCount)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("prefetch_count")
 }
@@ -610,10 +610,10 @@ static PHP_METHOD(amqp_channel_class, getPrefetchCount)
 set the number of prefetches */
 static PHP_METHOD(amqp_channel_class, setPrefetchSize)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
-	PHP5to7_param_long_type_t prefetch_size;
+	zend_long prefetch_size;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &prefetch_size) == FAILURE) {
 		return;
@@ -679,7 +679,7 @@ static PHP_METHOD(amqp_channel_class, setPrefetchSize)
 get the number of prefetches */
 static PHP_METHOD(amqp_channel_class, getPrefetchSize)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("prefetch_size")
 }
@@ -689,10 +689,10 @@ static PHP_METHOD(amqp_channel_class, getPrefetchSize)
 set the number of prefetches */
 static PHP_METHOD(amqp_channel_class, setGlobalPrefetchCount)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
-	PHP5to7_param_long_type_t global_prefetch_count;
+	zend_long global_prefetch_count;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &global_prefetch_count) == FAILURE) {
 		return;
@@ -735,7 +735,7 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchCount)
 get the number of prefetches */
 static PHP_METHOD(amqp_channel_class, getGlobalPrefetchCount)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("global_prefetch_count")
 }
@@ -745,10 +745,10 @@ static PHP_METHOD(amqp_channel_class, getGlobalPrefetchCount)
 set the number of prefetches */
 static PHP_METHOD(amqp_channel_class, setGlobalPrefetchSize)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
-	PHP5to7_param_long_type_t global_prefetch_size;
+	zend_long global_prefetch_size;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &global_prefetch_size) == FAILURE) {
 		return;
@@ -791,7 +791,7 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchSize)
 get the number of prefetches */
 static PHP_METHOD(amqp_channel_class, getGlobalPrefetchSize)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("global_prefetch_size")
 }
@@ -801,11 +801,11 @@ static PHP_METHOD(amqp_channel_class, getGlobalPrefetchSize)
 set the number of prefetches */
 static PHP_METHOD(amqp_channel_class, qos)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
-	PHP5to7_param_long_type_t prefetch_size;
-	PHP5to7_param_long_type_t prefetch_count;
+	zend_long prefetch_size;
+	zend_long prefetch_count;
 	zend_bool global = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll|b", &prefetch_size, &prefetch_count, &global) == FAILURE) {
@@ -983,7 +983,7 @@ static PHP_METHOD(amqp_channel_class, rollbackTransaction)
 Get the AMQPConnection object in use */
 static PHP_METHOD(amqp_channel_class, getConnection)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("connection")
 }
@@ -1319,7 +1319,7 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
 /* {{{ proto amqp::getConsumers() */
 static PHP_METHOD(amqp_channel_class, getConsumers)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("consumers");
 }

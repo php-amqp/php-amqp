@@ -141,7 +141,7 @@ struct _amqp_connection_resource {
 	zend_bool is_connected;
 	zend_bool is_persistent;
 	zend_bool is_dirty;
-	PHP5to7_zend_resource_t resource;
+	zend_resource *resource;
 	amqp_connection_object *parent;
 	amqp_channel_t max_slots;
 	amqp_channel_t used_slots;
@@ -221,15 +221,15 @@ struct _amqp_connection_object {
 #define PHP_AMQP_NOPARAMS() if (zend_parse_parameters_none() == FAILURE) { return; }
 
 #define PHP_AMQP_RETURN_THIS_PROP(prop_name) \
-    zval * _zv = zend_read_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(prop_name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC); \
+    zval * _zv = zend_read_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(prop_name), 0 , &rv TSRMLS_CC); \
     RETURN_ZVAL(_zv, 1, 0);
 
-#define PHP_AMQP_READ_OBJ_PROP(cls, obj, name) zend_read_property((cls), PHP5to8_OBJ_PROP(obj), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
+#define PHP_AMQP_READ_OBJ_PROP(cls, obj, name) zend_read_property((cls), PHP5to8_OBJ_PROP(obj), ZEND_STRL(name), 0 , &rv TSRMLS_CC)
 #define PHP_AMQP_READ_OBJ_PROP_DOUBLE(cls, obj, name) Z_DVAL_P(PHP_AMQP_READ_OBJ_PROP((cls), (obj), (name)))
 
-#define PHP_AMQP_READ_THIS_PROP_CE(name, ce) zend_read_property((ce), PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
-#define PHP_AMQP_READ_THIS_PROP(name) zend_read_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(name), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC)
-#define PHP_AMQP_READ_THIS_PROP_BOOL(name) Z_BVAL_P(PHP_AMQP_READ_THIS_PROP(name))
+#define PHP_AMQP_READ_THIS_PROP_CE(name, ce) zend_read_property((ce), PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(name), 0 , &rv TSRMLS_CC)
+#define PHP_AMQP_READ_THIS_PROP(name) zend_read_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL(name), 0 , &rv TSRMLS_CC)
+#define PHP_AMQP_READ_THIS_PROP_BOOL(name) Z_TYPE_P(PHP_AMQP_READ_THIS_PROP(name)) == IS_TRUE
 #define PHP_AMQP_READ_THIS_PROP_STR(name) Z_STRVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 #define PHP_AMQP_READ_THIS_PROP_STRLEN(name) (Z_TYPE_P(PHP_AMQP_READ_THIS_PROP(name)) == IS_STRING ? Z_STRLEN_P(PHP_AMQP_READ_THIS_PROP(name)) : 0)
 #define PHP_AMQP_READ_THIS_PROP_ARR(name) Z_ARRVAL_P(PHP_AMQP_READ_THIS_PROP(name))
@@ -348,7 +348,7 @@ struct _amqp_connection_object {
 
 ZEND_BEGIN_MODULE_GLOBALS(amqp)
     char *error_message;
-    PHP5to7_param_long_type_t error_code;
+    zend_long error_code;
 ZEND_END_MODULE_GLOBALS(amqp)
 
 ZEND_EXTERN_MODULE_GLOBALS(amqp);
@@ -381,7 +381,7 @@ int php_amqp_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_connect
 /**
  * @deprecated
  */
-void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, PHP5to7_param_long_type_t code TSRMLS_DC);
+void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, zend_long code TSRMLS_DC);
 void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entry *exception_ce TSRMLS_DC);
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_resource *connection_resource, amqp_channel_resource *channel_resource);
 

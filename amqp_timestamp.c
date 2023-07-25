@@ -41,7 +41,6 @@ static const double AMQP_TIMESTAMP_MIN = 0;
 static PHP_METHOD(amqp_timestamp_class, __construct)
 {
 	double timestamp;
-	zval *timestamp_value;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &timestamp) == FAILURE) {
 		return;
@@ -78,7 +77,7 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 Get timestamp */
 static PHP_METHOD(amqp_timestamp_class, getTimestamp)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 
 	PHP_AMQP_RETURN_THIS_PROP("timestamp");
@@ -90,7 +89,7 @@ static PHP_METHOD(amqp_timestamp_class, getTimestamp)
 Return timestamp as string */
 static PHP_METHOD(amqp_timestamp_class, __toString)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 
 	PHP_AMQP_RETURN_THIS_PROP("timestamp");
@@ -128,7 +127,7 @@ PHP_MINIT_FUNCTION(amqp_timestamp)
 
 	INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
 	this_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	this_ce->ce_flags = this_ce->ce_flags | PHP5to7_ZEND_ACC_FINAL_CLASS;
+	this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
 
 	zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
 

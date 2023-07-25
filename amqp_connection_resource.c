@@ -596,14 +596,14 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)PHP5to7_ZEND_RESOURCE_DTOR_ARG->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)res->ptr;
 
 	connection_resource_destructor(resource, 1 TSRMLS_CC);
 }
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)PHP5to7_ZEND_RESOURCE_DTOR_ARG->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)res->ptr;
 
 	connection_resource_destructor(resource, 0 TSRMLS_CC);
 }

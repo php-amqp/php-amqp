@@ -31,17 +31,17 @@
 zend_class_entry *amqp_decimal_class_entry;
 #define this_ce amqp_decimal_class_entry
 
-static const PHP5to7_param_long_type_t AMQP_DECIMAL_EXPONENT_MIN = 0;
-static const PHP5to7_param_long_type_t AMQP_DECIMAL_EXPONENT_MAX = UINT8_MAX;
-static const PHP5to7_param_long_type_t AMQP_DECIMAL_SIGNIFICAND_MIN = 0;
-static const PHP5to7_param_long_type_t AMQP_DECIMAL_SIGNIFICAND_MAX = UINT32_MAX;
+static const zend_long AMQP_DECIMAL_EXPONENT_MIN = 0;
+static const zend_long AMQP_DECIMAL_EXPONENT_MAX = UINT8_MAX;
+static const zend_long AMQP_DECIMAL_SIGNIFICAND_MIN = 0;
+static const zend_long AMQP_DECIMAL_SIGNIFICAND_MAX = UINT32_MAX;
 
 
 /* {{{ proto AMQPDecimal::__construct(int $e, int $n)
  */
 static PHP_METHOD(amqp_decimal_class, __construct)
 {
-    PHP5to7_param_long_type_t exponent, significand;
+    zend_long exponent, significand;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &exponent, &significand) == FAILURE) {
 		return;
@@ -75,7 +75,7 @@ static PHP_METHOD(amqp_decimal_class, __construct)
 Get exponent */
 static PHP_METHOD(amqp_decimal_class, getExponent)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 
 	PHP_AMQP_RETURN_THIS_PROP("exponent");
@@ -86,7 +86,7 @@ static PHP_METHOD(amqp_decimal_class, getExponent)
 Get E */
 static PHP_METHOD(amqp_decimal_class, getSignificand)
 {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
     PHP_AMQP_NOPARAMS();
 
     PHP_AMQP_RETURN_THIS_PROP("significand");
@@ -121,7 +121,7 @@ PHP_MINIT_FUNCTION(amqp_decimal)
 
 	INIT_CLASS_ENTRY(ce, "AMQPDecimal", amqp_decimal_class_functions);
 	this_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	this_ce->ce_flags = this_ce->ce_flags | PHP5to7_ZEND_ACC_FINAL_CLASS;
+	this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
 
     zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MIN"), AMQP_DECIMAL_EXPONENT_MIN TSRMLS_CC);
     zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MAX"), AMQP_DECIMAL_EXPONENT_MAX TSRMLS_CC);
