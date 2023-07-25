@@ -45,7 +45,11 @@ typedef struct _amqp_callback_bucket amqp_callback_bucket;
 #error PHP >= 5.6 required
 #endif
 
+#if AMQP_VERSION_MINOR >= 13
+#include <rabbitmq-c/amqp.h>
+#else
 #include <amqp.h>
+#endif
 
 extern zend_module_entry amqp_module_entry;
 #define phpext_amqp_ptr &amqp_module_entry

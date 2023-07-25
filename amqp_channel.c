@@ -41,8 +41,13 @@
 # include <signal.h>
 #endif
 
+#if AMQP_VERSION_MINOR >= 13
+#include <rabbitmq-c/amqp.h>
+#include <rabbitmq-c/amqp_framing.h>
+#else
 #include <amqp.h>
 #include <amqp_framing.h>
+#endif
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"

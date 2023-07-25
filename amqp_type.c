@@ -21,7 +21,11 @@
   +----------------------------------------------------------------------+
 */
 #include <stdint.h>
+#if AMQP_VERSION_MINOR >= 13
+#include <rabbitmq-c/amqp.h>
+#else
 #include <amqp.h>
+#endif
 #include "Zend/zend_interfaces.h"
 #include "amqp_type.h"
 #include "amqp_timestamp.h"

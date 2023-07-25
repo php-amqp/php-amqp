@@ -26,7 +26,11 @@
 
 #include "php.h"
 
+#if AMQP_VERSION_MINOR >= 13
+#include <rabbitmq-c/amqp.h>
+#else
 #include <amqp.h>
+#endif
 #include "php_amqp.h"
 
 PHP_MINIT_FUNCTION(amqp_type);
