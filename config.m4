@@ -31,8 +31,11 @@ if test "$PHP_AMQP" != "no"; then
 
 	dnl # --with-amqp -> check with-path
 
-	SEARCH_FOR="amqp_framing.h"
+	NEW_LAYOUT=rabbitmq-c/framing.h
+	OLD_LAYOUT=amqp_framing.h
 	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+
+	HAVE_LIBRABBITMQ_NEW_LAYOUT=0
 
 	if test "$PHP_LIBRABBITMQ_DIR" = "yes" -a -x $PKG_CONFIG; then
 		AC_MSG_CHECKING([for amqp using pkg-config])
@@ -44,8 +47,12 @@ if test "$PHP_AMQP" != "no"; then
 		PHP_AMQP_VERSION=`$PKG_CONFIG librabbitmq --modversion`
 		AC_MSG_RESULT([found version $PHP_AMQP_VERSION])
 
-		if ! $PKG_CONFIG librabbitmq --atleast-version 0.7.1 ; then
-			AC_MSG_ERROR([librabbitmq must be version 0.7.1 or greater])
+		if ! $PKG_CONFIG librabbitmq --atleast-version 0.10.0 ; then
+			AC_MSG_ERROR([librabbitmq must be version 0.10.0 or greater])
+		fi
+
+		if test -r `$PKG_CONFIG librabbitmq --variable=includedir`/$NEW_LAYOUT; then
+		    HAVE_LIBRABBITMQ_NEW_LAYOUT=1
 		fi
 
 		PHP_AMQP_LIBS=`$PKG_CONFIG librabbitmq --libs`
@@ -58,8 +65,13 @@ if test "$PHP_AMQP" != "no"; then
 		AC_MSG_CHECKING([for amqp files in default path])
 		if test "$PHP_LIBRABBITMQ_DIR" != "no" && test "$PHP_LIBRABBITMQ_DIR" != "yes"; then
 			for i in $PHP_LIBRABBITMQ_DIR; do
-				if test -r $i/include/$SEARCH_FOR;
-					then
+			    if test -r $i/include/$NEW_LAYOUT; then
+                    AMQP_DIR=$i
+                    HAVE_LIBRABBITMQ_NEW_LAYOUT=1
+                    AC_MSG_RESULT(found in $i)
+                    break
+                fi
+				if test -r $i/include/$OLD_LAYOUT; then
 					AMQP_DIR=$i
 					AC_MSG_RESULT(found in $i)
 					break
@@ -67,8 +79,13 @@ if test "$PHP_AMQP" != "no"; then
 			done
 		else
 			for i in $PHP_AMQP /usr/local /usr ; do
-				if test -r $i/include/$SEARCH_FOR;
-					then
+			    if test -r $i/include/$NEW_LAYOUT; then
+                    AMQP_DIR=$i
+                    HAVE_LIBRABBITMQ_NEW_LAYOUT=1
+                    AC_MSG_RESULT(found in $i)
+                    break
+                fi
+				if test -r $i/include/$OLD_LAYOUT; then
 					AMQP_DIR=$i
 					AC_MSG_RESULT(found in $i)
 					break
@@ -134,6 +151,11 @@ if test "$PHP_AMQP" != "no"; then
 
 		PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $AMQP_DIR/$PHP_LIBDIR, AMQP_SHARED_LIBADD)
 	fi
+
+	AC_MSG_CHECKING([for new librabbitmq layout])
+    AC_MSG_RESULT([${HAVE_LIBRABBITMQ_NEW_LAYOUT}])
+    AC_DEFINE_UNQUOTED(HAVE_LIBRABBITMQ_NEW_LAYOUT, ${HAVE_LIBRABBITMQ_NEW_LAYOUT}, ["Librabbitmq new layout"])
+
 	PHP_SUBST(AMQP_SHARED_LIBADD)
 
 	AMQP_SOURCES="amqp.c amqp_type.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c amqp_timestamp.c amqp_decimal.c"

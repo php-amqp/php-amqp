@@ -43,10 +43,17 @@
 # include <stdint.h>
 #endif
 
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
+#include <rabbitmq-c/amqp.h>
+#include <rabbitmq-c/framing.h>
+#include <rabbitmq-c/tcp_socket.h>
+#include <rabbitmq-c/ssl_socket.h>
+#else
 #include <amqp.h>
-#include <amqp_tcp_socket.h>
 #include <amqp_framing.h>
+#include <amqp_tcp_socket.h>
 #include <amqp_ssl_socket.h>
+#endif
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -596,14 +603,14 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)PHP5to7_ZEND_RESOURCE_DTOR_ARG->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)res->ptr;
 
 	connection_resource_destructor(resource, 1 TSRMLS_CC);
 }
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor)
 {
-	amqp_connection_resource *resource = (amqp_connection_resource *)PHP5to7_ZEND_RESOURCE_DTOR_ARG->ptr;
+	amqp_connection_resource *resource = (amqp_connection_resource *)res->ptr;
 
 	connection_resource_destructor(resource, 0 TSRMLS_CC);
 }

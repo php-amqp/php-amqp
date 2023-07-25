@@ -40,8 +40,13 @@
 # include <signal.h>
 # include <stdint.h>
 #endif
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
+#include <rabbitmq-c/amqp.h>
+#include <rabbitmq-c/framing.h>
+#else
 #include <amqp.h>
 #include <amqp_framing.h>
+#endif
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -65,9 +70,9 @@ AMQPQueue constructor
 */
 static PHP_METHOD(amqp_queue_class, __construct)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
-	PHP5to7_zval_t arguments PHP5to7_MAYBE_SET_TO_NULL;
+	zval arguments;
 
 	zval *channelObj;
 	amqp_channel_resource *channel_resource;
@@ -76,16 +81,16 @@ static PHP_METHOD(amqp_queue_class, __construct)
 		return;
 	}
 
-	PHP5to7_MAYBE_INIT(arguments);
-	PHP5to7_ARRAY_INIT(arguments);
-	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("arguments"), PHP5to7_MAYBE_PTR(arguments) TSRMLS_CC);
-	PHP5to7_MAYBE_DESTROY(arguments);
+	ZVAL_UNDEF(&arguments);
+	array_init(&arguments);
+	zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("arguments"), &arguments TSRMLS_CC);
+	zval_ptr_dtor(&arguments);
 
 	channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(channelObj);
 	PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not create queue.");
 
-	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("channel"), channelObj TSRMLS_CC);
-	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("connection"), PHP_AMQP_READ_OBJ_PROP(amqp_channel_class_entry, channelObj, "connection") TSRMLS_CC);
+	zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("channel"), channelObj TSRMLS_CC);
+	zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("connection"), PHP_AMQP_READ_OBJ_PROP(amqp_channel_class_entry, channelObj, "connection") TSRMLS_CC);
 
 }
 /* }}} */
@@ -95,7 +100,7 @@ static PHP_METHOD(amqp_queue_class, __construct)
 Get the queue name */
 static PHP_METHOD(amqp_queue_class, getName)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	PHP_AMQP_NOPARAMS();
 
@@ -113,7 +118,7 @@ static PHP_METHOD(amqp_queue_class, getName)
 Set the queue name */
 static PHP_METHOD(amqp_queue_class, setName)
 {
-	char *name = NULL;	PHP5to7_param_str_len_type_t name_len = 0;
+	char *name = NULL;	size_t name_len = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
 		return;
@@ -126,7 +131,7 @@ static PHP_METHOD(amqp_queue_class, setName)
 	}
 
 	/* Set the queue name */
-	zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("name"), name, name_len TSRMLS_CC);
+	zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("name"), name, name_len TSRMLS_CC);
 
 	/* BC */
 	RETURN_TRUE;
@@ -139,9 +144,9 @@ static PHP_METHOD(amqp_queue_class, setName)
 Get the queue parameters */
 static PHP_METHOD(amqp_queue_class, getFlags)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
-	PHP5to7_param_long_type_t flags = 0;
+	zend_long flags = 0;
 
 	PHP_AMQP_NOPARAMS();
 
@@ -170,7 +175,7 @@ static PHP_METHOD(amqp_queue_class, getFlags)
 Set the queue parameters */
 static PHP_METHOD(amqp_queue_class, setFlags)
 {
-	PHP5to7_param_long_type_t flags;
+	zend_long flags;
 	zend_bool flags_is_null = 1;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l!", &flags, &flags_is_null) == FAILURE) {
@@ -180,10 +185,10 @@ static PHP_METHOD(amqp_queue_class, setFlags)
 	/* Set the flags based on the bitmask we were given */
 	flags = flags ? flags & PHP_AMQP_QUEUE_FLAGS : flags;
 
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flags) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("durable"), IS_DURABLE(flags) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("exclusive"), IS_EXCLUSIVE(flags) TSRMLS_CC);
-	zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("auto_delete"), IS_AUTODELETE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("durable"), IS_DURABLE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("exclusive"), IS_EXCLUSIVE(flags) TSRMLS_CC);
+	zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("auto_delete"), IS_AUTODELETE(flags) TSRMLS_CC);
 
 	/* BC */
 	RETURN_TRUE;
@@ -195,38 +200,37 @@ static PHP_METHOD(amqp_queue_class, setFlags)
 Get the queue argument referenced by key */
 static PHP_METHOD(amqp_queue_class, getArgument)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
-
-	PHP5to7_zval_t *tmp = NULL;
-
-	char *key;	PHP5to7_param_str_len_type_t key_len;
+	zval rv;
+	zval *tmp = NULL;
+	char *key;
+	size_t key_len;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
 		return;
 	}
 
-	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned)(key_len + 1), tmp)) {
+	if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	RETURN_ZVAL(PHP5to7_MAYBE_DEREF(tmp), 1, 0);
+	RETURN_ZVAL(tmp, 1, 0);
 }
 /* }}} */
 
 /* {{{ proto AMQPQueue::hasArgument(string key) */
 static PHP_METHOD(amqp_queue_class, hasArgument)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
-	PHP5to7_zval_t *tmp = NULL;
+	zval *tmp = NULL;
 
-	char *key;	PHP5to7_param_str_len_type_t key_len;
+	char *key;	size_t key_len;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
 		return;
 	}
 
-	if (!PHP5to7_ZEND_HASH_FIND(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned)(key_len + 1), tmp)) {
+	if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -239,7 +243,7 @@ static PHP_METHOD(amqp_queue_class, hasArgument)
 Get the queue arguments */
 static PHP_METHOD(amqp_queue_class, getArguments)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("arguments");
 }
@@ -255,7 +259,7 @@ static PHP_METHOD(amqp_queue_class, setArguments)
 		return;
 	}
 
-	zend_update_property(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("arguments"), zvalArguments TSRMLS_CC);
+	zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("arguments"), zvalArguments TSRMLS_CC);
 
 	RETURN_TRUE;
 }
@@ -266,9 +270,9 @@ static PHP_METHOD(amqp_queue_class, setArguments)
 Get the queue name */
 static PHP_METHOD(amqp_queue_class, setArgument)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
-	char *key= NULL;    PHP5to7_param_str_len_type_t key_len = 0;
+	char *key= NULL;    size_t key_len = 0;
 	zval *value = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sz",
@@ -279,13 +283,14 @@ static PHP_METHOD(amqp_queue_class, setArgument)
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
-			PHP5to7_ZEND_HASH_DEL(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned) (key_len + 1));
+			zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
 			break;
-		PHP5to7_CASE_IS_BOOL:
+		case IS_TRUE:
+		case IS_FALSE:
 		case IS_LONG:
 		case IS_DOUBLE:
 		case IS_STRING:
-			PHP5to7_ZEND_HASH_ADD(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, (unsigned) (key_len + 1), value, sizeof(zval *));
+			zend_hash_str_add(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len, value);
 			Z_TRY_ADDREF_P(value);
 			break;
 		default:
@@ -303,13 +308,13 @@ declare queue
 */
 static PHP_METHOD(amqp_queue_class, declareQueue)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
 
 	char *name;
 	amqp_table_t *arguments;
-	PHP5to7_param_long_type_t message_count;
+	zend_long message_count;
 
 	if (zend_parse_parameters_none() == FAILURE) {
 		return;
@@ -347,7 +352,7 @@ static PHP_METHOD(amqp_queue_class, declareQueue)
 
 	/* Set the queue name, in case it is an autogenerated queue name */
 	name = php_amqp_type_amqp_bytes_to_char(r->queue);
-	zend_update_property_string(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("name"), name TSRMLS_CC);
+	zend_update_property_string(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("name"), name TSRMLS_CC);
 	efree(name);
 
 	php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
@@ -362,14 +367,14 @@ bind queue to exchange by routing key
 */
 static PHP_METHOD(amqp_queue_class, bind)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	zval *zvalArguments = NULL;
 
 	amqp_channel_resource *channel_resource;
 
-	char *exchange_name;		PHP5to7_param_str_len_type_t exchange_name_len;
-	char *keyname     = NULL;	PHP5to7_param_str_len_type_t keyname_len = 0;
+	char *exchange_name;		size_t exchange_name_len;
+	char *keyname     = NULL;	size_t keyname_len = 0;
 
 	amqp_table_t *arguments = NULL;
 
@@ -421,14 +426,13 @@ return array (messages)
 */
 static PHP_METHOD(amqp_queue_class, get)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
 
-	PHP5to7_zval_t message PHP5to7_MAYBE_SET_TO_NULL;
-	PHP5to7_zval_t retval PHP5to7_MAYBE_SET_TO_NULL;
+	zval message;
 
-	PHP5to7_param_long_type_t flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
+	zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
 
 	/* Parse out the method parameters */
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|l", &flags) == FAILURE) {
@@ -486,15 +490,15 @@ static PHP_METHOD(amqp_queue_class, get)
 		return;
 	}
 
-	PHP5to7_MAYBE_INIT(message);
+	ZVAL_UNDEF(&message);
 
-	convert_amqp_envelope_to_zval(&envelope, PHP5to7_MAYBE_PTR(message) TSRMLS_CC);
+	convert_amqp_envelope_to_zval(&envelope, &message TSRMLS_CC);
 
 	php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 	amqp_destroy_envelope(&envelope);
 
-	RETVAL_ZVAL(PHP5to7_MAYBE_PTR(message), 1, 0);
-	PHP5to7_MAYBE_DESTROY(message);
+	RETVAL_ZVAL(&message, 1, 0);
+	zval_ptr_dtor(&message);
 }
 /* }}} */
 
@@ -504,12 +508,11 @@ consume the message
 */
 static PHP_METHOD(amqp_queue_class, consume)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
-	PHP5to7_zval_t *consumer_tag_zv = NULL;
-	PHP5to7_zval_t current_channel_zv PHP5to7_MAYBE_SET_TO_NULL;
+	zval current_channel_zv;
 
-	PHP5to7_zval_t *current_queue_zv = NULL;
+	zval *current_queue_zv = NULL;
 
 	amqp_channel_resource *channel_resource;
 	amqp_channel_resource *current_channel_resource;
@@ -519,8 +522,8 @@ static PHP_METHOD(amqp_queue_class, consume)
 
 	amqp_table_t *arguments;
 
-	char *consumer_tag = NULL;  PHP5to7_param_str_len_type_t consumer_tag_len = 0;
-	PHP5to7_param_long_type_t flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
+	char *consumer_tag = NULL;  size_t consumer_tag_len = 0;
+	zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|f!ls",
 							  &fci, &fci_cache,
@@ -530,7 +533,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 	}
 
 	zval *channel_zv = PHP_AMQP_READ_THIS_PROP("channel");
-	zval *consumers = zend_read_property(amqp_channel_class_entry, PHP5to8_OBJ_PROP(channel_zv), ZEND_STRL("consumers"), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC);
+	zval *consumers = zend_read_property(amqp_channel_class_entry, PHP_AMQP_COMPAT_OBJ_P(channel_zv), ZEND_STRL("consumers"), 0 , &rv TSRMLS_CC);
 
 	if (IS_ARRAY != Z_TYPE_P(consumers)) {
 		zend_throw_exception(amqp_queue_exception_class_entry, "Invalid channel consumers, forgot to call channel constructor?", 0 TSRMLS_CC);
@@ -572,34 +575,23 @@ static PHP_METHOD(amqp_queue_class, consume)
 		char *key;
 		key = estrndup((char *) r->consumer_tag.bytes, (unsigned) r->consumer_tag.len);
 
-		if (PHP5to7_ZEND_HASH_FIND(Z_ARRVAL_P(consumers), (const char *) key, PHP5to7_ZEND_HASH_STRLEN(r->consumer_tag.len), consumer_tag_zv)) {
+		if (zend_hash_str_find(Z_ARRVAL_P(consumers), key, r->consumer_tag.len) != NULL) {
 			// This should never happen as AMQP server guarantees that consumer tag is unique within channel
 			zend_throw_exception(amqp_exception_class_entry, "Duplicate consumer tag", 0 TSRMLS_CC);
 		    efree(key);
 			return;
 		}
 
-		PHP5to7_zval_t tmp PHP5to7_MAYBE_SET_TO_NULL;
+		zval tmp;
 
-#if PHP_MAJOR_VERSION >= 7
-		PHP5to7_MAYBE_INIT(tmp);
-		ZVAL_COPY(PHP5to7_MAYBE_PTR(tmp), getThis());
-#else
-		tmp = getThis();
-		Z_ADDREF_P(tmp);
-#endif
+		ZVAL_UNDEF(&tmp);
+		ZVAL_COPY(&tmp, getThis());
 
-		PHP5to7_ZEND_HASH_ADD(Z_ARRVAL_P(consumers),
-		                      (const char *) key,
-		                      PHP5to7_ZEND_HASH_STRLEN(r->consumer_tag.len),
-		                      PHP5to7_MAYBE_PTR(tmp),
-		                      sizeof(PHP5to7_MAYBE_PTR_TYPE)
-		);
-
+		zend_hash_str_add(Z_ARRVAL_P(consumers), key, r->consumer_tag.len, &tmp);
 		efree(key);
 
 		/* Set the consumer tag name, in case it is an autogenerated consumer tag name */
-		zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("consumer_tag"), (const char *) r->consumer_tag.bytes, (PHP5to7_param_str_len_type_t) r->consumer_tag.len TSRMLS_CC);
+		zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("consumer_tag"), (const char *) r->consumer_tag.bytes, (size_t) r->consumer_tag.len TSRMLS_CC);
 	}
 
 	if (!ZEND_FCI_INITIALIZED(fci)) {
@@ -621,7 +613,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 
 	while(1) {
 		/* Initialize the message */
-		PHP5to7_zval_t message PHP5to7_MAYBE_SET_TO_NULL;
+		zval message;
 
 		amqp_envelope_t envelope;
 
@@ -660,8 +652,8 @@ static PHP_METHOD(amqp_queue_class, consume)
 			return;
 		}
 
-		PHP5to7_MAYBE_INIT(message);
-		convert_amqp_envelope_to_zval(&envelope, PHP5to7_MAYBE_PTR(message) TSRMLS_CC);
+		ZVAL_UNDEF(&message);
+		convert_amqp_envelope_to_zval(&envelope, &message TSRMLS_CC);
 
 		current_channel_resource = channel_resource->connection_resource->slots[envelope.channel - 1];
 
@@ -672,14 +664,10 @@ static PHP_METHOD(amqp_queue_class, consume)
 			break;
 		}
 
-#if PHP_MAJOR_VERSION >= 7
-		PHP5to7_MAYBE_INIT(current_channel_zv);
+		ZVAL_UNDEF(&current_channel_zv);
 		ZVAL_OBJ(&current_channel_zv, &current_channel_resource->parent->zo);
-#else
-		current_channel_zv = current_channel_resource->parent->this_ptr;
-#endif
 
-		consumers = zend_read_property(amqp_channel_class_entry, PHP5to8_OBJ_PROP(PHP5to7_MAYBE_PTR(current_channel_zv)), ZEND_STRL("consumers"), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC);
+		consumers = zend_read_property(amqp_channel_class_entry, PHP_AMQP_COMPAT_OBJ_P(&current_channel_zv), ZEND_STRL("consumers"), 0 , &rv TSRMLS_CC);
 
 		if (IS_ARRAY != Z_TYPE_P(consumers)) {
 			zend_throw_exception(amqp_queue_exception_class_entry, "Invalid channel consumers, forgot to call channel constructor?", 0 TSRMLS_CC);
@@ -690,16 +678,16 @@ static PHP_METHOD(amqp_queue_class, consume)
 		char *key;
 		key = estrndup((char *)envelope.consumer_tag.bytes, (unsigned) envelope.consumer_tag.len);
 
-		if (!PHP5to7_ZEND_HASH_FIND(Z_ARRVAL_P(consumers), key, PHP5to7_ZEND_HASH_STRLEN(envelope.consumer_tag.len), current_queue_zv)) {
-			PHP5to7_zval_t exception PHP5to7_MAYBE_SET_TO_NULL;
-			PHP5to7_MAYBE_INIT(exception);
-			object_init_ex(PHP5to7_MAYBE_PTR(exception), amqp_envelope_exception_class_entry);
-		    zend_update_property_string(zend_exception_get_default(TSRMLS_C), PHP5to8_OBJ_PROP(PHP5to7_MAYBE_PTR(exception)),  ZEND_STRL("message"), "Orphaned envelope" TSRMLS_CC);
-			zend_update_property(amqp_envelope_exception_class_entry, PHP5to8_OBJ_PROP(PHP5to7_MAYBE_PTR(exception)), ZEND_STRL("envelope"), PHP5to7_MAYBE_PTR(message) TSRMLS_CC);
+		if ((current_queue_zv = zend_hash_str_find(Z_ARRVAL_P(consumers), key, envelope.consumer_tag.len)) == NULL) {
+			zval exception;
+			ZVAL_UNDEF(&exception);
+			object_init_ex(&exception, amqp_envelope_exception_class_entry);
+		    zend_update_property_string(zend_exception_get_default(TSRMLS_C), PHP_AMQP_COMPAT_OBJ_P(&exception),  ZEND_STRL("message"), "Orphaned envelope" TSRMLS_CC);
+			zend_update_property(amqp_envelope_exception_class_entry, PHP_AMQP_COMPAT_OBJ_P(&exception), ZEND_STRL("envelope"), &message TSRMLS_CC);
 
-			zend_throw_exception_object(PHP5to7_MAYBE_PTR(exception) TSRMLS_CC);
+			zend_throw_exception_object(&exception TSRMLS_CC);
 
-			PHP5to7_MAYBE_DESTROY(message);
+			zval_ptr_dtor(&message);
 
 			amqp_destroy_envelope(&envelope);
 		    efree(key);
@@ -710,40 +698,40 @@ static PHP_METHOD(amqp_queue_class, consume)
 		amqp_destroy_envelope(&envelope);
 
 		/* Make the callback */
-		PHP5to7_zval_t params PHP5to7_MAYBE_SET_TO_NULL;
-		PHP5to7_zval_t retval PHP5to7_MAYBE_SET_TO_NULL;
+		zval params;
+		zval retval;
 
 		/* Build the parameter array */
-		PHP5to7_MAYBE_INIT(params);
-		PHP5to7_ARRAY_INIT(params);
+		ZVAL_UNDEF(&params);
+		array_init(&params);
 
 		/* Dump it into the params array */
-		add_index_zval(PHP5to7_MAYBE_PTR(params), 0, PHP5to7_MAYBE_PTR(message));
-		Z_ADDREF_P( PHP5to7_MAYBE_PTR(message));
+		add_index_zval(&params, 0, &message);
+		Z_ADDREF_P( &message);
 
 		/* Add a pointer to the queue: */
-		add_index_zval(PHP5to7_MAYBE_PTR(params), 1, PHP5to7_MAYBE_DEREF(current_queue_zv));
-		Z_ADDREF_P(PHP5to7_MAYBE_DEREF(current_queue_zv));
+		add_index_zval(&params, 1, current_queue_zv);
+		Z_ADDREF_P(current_queue_zv);
 
 
 		/* Convert everything to be callable */
-		zend_fcall_info_args(&fci, PHP5to7_MAYBE_PTR(params) TSRMLS_CC);
+		zend_fcall_info_args(&fci, &params TSRMLS_CC);
 		/* Initialize the return value pointer */
 
-		PHP5to7_SET_FCI_RETVAL_PTR(fci, PHP5to7_MAYBE_PTR(retval));
+		fci.retval = &retval;
 
 		/* Call the function, and track the return value */
-		if (zend_call_function(&fci, &fci_cache TSRMLS_CC) == SUCCESS && PHP5to7_CHECK_FCI_RETVAL_PTR(fci)) {
-			RETVAL_ZVAL(PHP5to7_MAYBE_PTR(retval), 1, 1);
+		if (zend_call_function(&fci, &fci_cache TSRMLS_CC) == SUCCESS && fci.retval) {
+			RETVAL_ZVAL(&retval, 1, 1);
   		}
 
 		/* Clean up our mess */
 		zend_fcall_info_args_clear(&fci, 1);
-		PHP5to7_MAYBE_DESTROY(params);
-		PHP5to7_MAYBE_DESTROY(message);
+		zval_ptr_dtor(&params);
+		zval_ptr_dtor(&message);
 
 		/* Check if user land function wants to bail */
-		if (EG(exception) || PHP5to7_IS_FALSE_P(return_value)) {
+		if (EG(exception) || Z_TYPE_P(return_value) == IS_FALSE) {
 			break;
 		}
 	}
@@ -759,12 +747,12 @@ static PHP_METHOD(amqp_queue_class, consume)
 */
 static PHP_METHOD(amqp_queue_class, ack)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
 
-	PHP5to7_param_long_type_t deliveryTag = 0;
-	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
+	zend_long deliveryTag = 0;
+	zend_long flags = AMQP_NOPARAM;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|l", &deliveryTag, &flags ) == FAILURE) {
 		return;
@@ -804,12 +792,12 @@ static PHP_METHOD(amqp_queue_class, ack)
 */
 static PHP_METHOD(amqp_queue_class, nack)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
 
-	PHP5to7_param_long_type_t deliveryTag = 0;
-	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
+	zend_long deliveryTag = 0;
+	zend_long flags = AMQP_NOPARAM;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|l", &deliveryTag, &flags ) == FAILURE) {
 		return;
@@ -850,12 +838,12 @@ static PHP_METHOD(amqp_queue_class, nack)
 */
 static PHP_METHOD(amqp_queue_class, reject)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
 
-	PHP5to7_param_long_type_t deliveryTag = 0;
-	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
+	zend_long deliveryTag = 0;
+	zend_long flags = AMQP_NOPARAM;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|l", &deliveryTag, &flags) == FAILURE) {
 		return;
@@ -895,7 +883,7 @@ purge queue
 */
 static PHP_METHOD(amqp_queue_class, purge)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
 
@@ -939,19 +927,19 @@ cancel queue to consumer
 */
 static PHP_METHOD(amqp_queue_class, cancel)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
-	PHP5to7_zval_t *tmp = NULL;
 
-	char *consumer_tag = NULL;  PHP5to7_param_str_len_type_t consumer_tag_len = 0;
+	char *consumer_tag = NULL;
+	size_t consumer_tag_len = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s", &consumer_tag, &consumer_tag_len) == FAILURE) {
 		return;
 	}
 
 	zval *channel_zv = PHP_AMQP_READ_THIS_PROP("channel");
-	zval *consumers = zend_read_property(amqp_channel_class_entry, PHP5to8_OBJ_PROP(channel_zv), ZEND_STRL("consumers"), 0 PHP5to7_READ_PROP_RV_PARAM_CC TSRMLS_CC);
+	zval *consumers = zend_read_property(amqp_channel_class_entry, PHP_AMQP_COMPAT_OBJ_P(channel_zv), ZEND_STRL("consumers"), 0 , &rv TSRMLS_CC);
 	zend_bool has_consumer_tag = (zend_bool) (IS_STRING == Z_TYPE_P(PHP_AMQP_READ_THIS_PROP("consumer_tag")));
 
 	if (IS_ARRAY != Z_TYPE_P(consumers)) {
@@ -983,12 +971,13 @@ static PHP_METHOD(amqp_queue_class, cancel)
 	}
 
 	if (!consumer_tag_len || (has_consumer_tag && strcmp(consumer_tag, PHP_AMQP_READ_THIS_PROP_STR("consumer_tag")) != 0)) {
-		zend_update_property_null(this_ce, PHP5to8_OBJ_PROP(getThis()), ZEND_STRL("consumer_tag") TSRMLS_CC);
+		zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("consumer_tag") TSRMLS_CC);
 	}
 
     char *key;
     key = estrndup((char *)r->consumer_tag.bytes, (unsigned) r->consumer_tag.len);
-    PHP5to7_ZEND_HASH_DEL(Z_ARRVAL_P(consumers), (const char *) key, PHP5to7_ZEND_HASH_STRLEN(r->consumer_tag.len));
+
+	zend_hash_str_del_ind(Z_ARRVAL_P(consumers), key, r->consumer_tag.len);
     efree(key);
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
@@ -1003,13 +992,13 @@ unbind queue from exchange
 */
 static PHP_METHOD(amqp_queue_class, unbind)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	zval *zvalArguments = NULL;
 	amqp_channel_resource *channel_resource;
 
-	char *exchange_name;		PHP5to7_param_str_len_type_t exchange_name_len;
-	char *keyname     = NULL;	PHP5to7_param_str_len_type_t keyname_len = 0;
+	char *exchange_name;		size_t exchange_name_len;
+	char *keyname     = NULL;	size_t keyname_len = 0;
 
 	amqp_table_t *arguments = NULL;
 
@@ -1060,13 +1049,13 @@ delete queue and return the number of messages deleted in it
 */
 static PHP_METHOD(amqp_queue_class, delete)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 
 	amqp_channel_resource *channel_resource;
 
-	PHP5to7_param_long_type_t flags = AMQP_NOPARAM;
+	zend_long flags = AMQP_NOPARAM;
 
-	PHP5to7_param_long_type_t message_count;
+	zend_long message_count;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|l", &flags) == FAILURE) {
 		return;
@@ -1105,7 +1094,7 @@ static PHP_METHOD(amqp_queue_class, delete)
 Get the AMQPChannel object in use */
 static PHP_METHOD(amqp_queue_class, getChannel)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("channel");
 }
@@ -1115,7 +1104,7 @@ static PHP_METHOD(amqp_queue_class, getChannel)
 Get the AMQPConnection object in use */
 static PHP_METHOD(amqp_queue_class, getConnection)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("connection");
 }
@@ -1125,7 +1114,7 @@ static PHP_METHOD(amqp_queue_class, getConnection)
 Get latest consumer tag*/
 static PHP_METHOD(amqp_queue_class, getConsumerTag)
 {
-	PHP5to7_READ_PROP_RV_PARAM_DECL;
+	zval rv;
 	PHP_AMQP_NOPARAMS();
 	PHP_AMQP_RETURN_THIS_PROP("consumer_tag");
 }

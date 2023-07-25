@@ -43,8 +43,13 @@
 
 #endif
 
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
+#include <rabbitmq-c/amqp.h>
+#include <rabbitmq-c/framing.h>
+#else
 #include <amqp.h>
 #include <amqp_framing.h>
+#endif
 
 #ifdef PHP_WIN32
 # include "win32/unistd.h"
@@ -71,13 +76,13 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
     amqp_basic_properties_t *p = &amqp_envelope->message.properties;
     amqp_message_t *message = &amqp_envelope->message;
 
-    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("body"), (const char *) message->body.bytes, (PHP5to7_param_str_len_type_t) message->body.len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("body"), (const char *) message->body.bytes, (size_t) message->body.len TSRMLS_CC);
 
-    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("consumer_tag"), (const char *) amqp_envelope->consumer_tag.bytes, (PHP5to7_param_str_len_type_t) amqp_envelope->consumer_tag.len TSRMLS_CC);
-    zend_update_property_long(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("delivery_tag"), (PHP5to7_param_long_type_t) amqp_envelope->delivery_tag TSRMLS_CC);
-    zend_update_property_bool(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("is_redelivery"), (PHP5to7_param_long_type_t) amqp_envelope->redelivered TSRMLS_CC);
-    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("exchange_name"), (const char *) amqp_envelope->exchange.bytes, (PHP5to7_param_str_len_type_t) amqp_envelope->exchange.len TSRMLS_CC);
-    zend_update_property_stringl(this_ce, PHP5to8_OBJ_PROP(envelope), ZEND_STRL("routing_key"), (const char *) amqp_envelope->routing_key.bytes, (PHP5to7_param_str_len_type_t) amqp_envelope->routing_key.len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("consumer_tag"), (const char *) amqp_envelope->consumer_tag.bytes, (size_t) amqp_envelope->consumer_tag.len TSRMLS_CC);
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("delivery_tag"), (zend_long) amqp_envelope->delivery_tag TSRMLS_CC);
+    zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("is_redelivery"), (zend_long) amqp_envelope->redelivered TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("exchange_name"), (const char *) amqp_envelope->exchange.bytes, (size_t) amqp_envelope->exchange.len TSRMLS_CC);
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(envelope), ZEND_STRL("routing_key"), (const char *) amqp_envelope->routing_key.bytes, (size_t) amqp_envelope->routing_key.len TSRMLS_CC);
 
     php_amqp_basic_properties_extract(p, envelope TSRMLS_CC);
 }
@@ -94,7 +99,7 @@ static PHP_METHOD(amqp_envelope_class, __construct) {
 
 /* {{{ proto AMQPEnvelope::getBody()*/
 static PHP_METHOD(amqp_envelope_class, getBody) {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
 
     PHP_AMQP_NOPARAMS();
 
@@ -111,7 +116,7 @@ static PHP_METHOD(amqp_envelope_class, getBody) {
 
 /* {{{ proto AMQPEnvelope::getRoutingKey() */
 static PHP_METHOD(amqp_envelope_class, getRoutingKey) {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
     PHP_AMQP_NOPARAMS();
     PHP_AMQP_RETURN_THIS_PROP("routing_key");
 }
@@ -119,7 +124,7 @@ static PHP_METHOD(amqp_envelope_class, getRoutingKey) {
 
 /* {{{ proto AMQPEnvelope::getDeliveryTag() */
 static PHP_METHOD(amqp_envelope_class, getDeliveryTag) {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
     PHP_AMQP_NOPARAMS();
     PHP_AMQP_RETURN_THIS_PROP("delivery_tag");
 }
@@ -127,7 +132,7 @@ static PHP_METHOD(amqp_envelope_class, getDeliveryTag) {
 
 /* {{{ proto AMQPEnvelope::getConsumerTag() */
 static PHP_METHOD(amqp_envelope_class, getConsumerTag) {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
     PHP_AMQP_NOPARAMS();
     PHP_AMQP_RETURN_THIS_PROP("consumer_tag");
 }
@@ -135,7 +140,7 @@ static PHP_METHOD(amqp_envelope_class, getConsumerTag) {
 
 /* {{{ proto AMQPEnvelope::getExchangeName() */
 static PHP_METHOD(amqp_envelope_class, getExchangeName) {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
     PHP_AMQP_NOPARAMS();
     PHP_AMQP_RETURN_THIS_PROP("exchange_name");
 }
@@ -143,7 +148,7 @@ static PHP_METHOD(amqp_envelope_class, getExchangeName) {
 
 /* {{{ proto AMQPEnvelope::isRedelivery() */
 static PHP_METHOD(amqp_envelope_class, isRedelivery) {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
     PHP_AMQP_NOPARAMS();
     PHP_AMQP_RETURN_THIS_PROP("is_redelivery");
 }
@@ -152,44 +157,43 @@ static PHP_METHOD(amqp_envelope_class, isRedelivery) {
 
 /* {{{ proto AMQPEnvelope::getHeader(string name) */
 static PHP_METHOD(amqp_envelope_class, getHeader) {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
 
-    char *key;  PHP5to7_param_str_len_type_t key_len;
-    PHP5to7_zval_t *tmp = NULL;
+	char *key;
+	size_t key_len;
+    zval *tmp = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
         return;
     }
 
     zval* zv = PHP_AMQP_READ_THIS_PROP_CE("headers", amqp_basic_properties_class_entry);
-	//zval* zv = PHP_AMQP_READ_THIS_PROP("headers");
 
     /* Look for the hash key */
-    if (!PHP5to7_ZEND_HASH_FIND(HASH_OF(zv), key, key_len + 1, tmp)) {
+    if ((tmp = zend_hash_str_find(HASH_OF(zv), key, key_len)) == NULL) {
         RETURN_FALSE;
     }
 
-    RETURN_ZVAL(PHP5to7_MAYBE_DEREF(tmp), 1, 0);
+    RETURN_ZVAL(tmp, 1, 0);
 }
 /* }}} */
 
 
 /* {{{ proto AMQPEnvelope::hasHeader(string name) */
 static PHP_METHOD(amqp_envelope_class, hasHeader) {
-    PHP5to7_READ_PROP_RV_PARAM_DECL;
+    zval rv;
 
-    char *key;  PHP5to7_param_str_len_type_t key_len;
-    PHP5to7_zval_t *tmp = NULL;
+	char *key;
+	size_t key_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
         return;
     }
 
     zval* zv = PHP_AMQP_READ_THIS_PROP_CE("headers", amqp_basic_properties_class_entry);
-    //zval* zv = PHP_AMQP_READ_THIS_PROP("headers");
 
     /* Look for the hash key */
-    if (!PHP5to7_ZEND_HASH_FIND(HASH_OF(zv), key, key_len + 1, tmp)) {
+	if (zend_hash_str_find(HASH_OF(zv), key, key_len) == NULL) {
         RETURN_FALSE;
     }
 
@@ -251,7 +255,7 @@ PHP_MINIT_FUNCTION (amqp_envelope) {
     zend_class_entry ce;
 
     INIT_CLASS_ENTRY(ce, "AMQPEnvelope", amqp_envelope_class_functions);
-    this_ce = zend_register_internal_class_ex(&ce, amqp_basic_properties_class_entry PHP5to7_PARENT_CLASS_NAME_C(NULL) TSRMLS_CC);
+    this_ce = zend_register_internal_class_ex(&ce, amqp_basic_properties_class_entry TSRMLS_CC);
 
     zend_declare_property_null(this_ce, ZEND_STRL("body"), ZEND_ACC_PRIVATE TSRMLS_CC);
 

@@ -24,7 +24,11 @@
 #define PHP_AMQP_METHODS_HANDLING_H
 
 #include "php_amqp.h"
-#include "amqp.h"
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
+#include <rabbitmq-c/amqp.h>
+#else
+#include <amqp.h>
+#endif
 #include "php.h"
 
 int amqp_simple_wait_method_list_noblock(amqp_connection_state_t state,
@@ -39,7 +43,7 @@ int amqp_simple_wait_method_noblock(amqp_connection_state_t state,
                             amqp_method_t *output,
                             struct timeval *timeout);
 
-int php_amqp_call_callback_with_params(PHP5to7_zval_t params, amqp_callback_bucket *cb TSRMLS_DC);
+int php_amqp_call_callback_with_params(zval params, amqp_callback_bucket *cb TSRMLS_DC);
 
 int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *msg, amqp_callback_bucket *cb TSRMLS_DC);
 int php_amqp_handle_basic_return(char **message, amqp_connection_resource *resource, amqp_channel_t channel_id, amqp_channel_object *channel, amqp_method_t *method TSRMLS_DC);

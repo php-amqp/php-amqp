@@ -41,8 +41,14 @@
 # include <stdint.h>
 # include <signal.h>
 #endif
+
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
+#include <rabbitmq-c/amqp.h>
+#include <rabbitmq-c/framing.h>
+#else
 #include <amqp.h>
 #include <amqp_framing.h>
+#endif
 
 #include "php_amqp.h"
 #include "amqp_connection.h"
@@ -106,7 +112,7 @@ PHP_INI_BEGIN()
 	PHP_INI_ENTRY("amqp.sasl_method",			DEFAULT_SASL_METHOD,			PHP_INI_ALL, NULL)
 PHP_INI_END()
 
-ZEND_DECLARE_MODULE_GLOBALS(amqp);
+ZEND_DECLARE_MODULE_GLOBALS(amqp)
 
 static PHP_GINIT_FUNCTION(amqp) /* {{{ */
 {
@@ -133,26 +139,26 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
 
 	/* Class Exceptions */
 	INIT_CLASS_ENTRY(ce, "AMQPException", NULL);
-	amqp_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, zend_exception_get_default(TSRMLS_C));
+	amqp_exception_class_entry = zend_register_internal_class_ex(&ce, zend_exception_get_default(TSRMLS_C));
 
 	INIT_CLASS_ENTRY(ce, "AMQPConnectionException", NULL);
-	amqp_connection_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+	amqp_connection_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPChannelException", NULL);
-	amqp_channel_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+	amqp_channel_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPQueueException", NULL);
-	amqp_queue_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+	amqp_queue_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPEnvelopeException", NULL);
-	amqp_envelope_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+	amqp_envelope_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 	zend_declare_property_null(amqp_envelope_exception_class_entry, ZEND_STRL("envelope"), ZEND_ACC_PUBLIC TSRMLS_CC);
 
 	INIT_CLASS_ENTRY(ce, "AMQPExchangeException", NULL);
-	amqp_exchange_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+	amqp_exchange_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	INIT_CLASS_ENTRY(ce, "AMQPValueException", NULL);
-	amqp_value_exception_class_entry = PHP5to7_zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+	amqp_value_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
 	REGISTER_INI_ENTRIES();
 
@@ -186,6 +192,7 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
 
 	REGISTER_LONG_CONSTANT("AMQP_DELIVERY_MODE_TRANSIENT",		AMQP_DELIVERY_NONPERSISTENT,	CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("AMQP_DELIVERY_MODE_PERSISTENT",		AMQP_DELIVERY_PERSISTENT,	CONST_CS | CONST_PERSISTENT);
+
 	return SUCCESS;
 } /* }}} */
 
@@ -302,7 +309,7 @@ void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entr
 	php_amqp_zend_throw_exception(reply, exception_ce, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 }
 
-void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, PHP5to7_param_long_type_t code TSRMLS_DC)
+void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, zend_long code TSRMLS_DC)
 {
 	switch (reply.reply_type) {
 		case AMQP_RESPONSE_NORMAL:
