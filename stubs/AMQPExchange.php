@@ -136,7 +136,7 @@ class AMQPExchange
     /**
      * Get the configured name.
      *
-     * @return string The configured name as a string.
+     * @return string|null The configured name as a string.
      */
     public function getName()
     {
@@ -145,7 +145,7 @@ class AMQPExchange
     /**
      * Get the configured type.
      *
-     * @return string The configured type as a string.
+     * @return string|null The configured type as a string.
      */
     public function getType()
     {
@@ -220,7 +220,7 @@ class AMQPExchange
     /**
      * Set the name of the exchange.
      *
-     * @param string $exchange_name The name of the exchange to set as string.
+     * @param string|null $exchange_name The name of the exchange to set as string.
      *
      * @return void
      */
@@ -234,7 +234,7 @@ class AMQPExchange
      * Set the type of the exchange. This can be any of AMQP_EX_TYPE_DIRECT,
      * AMQP_EX_TYPE_FANOUT, AMQP_EX_TYPE_HEADERS or AMQP_EX_TYPE_TOPIC.
      *
-     * @param string $exchange_type The type of exchange as a string.
+     * @param string|null $exchange_type The type of exchange as a string.
      *
      * @return void
      */

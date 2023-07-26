@@ -108,8 +108,7 @@ static PHP_METHOD(amqp_exchange_class, getName)
     if (PHP_AMQP_READ_THIS_PROP_STRLEN("name") > 0) {
         PHP_AMQP_RETURN_THIS_PROP("name");
     } else {
-        /* BC */
-        RETURN_FALSE;
+        RETURN_NULL();
     }
 }
 /* }}} */
@@ -122,7 +121,7 @@ static PHP_METHOD(amqp_exchange_class, setName)
     char *name = NULL;
     size_t name_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s!", &name, &name_len) == FAILURE) {
         return;
     }
 
@@ -226,8 +225,7 @@ static PHP_METHOD(amqp_exchange_class, getType)
     if (PHP_AMQP_READ_THIS_PROP_STRLEN("type") > 0) {
         PHP_AMQP_RETURN_THIS_PROP("type");
     } else {
-        /* BC */
-        RETURN_FALSE;
+        RETURN_NULL();
     }
 }
 /* }}} */
@@ -240,7 +238,7 @@ static PHP_METHOD(amqp_exchange_class, setType)
     char *type = NULL;
     size_t type_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &type, &type_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s!", &type, &type_len) == FAILURE) {
         return;
     }
 

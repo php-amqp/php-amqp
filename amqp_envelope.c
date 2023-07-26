@@ -140,7 +140,6 @@ static PHP_METHOD(amqp_envelope_class, getBody)
     zval *zv = PHP_AMQP_READ_THIS_PROP("body");
 
     if (Z_STRLEN_P(zv) == 0) {
-        /* BC */
         RETURN_STRING("");
     }
 
