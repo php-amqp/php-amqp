@@ -21,15 +21,15 @@
   +----------------------------------------------------------------------+
 */
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+    #include "config.h"
 #endif
 
 #include "php.h"
 
 #if AMQP_VERSION_MINOR >= 13
-#include <rabbitmq-c/amqp.h>
+    #include <rabbitmq-c/amqp.h>
 #else
-#include <amqp.h>
+    #include <amqp.h>
 #endif
 #include "php_amqp.h"
 
@@ -42,7 +42,19 @@ amqp_table_t *php_amqp_type_convert_zval_to_amqp_table(zval *php_array TSRMLS_DC
 void php_amqp_type_free_amqp_table(amqp_table_t *object);
 
 /** Internal functions */
-zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, amqp_field_value_t **fieldPtr, char *key TSRMLS_DC);
-void php_amqp_type_internal_convert_zval_array(zval *php_array, amqp_field_value_t **field, zend_bool allow_int_keys TSRMLS_DC);
-void php_amqp_type_internal_convert_zval_to_amqp_table(zval *php_array, amqp_table_t *amqp_table, zend_bool allow_int_keys TSRMLS_DC);
+zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(
+    zval *value,
+    amqp_field_value_t **fieldPtr,
+    char *key TSRMLS_DC
+);
+void php_amqp_type_internal_convert_zval_array(
+    zval *php_array,
+    amqp_field_value_t **field,
+    zend_bool allow_int_keys TSRMLS_DC
+);
+void php_amqp_type_internal_convert_zval_to_amqp_table(
+    zval *php_array,
+    amqp_table_t *amqp_table,
+    zend_bool allow_int_keys TSRMLS_DC
+);
 void php_amqp_type_internal_convert_zval_to_amqp_array(zval *php_array, amqp_array_t *amqp_array TSRMLS_DC);

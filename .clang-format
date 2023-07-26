@@ -1,0 +1,85 @@
+# Generated from CLion C/C++ Code Style settings
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AlignConsecutiveAssignments: None
+AlignOperands: Align
+
+AllowAllArgumentsOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+AlignAfterOpenBracket: BlockIndent
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterReturnType: None
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Custom
+MacroBlockBegin: "(ZEND_BEGIN_ARG_INFO(_EX)?|PHP_INI_BEGIN)"
+MacroBlockEnd: "(ZEND_END_ARG_INFO|PHP_INI_END)"
+Macros:
+  - "PHP_ME(a, b, c, d)={a, b, c, d},"
+  - "PHP_MALIAS(a, b, c, d, e)={a, b, c, d, e},"
+  - "ZEND_HASH_FOREACH_KEY_VAL(a, b, c, d)=do {"
+  - "ZEND_HASH_FOREACH_STR_KEY(a, b)=do {"
+  - "ZEND_HASH_FOREACH_STR_KEY_VAL(a, b, c)=do {"
+  - "ZEND_HASH_FOREACH_END=} while(true)"
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: false
+  AfterControlStatement: Never
+  AfterEnum: false
+  AfterFunction: true
+  AfterNamespace: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: true
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+ColumnLimit: 120
+CompactNamespaces: false
+IndentCaseLabels: true
+IndentPPDirectives: BeforeHash
+IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: All
+ObjCSpaceAfterProperty: false
+ObjCSpaceBeforeProtocolList: true
+PointerAlignment: Right
+ReferenceAlignment: Right
+ReflowComments: false
+SpaceAfterCStyleCast: true
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 0
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+TabWidth: 4
+UseTab: Never
+AlignArrayOfStructures: Left
+SortIncludes: Never
+IndentWrappedFunctionNames: true
+InsertNewlineAtEOF: true
+PenaltyReturnTypeOnItsOwnLine: 9999
+PenaltyExcessCharacter: 100
