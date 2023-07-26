@@ -81,6 +81,9 @@ extern zend_module_entry amqp_module_entry;
 #else
 #define PHP_AMQP_COMPAT_OBJ_P(zv) (zv)
 #endif
+#if PHP_VERSION_ID < 80200
+#define zend_ini_parse_quantity_warn(v, name) (zend_atol(ZSTR_VAL(v), ZSTR_LEN(v)))
+#endif
 
 #include "amqp_connection_resource.h"
 

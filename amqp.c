@@ -122,10 +122,6 @@ zend_bool php_amqp_is_valid_prefetch_count(zend_long val) {
   return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_COUNT;
 }
 
-#if PHP_VERSION_ID < 82000
-#define zend_ini_parse_quantity_warn(v, name) (zend_atol(ZSTR_VAL(v), ZSTR_LEN(v)))
-#endif
-
 static ZEND_INI_MH(onUpdateIdentifier)
 {
 	if (new_value != NULL && !php_amqp_is_valid_identifier(new_value)) {
