@@ -676,8 +676,6 @@ static PHP_METHOD(amqp_channel_class, setPrefetchSize)
         ZEND_STRL("prefetch_size"),
         prefetch_size TSRMLS_CC
     );
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -745,8 +743,6 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchCount)
         global_prefetch_count TSRMLS_CC
     );
     zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_size"), 0 TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -819,8 +815,6 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchSize)
         ZEND_STRL("global_prefetch_size"),
         global_prefetch_size TSRMLS_CC
     );
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -926,8 +920,6 @@ static PHP_METHOD(amqp_channel_class, qos)
             php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -958,8 +950,6 @@ static PHP_METHOD(amqp_channel_class, startTransaction)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -990,8 +980,6 @@ static PHP_METHOD(amqp_channel_class, commitTransaction)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1022,8 +1010,6 @@ static PHP_METHOD(amqp_channel_class, rollbackTransaction)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1069,8 +1055,6 @@ static PHP_METHOD(amqp_channel_class, basicRecover)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1099,8 +1083,6 @@ PHP_METHOD(amqp_channel_class, confirmSelect)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
