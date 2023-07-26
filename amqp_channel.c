@@ -325,7 +325,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-		/* Prevent double free, it may happens in case case channel resource was already freed due to some hard error. */
+		/* Prevent double free, it may happen in case the channel resource was already freed due to some hard error. */
 		if (channel_resource->connection_resource) {
 			php_amqp_connection_resource_unregister_channel(channel_resource->connection_resource, channel_resource->channel_id);
 			channel_resource->channel_id = 0;
@@ -334,7 +334,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 		return;
 	}
 
-	/* r->channel_id is a 16-bit channel number insibe amqp_bytes_t, assertion below will without converting to uint16_t*/
+	/* r->channel_id is a 16-bit channel number inside amqp_bytes_t, assertion below will without converting to uint16_t*/
 	/* assert (r->channel_id == channel_resource->channel_id);*/
 	php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 

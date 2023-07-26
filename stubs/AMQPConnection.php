@@ -317,6 +317,15 @@ class AMQPConnection
     }
 
     /**
+     * Get the configured timeout (in seconds) for connecting to the AMQP broker
+     *
+     * @return float
+     */
+    public function getConnectTimeout()
+    {
+    }
+
+    /**
      * Sets the interval of time to wait (in seconds) for RPC activity to AMQP broker
      *
      * @param float $timeout

@@ -193,10 +193,12 @@ struct _amqp_connection_object {
 	#define PHP_AMQP_MAX_CHANNELS 65535 // Note that the maximum number of channels the protocol supports is 65535 (2^16, with the 0-channel reserved)
 #endif
 
-#define PHP_AMQP_MAX_FRAME INT_MAX
+#define PHP_AMQP_MAX_FRAME_SIZE INT_MAX
 #define PHP_AMQP_MAX_HEARTBEAT INT_MAX
 #define PHP_AMQP_MAX_CREDENTIALS_LENGTH 1024
 #define PHP_AMQP_MAX_IDENTIFIER_LENGTH 512
+#define PHP_AMQP_MIN_PORT 1
+#define PHP_AMQP_MAX_PORT 65535
 
 #define PHP_AMQP_DEFAULT_CHANNEL_MAX PHP_AMQP_MAX_CHANNELS
 #define PHP_AMQP_DEFAULT_FRAME_MAX AMQP_DEFAULT_FRAME_SIZE
@@ -378,6 +380,14 @@ int php_amqp_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_connect
 void php_amqp_zend_throw_exception(amqp_rpc_reply_t reply, zend_class_entry *exception_ce, const char *message, zend_long code TSRMLS_DC);
 void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entry *exception_ce TSRMLS_DC);
 void php_amqp_maybe_release_buffers_on_channel(amqp_connection_resource *connection_resource, amqp_channel_resource *channel_resource);
+
+zend_bool php_amqp_is_valid_identifier(zend_string *val);
+zend_bool php_amqp_is_valid_credential(zend_string *val);
+zend_bool php_amqp_is_valid_port(zend_long val);
+zend_bool php_amqp_is_valid_timeout(double timeout);
+zend_bool php_amqp_is_valid_channel_max(zend_long val);
+zend_bool php_amqp_is_valid_frame_size_max(zend_long val);
+zend_bool php_amqp_is_valid_heartbeat(zend_long val);
 
 #endif	/* PHP_AMQP_H */
 
