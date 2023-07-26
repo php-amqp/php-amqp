@@ -17,7 +17,7 @@ class AMQPExchange
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     * @return boolean true on success or false on failure.
+     * @return void
      */
     public function bind($exchange_name, $routing_key = '', array $arguments = array())
     {
@@ -35,7 +35,7 @@ class AMQPExchange
      * @throws AMQPExchangeException   On failure.
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     * @return boolean true on success or false on failure.
+     * @return void
      */
     public function unbind($exchange_name, $routing_key = '', array $arguments = array())
     {
@@ -66,7 +66,7 @@ class AMQPExchange
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function declareExchange()
     {
@@ -85,7 +85,7 @@ class AMQPExchange
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean true on success or false on failure.
+     * @return void
      */
     public function delete($exchangeName = null, $flags = AMQP_NOPARAM)
     {
@@ -170,7 +170,7 @@ class AMQPExchange
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function publish(
         $message,
@@ -186,7 +186,7 @@ class AMQPExchange
      * @param string         $key   Name of the argument to set.
      * @param string|integer $value Value of the argument to set.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setArgument($key, $value)
     {
@@ -197,7 +197,7 @@ class AMQPExchange
      *
      * @param array $arguments An array of key/value pairs of arguments.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setArguments(array $arguments)
     {

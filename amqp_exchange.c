@@ -312,8 +312,6 @@ static PHP_METHOD(amqp_exchange_class, setArguments)
     }
 
     zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("arguments"), zvalArguments TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -351,8 +349,6 @@ static PHP_METHOD(amqp_exchange_class, setArgument)
             );
             return;
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -417,8 +413,6 @@ static PHP_METHOD(amqp_exchange_class, declareExchange)
         php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry TSRMLS_CC);
         return;
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -459,8 +453,6 @@ static PHP_METHOD(amqp_exchange_class, delete)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -695,8 +687,6 @@ static PHP_METHOD(amqp_exchange_class, publish)
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -760,8 +750,6 @@ static PHP_METHOD(amqp_exchange_class, bind)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -824,8 +812,6 @@ static PHP_METHOD(amqp_exchange_class, unbind)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 

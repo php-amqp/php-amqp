@@ -869,13 +869,7 @@ static PHP_METHOD(amqp_connection_class, isConnected)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    /* If the channel_connect is 1, we have a connection */
-    if (connection->connection_resource != NULL && connection->connection_resource->is_connected) {
-        RETURN_TRUE;
-    }
-
-    /* We have no connection */
-    RETURN_FALSE;
+    RETURN_BOOL(connection->connection_resource != NULL && connection->connection_resource->is_connected);
 }
 /* }}} */
 
@@ -1115,8 +1109,6 @@ static PHP_METHOD(amqp_connection_class, setLogin)
         login,
         login_len TSRMLS_CC
     );
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1202,8 +1194,6 @@ static PHP_METHOD(amqp_connection_class, setHost)
     }
 
     zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), host, host_len TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1303,8 +1293,6 @@ static PHP_METHOD(amqp_connection_class, setVhost)
         vhost,
         vhost_len TSRMLS_CC
     );
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1370,11 +1358,9 @@ static PHP_METHOD(amqp_connection_class, setTimeout)
 
             php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 
-            RETURN_FALSE;
+            zend_throw_exception(amqp_connection_exception_class_entry, "Could not set read timeout", 0 TSRMLS_CC);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1425,11 +1411,9 @@ static PHP_METHOD(amqp_connection_class, setReadTimeout)
 
             php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 
-            RETURN_FALSE;
+            zend_throw_exception(amqp_connection_exception_class_entry, "Could not set read timeout", 0 TSRMLS_CC);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1480,11 +1464,9 @@ static PHP_METHOD(amqp_connection_class, setWriteTimeout)
 
             php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 
-            RETURN_FALSE;
+            zend_throw_exception(amqp_connection_exception_class_entry, "Could not set write timeout", 0 TSRMLS_CC);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1545,11 +1527,9 @@ static PHP_METHOD(amqp_connection_class, setRpcTimeout)
 
             php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
 
-            RETURN_FALSE;
+            zend_throw_exception(amqp_connection_exception_class_entry, "Could not set connect timeout", 0 TSRMLS_CC);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1695,8 +1675,6 @@ static PHP_METHOD(amqp_connection_class, setCert)
     }
 
     zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cert"), str, str_len TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1720,8 +1698,6 @@ static PHP_METHOD(amqp_connection_class, setKey)
     }
 
     zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("key"), str, str_len TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1745,8 +1721,6 @@ static PHP_METHOD(amqp_connection_class, setVerify)
     }
 
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("verify"), verify TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1782,8 +1756,6 @@ static PHP_METHOD(amqp_connection_class, setSaslMethod)
     }
 
     zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("sasl_method"), method TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1816,9 +1788,6 @@ static PHP_METHOD(amqp_connection_class, setConnectionName)
             str_len TSRMLS_CC
         );
     }
-
-
-    RETURN_TRUE;
 }
 /* }}} */
 

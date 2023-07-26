@@ -181,7 +181,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If host is longer then 1024 characters.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setHost($host)
     {
@@ -195,7 +195,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If login is longer then 32 characters.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setLogin($login)
     {
@@ -237,7 +237,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If host is longer then 32 characters.
      *
-     * @return boolean true on success or false on failure.
+     * @return void
      */
     public function setVhost($vhost)
     {
@@ -252,7 +252,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If timeout is less than 0.
      *
-     * @return bool
+     * @return void
      */
     public function setTimeout($timeout)
     {
@@ -277,7 +277,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If timeout is less than 0.
      *
-     * @return bool
+     * @return void
      */
     public function setReadTimeout($timeout)
     {
@@ -300,7 +300,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If timeout is less than 0.
      *
-     * @return bool
+     * @return void
      */
     public function setWriteTimeout($timeout)
     {
@@ -332,7 +332,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If timeout is less than 0.
      *
-     * @return bool
+     * @return void
      */
     public function setRpcTimeout($timeout)
     {
@@ -436,7 +436,7 @@ class AMQPConnection
      * Set path to the client certificate in PEM format
      *
      * @param string $cert
-     * @return bool
+     * @return void
      */
     public function setCert($cert)
     {
@@ -455,7 +455,7 @@ class AMQPConnection
      * Set path to the client key in PEM format
      *
      * @param string $key
-     * @return bool
+     * @return void
      */
     public function setKey($key)
     {
@@ -474,7 +474,7 @@ class AMQPConnection
      * Enable or disable peer verification
      *
      * @param bool $verify
-     * @return bool
+     * @return void
      */
     public function setVerify($verify)
     {
@@ -484,7 +484,7 @@ class AMQPConnection
      * set authentication method
      *
      * @param int $method AMQP_SASL_METHOD_PLAIN | AMQP_SASL_METHOD_EXTERNAL
-     * @return bool
+     * @return void
      */
     public function setSaslMethod($method)
     {
@@ -499,7 +499,7 @@ class AMQPConnection
 
     /**
      * @param string|null $connection_name
-     * @return bool
+     * @return void
      */
     public function setConnectionName($connection_name)
     {
