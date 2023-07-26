@@ -41,7 +41,7 @@ object(AMQPEnvelope)#1 (20) {
   ["cluster_id":"AMQPBasicProperties":private]=>
   string(0) ""
   ["body":"AMQPEnvelope":private]=>
-  NULL
+  string(0) ""
   ["consumer_tag":"AMQPEnvelope":private]=>
   NULL
   ["delivery_tag":"AMQPEnvelope":private]=>
@@ -51,5 +51,5 @@ object(AMQPEnvelope)#1 (20) {
   ["exchange_name":"AMQPEnvelope":private]=>
   NULL
   ["routing_key":"AMQPEnvelope":private]=>
-  NULL
+  string(0) ""
 }
