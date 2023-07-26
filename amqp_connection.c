@@ -1968,7 +1968,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getConnectionName, ZEND_SEN
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setConnectionName, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, connection_name)
+ZEND_ARG_INFO(0, connection_name)
 ZEND_END_ARG_INFO()
 
 

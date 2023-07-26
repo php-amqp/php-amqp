@@ -10,6 +10,20 @@ env:
     TEST_TIMEOUT: 120
 
 jobs:
+    checkstyle:
+        name: Check coding style
+        runs-on: ubuntu-22.04
+        steps:
+          - name: install clang-format
+            uses: myci-actions/add-deb-repo@11
+            with:
+                repo: "http://apt.llvm.org/jammy/ llvm-toolchain-jammy main"
+                repo-name: llvm
+                keys-asc: https://apt.llvm.org/llvm-snapshot.gpg.key
+                install: clang-format-17
+          - name: Check style
+            run: clang-format-17 --dry-run --Werror  *.c *.h
+
     test:
         name: php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         runs-on: ${{ matrix.os }}
