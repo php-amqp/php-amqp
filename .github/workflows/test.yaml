@@ -21,8 +21,10 @@ jobs:
                 repo-name: llvm
                 keys-asc: https://apt.llvm.org/llvm-snapshot.gpg.key
                 install: clang-format-17
+
           - name: Checkout
             uses: actions/checkout@v3.5.3
+
           - name: Check style
             run: clang-format-17 --dry-run --Werror  *.c *.h
 
