@@ -199,6 +199,8 @@ struct _amqp_connection_object {
 #define PHP_AMQP_MAX_IDENTIFIER_LENGTH 512
 #define PHP_AMQP_MIN_PORT 1
 #define PHP_AMQP_MAX_PORT 65535
+#define PHP_AMQP_MAX_PREFETCH_COUNT UINT16_MAX
+#define PHP_AMQP_MAX_PREFETCH_SIZE UINT32_MAX
 
 #define PHP_AMQP_DEFAULT_CHANNEL_MAX PHP_AMQP_MAX_CHANNELS
 #define PHP_AMQP_DEFAULT_FRAME_MAX AMQP_DEFAULT_FRAME_SIZE
@@ -388,6 +390,8 @@ zend_bool php_amqp_is_valid_timeout(double timeout);
 zend_bool php_amqp_is_valid_channel_max(zend_long val);
 zend_bool php_amqp_is_valid_frame_size_max(zend_long val);
 zend_bool php_amqp_is_valid_heartbeat(zend_long val);
+zend_bool php_amqp_is_valid_prefetch_count(zend_long val);
+zend_bool php_amqp_is_valid_prefetch_size(zend_long val);
 
 #endif	/* PHP_AMQP_H */
 

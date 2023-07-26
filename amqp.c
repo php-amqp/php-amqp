@@ -114,6 +114,14 @@ zend_bool php_amqp_is_valid_heartbeat(zend_long val) {
     return val > 0 && val <= PHP_AMQP_MAX_HEARTBEAT;
 }
 
+zend_bool php_amqp_is_valid_prefetch_size(zend_long val) {
+  return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_SIZE;
+}
+
+zend_bool php_amqp_is_valid_prefetch_count(zend_long val) {
+  return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_COUNT;
+}
+
 static ZEND_INI_MH(onUpdateIdentifier)
 {
 	if (new_value != NULL && !php_amqp_is_valid_identifier(new_value)) {
@@ -181,10 +189,20 @@ static ZEND_INI_MH(onUpdateHeartbeat)
     return SUCCESS;
 }
 
-static ZEND_INI_MH(onUpdateSignedLong)
+static ZEND_INI_MH(onUpdatePrefetchCount)
 {
-    zend_long l = zend_ini_parse_quantity_warn(new_value, entry->name);
-    if (l < 0) {
+  zend_long val = zend_ini_parse_quantity_warn(new_value, entry->name);
+  if (!php_amqp_is_valid_prefetch_count(val)) {
+    return FAILURE;
+  }
+
+  return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdatePrefetchSize)
+{
+    zend_long val = zend_ini_parse_quantity_warn(new_value, entry->name);
+    if (!php_amqp_is_valid_prefetch_size(val)) {
         return FAILURE;
     }
 
@@ -203,10 +221,10 @@ PHP_INI_BEGIN()
 	PHP_INI_ENTRY("amqp.login",					DEFAULT_LOGIN,					PHP_INI_ALL, onUpdateCredentials)
 	PHP_INI_ENTRY("amqp.password",				DEFAULT_PASSWORD,				PHP_INI_ALL, onUpdateCredentials)
 	PHP_INI_ENTRY("amqp.auto_ack",				DEFAULT_AUTOACK,				PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.prefetch_count",		DEFAULT_PREFETCH_COUNT,			PHP_INI_ALL, onUpdateSignedLong)
-	PHP_INI_ENTRY("amqp.prefetch_size",			DEFAULT_PREFETCH_SIZE,			PHP_INI_ALL, onUpdateSignedLong)
-	PHP_INI_ENTRY("amqp.global_prefetch_count",	DEFAULT_GLOBAL_PREFETCH_COUNT,	PHP_INI_ALL, onUpdateSignedLong)
-	PHP_INI_ENTRY("amqp.global_prefetch_size",	DEFAULT_GLOBAL_PREFETCH_SIZE,	PHP_INI_ALL, onUpdateSignedLong)
+	PHP_INI_ENTRY("amqp.prefetch_count",		DEFAULT_PREFETCH_COUNT,			PHP_INI_ALL, onUpdatePrefetchCount)
+	PHP_INI_ENTRY("amqp.prefetch_size",			DEFAULT_PREFETCH_SIZE,			PHP_INI_ALL, onUpdatePrefetchSize)
+	PHP_INI_ENTRY("amqp.global_prefetch_count",	DEFAULT_GLOBAL_PREFETCH_COUNT,	PHP_INI_ALL, onUpdatePrefetchCount)
+	PHP_INI_ENTRY("amqp.global_prefetch_size",	DEFAULT_GLOBAL_PREFETCH_SIZE,	PHP_INI_ALL, onUpdatePrefetchSize)
 	PHP_INI_ENTRY("amqp.channel_max",			DEFAULT_CHANNEL_MAX,			PHP_INI_ALL, onUpdateChannelMax)
 	PHP_INI_ENTRY("amqp.frame_max",				DEFAULT_FRAME_MAX,				PHP_INI_ALL, onUpdateFrameSizeMax)
 	PHP_INI_ENTRY("amqp.heartbeat",				DEFAULT_HEARTBEAT,				PHP_INI_ALL, onUpdateHeartbeat)
