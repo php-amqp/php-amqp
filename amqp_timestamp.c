@@ -64,7 +64,7 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 /* }}} */
 
 
-/* {{{ proto int AMQPTimestamp::getTimestamp()
+/* {{{ proto string AMQPTimestamp::getTimestamp()
 Get timestamp */
 static PHP_METHOD(amqp_timestamp_class, getTimestamp)
 {

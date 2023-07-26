@@ -43,6 +43,8 @@ class AMQPChannel
 
     /**
      * Closes the channel.
+     *
+     * @return void
      */
     public function close()
     {
@@ -235,6 +237,7 @@ class AMQPChannel
      * Redeliver unacknowledged messages.
      *
      * @param bool $requeue
+     * @return bool
      */
     public function basicRecover($requeue = true)
     {
@@ -242,6 +245,8 @@ class AMQPChannel
 
     /**
      * Set the channel to use publisher acknowledgements. This can only used on a non-transactional channel.
+     *
+     * @return bool
      */
     public function confirmSelect()
     {
@@ -250,8 +255,6 @@ class AMQPChannel
     /**
      * Set callback to process basic.ack and basic.nac AMQP server methods (applicable when channel in confirm mode).
      *
-     * @param callable|null $ack_callback
-     * @param callable|null $nack_callback
      *
      * Callback functions with all arguments have the following signature:
      *
@@ -263,6 +266,9 @@ class AMQPChannel
      * Note, basic.nack server method will only be delivered if an internal error occurs in the Erlang process
      * responsible for a queue (see https://www.rabbitmq.com/confirms.html for details).
      *
+     * @param callable|null $ack_callback
+     * @param callable|null $nack_callback
+     * @return void
      */
     public function setConfirmCallback(callable $ack_callback=null, callable $nack_callback=null)
     {
@@ -276,6 +282,8 @@ class AMQPChannel
      * @param float $timeout Timeout in seconds. May be fractional.
      *
      * @throws AMQPQueueException If timeout occurs.
+     *
+     * @return void
      */
     public function waitForConfirm($timeout = 0.0)
     {
@@ -283,8 +291,6 @@ class AMQPChannel
 
     /**
      * Set callback to process basic.return AMQP server method
-     *
-     * @param callable|null $return_callback
      *
      * Callback function with all arguments has the following signature:
      *
@@ -297,6 +303,8 @@ class AMQPChannel
      *
      * and should return boolean false when wait loop should be canceled.
      *
+     * @param callable|null $return_callback
+     * @return void
      */
     public function setReturnCallback(callable $return_callback=null)
     {
@@ -308,6 +316,8 @@ class AMQPChannel
      * @param float $timeout Timeout in seconds. May be fractional.
      *
      * @throws AMQPQueueException If timeout occurs.
+     *
+     * @return void
      */
     public function waitForBasicReturn($timeout = 0.0)
     {

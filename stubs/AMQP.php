@@ -140,4 +140,4 @@ define('AMQP_DELIVERY_MODE_TRANSIENT', 1);
 /**
  * Writes the message to the disk when the message is placed in a durable queue.
  */
-define('AMQP_DELIVERY_MODE_PERSISTENT', 2)
+define('AMQP_DELIVERY_MODE_PERSISTENT', 2);

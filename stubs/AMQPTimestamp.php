@@ -5,7 +5,14 @@
  */
 final class AMQPTimestamp
 {
+    /**
+     * @var string
+     */
     const MIN = "0";
+
+    /**
+     * @var string
+     */
     const MAX = "18446744073709551616";
 
     /**

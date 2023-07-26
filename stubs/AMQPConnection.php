@@ -417,6 +417,7 @@ class AMQPConnection
      * Set path to the CA cert file in PEM format
      *
      * @param string $cacert
+     * @return bool
      */
     public function setCACert($cacert)
     {
@@ -435,6 +436,7 @@ class AMQPConnection
      * Set path to the client certificate in PEM format
      *
      * @param string $cert
+     * @return bool
      */
     public function setCert($cert)
     {
@@ -453,6 +455,7 @@ class AMQPConnection
      * Set path to the client key in PEM format
      *
      * @param string $key
+     * @return bool
      */
     public function setKey($key)
     {
@@ -471,6 +474,7 @@ class AMQPConnection
      * Enable or disable peer verification
      *
      * @param bool $verify
+     * @return bool
      */
     public function setVerify($verify)
     {
@@ -480,6 +484,7 @@ class AMQPConnection
      * set authentication method
      *
      * @param int $method AMQP_SASL_METHOD_PLAIN | AMQP_SASL_METHOD_EXTERNAL
+     * @return bool
      */
     public function setSaslMethod($method)
     {
@@ -494,6 +499,7 @@ class AMQPConnection
 
     /**
      * @param string|null $connection_name
+     * @return bool
      */
     public function setConnectionName($connection_name)
     {
