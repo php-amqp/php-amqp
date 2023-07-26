@@ -21,7 +21,7 @@
   +----------------------------------------------------------------------+
 */
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+    #include "config.h"
 #endif
 
 #include "php.h"
@@ -40,26 +40,36 @@ static const double AMQP_TIMESTAMP_MIN = 0;
  */
 static PHP_METHOD(amqp_timestamp_class, __construct)
 {
-	double timestamp;
+    double timestamp;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &timestamp) == FAILURE) {
-		return;
-	}
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &timestamp) == FAILURE) {
+        return;
+    }
 
-	if (timestamp < AMQP_TIMESTAMP_MIN) {
-		zend_throw_exception_ex(amqp_value_exception_class_entry, 0 TSRMLS_CC, "The timestamp parameter must be greater than %0.f.", AMQP_TIMESTAMP_MIN);
-		return;
-	}
+    if (timestamp < AMQP_TIMESTAMP_MIN) {
+        zend_throw_exception_ex(
+            amqp_value_exception_class_entry,
+            0 TSRMLS_CC,
+            "The timestamp parameter must be greater than %0.f.",
+            AMQP_TIMESTAMP_MIN
+        );
+        return;
+    }
 
-	if (timestamp > AMQP_TIMESTAMP_MAX) {
-		zend_throw_exception_ex(amqp_value_exception_class_entry, 0 TSRMLS_CC, "The timestamp parameter must be less than %0.f.", AMQP_TIMESTAMP_MAX);
-		return;
-	}
+    if (timestamp > AMQP_TIMESTAMP_MAX) {
+        zend_throw_exception_ex(
+            amqp_value_exception_class_entry,
+            0 TSRMLS_CC,
+            "The timestamp parameter must be less than %0.f.",
+            AMQP_TIMESTAMP_MAX
+        );
+        return;
+    }
 
-	zend_string *str;
-	str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
-	zend_update_property_str(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), str);
-	zend_string_delref(str);
+    zend_string *str;
+    str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
+    zend_update_property_str(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), str);
+    zend_string_delref(str);
 }
 /* }}} */
 
@@ -68,10 +78,10 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
 Get timestamp */
 static PHP_METHOD(amqp_timestamp_class, getTimestamp)
 {
-	zval rv;
-	PHP_AMQP_NOPARAMS();
+    zval rv;
+    PHP_AMQP_NOPARAMS();
 
-	PHP_AMQP_RETURN_THIS_PROP("timestamp");
+    PHP_AMQP_RETURN_THIS_PROP("timestamp");
 }
 /* }}} */
 
@@ -80,15 +90,15 @@ static PHP_METHOD(amqp_timestamp_class, getTimestamp)
 Return timestamp as string */
 static PHP_METHOD(amqp_timestamp_class, __toString)
 {
-	zval rv;
-	PHP_AMQP_NOPARAMS();
+    zval rv;
+    PHP_AMQP_NOPARAMS();
 
-	PHP_AMQP_RETURN_THIS_PROP("timestamp");
+    PHP_AMQP_RETURN_THIS_PROP("timestamp");
 }
 /* }}} */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-	ZEND_ARG_INFO(0, timestamp)
+    ZEND_ARG_INFO(0, timestamp)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_getTimestamp, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
@@ -97,7 +107,13 @@ ZEND_END_ARG_INFO()
 #if PHP_MAJOR_VERSION < 8
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_toString, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 #else
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_timestamp_class_toString, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, IS_STRING, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_timestamp_class_toString,
+    ZEND_SEND_BY_VAL,
+    ZEND_RETURN_VALUE,
+    IS_STRING,
+    0
+)
 #endif
 ZEND_END_ARG_INFO()
 
@@ -106,36 +122,27 @@ zend_function_entry amqp_timestamp_class_functions[] = {
 	PHP_ME(amqp_timestamp_class, getTimestamp, 	arginfo_amqp_timestamp_class_getTimestamp,	ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_timestamp_class, __toString, 	arginfo_amqp_timestamp_class_toString,	ZEND_ACC_PUBLIC)
 
-	{NULL, NULL, NULL}
+    {NULL, NULL, NULL}
 };
 
 
 PHP_MINIT_FUNCTION(amqp_timestamp)
 {
-	zend_class_entry ce;
-	char min[21], max[21];
-	int min_len, max_len;
+    zend_class_entry ce;
+    char min[21], max[21];
+    int min_len, max_len;
 
-	INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
-	this_ce = zend_register_internal_class(&ce TSRMLS_CC);
-	this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
+    INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
+    this_ce = zend_register_internal_class(&ce TSRMLS_CC);
+    this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
 
-	zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
-	max_len = snprintf(max, sizeof(max), "%.0f", AMQP_TIMESTAMP_MAX);
-	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MAX"), max, max_len TSRMLS_CC);
+    max_len = snprintf(max, sizeof(max), "%.0f", AMQP_TIMESTAMP_MAX);
+    zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MAX"), max, max_len TSRMLS_CC);
 
-	min_len = snprintf(min, sizeof(min), "%.0f", AMQP_TIMESTAMP_MIN);
-	zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MIN"), min, min_len TSRMLS_CC);
+    min_len = snprintf(min, sizeof(min), "%.0f", AMQP_TIMESTAMP_MIN);
+    zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MIN"), min, min_len TSRMLS_CC);
 
-	return SUCCESS;
+    return SUCCESS;
 }
-
-/*
-*Local variables:
-*tab-width: 4
-*c-basic-offset: 4
-*End:
-*vim600: noet sw=4 ts=4 fdm=marker
-*vim<6
-*/

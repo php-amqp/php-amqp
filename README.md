@@ -137,6 +137,9 @@ using `-Y amqp` attribute, just give a try - `tshark -i lo -Y amqp`.
    
 > NOTE: -w provides raw packet data, not text. If you want text output you need to redirect stdout (e.g. using '>'), don't use the -w option for this.
 
+#### Formatting
+
+Run `./tools/dev-format.sh` to automatically format all `.c` and `.h` files. Note: this requires `clang-format` >=17.
 
 #### Configuring a RabbitMQ server
 
