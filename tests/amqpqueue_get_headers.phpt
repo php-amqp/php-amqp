@@ -59,4 +59,4 @@ bool(true)
 one
 2
 Has nonexistent header: false
-Get nonexistent header: false
+Get nonexistent header: NULL

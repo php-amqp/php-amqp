@@ -107,7 +107,7 @@ static PHP_METHOD(amqp_envelope_class, getBody) {
 
     if (Z_STRLEN_P(zv) == 0) {
         /* BC */
-        RETURN_FALSE;
+        RETURN_STRING("");
     }
 
     RETURN_ZVAL(zv, 1, 0);
@@ -171,7 +171,7 @@ static PHP_METHOD(amqp_envelope_class, getHeader) {
 
     /* Look for the hash key */
     if ((tmp = zend_hash_str_find(HASH_OF(zv), key, key_len)) == NULL) {
-        RETURN_FALSE;
+        RETURN_NULL();
     }
 
     RETURN_ZVAL(tmp, 1, 0);
@@ -257,13 +257,13 @@ PHP_MINIT_FUNCTION (amqp_envelope) {
     INIT_CLASS_ENTRY(ce, "AMQPEnvelope", amqp_envelope_class_functions);
     this_ce = zend_register_internal_class_ex(&ce, amqp_basic_properties_class_entry TSRMLS_CC);
 
-    zend_declare_property_null(this_ce, ZEND_STRL("body"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("body"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
 
     zend_declare_property_null(this_ce, ZEND_STRL("consumer_tag"), ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_null(this_ce, ZEND_STRL("delivery_tag"), ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_null(this_ce, ZEND_STRL("is_redelivery"), ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_null(this_ce, ZEND_STRL("exchange_name"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("routing_key"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("routing_key"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
 
     return SUCCESS;
 }

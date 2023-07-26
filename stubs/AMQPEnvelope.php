@@ -30,7 +30,7 @@ class AMQPEnvelope extends AMQPBasicProperties
     /**
      * Get the consumer tag of the message.
      *
-     * @return string The consumer tag of the message.
+     * @return string|null The consumer tag of the message.
      */
     public function getConsumerTag()
     {
@@ -39,7 +39,7 @@ class AMQPEnvelope extends AMQPBasicProperties
     /**
      * Get the delivery tag of the message.
      *
-     * @return integer The delivery tag of the message.
+     * @return integer|null The delivery tag of the message.
      */
     public function getDeliveryTag()
     {
@@ -48,7 +48,7 @@ class AMQPEnvelope extends AMQPBasicProperties
     /**
      * Get the exchange name on which the message was published.
      *
-     * @return string The exchange name on which the message was published.
+     * @return string|null The exchange name on which the message was published.
      */
     public function getExchangeName()
     {
@@ -73,8 +73,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @param string $header_key Name of the header to get the value from.
      *
-     * @return string|boolean The contents of the specified header or FALSE
-     *                        if not set.
+     * @return string|null The contents of the specified header or null if not set.
      */
     public function getHeader($header_key)
     {
