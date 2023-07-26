@@ -9,21 +9,17 @@ $cnn->connect();
 
 $ch = new AMQPChannel($cnn);
 
-// Declare a new exchange
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange' . microtime(true));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
-// Create a new queue
 $q = new AMQPQueue($ch);
 $q->setName('queue1' . microtime(true));
 $q->declareQueue();
 
-// Bind it on the exchange to routing.key
 $q->bind($ex->getName(), '*');
 
-// Publish a message to the exchange with a routing key
 $ex->publish('');
 
 $msg = $q->get(AMQP_AUTOACK);
