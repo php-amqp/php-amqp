@@ -20,8 +20,9 @@ jobs:
                 repo: "deb https://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main"
                 repo-name: llvm
                 keys-asc: https://apt.llvm.org/llvm-snapshot.gpg.key
-          - name: Install
-            run: sudo apt-get install clang-format-17
+                install: clang-format-17
+          - name: Checkout
+            uses: actions/checkout@v3.5.3
           - name: Check style
             run: clang-format-17 --dry-run --Werror  *.c *.h
 
