@@ -6,6 +6,19 @@
 class AMQPQueue
 {
     /**
+     * Create an instance of an AMQPQueue object.
+     *
+     * @param AMQPChannel $amqp_channel The amqp channel to use.
+     *
+     * @throws AMQPQueueException      When amqp_channel is not connected to a
+     *                                 broker.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     */
+    public function __construct(AMQPChannel $amqp_channel)
+    {
+    }
+
+    /**
      * Acknowledge the receipt of a message.
      *
      * This method allows the acknowledgement of a message that is retrieved
@@ -67,25 +80,12 @@ class AMQPQueue
     }
 
     /**
-     * Create an instance of an AMQPQueue object.
-     *
-     * @param AMQPChannel $amqp_channel The amqp channel to use.
-     *
-     * @throws AMQPQueueException      When amqp_channel is not connected to a
-     *                                 broker.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
-     */
-    public function __construct(AMQPChannel $amqp_channel)
-    {
-    }
-
-    /**
      * Consume messages from a queue.
      *
      * Blocking function that will retrieve the next message from the queue as
      * it becomes available and will pass it off to the callback.
      *
-     * @param callable | null $callback    A callback function to which the
+     * @param callable|null $callback    A callback function to which the
      *                              consumed message will be passed. The
      *                              function must accept at a minimum
      *                              one parameter, an AMQPEnvelope object,
@@ -108,7 +108,7 @@ class AMQPQueue
      *                              `basic.consume` request and just run $callback
      *                              if it provided. Calling method with empty $callback
      *                              and AMQP_JUST_CONSUME makes no sense.
-     * @param string | null $consumerTag     A string describing this consumer. Used
+     * @param string|null $consumerTag     A string describing this consumer. Used
      *                              for canceling subscriptions with cancel().
      *
      * @throws AMQPChannelException    If the channel is not open.
@@ -121,7 +121,7 @@ class AMQPQueue
     public function consume(
         callable $callback = null,
         $flags = AMQP_NOPARAM,
-        ?$consumerTag = null
+        $consumerTag = null
     ) {
     }
 

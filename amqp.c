@@ -86,25 +86,148 @@ zend_function_entry amqp_functions[] = {
 };
 /* }}} */
 
+zend_bool php_amqp_is_valid_identifier(zend_string *val) {
+    return ZSTR_LEN(val) > 0 && ZSTR_LEN(val) <= PHP_AMQP_MAX_IDENTIFIER_LENGTH;
+}
+
+zend_bool php_amqp_is_valid_credential(zend_string *val) {
+    return ZSTR_LEN(val) > 0 && ZSTR_LEN(val) <= PHP_AMQP_MAX_CREDENTIALS_LENGTH;
+}
+
+zend_bool php_amqp_is_valid_port(zend_long val) {
+    return val >= PHP_AMQP_MIN_PORT && val <= PHP_AMQP_MAX_PORT;
+}
+
+zend_bool php_amqp_is_valid_timeout(double timeout) {
+    return timeout >= 0;
+}
+
+zend_bool php_amqp_is_valid_channel_max(zend_long val) {
+    return val > 0 && val <= PHP_AMQP_DEFAULT_CHANNEL_MAX;
+}
+
+zend_bool php_amqp_is_valid_frame_size_max(zend_long val) {
+    return val > 0 && val <= PHP_AMQP_MAX_FRAME_SIZE;
+}
+
+zend_bool php_amqp_is_valid_heartbeat(zend_long val) {
+    return val > 0 && val <= PHP_AMQP_MAX_HEARTBEAT;
+}
+
+zend_bool php_amqp_is_valid_prefetch_size(zend_long val) {
+  return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_SIZE;
+}
+
+zend_bool php_amqp_is_valid_prefetch_count(zend_long val) {
+  return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_COUNT;
+}
+
+static ZEND_INI_MH(onUpdateIdentifier)
+{
+	if (new_value != NULL && !php_amqp_is_valid_identifier(new_value)) {
+		return FAILURE;
+	}
+
+	return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdateCredentials)
+{
+	if (new_value != NULL && !php_amqp_is_valid_credential(new_value)) {
+		return FAILURE;
+	}
+
+	return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdatePort)
+{
+	zend_long val = zend_ini_parse_quantity_warn(new_value, entry->name);
+	if (!php_amqp_is_valid_port(val)) {
+		return FAILURE;
+	}
+
+	return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdateTimeout)
+{
+	if (!php_amqp_is_valid_timeout(zend_strtod(ZSTR_VAL(new_value), NULL))) {
+		return FAILURE;
+	}
+
+	return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdateChannelMax)
+{
+    zend_long val = zend_ini_parse_quantity_warn(new_value, entry->name);
+    if (!php_amqp_is_valid_channel_max(val)) {
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdateFrameSizeMax)
+{
+    zend_long val = zend_ini_parse_quantity_warn(new_value, entry->name);
+    if (!php_amqp_is_valid_frame_size_max(val)) {
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdateHeartbeat)
+{
+    zend_long val = zend_ini_parse_quantity_warn(new_value, entry->name);
+    if (!php_amqp_is_valid_heartbeat(val)) {
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdatePrefetchCount)
+{
+  zend_long val = zend_ini_parse_quantity_warn(new_value, entry->name);
+  if (!php_amqp_is_valid_prefetch_count(val)) {
+    return FAILURE;
+  }
+
+  return SUCCESS;
+}
+
+static ZEND_INI_MH(onUpdatePrefetchSize)
+{
+    zend_long val = zend_ini_parse_quantity_warn(new_value, entry->name);
+    if (!php_amqp_is_valid_prefetch_size(val)) {
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
 PHP_INI_BEGIN()
-	PHP_INI_ENTRY("amqp.host",					DEFAULT_HOST,					PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.vhost",					DEFAULT_VHOST,					PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.port",					DEFAULT_PORT,					PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.timeout",				DEFAULT_TIMEOUT,				PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.read_timeout",			DEFAULT_READ_TIMEOUT,			PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.write_timeout",			DEFAULT_WRITE_TIMEOUT,			PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.connect_timeout",		DEFAULT_CONNECT_TIMEOUT,		PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.rpc_timeout",			DEFAULT_RPC_TIMEOUT,			PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.login",					DEFAULT_LOGIN,					PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.password",				DEFAULT_PASSWORD,				PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("amqp.host",					DEFAULT_HOST,					PHP_INI_ALL, onUpdateIdentifier)
+	PHP_INI_ENTRY("amqp.vhost",					DEFAULT_VHOST,					PHP_INI_ALL, onUpdateIdentifier)
+	PHP_INI_ENTRY("amqp.port",					DEFAULT_PORT,					PHP_INI_ALL, onUpdatePort)
+	PHP_INI_ENTRY("amqp.timeout",				DEFAULT_TIMEOUT,				PHP_INI_ALL, onUpdateTimeout)
+	PHP_INI_ENTRY("amqp.read_timeout",			DEFAULT_READ_TIMEOUT,			PHP_INI_ALL, onUpdateTimeout)
+	PHP_INI_ENTRY("amqp.write_timeout",			DEFAULT_WRITE_TIMEOUT,			PHP_INI_ALL, onUpdateTimeout)
+	PHP_INI_ENTRY("amqp.connect_timeout",		DEFAULT_CONNECT_TIMEOUT,		PHP_INI_ALL, onUpdateTimeout)
+	PHP_INI_ENTRY("amqp.rpc_timeout",			DEFAULT_RPC_TIMEOUT,			PHP_INI_ALL, onUpdateTimeout)
+	PHP_INI_ENTRY("amqp.login",					DEFAULT_LOGIN,					PHP_INI_ALL, onUpdateCredentials)
+	PHP_INI_ENTRY("amqp.password",				DEFAULT_PASSWORD,				PHP_INI_ALL, onUpdateCredentials)
 	PHP_INI_ENTRY("amqp.auto_ack",				DEFAULT_AUTOACK,				PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.prefetch_count",		DEFAULT_PREFETCH_COUNT,			PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.prefetch_size",			DEFAULT_PREFETCH_SIZE,			PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.global_prefetch_count",	DEFAULT_GLOBAL_PREFETCH_COUNT,	PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.global_prefetch_size",	DEFAULT_GLOBAL_PREFETCH_SIZE,	PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.channel_max",			DEFAULT_CHANNEL_MAX,			PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.frame_max",				DEFAULT_FRAME_MAX,				PHP_INI_ALL, NULL)
-	PHP_INI_ENTRY("amqp.heartbeat",				DEFAULT_HEARTBEAT,				PHP_INI_ALL, NULL)
+	PHP_INI_ENTRY("amqp.prefetch_count",		DEFAULT_PREFETCH_COUNT,			PHP_INI_ALL, onUpdatePrefetchCount)
+	PHP_INI_ENTRY("amqp.prefetch_size",			DEFAULT_PREFETCH_SIZE,			PHP_INI_ALL, onUpdatePrefetchSize)
+	PHP_INI_ENTRY("amqp.global_prefetch_count",	DEFAULT_GLOBAL_PREFETCH_COUNT,	PHP_INI_ALL, onUpdatePrefetchCount)
+	PHP_INI_ENTRY("amqp.global_prefetch_size",	DEFAULT_GLOBAL_PREFETCH_SIZE,	PHP_INI_ALL, onUpdatePrefetchSize)
+	PHP_INI_ENTRY("amqp.channel_max",			DEFAULT_CHANNEL_MAX,			PHP_INI_ALL, onUpdateChannelMax)
+	PHP_INI_ENTRY("amqp.frame_max",				DEFAULT_FRAME_MAX,				PHP_INI_ALL, onUpdateFrameSizeMax)
+	PHP_INI_ENTRY("amqp.heartbeat",				DEFAULT_HEARTBEAT,				PHP_INI_ALL, onUpdateHeartbeat)
 	PHP_INI_ENTRY("amqp.cacert",				DEFAULT_CACERT,					PHP_INI_ALL, NULL)
 	PHP_INI_ENTRY("amqp.cert",					DEFAULT_CERT,					PHP_INI_ALL, NULL)
 	PHP_INI_ENTRY("amqp.key",					DEFAULT_KEY,					PHP_INI_ALL, NULL)

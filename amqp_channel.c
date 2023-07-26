@@ -325,7 +325,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 		php_amqp_zend_throw_exception(res, amqp_channel_exception_class_entry, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-		/* Prevent double free, it may happens in case case channel resource was already freed due to some hard error. */
+		/* Prevent double free, it may happen in case the channel resource was already freed due to some hard error. */
 		if (channel_resource->connection_resource) {
 			php_amqp_connection_resource_unregister_channel(channel_resource->connection_resource, channel_resource->channel_id);
 			channel_resource->channel_id = 0;
@@ -334,7 +334,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 		return;
 	}
 
-	/* r->channel_id is a 16-bit channel number insibe amqp_bytes_t, assertion below will without converting to uint16_t*/
+	/* r->channel_id is a 16-bit channel number inside amqp_bytes_t, assertion below will without converting to uint16_t*/
 	/* assert (r->channel_id == channel_resource->channel_id);*/
 	php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
@@ -360,7 +360,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
 
 	php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-	uint16_t global_prefetch_size = (uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_size");
+	uint32_t global_prefetch_size = (uint32_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_size");
 	uint16_t global_prefetch_count = (uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_count");
 
 	/* Set the global prefetch settings (ignoring if 0 for backwards compatibility) */
@@ -448,6 +448,11 @@ static PHP_METHOD(amqp_channel_class, setPrefetchCount)
 		return;
 	}
 
+    if (!php_amqp_is_valid_prefetch_count(prefetch_count)) {
+        zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'prefetch_count' must be between 0 and %u.", PHP_AMQP_MAX_PREFETCH_COUNT);
+        return;
+    }
+
 	channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 	PHP_AMQP_VERIFY_CHANNEL_CONNECTION_RESOURCE(channel_resource, "Could not set prefetch count.");
 	// TODO: verify that connection is active and resource exists. that is enough
@@ -472,7 +477,7 @@ static PHP_METHOD(amqp_channel_class, setPrefetchCount)
 
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-		uint16_t global_prefetch_size = (uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_size");
+		uint32_t global_prefetch_size = (uint32_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_size");
 		uint16_t global_prefetch_count = (uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_count");
 
 		/* Re-apply current global prefetch settings if set (writing consumer prefetch settings will clear global prefetch settings) */
@@ -528,6 +533,11 @@ static PHP_METHOD(amqp_channel_class, setPrefetchSize)
 		return;
 	}
 
+    if (!php_amqp_is_valid_prefetch_size(prefetch_size)) {
+        zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'prefetch_size' must be between 0 and %u.", PHP_AMQP_MAX_PREFETCH_SIZE);
+        return;
+    }
+
 	channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 	PHP_AMQP_VERIFY_CHANNEL_CONNECTION_RESOURCE(channel_resource, "Could not set prefetch size.");
 
@@ -536,7 +546,7 @@ static PHP_METHOD(amqp_channel_class, setPrefetchSize)
 		amqp_basic_qos(
 			channel_resource->connection_resource->connection_state,
 			channel_resource->channel_id,
-			(uint16_t)prefetch_size,
+			(uint32_t)prefetch_size,
 			0,
 			0
 		);
@@ -551,7 +561,7 @@ static PHP_METHOD(amqp_channel_class, setPrefetchSize)
 
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-		uint16_t global_prefetch_size = (uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_size");
+		uint32_t global_prefetch_size = (uint32_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_size");
 		uint16_t global_prefetch_count = (uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_count");
 
 		/* Re-apply current global prefetch settings if set (writing consumer prefetch settings will clear global prefetch settings) */
@@ -604,6 +614,11 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchCount)
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &global_prefetch_count) == FAILURE) {
 		return;
 	}
+
+    if (!php_amqp_is_valid_prefetch_count(global_prefetch_count)) {
+        zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'global_prefetch_count' must be between 0 and %u.", PHP_AMQP_MAX_PREFETCH_COUNT);
+        return;
+    }
 
 	channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 	PHP_AMQP_VERIFY_CHANNEL_CONNECTION_RESOURCE(channel_resource, "Could not set global prefetch count.");
@@ -659,6 +674,11 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchSize)
 		return;
 	}
 
+    if (!php_amqp_is_valid_prefetch_size(global_prefetch_size)) {
+        zend_throw_exception_ex(amqp_connection_exception_class_entry, 0 TSRMLS_CC, "Parameter 'global_prefetch_size' must be between 0 and %u.", PHP_AMQP_MAX_PREFETCH_SIZE);
+        return;
+    }
+
 	channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 	PHP_AMQP_VERIFY_CHANNEL_CONNECTION_RESOURCE(channel_resource, "Could not set prefetch size.");
 
@@ -668,7 +688,7 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchSize)
 		amqp_basic_qos(
 			channel_resource->connection_resource->connection_state,
 			channel_resource->channel_id,
-			(uint16_t)global_prefetch_size,
+			(uint32_t)global_prefetch_size,
 			0,
 			1
 		);
@@ -734,7 +754,7 @@ static PHP_METHOD(amqp_channel_class, qos)
 		amqp_basic_qos(
 			channel_resource->connection_resource->connection_state,
 			channel_resource->channel_id,
-			(uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("prefetch_size"),
+			(uint32_t)PHP_AMQP_READ_THIS_PROP_LONG("prefetch_size"),
 			(uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("prefetch_count"),
 			/* NOTE that RabbitMQ has reinterpreted global flag field. See https://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.qos.global for details */
 			0							/* Global flag - whether this change should affect every channel_resource */
@@ -750,7 +770,7 @@ static PHP_METHOD(amqp_channel_class, qos)
 
 		php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-		uint16_t global_prefetch_size = (uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_size");
+		uint32_t global_prefetch_size = (uint32_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_size");
 		uint16_t global_prefetch_count = (uint16_t)PHP_AMQP_READ_THIS_PROP_LONG("global_prefetch_count");
 
 		/* Re-apply current global prefetch settings if set (writing consumer prefetch settings will clear global prefetch settings) */
