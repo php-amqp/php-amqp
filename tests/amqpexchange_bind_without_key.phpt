@@ -27,6 +27,6 @@ var_dump($ex->bind($ex2->getName(), ''));
 
 ?>
 --EXPECT--
-bool(true)
-bool(true)
-bool(true)
+NULL
+NULL
+NULL

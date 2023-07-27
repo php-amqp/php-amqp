@@ -168,4 +168,4 @@ AMQPEnvelope
 }
 
 call #3
-bool(false)
+NULL

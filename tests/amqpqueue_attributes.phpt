@@ -11,10 +11,10 @@ $ch = new AMQPChannel($cnn);
 
 $q = new AMQPQueue($ch);
 
-$q->setArguments($arr = array('existent' => 'value', 'false' => false));
+var_dump($q->setArguments($arr = array('existent' => 'value', 'false' => false)));
 
 echo 'Initial args: ', count($arr), ', queue args: ', count($q->getArguments()), PHP_EOL;
-$q->setArgument('foo', 'bar');
+var_dump($q->setArgument('foo', 'bar'));
 echo 'Initial args: ', count($arr), ', queue args: ', count($q->getArguments()), PHP_EOL;
 
 foreach (array('existent', 'false', 'nonexistent') as $key) {
@@ -23,8 +23,10 @@ foreach (array('existent', 'false', 'nonexistent') as $key) {
 
 ?>
 --EXPECT--
+NULL
 Initial args: 2, queue args: 2
+NULL
 Initial args: 2, queue args: 3
 existent: true, 'value'
 false: true, false
-nonexistent: false, false
+nonexistent: false, NULL

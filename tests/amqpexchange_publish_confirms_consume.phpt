@@ -26,7 +26,7 @@ $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->setFlags(AMQP_AUTODELETE);
 $ex->declareExchange();
 
-echo $ex->publish('message 1', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
+var_dump($ex->publish('message 1', 'routing.key', AMQP_MANDATORY));
 
 // Create a new queue
 $q = new AMQPQueue($ch);
@@ -47,7 +47,7 @@ try {
     echo get_class($e), "({$e->getCode()}): ", $e->getMessage(). PHP_EOL;
 }
 
-echo $ex->publish('message 2', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
+var_dump($ex->publish('message 2', 'routing.key', AMQP_MANDATORY));
 
 /* callback(int $reply_code, string $reply_text, string $exchange, string $routing_key, AMQPBasicProperties $properties, string $body); */
 $ch->setReturnCallback(function ($reply_code, $reply_text, $exchange, $routing_key, AMQPBasicProperties $properties, $body) {
@@ -79,13 +79,13 @@ try {
 $q->delete();
 $ex->delete();
 ?>
---EXPECTF--
-true
-bool(false)
+--EXPECT--
+NULL
+NULL
 Unhandled basic.return method from server received. Use AMQPChannel::setReturnCallback() to process it.
 Unhandled basic.ack method from server received. Use AMQPChannel::setConfirmCallback() to process it.
 AMQPQueueException(0): Consumer timeout exceed
-true
+NULL
 Message returned: NO_ROUTE, message body:message 2
 Message acked
 array(2) {

@@ -109,7 +109,7 @@ class AMQPExchange
      *
      * @param string $key The key to look up.
      *
-     * @return bool
+     * @return boolean
      */
     public function hasArgument($key)
     {

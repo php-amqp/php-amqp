@@ -1153,8 +1153,6 @@ static PHP_METHOD(amqp_connection_class, setPassword)
         password,
         password_len TSRMLS_CC
     );
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1248,8 +1246,6 @@ static PHP_METHOD(amqp_connection_class, setPort)
     }
 
     zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("port"), port TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 

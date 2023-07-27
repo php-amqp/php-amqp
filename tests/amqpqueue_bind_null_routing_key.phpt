@@ -12,15 +12,19 @@ $ch = new AMQPChannel($cnn);
 $ex = new AMQPExchange($ch);
 $ex->setName('exchange-' . microtime(true));
 $ex->setType(AMQP_EX_TYPE_DIRECT);
-$ex->declareExchange();
+var_dump($ex->declareExchange());
 
 $queue = new AMQPQueue($ch);
 $queue->setName("queue-" . microtime(true));
-$queue->declareQueue();
-echo $queue->bind($ex->getName(), null) ? 'true' : 'false';
+var_dump($queue->declareQueue());
+var_dump($queue->bind($ex->getName(), null));
 
-$queue->delete();
-$ex->delete();
+var_dump($queue->delete());
+var_dump($ex->delete());
 ?>
 --EXPECT--
-true
+NULL
+int(0)
+NULL
+int(0)
+NULL

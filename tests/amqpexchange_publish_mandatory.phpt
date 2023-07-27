@@ -36,8 +36,8 @@ $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->setFlags(AMQP_AUTODELETE);
 $ex->declareExchange();
 
-echo $ex->publish('message 1', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
-echo $ex->publish('message 2', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
+var_dump($ex->publish('message 1', 'routing.key', AMQP_MANDATORY));
+var_dump($ex->publish('message 2', 'routing.key', AMQP_MANDATORY));
 
 // Create a new queue
 $q = new AMQPQueue($ch);
@@ -75,9 +75,9 @@ $ex->delete();
 ?>
 --EXPECTF--
 AMQPQueueException(0): Wait timeout exceed
-true
-true
-bool(false)
+NULL
+NULL
+NULL
 Unhandled basic.return method from server received. Use AMQPChannel::setReturnCallback() to process it.
 Message returned
 array(6) {

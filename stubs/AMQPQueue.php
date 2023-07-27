@@ -33,7 +33,7 @@ class AMQPQueue
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean
+     * @return void
      */
     public function ack($delivery_tag, $flags = AMQP_NOPARAM)
     {
@@ -49,7 +49,7 @@ class AMQPQueue
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean
+     * @return void
      */
     public function bind($exchange_name, $routing_key = null, array $arguments = array())
     {
@@ -73,7 +73,7 @@ class AMQPQueue
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return bool;
+     * @return void
      */
     public function cancel($consumer_tag = '')
     {
@@ -178,7 +178,7 @@ class AMQPQueue
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPQueueException      If queue is not exist.
      *
-     * @return AMQPEnvelope|boolean
+     * @return AMQPEnvelope|null
      */
     public function get($flags = AMQP_NOPARAM)
     {
@@ -189,7 +189,7 @@ class AMQPQueue
      *
      * @param string $key The key to look up.
      *
-     * @return string|integer|boolean The string or integer value associated
+     * @return string|integer|null The string or integer value associated
      *                                with the given key, or false if the key
      *                                is not set.
      */
@@ -219,7 +219,7 @@ class AMQPQueue
     /**
      * Get the configured name.
      *
-     * @return string The configured name as a string.
+     * @return string|null The configured name as a string.
      */
     public function getName()
     {
@@ -246,7 +246,7 @@ class AMQPQueue
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean
+     * @return void
      */
     public function nack($delivery_tag, $flags = AMQP_NOPARAM)
     {
@@ -267,7 +267,7 @@ class AMQPQueue
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean
+     * @return void
      */
     public function reject($delivery_tag, $flags = AMQP_NOPARAM)
     {
@@ -276,10 +276,12 @@ class AMQPQueue
     /**
      * Purge the contents of a queue.
      *
+     * Returns the number of purged messages
+     *
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean
+     * @return int
      */
     public function purge()
     {
@@ -291,7 +293,7 @@ class AMQPQueue
      * @param string $key   The key to set.
      * @param mixed  $value The value to set.
      *
-     * @return boolean
+     * @return void
      */
     public function setArgument($key, $value)
     {
@@ -304,7 +306,7 @@ class AMQPQueue
      *
      * @param array $arguments An array of key/value pairs of arguments.
      *
-     * @return boolean
+     * @return void
      */
     public function setArguments(array $arguments)
     {
@@ -328,7 +330,7 @@ class AMQPQueue
      *                       AMQP_DURABLE, AMQP_PASSIVE,
      *                       AMQP_EXCLUSIVE, AMQP_AUTODELETE.
      *
-     * @return boolean
+     * @return void
      */
     public function setFlags($flags)
     {
@@ -339,7 +341,7 @@ class AMQPQueue
      *
      * @param string $queue_name The name of the queue.
      *
-     * @return boolean
+     * @return void
      */
     public function setName($queue_name)
     {
@@ -357,7 +359,7 @@ class AMQPQueue
      * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return boolean
+     * @return void
      */
     public function unbind($exchange_name, $routing_key = null, array $arguments = array())
     {
@@ -384,10 +386,9 @@ class AMQPQueue
     /**
      * Get latest consumer tag. If no consumer available or the latest on was canceled null will be returned.
      *
-     * @return string | null
+     * @return string|null
      */
     public function getConsumerTag()
     {
     }
-
 }

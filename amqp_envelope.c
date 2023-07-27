@@ -233,11 +233,7 @@ static PHP_METHOD(amqp_envelope_class, hasHeader)
     zval *zv = PHP_AMQP_READ_THIS_PROP_CE("headers", amqp_basic_properties_class_entry);
 
     /* Look for the hash key */
-    if (zend_hash_str_find(HASH_OF(zv), key, key_len) == NULL) {
-        RETURN_FALSE;
-    }
-
-    RETURN_TRUE;
+    RETURN_BOOL(zend_hash_str_find(HASH_OF(zv), key, key_len) != NULL);
 }
 /* }}} */
 

@@ -27,5 +27,5 @@ $queue->delete();
 $ex->delete();
 ?>
 --EXPECT--
-bool(true)
-bool(true)
+NULL
+NULL

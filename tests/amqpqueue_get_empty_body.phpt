@@ -32,7 +32,7 @@ echo "'" . $msg->getBody() . "'\n";
 
 $msg = $q->get(AMQP_AUTOACK);
 
-if ($msg === FALSE) {
+if ($msg === null) {
 	echo "No more messages\n";
 }
 

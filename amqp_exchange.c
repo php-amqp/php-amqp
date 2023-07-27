@@ -274,7 +274,6 @@ static PHP_METHOD(amqp_exchange_class, getArgument)
 static PHP_METHOD(amqp_exchange_class, hasArgument)
 {
     zval rv;
-    zval *tmp = NULL;
     char *key;
     size_t key_len;
 
@@ -282,11 +281,7 @@ static PHP_METHOD(amqp_exchange_class, hasArgument)
         return;
     }
 
-    if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
-        RETURN_FALSE;
-    }
-
-    RETURN_TRUE;
+    RETURN_BOOL(zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len) != NULL);
 }
 /* }}} */
 

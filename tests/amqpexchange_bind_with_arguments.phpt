@@ -28,5 +28,5 @@ var_dump($ex->bind($ex2->getName(), 'test', array('test' => 'passed', 'at' => $t
 
 ?>
 --EXPECT--
-bool(true)
-bool(true)
+NULL
+NULL

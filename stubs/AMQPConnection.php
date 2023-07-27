@@ -209,7 +209,7 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If password is longer then 32characters.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setPassword($password)
     {
@@ -223,7 +223,7 @@ class AMQPConnection
      * @throws AMQPConnectionException If port is longer not between
      *                                 1 and 65535.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return void
      */
     public function setPort($port)
     {
@@ -398,7 +398,7 @@ class AMQPConnection
      *
      * When connection is not connected, boolean false always returned
      *
-     * @return bool
+     * @return boolean
      */
     public function isPersistent()
     {
@@ -417,7 +417,7 @@ class AMQPConnection
      * Set path to the CA cert file in PEM format
      *
      * @param string $cacert
-     * @return bool
+     * @return boolean
      */
     public function setCACert($cacert)
     {
@@ -464,7 +464,7 @@ class AMQPConnection
     /**
      * Get whether peer verification enabled or disabled
      *
-     * @return bool
+     * @return boolean
      */
     public function getVerify()
     {

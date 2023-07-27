@@ -46,11 +46,8 @@ $ex1->declareExchange();
 $ex2 = new AMQPExchange($ch2);
 $ex2->setName($exchange_name);
 
-echo $ex2->publish('message 1-2', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
-echo $ex2->publish('message 2-2', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
-
-//echo $ex1->publish('message 1-1', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
-//echo $ex1->publish('message 2-1', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
+var_dump($ex2->publish('message 1-2', 'routing.key', AMQP_MANDATORY));
+var_dump($ex2->publish('message 2-2', 'routing.key', AMQP_MANDATORY));
 
 // Create a new queue
 $q = new AMQPQueue($ch1);
@@ -77,8 +74,8 @@ echo 'Connection active: ', ($cnn->isConnected() ? 'yes' : 'no');
 --EXPECTF--
 AMQPQueueException(0): Wait timeout exceed
 AMQPQueueException(0): Wait timeout exceed
-true
-true
-bool(false)
+NULL
+NULL
+NULL
 AMQPException(0): Library error: unexpected method received
 Connection active: no

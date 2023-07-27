@@ -114,8 +114,7 @@ static PHP_METHOD(amqp_queue_class, getName)
     if (PHP_AMQP_READ_THIS_PROP_STRLEN("name") > 0) {
         PHP_AMQP_RETURN_THIS_PROP("name");
     } else {
-        /* BC */
-        RETURN_FALSE;
+        RETURN_NULL();
     }
 }
 /* }}} */
@@ -144,9 +143,6 @@ static PHP_METHOD(amqp_queue_class, setName)
 
     /* Set the queue name */
     zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("name"), name, name_len TSRMLS_CC);
-
-    /* BC */
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -220,9 +216,6 @@ static PHP_METHOD(amqp_queue_class, setFlags)
         ZEND_STRL("auto_delete"),
         IS_AUTODELETE(flags) TSRMLS_CC
     );
-
-    /* BC */
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -241,7 +234,7 @@ static PHP_METHOD(amqp_queue_class, getArgument)
     }
 
     if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
-        RETURN_FALSE;
+        RETURN_NULL();
     }
 
     RETURN_ZVAL(tmp, 1, 0);
@@ -253,8 +246,6 @@ static PHP_METHOD(amqp_queue_class, hasArgument)
 {
     zval rv;
 
-    zval *tmp = NULL;
-
     char *key;
     size_t key_len;
 
@@ -262,11 +253,7 @@ static PHP_METHOD(amqp_queue_class, hasArgument)
         return;
     }
 
-    if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
-        RETURN_FALSE;
-    }
-
-    RETURN_TRUE;
+    RETURN_BOOL(zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len) != NULL);
 }
 /* }}} */
 
@@ -292,8 +279,6 @@ static PHP_METHOD(amqp_queue_class, setArguments)
     }
 
     zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("arguments"), zvalArguments TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -332,8 +317,6 @@ static PHP_METHOD(amqp_queue_class, setArgument)
             );
             return;
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -466,8 +449,6 @@ static PHP_METHOD(amqp_queue_class, bind)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -509,7 +490,7 @@ static PHP_METHOD(amqp_queue_class, get)
 
     if (AMQP_BASIC_GET_EMPTY_METHOD == res.reply.id) {
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-        RETURN_FALSE;
+        RETURN_NULL();
     }
 
     assert(AMQP_BASIC_GET_OK_METHOD == res.reply.id);
@@ -904,8 +885,6 @@ static PHP_METHOD(amqp_queue_class, ack)
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -960,8 +939,6 @@ static PHP_METHOD(amqp_queue_class, nack)
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1015,8 +992,6 @@ static PHP_METHOD(amqp_queue_class, reject)
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1063,14 +1038,9 @@ static PHP_METHOD(amqp_queue_class, purge)
         return;
     }
 
-    /* long message_count = r->message_count; */
-
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-    /* RETURN_LONG(message_count) */;
-
-    /* BC */
-    RETURN_TRUE;
+    RETURN_LONG(r->message_count);
 }
 /* }}} */
 
@@ -1153,8 +1123,6 @@ static PHP_METHOD(amqp_queue_class, cancel)
     zend_hash_str_del_ind(Z_ARRVAL_P(consumers), r->consumer_tag.bytes, r->consumer_tag.len);
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1217,8 +1185,6 @@ static PHP_METHOD(amqp_queue_class, unbind)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-
-    RETURN_TRUE;
 }
 /* }}} */
 

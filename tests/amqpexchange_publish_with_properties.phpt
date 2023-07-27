@@ -53,7 +53,7 @@ $attrs_control = array(
     //'headers'          => 'not array', // should be array // NOTE: covered in tests/amqpexchange_publish_with_properties_ignore_num_header.phpt
 );
 
-echo $ex->publish('message', 'routing.key', AMQP_NOPARAM, $attrs) ? 'true' : 'false', PHP_EOL;
+var_dump($ex->publish('message', 'routing.key', AMQP_NOPARAM, $attrs));
 
 
 //var_dump($attrs, $attrs_control);
@@ -70,7 +70,7 @@ $q->delete();
 
 ?>
 --EXPECTF--
-true
+NULL
 Message attributes are the same
 AMQPEnvelope
     getBody:
