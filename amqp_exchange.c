@@ -136,7 +136,13 @@ static PHP_METHOD(amqp_exchange_class, setName)
     }
 
     /* Set the exchange name */
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("name"), name, name_len TSRMLS_CC);
+    zend_update_property_stringl(
+        this_ce,
+        PHP_AMQP_COMPAT_OBJ_P(getThis()),
+        ZEND_STRL("name"),
+        name,
+        name_len TSRMLS_CC
+    );
 }
 /* }}} */
 
@@ -242,7 +248,13 @@ static PHP_METHOD(amqp_exchange_class, setType)
         return;
     }
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("type"), type, type_len TSRMLS_CC);
+    zend_update_property_stringl(
+        this_ce,
+        PHP_AMQP_COMPAT_OBJ_P(getThis()),
+        ZEND_STRL("type"),
+        type,
+        type_len TSRMLS_CC
+    );
 }
 /* }}} */
 
@@ -497,8 +509,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
     props.headers.entries = 0;
 
     {
-        if (ini_arr &&
-            (tmp = zend_hash_str_find(HASH_OF(ini_arr), "content_type", sizeof("content_type") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("content_type"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -508,8 +519,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             }
         }
 
-        if (ini_arr &&
-            (tmp = zend_hash_str_find(HASH_OF(ini_arr), "content_encoding", sizeof("content_encoding") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("content_encoding"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -519,7 +529,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             }
         }
 
-        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "message_id", sizeof("message_id") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("message_id"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -529,7 +539,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             }
         }
 
-        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "user_id", sizeof("user_id") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("user_id"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -539,7 +549,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             }
         }
 
-        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "app_id", sizeof("app_id") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("app_id"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -549,8 +559,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             }
         }
 
-        if (ini_arr &&
-            (tmp = zend_hash_str_find(HASH_OF(ini_arr), "delivery_mode", sizeof("delivery_mode") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("delivery_mode"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_long(tmp);
 
@@ -558,7 +567,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             props._flags |= AMQP_BASIC_DELIVERY_MODE_FLAG;
         }
 
-        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "priority", sizeof("priority") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("priority"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_long(tmp);
 
@@ -566,7 +575,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             props._flags |= AMQP_BASIC_PRIORITY_FLAG;
         }
 
-        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "timestamp", sizeof("timestamp") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("timestamp"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_long(tmp);
 
@@ -574,7 +583,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             props._flags |= AMQP_BASIC_TIMESTAMP_FLAG;
         }
 
-        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "expiration", sizeof("expiration") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("expiration"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -584,7 +593,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             }
         }
 
-        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "type", sizeof("type") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("type"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -594,7 +603,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             }
         }
 
-        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "reply_to", sizeof("reply_to") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("reply_to"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -603,8 +612,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
                 props._flags |= AMQP_BASIC_REPLY_TO_FLAG;
             }
         }
-        if (ini_arr &&
-            (tmp = zend_hash_str_find(HASH_OF(ini_arr), "correlation_id", sizeof("correlation_id") - 1)) != NULL) {
+        if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("correlation_id"))) != NULL) {
             SEPARATE_ZVAL(tmp);
             convert_to_string(tmp);
 
@@ -617,7 +625,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
 
     amqp_table_t *headers = NULL;
 
-    if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), "headers", sizeof("headers") - 1)) != NULL) {
+    if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("headers"))) != NULL) {
         SEPARATE_ZVAL(tmp);
         convert_to_array(tmp);
 

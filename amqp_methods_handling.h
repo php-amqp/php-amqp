@@ -49,7 +49,11 @@ int amqp_simple_wait_method_noblock(
 
 int php_amqp_call_callback_with_params(zval params, amqp_callback_bucket *cb TSRMLS_DC);
 
-int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *msg, amqp_callback_bucket *cb TSRMLS_DC);
+int php_amqp_call_basic_return_callback(
+    amqp_basic_return_t *m,
+    amqp_message_t *msg,
+    amqp_callback_bucket *cb TSRMLS_DC
+);
 int php_amqp_handle_basic_return(
     char **message,
     amqp_connection_resource *resource,

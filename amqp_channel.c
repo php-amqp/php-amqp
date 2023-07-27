@@ -740,7 +740,12 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchCount)
         ZEND_STRL("global_prefetch_count"),
         global_prefetch_count TSRMLS_CC
     );
-    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("global_prefetch_size"), 0 TSRMLS_CC);
+    zend_update_property_long(
+        this_ce,
+        PHP_AMQP_COMPAT_OBJ_P(getThis()),
+        ZEND_STRL("global_prefetch_size"),
+        0 TSRMLS_CC
+    );
 }
 /* }}} */
 

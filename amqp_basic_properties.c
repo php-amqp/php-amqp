@@ -211,7 +211,13 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
 
     zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), timestamp TSRMLS_CC);
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("type"), type, type_len TSRMLS_CC);
+    zend_update_property_stringl(
+        this_ce,
+        PHP_AMQP_COMPAT_OBJ_P(getThis()),
+        ZEND_STRL("type"),
+        type,
+        type_len TSRMLS_CC
+    );
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
@@ -573,12 +579,10 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC)
                 break;
 
             case AMQP_FIELD_KIND_TIMESTAMP: {
-                char timestamp_str[20];
                 zval timestamp;
                 ZVAL_UNDEF(&timestamp);
 
-                int length = snprintf(timestamp_str, sizeof(timestamp_str), ZEND_ULONG_FMT, entry->value.value.u64);
-                ZVAL_STRINGL(&timestamp, (char *) timestamp_str, length);
+                ZVAL_DOUBLE(&timestamp, entry->value.value.u64);
                 object_init_ex(&value, amqp_timestamp_class_entry);
 
                 zend_call_method_with_1_params(
@@ -589,8 +593,6 @@ void parse_amqp_table(amqp_table_t *table, zval *result TSRMLS_DC)
                     NULL,
                     &timestamp
                 );
-
-                zval_ptr_dtor(&timestamp);
                 break;
             }
 

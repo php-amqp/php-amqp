@@ -45,16 +45,16 @@ var_dump(AMQPTimestamp::MIN);
 
 ==END==
 --EXPECTF--
+float(100000)
 string(6) "100000"
-string(6) "100000"
-string(6) "100000"
+float(100000)
 string(6) "100000"
 AMQPTimestamp::__construct() expects exactly 1 argument, 0 given
 AMQPTimestamp::__construct(): Argument #1 ($timestamp) must be of type float, string given
 The timestamp parameter must be greater than 0.
 The timestamp parameter must be less than 18446744073709551616.
 bool(true)
-string(20) "18446744073709551616"
-string(1) "0"
+float(1.8446744073709552E+19)
+float(0)
 
 ==END==

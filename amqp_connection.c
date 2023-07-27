@@ -388,7 +388,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
     /* Pull the login out of the $params array */
     zdata = NULL;
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "login", sizeof("login") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("login"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -416,7 +416,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
     /* Pull the password out of the $params array */
     zdata = NULL;
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "password", sizeof("password") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("password"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -450,7 +450,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
     /* Pull the host out of the $params array */
     zdata = NULL;
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "host", sizeof("host") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("host"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -484,7 +484,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
     /* Pull the vhost out of the $params array */
     zdata = NULL;
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "vhost", sizeof("vhost") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("vhost"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -523,7 +523,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_INT("amqp.port") TSRMLS_CC
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "port", sizeof("port") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("port"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
 
@@ -553,7 +553,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_FLT("amqp.read_timeout") TSRMLS_CC
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "read_timeout", sizeof("read_timeout") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("read_timeout"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
 
@@ -573,12 +573,16 @@ static PHP_METHOD(amqp_connection_class, __construct)
             Z_DVAL_P(zdata) TSRMLS_CC
         );
 
-        if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "timeout", sizeof("timeout") - 1)) != NULL) {
+        if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("timeout"))) != NULL) {
             /* 'read_timeout' takes precedence on 'timeout' but users have to know this */
-            php_error_docref(NULL TSRMLS_CC, E_NOTICE, "Parameter 'timeout' is deprecated, 'read_timeout' used instead");
+            php_error_docref(
+                NULL TSRMLS_CC,
+                E_NOTICE,
+                "Parameter 'timeout' is deprecated, 'read_timeout' used instead"
+            );
         }
 
-    } else if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "timeout", sizeof("timeout") - 1)) != NULL) {
+    } else if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("timeout"))) != NULL) {
 
         php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "Parameter 'timeout' is deprecated; use 'read_timeout' instead");
 
@@ -647,8 +651,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_FLT("amqp.write_timeout") TSRMLS_CC
     );
 
-    if (ini_arr &&
-        (zdata = zend_hash_str_find(HASH_OF(ini_arr), "write_timeout", sizeof("write_timeout") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("write_timeout"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
 
@@ -676,7 +679,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_FLT("amqp.rpc_timeout") TSRMLS_CC
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "rpc_timeout", sizeof("rpc_timeout") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("rpc_timeout"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
 
@@ -704,8 +707,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_FLT("amqp.connect_timeout") TSRMLS_CC
     );
 
-    if (ini_arr &&
-        (zdata = zend_hash_str_find(HASH_OF(ini_arr), "connect_timeout", sizeof("connect_timeout") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("connect_timeout"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
 
@@ -733,7 +735,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_INT("amqp.channel_max") TSRMLS_CC
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "channel_max", sizeof("channel_max") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("channel_max"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
 
@@ -770,7 +772,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_INT("amqp.frame_max") TSRMLS_CC
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "frame_max", sizeof("frame_max") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("frame_max"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
         if (!php_amqp_is_valid_frame_size_max(Z_LVAL_P(zdata))) {
@@ -806,7 +808,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_INT("amqp.heartbeat") TSRMLS_CC
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "heartbeat", sizeof("heartbeat") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("heartbeat"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
         if (!php_amqp_is_valid_heartbeat(Z_LVAL_P(zdata))) {
@@ -833,7 +835,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         INI_INT("amqp.sasl_method") TSRMLS_CC
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "sasl_method", sizeof("sasl_method") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("sasl_method"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
         zend_update_property_long(
@@ -853,8 +855,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
     /* Pull the connection_name out of the $params array */
     zdata = NULL;
-    if (ini_arr &&
-        (zdata = zend_hash_str_find(HASH_OF(ini_arr), "connection_name", sizeof("connection_name") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("connection_name"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -1213,7 +1214,13 @@ static PHP_METHOD(amqp_connection_class, setHost)
         return;
     }
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), host, host_len TSRMLS_CC);
+    zend_update_property_stringl(
+        this_ce,
+        PHP_AMQP_COMPAT_OBJ_P(getThis()),
+        ZEND_STRL("host"),
+        host,
+        host_len TSRMLS_CC
+    );
 }
 /* }}} */
 
@@ -1667,7 +1674,13 @@ static PHP_METHOD(amqp_connection_class, setCACert)
         return;
     }
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cacert"), str, str_len TSRMLS_CC);
+    zend_update_property_stringl(
+        this_ce,
+        PHP_AMQP_COMPAT_OBJ_P(getThis()),
+        ZEND_STRL("cacert"),
+        str,
+        str_len TSRMLS_CC
+    );
 }
 /* }}} */
 

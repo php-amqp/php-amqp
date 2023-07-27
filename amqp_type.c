@@ -252,7 +252,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(
                 );
 
                 field->kind = AMQP_FIELD_KIND_TIMESTAMP;
-                field->value.u64 = strtoimax(Z_STRVAL(result_zv), NULL, 10);
+                field->value.u64 = Z_DVAL(result_zv);
 
                 zval_ptr_dtor(&result_zv);
 

@@ -76,7 +76,7 @@ array(1) {
     ["time"]=>
     object(AMQPTimestamp)#%d (1) {
       ["timestamp":"AMQPTimestamp":private]=>
-      string(10) "%s"
+      float(%d)
     }
     ["exchange"]=>
     string(%d) "exchange-%f"

@@ -33,10 +33,10 @@
 zend_class_entry *amqp_timestamp_class_entry;
 #define this_ce amqp_timestamp_class_entry
 
-static const double AMQP_TIMESTAMP_MAX = 0xFFFFFFFFFFFFFFFF;
+static const double AMQP_TIMESTAMP_MAX = 0xFFFFFFFFFFFFFFFFp0;
 static const double AMQP_TIMESTAMP_MIN = 0;
 
-/* {{{ proto AMQPTimestamp::__construct(string $timestamp)
+/* {{{ proto AMQPTimestamp::__construct(float $timestamp)
  */
 static PHP_METHOD(amqp_timestamp_class, __construct)
 {
@@ -66,15 +66,17 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
         return;
     }
 
-    zend_string *str;
-    str = _php_math_number_format_ex(timestamp, 0, "", 0, "", 0);
-    zend_update_property_str(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), str);
-    zend_string_delref(str);
+    zend_update_property_double(
+        this_ce,
+        PHP_AMQP_COMPAT_OBJ_P(getThis()),
+        ZEND_STRL("timestamp"),
+        floor(timestamp) TSRMLS_CC
+    );
 }
 /* }}} */
 
 
-/* {{{ proto string AMQPTimestamp::getTimestamp()
+/* {{{ proto float AMQPTimestamp::getTimestamp()
 Get timestamp */
 static PHP_METHOD(amqp_timestamp_class, getTimestamp)
 {
@@ -93,30 +95,21 @@ static PHP_METHOD(amqp_timestamp_class, __toString)
     zval rv;
     PHP_AMQP_NOPARAMS();
 
-    PHP_AMQP_RETURN_THIS_PROP("timestamp");
+    zval *timestamp =
+        zend_read_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), 0, &rv TSRMLS_CC);
+
+    RETURN_NEW_STR(_php_math_number_format_ex(Z_DVAL_P(timestamp), 0, "", 0, "", 0));
 }
 /* }}} */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_TYPE_INFO(0, timestamp, IS_STRING, 0)
+    ZEND_ARG_TYPE_INFO(0, timestamp, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
-    arginfo_amqp_timestamp_class_getTimestamp,
-    ZEND_SEND_BY_VAL,
-    0,
-    IS_STRING,
-    0
-)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_timestamp_class_getTimestamp, ZEND_SEND_BY_VAL, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
-    arginfo_amqp_timestamp_class_toString,
-    ZEND_SEND_BY_VAL,
-    0,
-    IS_STRING,
-    0
-)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_timestamp_class_toString, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 zend_function_entry amqp_timestamp_class_functions[] = {
@@ -131,8 +124,6 @@ zend_function_entry amqp_timestamp_class_functions[] = {
 PHP_MINIT_FUNCTION(amqp_timestamp)
 {
     zend_class_entry ce;
-    char min[21], max[21];
-    int min_len, max_len;
 
     INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
     this_ce = zend_register_internal_class(&ce TSRMLS_CC);
@@ -140,11 +131,9 @@ PHP_MINIT_FUNCTION(amqp_timestamp)
 
     zend_declare_property_null(this_ce, ZEND_STRL("timestamp"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
-    max_len = snprintf(max, sizeof(max), "%.0f", AMQP_TIMESTAMP_MAX);
-    zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MAX"), max, max_len TSRMLS_CC);
+    zend_declare_class_constant_double(this_ce, ZEND_STRL("MAX"), AMQP_TIMESTAMP_MAX TSRMLS_CC);
 
-    min_len = snprintf(min, sizeof(min), "%.0f", AMQP_TIMESTAMP_MIN);
-    zend_declare_class_constant_stringl(this_ce, ZEND_STRL("MIN"), min, min_len TSRMLS_CC);
+    zend_declare_class_constant_double(this_ce, ZEND_STRL("MIN"), AMQP_TIMESTAMP_MIN TSRMLS_CC);
 
     return SUCCESS;
 }

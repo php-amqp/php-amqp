@@ -45,3 +45,8 @@ CMakeLists.txt
 .idea/
 /vendor/
 /composer.lock
+
+/config.h.in~
+/configure~
+/impl.json
+/stubs.json

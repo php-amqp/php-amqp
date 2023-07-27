@@ -29,13 +29,11 @@ class AMQPQueue
      *                              acknowledge receipt.
      * @param integer $flags        The only valid flag that can be passed is
      *                              AMQP_MULTIPLE.
-     *
-     * @return void
-     *@throws AMQPConnectionException If the connection to the broker was lost.
-     *
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException    If the channel is not open.
+     * @return void
      */
-    public function ack($deliveryTag, $flags = AMQP_NOPARAM)
+    public function ack(int $deliveryTag, int $flags = AMQP_NOPARAM): void
     {
     }
 
@@ -45,13 +43,11 @@ class AMQPQueue
      * @param string $exchangeName Name of the exchange to bind to.
      * @param string $routingKey   Pattern or routing key to bind with.
      * @param array  $arguments     Additional binding arguments.
-     *
-     * @return void
-     *@throws AMQPConnectionException If the connection to the broker was lost.
-     *
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException    If the channel is not open.
+     * @return void
      */
-    public function bind($exchangeName, $routingKey = null, array $arguments = array())
+    public function bind(string $exchangeName, ?string $routingKey = null, array $arguments = array()): void
     {
     }
 
@@ -69,13 +65,11 @@ class AMQPQueue
      *                             or no consumer tag was passed and the latest tag was used
      *                             the internal consumer tag will be set to null, so that
      *                             `AMQPQueue::getConsumerTag()` will return null afterwards.
-     *
-     * @return void
-     *@throws AMQPConnectionException If the connection to the broker was lost.
-     *
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException    If the channel is not open.
+     * @return void
      */
-    public function cancel($consumerTag = '')
+    public function cancel(string $consumerTag = ''): void
     {
     }
 
@@ -120,9 +114,9 @@ class AMQPQueue
      */
     public function consume(
         callable $callback = null,
-        $flags = AMQP_NOPARAM,
-        $consumerTag = null
-    ) {
+        int $flags = AMQP_NOPARAM,
+        ?string $consumerTag = null
+    ): void {
     }
 
     /**
@@ -134,7 +128,7 @@ class AMQPQueue
      *
      * @return integer the message count.
      */
-    public function declareQueue()
+    public function declareQueue(): int
     {
     }
 
@@ -153,7 +147,7 @@ class AMQPQueue
      *
      * @return integer The number of deleted messages.
      */
-    public function delete($flags = AMQP_NOPARAM)
+    public function delete(int $flags = AMQP_NOPARAM): int
     {
     }
 
@@ -180,7 +174,7 @@ class AMQPQueue
      *
      * @return AMQPEnvelope|null
      */
-    public function get($flags = AMQP_NOPARAM)
+    public function get(int $flags = AMQP_NOPARAM): ?AMQPEnvelope
     {
     }
 
@@ -193,7 +187,7 @@ class AMQPQueue
      *                                with the given key, or false if the key
      *                                is not set.
      */
-    public function getArgument($argumentName)
+    public function getArgument(string $argumentName)
     {
     }
 
@@ -202,7 +196,7 @@ class AMQPQueue
      *
      * @return array An array containing all the set key/value pairs.
      */
-    public function getArguments()
+    public function getArguments(): array
     {
     }
 
@@ -212,7 +206,7 @@ class AMQPQueue
      * @return int An integer bitmask of all the flags currently set on this
      *             exchange object.
      */
-    public function getFlags()
+    public function getFlags(): int
     {
     }
 
@@ -221,7 +215,7 @@ class AMQPQueue
      *
      * @return string|null The configured name as a string.
      */
-    public function getName()
+    public function getName(): ?string
     {
     }
 
@@ -242,13 +236,11 @@ class AMQPQueue
      * @param integer $flags        AMQP_REQUEUE to requeue the message(s),
      *                              AMQP_MULTIPLE to nack all previous
      *                              unacked messages as well.
-     *
-     * @return void
-     *@throws AMQPConnectionException If the connection to the broker was lost.
-     *
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException    If the channel is not open.
+     * @return void
      */
-    public function nack($deliveryTag, $flags = AMQP_NOPARAM)
+    public function nack(int $deliveryTag, int $flags = AMQP_NOPARAM): void
     {
     }
 
@@ -263,13 +255,11 @@ class AMQPQueue
      *
      * @param integer $deliveryTag Delivery tag of the message to reject.
      * @param integer $flags        AMQP_REQUEUE to requeue the message(s).
-     *
-     * @return void
-     *@throws AMQPConnectionException If the connection to the broker was lost.
-     *
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException    If the channel is not open.
+     * @return void
      */
-    public function reject($deliveryTag, $flags = AMQP_NOPARAM)
+    public function reject(int $deliveryTag, int $flags = AMQP_NOPARAM): void
     {
     }
 
@@ -283,7 +273,7 @@ class AMQPQueue
      *
      * @return int
      */
-    public function purge()
+    public function purge(): int
     {
     }
 
@@ -295,7 +285,7 @@ class AMQPQueue
      *
      * @return void
      */
-    public function setArgument($argumentName, $argumentValue)
+    public function setArgument(string $argumentName, $argumentValue): void
     {
     }
 
@@ -308,7 +298,7 @@ class AMQPQueue
      *
      * @return void
      */
-    public function setArguments(array $arguments)
+    public function setArguments(array $arguments): void
     {
     }
 
@@ -319,7 +309,7 @@ class AMQPQueue
      *
      * @return boolean
      */
-    public function hasArgument($argumentName)
+    public function hasArgument(string $argumentName): bool
     {
     }
 
@@ -332,7 +322,7 @@ class AMQPQueue
      *
      * @return void
      */
-    public function setFlags($flags)
+    public function setFlags(int $flags): void
     {
     }
 
@@ -343,25 +333,21 @@ class AMQPQueue
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
     }
 
     /**
      * Remove a routing key binding on an exchange from the given queue.
      *
-     * @param string $exchangeName The name of the exchange on which the
-     *                              queue is bound.
+     * @param string $exchangeName The name of the exchange on which the queue is bound.
      * @param string $routingKey   The binding routing key used by the
-     *                              queue.
      * @param array  $arguments     Additional binding arguments.
-     *
-     * @return void
-     *@throws AMQPConnectionException If the connection to the broker was lost.
-     *
+     * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException    If the channel is not open.
+     * @return void
      */
-    public function unbind($exchangeName, $routingKey = null, array $arguments = array())
+    public function unbind(string $exchangeName, ?string $routingKey = null, array $arguments = array()): void
     {
     }
 
@@ -370,7 +356,7 @@ class AMQPQueue
      *
      * @return AMQPChannel
      */
-    public function getChannel()
+    public function getChannel(): AMQPChannel
     {
     }
 
@@ -379,7 +365,7 @@ class AMQPQueue
      *
      * @return AMQPConnection
      */
-    public function getConnection()
+    public function getConnection(): AMQPConnection
     {
     }
 
@@ -388,7 +374,7 @@ class AMQPQueue
      *
      * @return string|null
      */
-    public function getConsumerTag()
+    public function getConsumerTag(): ?string
     {
     }
 }
