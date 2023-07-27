@@ -245,6 +245,11 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
             if (le->type != le_amqp_connection_resource_persistent) {
                 /* hash conflict, given name associate with non-amqp persistent connection resource */
+                zend_throw_exception(
+                    amqp_connection_exception_class_entry,
+                    "Connection hash conflict detected. Persistent connection found that does not belong to AMQP.",
+                    0 TSRMLS_CC
+                );
                 return 0;
             }
 
@@ -322,11 +327,18 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
         /* Store a reference in the persistence list */
         new_le.ptr = connection->connection_resource;
-        new_le.type = persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource;
+        new_le.type = le_amqp_connection_resource_persistent;
 
         if (!zend_hash_str_update_mem(&EG(persistent_list), key, key_len, &new_le, sizeof(zend_resource))) {
             efree(key);
             php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+
+            zend_throw_exception(
+                amqp_connection_exception_class_entry,
+                "Could not store persistent connection in pool.",
+                0 TSRMLS_CC
+            );
+
             return 0;
         }
         efree(key);
@@ -898,7 +910,7 @@ static PHP_METHOD(amqp_connection_class, connect)
     }
 
     /* Actually connect this resource to the broker */
-    RETURN_BOOL(php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU));
+    php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
@@ -929,10 +941,11 @@ static PHP_METHOD(amqp_connection_class, pconnect)
     }
 
     /* Actually connect this resource to the broker or use stored connection */
-    RETURN_BOOL(php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU));
+    php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
+#define PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE "Attempted to %s a %s connection while a %s connection is established. Call '%s' instead"
 
 /* {{{ proto amqp:pdisconnect()
 destroy amqp persistent connection */
@@ -952,10 +965,14 @@ static PHP_METHOD(amqp_connection_class, pdisconnect)
     assert(connection->connection_resource != NULL);
 
     if (!connection->connection_resource->is_persistent) {
-        zend_throw_exception(
+        zend_throw_exception_ex(
             amqp_connection_exception_class_entry,
-            "Attempted to close a persistent connection while a transient connection is established. Call 'disconnect' instead",
-            0 TSRMLS_CC
+            0 TSRMLS_CC,
+            PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE,
+            "close",
+            "persistent",
+            "transient",
+            "disconnect"
         );
         return;
     }
@@ -981,10 +998,14 @@ static PHP_METHOD(amqp_connection_class, disconnect)
     }
 
     if (connection->connection_resource->is_persistent) {
-        zend_throw_exception(
+        zend_throw_exception_ex(
             amqp_connection_exception_class_entry,
-            "Attempted to close a transient connection while a persistent connection is established. Call 'pdisconnect' instead",
-            0 TSRMLS_CC
+            0 TSRMLS_CC,
+            PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE,
+            "close",
+            "transient",
+            "persistent",
+            "pdisconnect"
         );
         return;
     }
@@ -1012,19 +1033,22 @@ static PHP_METHOD(amqp_connection_class, reconnect)
         assert(connection->connection_resource != NULL);
 
         if (connection->connection_resource->is_persistent) {
-            php_error_docref(
-                NULL TSRMLS_CC,
-                E_WARNING,
-                "Attempt to reconnect persistent connection while transient one already established. Abort."
+            zend_throw_exception_ex(
+                amqp_connection_exception_class_entry,
+                0 TSRMLS_CC,
+                PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE,
+                "reconnect",
+                "transient",
+                "persistent",
+                "preconnect"
             );
-
-            RETURN_FALSE;
+            return;
         }
 
         php_amqp_disconnect(connection->connection_resource TSRMLS_CC);
     }
 
-    RETURN_BOOL(php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU));
+    php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
@@ -1045,19 +1069,22 @@ static PHP_METHOD(amqp_connection_class, preconnect)
         assert(connection->connection_resource != NULL);
 
         if (!connection->connection_resource->is_persistent) {
-            php_error_docref(
-                NULL TSRMLS_CC,
-                E_WARNING,
-                "Attempt to reconnect transient connection while persistent one already established. Abort."
+            zend_throw_exception_ex(
+                amqp_connection_exception_class_entry,
+                0 TSRMLS_CC,
+                PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE,
+                "reconnect",
+                "persistent",
+                "transient",
+                "reconnect"
             );
-
-            RETURN_FALSE;
+            return;
         }
 
         php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
     }
 
-    RETURN_BOOL(php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU));
+    php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 

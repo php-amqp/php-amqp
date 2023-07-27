@@ -5,17 +5,6 @@
  */
 class AMQPConnection
 {
-    /**
-     * Establish a transient connection with the AMQP broker.
-     *
-     * This method will initiate a connection with the AMQP broker.
-     *
-     * @throws AMQPConnectionException
-     * @return boolean TRUE on success or throw an exception on failure.
-     */
-    public function connect()
-    {
-    }
 
     /**
      * Create an instance of AMQPConnection.
@@ -62,6 +51,40 @@ class AMQPConnection
     }
 
     /**
+     * Check whether the connection to the AMQP broker is still valid.
+     *
+     * It does so by checking the return status of the last connect-command.
+     *
+     * @return boolean True if connected, false otherwise.
+     */
+    public function isConnected()
+    {
+    }
+
+    /**
+     * Whether connection persistent.
+     *
+     * When no connection is established, it will always returns false
+     *
+     * @return boolean
+     */
+    public function isPersistent()
+    {
+    }
+
+    /**
+     * Establish a transient connection with the AMQP broker.
+     *
+     * This method will initiate a connection with the AMQP broker.
+     *
+     * @throws AMQPConnectionException
+     * @return void
+     */
+    public function connect()
+    {
+    }
+
+    /**
      * Closes the transient connection with the AMQP broker.
      *
      * This method will close an open connection with the AMQP broker.
@@ -70,6 +93,52 @@ class AMQPConnection
      * @return void
      */
     public function disconnect()
+    {
+    }
+
+    /**
+     * Close any open transient connections and initiate a new one with the AMQP broker.
+     *
+     * @throws AMQPConnectionException
+     * @return void
+     */
+    public function reconnect()
+    {
+    }
+
+    /**
+     * Establish a persistent connection with the AMQP broker.
+     *
+     * This method will initiate a connection with the AMQP broker
+     * or reuse an existing one if present.
+     *
+     * @throws AMQPConnectionException
+     * @return void
+     */
+    public function pconnect()
+    {
+    }
+
+    /**
+     * Closes a persistent connection with the AMQP broker.
+     *
+     * This method will close an open persistent connection with the AMQP
+     * broker.
+     *
+     * @throws AMQPConnectionException When attempting to disconnect a transient connection
+     * @return void
+     */
+    public function pdisconnect()
+    {
+    }
+
+    /**
+     * Close any open persistent connections and initiate a new one with the AMQP broker.
+     *
+     * @throws AMQPConnectionException
+     * @return void
+     */
+    public function preconnect()
     {
     }
 
@@ -115,61 +184,6 @@ class AMQPConnection
      * @return string The configured virtual host as a string.
      */
     public function getVhost()
-    {
-    }
-
-    /**
-     * Check whether the connection to the AMQP broker is still valid.
-     *
-     * It does so by checking the return status of the last connect-command.
-     *
-     * @return boolean True if connected, false otherwise.
-     */
-    public function isConnected()
-    {
-    }
-
-    /**
-     * Establish a persistent connection with the AMQP broker.
-     *
-     * This method will initiate a connection with the AMQP broker
-     * or reuse an existing one if present.
-     *
-     * @throws AMQPConnectionException
-     * @return boolean TRUE on success or throws an exception on failure.
-     */
-    public function pconnect()
-    {
-    }
-
-    /**
-     * Closes a persistent connection with the AMQP broker.
-     *
-     * This method will close an open persistent connection with the AMQP
-     * broker.
-     *
-     * @throws AMQPConnectionException When attempting to disconnect a transient connection
-     * @return void
-     */
-    public function pdisconnect()
-    {
-    }
-
-    /**
-     * Close any open transient connections and initiate a new one with the AMQP broker.
-     *
-     * @return boolean TRUE on success or FALSE on failure.
-     */
-    public function reconnect()
-    {
-    }
-
-    /**
-     * Close any open persistent connections and initiate a new one with the AMQP broker.
-     *
-     * @return boolean TRUE on success or FALSE on failure.
-     */
-    public function preconnect()
     {
     }
 
@@ -390,17 +404,6 @@ class AMQPConnection
      * @return int
      */
     public function getHeartbeatInterval()
-    {
-    }
-
-    /**
-     * Whether connection persistent.
-     *
-     * When connection is not connected, boolean false always returned
-     *
-     * @return boolean
-     */
-    public function isPersistent()
     {
     }
 
