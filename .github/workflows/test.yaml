@@ -29,7 +29,7 @@ jobs:
             run: clang-format-17 --dry-run --Werror  *.c *.h
 
     stubs:
-        name: Check stubs
+        name: Check stubs php-${{ matrix.php-version }}
         runs-on: ubuntu-22.04
 
         strategy:
@@ -53,7 +53,7 @@ jobs:
             run: ./tools/check-stubs.sh
 
     test:
-        name: php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
+        name: Test php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         runs-on: ${{ matrix.os }}
 
         env:

@@ -6,4 +6,4 @@ for stub in `dirname $0`/../stubs/*.php; do
   result=$(($result+$?))
 done
 
-[ $result -gt 0 ] && exit 1
+test $result -gt 0 && exit 1 || exit 0
