@@ -2,7 +2,7 @@
 AMQPTimestamp
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<') || version_compare(PHP_VERSION, '8.0', '>')) {
+if (!extension_loaded("amqp")) {
   print "skip";
 }
 --FILE--
@@ -28,7 +28,7 @@ try {
 
 var_dump((new ReflectionClass("AMQPTimestamp"))->isFinal());
 
-var_dump(AMQPTimestamp::MAX);
+var_dump(number_format(AMQPTimestamp::MAX, 0, '.', '_'));
 var_dump(AMQPTimestamp::MIN);
 ?>
 
@@ -41,7 +41,7 @@ string(6) "100000"
 The timestamp parameter must be greater than 0.
 The timestamp parameter must be less than 18446744073709551616.
 bool(true)
-string(20) "18446744073709551616"
-string(1) "0"
+string(26) "18_446_744_073_709_551_616"
+float(0)
 
 ==END==
