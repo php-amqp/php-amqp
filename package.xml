@@ -25,8 +25,8 @@
     <date>2021-12-01</date>
     <time>11:14:28</time>
     <version>
-        <release>1.12.0dev</release>
-        <api>1.12.0dev</api>
+        <release>2.0.0dev</release>
+        <api>2.0.0dev</api>
     </version>
     <stability>
         <release>devel</release>

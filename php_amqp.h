@@ -397,7 +397,7 @@ ZEND_TSRMLS_CACHE_EXTERN();
 #endif
 
 #ifndef PHP_AMQP_VERSION
-    #define PHP_AMQP_VERSION "1.12.0dev"
+    #define PHP_AMQP_VERSION "2.0.0dev"
 #endif
 
 #ifndef PHP_AMQP_REVISION
