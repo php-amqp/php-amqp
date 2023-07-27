@@ -133,6 +133,19 @@ class AMQPQueue
     }
 
     /**
+     * Declare a new queue on the broker.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     * @throws AMQPQueueException      On failure.
+     *
+     * @return integer the message count.
+     */
+    public function declare(): int
+    {
+    }
+
+    /**
      * Delete a queue from the broker.
      *
      * This includes its entire contents of unread or unacknowledged messages.

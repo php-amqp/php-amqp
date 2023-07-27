@@ -73,6 +73,19 @@ class AMQPExchange
     }
 
     /**
+     * Declare a new exchange on the broker.
+     *
+     * @throws AMQPExchangeException   On failure.
+     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @return void
+     */
+    public function declare(): void
+    {
+    }
+
+    /**
      * Delete the exchange from the broker.
      *
      * @param string  $exchangeName Optional name of exchange to delete.
