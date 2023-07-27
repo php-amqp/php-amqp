@@ -14,7 +14,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string The contents of the message body.
      */
-    public function getBody()
+    public function getBody(): string
     {
     }
 
@@ -23,7 +23,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string The message routing key.
      */
-    public function getRoutingKey()
+    public function getRoutingKey(): string
     {
     }
 
@@ -32,7 +32,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string|null The consumer tag of the message.
      */
-    public function getConsumerTag()
+    public function getConsumerTag(): ?string
     {
     }
 
@@ -41,7 +41,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return integer|null The delivery tag of the message.
      */
-    public function getDeliveryTag()
+    public function getDeliveryTag(): ?int
     {
     }
 
@@ -50,7 +50,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string|null The exchange name on which the message was published.
      */
-    public function getExchangeName()
+    public function getExchangeName(): ?string
     {
     }
 
@@ -64,7 +64,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return bool TRUE if this is a redelivery, FALSE otherwise.
      */
-    public function isRedelivery()
+    public function isRedelivery(): bool
     {
     }
 
@@ -75,7 +75,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string|null The contents of the specified header or null if not set.
      */
-    public function getHeader($headerName)
+    public function getHeader(string $headerName): ?string
     {
     }
 
@@ -86,7 +86,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return boolean
      */
-    public function hasHeader($headerName)
+    public function hasHeader(string $headerName): bool
     {
     }
 }

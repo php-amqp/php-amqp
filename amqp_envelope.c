@@ -242,30 +242,78 @@ static PHP_METHOD(amqp_envelope_class, hasHeader)
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_getBody, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_envelope_class_getBody,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_getRoutingKey, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_envelope_class_getRoutingKey,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_getConsumerTag, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_envelope_class_getConsumerTag,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    1
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_getDeliveryTag, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_envelope_class_getDeliveryTag,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_LONG,
+    1
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_getExchangeName, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_envelope_class_getExchangeName,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    1
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_isRedelivery, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_envelope_class_isRedelivery,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_TRUE & IS_FALSE,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_getHeader, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, headerName)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_envelope_class_getHeader,
+    ZEND_SEND_BY_VAL,
+    1,
+    IS_STRING,
+    1
+)
+    ZEND_ARG_TYPE_INFO(0, headerName, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_hasHeader, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, headerName)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_envelope_class_hasHeader,
+    ZEND_SEND_BY_VAL,
+    1,
+    IS_TRUE & IS_FALSE,
+    0
+)
+    ZEND_ARG_TYPE_INFO(0, headerName, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 
