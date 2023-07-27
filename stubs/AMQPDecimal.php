@@ -31,17 +31,17 @@ final class AMQPDecimal
      *
      * @throws AMQPValueException
      */
-    public function __construct($exponent, $significand)
+    public function __construct(int $exponent, int $significand)
     {
     }
 
     /** @return int */
-    public function getExponent()
+    public function getExponent(): int
     {
     }
 
     /** @return int */
-    public function getSignificand()
+    public function getSignificand(): int
     {
     }
 }

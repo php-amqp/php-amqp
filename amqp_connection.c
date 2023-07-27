@@ -73,7 +73,7 @@ zend_object_handlers amqp_connection_object_handlers;
 
 #define PHP_AMQP_EXTRACT_CONNECTION_STR(name)                                                                          \
     zdata = NULL;                                                                                                      \
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), (name), sizeof(name))) != NULL) {                     \
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL(name))) != NULL) {                          \
         SEPARATE_ZVAL(zdata);                                                                                          \
         convert_to_string(zdata);                                                                                      \
     }                                                                                                                  \
@@ -1825,148 +1825,178 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class__construct, ZEND_SEND_BY_VA
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, credentials, IS_ARRAY, 0, "[]")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_isConnected, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_isConnected, ZEND_SEND_BY_VAL, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_connect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_connect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_pconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_pconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_pdisconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_pdisconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_disconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_disconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_reconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_reconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_preconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_preconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getLogin, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, login)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setLogin, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, login, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getPassword, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getPassword, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setPassword, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, password)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setPassword, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, password, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getHost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getHost, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setHost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, host)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setHost, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, host, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getPort, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getPort, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setPort, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, port)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setPort, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, port, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getVhost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getVhost, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setVhost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, vhost)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setVhost, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, vhost, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getTimeout, ZEND_SEND_BY_VAL, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setTimeout, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getReadTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getReadTimeout, ZEND_SEND_BY_VAL, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setReadTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setReadTimeout, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getWriteTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_getWriteTimeout,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_DOUBLE,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setWriteTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setWriteTimeout, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getConnectTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_getConnectTimeout,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_DOUBLE,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getRpcTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getRpcTimeout, ZEND_SEND_BY_VAL, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setRpcTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setRpcTimeout, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getUsedChannels, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getUsedChannels, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getMaxChannels, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getMaxChannels, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getMaxFrameSize, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getMaxFrameSize, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getHeartbeatInterval, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_getHeartbeatInterval,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_LONG,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_isPersistent, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_isPersistent, ZEND_SEND_BY_VAL, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getCACert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getCACert, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setCACert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, cacert)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setCACert, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, cacert, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getCert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getCert, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setCert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, cert)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setCert, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, cert, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getKey, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getKey, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setKey, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, key)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setKey, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getVerify, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getVerify, ZEND_SEND_BY_VAL, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setVerify, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, verify)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setVerify, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, verify, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getSaslMethod, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getSaslMethod, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setSaslMethod, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, saslMethod)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setSaslMethod, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, saslMethod, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getConnectionName, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_getConnectionName,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    1
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setConnectionName, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, connectionName)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_setConnectionName,
+    ZEND_SEND_BY_VAL,
+    1,
+    IS_VOID,
+    0
+)
+    ZEND_ARG_TYPE_INFO(0, connectionName, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
 

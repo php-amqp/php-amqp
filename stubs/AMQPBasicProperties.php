@@ -44,7 +44,7 @@ class AMQPBasicProperties
      *
      * @return string The content type of the message.
      */
-    public function getContentType()
+    public function getContentType(): string
     {
     }
 
@@ -53,7 +53,7 @@ class AMQPBasicProperties
      *
      * @return string The content encoding of the message.
      */
-    public function getContentEncoding()
+    public function getContentEncoding(): string
     {
     }
 
@@ -62,16 +62,16 @@ class AMQPBasicProperties
      *
      * @return array An array of key value pairs associated with the message.
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
     }
 
     /**
      * Get the delivery mode of the message.
      *
-     * @return integer The delivery mode of the message.
+     * @return int The delivery mode of the message.
      */
-    public function getDeliveryMode()
+    public function getDeliveryMode(): int
     {
     }
 
@@ -80,7 +80,7 @@ class AMQPBasicProperties
      *
      * @return int The message priority.
      */
-    public function getPriority()
+    public function getPriority(): int
     {
     }
 
@@ -89,7 +89,7 @@ class AMQPBasicProperties
      *
      * @return string The correlation id of the message.
      */
-    public function getCorrelationId()
+    public function getCorrelationId(): string
     {
     }
 
@@ -98,7 +98,7 @@ class AMQPBasicProperties
      *
      * @return string The contents of the reply to field.
      */
-    public function getReplyTo()
+    public function getReplyTo(): string
     {
     }
 
@@ -107,7 +107,7 @@ class AMQPBasicProperties
      *
      * @return string The message expiration.
      */
-    public function getExpiration()
+    public function getExpiration(): string
     {
     }
 
@@ -116,16 +116,16 @@ class AMQPBasicProperties
      *
      * @return string The message id
      */
-    public function getMessageId()
+    public function getMessageId(): string
     {
     }
 
     /**
      * Get the timestamp of the message.
      *
-     * @return string The message timestamp.
+     * @return int The message timestamp.
      */
-    public function getTimestamp()
+    public function getTimestamp(): int
     {
     }
 
@@ -134,7 +134,7 @@ class AMQPBasicProperties
      *
      * @return string The message type.
      */
-    public function getType()
+    public function getType(): string
     {
     }
 
@@ -143,7 +143,7 @@ class AMQPBasicProperties
      *
      * @return string The message user id.
      */
-    public function getUserId()
+    public function getUserId(): string
     {
     }
 
@@ -152,7 +152,7 @@ class AMQPBasicProperties
      *
      * @return string The application id of the message.
      */
-    public function getAppId()
+    public function getAppId(): string
     {
     }
 
@@ -161,7 +161,7 @@ class AMQPBasicProperties
      *
      * @return string The cluster id of the message.
      */
-    public function getClusterId()
+    public function getClusterId(): string
     {
     }
 }

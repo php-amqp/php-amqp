@@ -46,7 +46,7 @@ class AMQPConnection
      * @param array $credentials Optional array of credential information for
      *                           connecting to the AMQP broker.
      */
-    public function __construct(array $credentials = array())
+    public function __construct(array $credentials = [])
     {
     }
 
@@ -57,18 +57,18 @@ class AMQPConnection
      *
      * @return boolean True if connected, false otherwise.
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
     }
 
     /**
      * Whether connection persistent.
      *
-     * When no connection is established, it will always returns false
+     * When no connection is established, it will always return false
      *
      * @return boolean
      */
-    public function isPersistent()
+    public function isPersistent(): bool
     {
     }
 
@@ -80,7 +80,7 @@ class AMQPConnection
      * @throws AMQPConnectionException
      * @return void
      */
-    public function connect()
+    public function connect(): void
     {
     }
 
@@ -92,7 +92,7 @@ class AMQPConnection
      * @throws AMQPConnectionException When attempting to disconnect a persistent connection
      * @return void
      */
-    public function disconnect()
+    public function disconnect(): void
     {
     }
 
@@ -102,7 +102,7 @@ class AMQPConnection
      * @throws AMQPConnectionException
      * @return void
      */
-    public function reconnect()
+    public function reconnect(): void
     {
     }
 
@@ -115,7 +115,7 @@ class AMQPConnection
      * @throws AMQPConnectionException
      * @return void
      */
-    public function pconnect()
+    public function pconnect(): void
     {
     }
 
@@ -128,7 +128,7 @@ class AMQPConnection
      * @throws AMQPConnectionException When attempting to disconnect a transient connection
      * @return void
      */
-    public function pdisconnect()
+    public function pdisconnect(): void
     {
     }
 
@@ -138,7 +138,7 @@ class AMQPConnection
      * @throws AMQPConnectionException
      * @return void
      */
-    public function preconnect()
+    public function preconnect(): void
     {
     }
 
@@ -147,7 +147,7 @@ class AMQPConnection
      *
      * @return string The configured hostname of the broker
      */
-    public function getHost()
+    public function getHost(): string
     {
     }
 
@@ -156,7 +156,7 @@ class AMQPConnection
      *
      * @return string The configured login as a string.
      */
-    public function getLogin()
+    public function getLogin(): string
     {
     }
 
@@ -165,7 +165,7 @@ class AMQPConnection
      *
      * @return string The configured password as a string.
      */
-    public function getPassword()
+    public function getPassword(): string
     {
     }
 
@@ -174,7 +174,7 @@ class AMQPConnection
      *
      * @return int The configured port as an integer.
      */
-    public function getPort()
+    public function getPort(): int
     {
     }
 
@@ -183,7 +183,7 @@ class AMQPConnection
      *
      * @return string The configured virtual host as a string.
      */
-    public function getVhost()
+    public function getVhost(): string
     {
     }
 
@@ -197,7 +197,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setHost($host)
+    public function setHost(string $host): void
     {
     }
 
@@ -211,7 +211,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setLogin($login)
+    public function setLogin(string $login): void
     {
     }
 
@@ -225,7 +225,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setPassword($password)
+    public function setPassword(string $password): void
     {
     }
 
@@ -239,7 +239,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setPort($port)
+    public function setPort(int $port): void
     {
     }
 
@@ -253,7 +253,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setVhost($vhost)
+    public function setVhost(string $vhost): void
     {
     }
 
@@ -268,7 +268,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setTimeout($timeout)
+    public function setTimeout(float $timeout): void
     {
     }
 
@@ -280,7 +280,7 @@ class AMQPConnection
      *
      * @return float
      */
-    public function getTimeout()
+    public function getTimeout(): float
     {
     }
 
@@ -293,7 +293,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setReadTimeout($timeout)
+    public function setReadTimeout(float $timeout): void
     {
     }
 
@@ -303,7 +303,7 @@ class AMQPConnection
      *
      * @return float
      */
-    public function getReadTimeout()
+    public function getReadTimeout(): float
     {
     }
 
@@ -316,7 +316,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setWriteTimeout($timeout)
+    public function setWriteTimeout(float $timeout): void
     {
     }
 
@@ -326,7 +326,7 @@ class AMQPConnection
      *
      * @return float
      */
-    public function getWriteTimeout()
+    public function getWriteTimeout(): float
     {
     }
 
@@ -335,7 +335,7 @@ class AMQPConnection
      *
      * @return float
      */
-    public function getConnectTimeout()
+    public function getConnectTimeout(): float
     {
     }
 
@@ -348,7 +348,7 @@ class AMQPConnection
      *
      * @return void
      */
-    public function setRpcTimeout($timeout)
+    public function setRpcTimeout(float $timeout): void
     {
     }
 
@@ -358,7 +358,7 @@ class AMQPConnection
      *
      * @return float
      */
-    public function getRpcTimeout()
+    public function getRpcTimeout(): float
     {
     }
 
@@ -367,7 +367,7 @@ class AMQPConnection
      *
      * @return int
      */
-    public function getUsedChannels()
+    public function getUsedChannels(): int
     {
     }
 
@@ -379,7 +379,7 @@ class AMQPConnection
      *
      * @return int
      */
-    public function getMaxChannels()
+    public function getMaxChannels(): int
     {
     }
 
@@ -391,7 +391,7 @@ class AMQPConnection
      *
      * @return int
      */
-    public function getMaxFrameSize()
+    public function getMaxFrameSize(): int
     {
     }
 
@@ -403,7 +403,7 @@ class AMQPConnection
      *
      * @return int
      */
-    public function getHeartbeatInterval()
+    public function getHeartbeatInterval(): int
     {
     }
 
@@ -412,7 +412,7 @@ class AMQPConnection
      *
      * @return string
      */
-    public function getCACert()
+    public function getCACert(): string
     {
     }
 
@@ -422,7 +422,7 @@ class AMQPConnection
      * @param string $cacert
      * @return void
      */
-    public function setCACert($cacert)
+    public function setCACert(string $cacert): void
     {
     }
 
@@ -431,7 +431,7 @@ class AMQPConnection
      *
      * @return string
      */
-    public function getCert()
+    public function getCert(): string
     {
     }
 
@@ -441,7 +441,7 @@ class AMQPConnection
      * @param string $cert
      * @return void
      */
-    public function setCert($cert)
+    public function setCert(string $cert): void
     {
     }
 
@@ -450,7 +450,7 @@ class AMQPConnection
      *
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
     }
 
@@ -460,16 +460,16 @@ class AMQPConnection
      * @param string $key
      * @return void
      */
-    public function setKey($key)
+    public function setKey(string $key): void
     {
     }
 
     /**
      * Get whether peer verification enabled or disabled
      *
-     * @return boolean
+     * @return bool
      */
-    public function getVerify()
+    public function getVerify(): bool
     {
     }
 
@@ -479,7 +479,7 @@ class AMQPConnection
      * @param bool $verify
      * @return void
      */
-    public function setVerify($verify)
+    public function setVerify(bool $verify): void
     {
     }
 
@@ -489,14 +489,14 @@ class AMQPConnection
      * @param int $saslMethod AMQP_SASL_METHOD_PLAIN | AMQP_SASL_METHOD_EXTERNAL
      * @return void
      */
-    public function setSaslMethod($saslMethod)
+    public function setSaslMethod(int $saslMethod): void
     {
     }
 
     /**
      * @return int
      */
-    public function getSaslMethod()
+    public function getSaslMethod(): int
     {
     }
 
@@ -504,14 +504,14 @@ class AMQPConnection
      * @param string|null $connectionName
      * @return void
      */
-    public function setConnectionName($connectionName)
+    public function setConnectionName(?string $connectionName): void
     {
     }
 
     /**
      * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
     }
 }

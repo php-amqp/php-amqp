@@ -118,14 +118,14 @@ static PHP_METHOD(amqp_decimal_class, getSignificand)
 
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_decimal_class_construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 2)
-    ZEND_ARG_INFO(0, exponent)
-    ZEND_ARG_INFO(0, significand)
+    ZEND_ARG_TYPE_INFO(0, exponent, IS_LONG, 0)
+    ZEND_ARG_TYPE_INFO(0, significand, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_decimal_class_getExponent, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_decimal_class_getExponent, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_decimal_class_getSignificand, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_decimal_class_getSignificand, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
 

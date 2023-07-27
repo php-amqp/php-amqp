@@ -386,46 +386,118 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class__construct, ZEND_SEND
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, clusterId, IS_STRING, 0, "\"\"")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getContentType, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getContentType,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getContentEncoding, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getContentEncoding,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getHeaders, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getHeaders,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_ARRAY,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getDeliveryMode, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getDeliveryMode,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_LONG,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getPriority, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getPriority,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_LONG,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getCorrelationId, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getCorrelationId,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getReplyTo, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getReplyTo,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getExpiration, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getExpiration,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getMessageId, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getMessageId,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getTimestamp, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getTimestamp,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_LONG,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getType, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_basic_properties_class_getType, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getUserId, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getUserId,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getAppId, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_basic_properties_class_getAppId, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_basic_properties_class_getClusterId, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_basic_properties_class_getClusterId,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
 
