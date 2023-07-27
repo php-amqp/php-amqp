@@ -10,16 +10,16 @@ class AMQPExchange
      *
      * Bind an exchange to another exchange using the specified routing key.
      *
-     * @param string $exchange_name Name of the exchange to bind.
-     * @param string $routing_key   The routing key to use for binding.
+     * @param string $exchangeName Name of the exchange to bind.
+     * @param string $routingKey   The routing key to use for binding.
      * @param array  $arguments     Additional binding arguments.
      *
-     * @throws AMQPExchangeException   On failure.
-     * @throws AMQPChannelException    If the channel is not open.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
      * @return void
+     *@throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     * @throws AMQPExchangeException   On failure.
      */
-    public function bind($exchange_name, $routing_key = '', array $arguments = array())
+    public function bind($exchangeName, $routingKey = '', array $arguments = array())
     {
     }
 
@@ -28,16 +28,16 @@ class AMQPExchange
      *
      * Remove a routing key binding on an another exchange from the given exchange.
      *
-     * @param string $exchange_name Name of the exchange to bind.
-     * @param string $routing_key   The routing key to use for binding.
+     * @param string $exchangeName Name of the exchange to bind.
+     * @param string $routingKey   The routing key to use for binding.
      * @param array  $arguments     Additional binding arguments.
      *
-     * @throws AMQPExchangeException   On failure.
-     * @throws AMQPChannelException    If the channel is not open.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
      * @return void
+     *@throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     * @throws AMQPExchangeException   On failure.
      */
-    public function unbind($exchange_name, $routing_key = '', array $arguments = array())
+    public function unbind($exchangeName, $routingKey = '', array $arguments = array())
     {
     }
 
@@ -47,7 +47,7 @@ class AMQPExchange
      * Returns a new instance of an AMQPExchange object, associated with the
      * given AMQPChannel object.
      *
-     * @param AMQPChannel $amqp_channel A valid AMQPChannel object, connected
+     * @param AMQPChannel $channel A valid AMQPChannel object, connected
      *                                  to a broker.
      *
      * @throws AMQPExchangeException   When amqp_channel is not connected to
@@ -55,7 +55,7 @@ class AMQPExchange
      * @throws AMQPConnectionException If the connection to the broker was
      *                                 lost.
      */
-    public function __construct(AMQPChannel $amqp_channel)
+    public function __construct(AMQPChannel $channel)
     {
     }
 
@@ -117,7 +117,7 @@ class AMQPExchange
     /**
      * Get all arguments set on the given exchange.
      *
-     * @return array An array containing all of the set key/value pairs.
+     * @return array An array containing all the set key/value pairs.
      */
     public function getArguments()
     {
@@ -157,26 +157,26 @@ class AMQPExchange
      * Publish a message to the exchange represented by the AMQPExchange object.
      *
      * @param string  $message     The message to publish.
-     * @param string  $routing_key The optional routing key to which to
+     * @param string  $routingKey The optional routing key to which to
      *                             publish to.
      * @param integer $flags       One or more of AMQP_MANDATORY and
      *                             AMQP_IMMEDIATE.
-     * @param array   $attributes  One of content_type, content_encoding,
+     * @param array   headers      One of content_type, content_encoding,
      *                             message_id, user_id, app_id, delivery_mode,
      *                             priority, timestamp, expiration, type
      *                             or reply_to, headers.
      *
-     * @throws AMQPExchangeException   On failure.
-     * @throws AMQPChannelException    If the channel is not open.
+     * @return void
+     *@throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      *
-     * @return void
+     * @throws AMQPExchangeException   On failure.
      */
     public function publish(
         $message,
-        $routing_key = null,
+        $routingKey = null,
         $flags = AMQP_NOPARAM,
-        array $attributes = array()
+        array $headers = array()
     ) {
     }
 
@@ -220,11 +220,11 @@ class AMQPExchange
     /**
      * Set the name of the exchange.
      *
-     * @param string|null $exchange_name The name of the exchange to set as string.
+     * @param string|null $exchangeName The name of the exchange to set as string.
      *
      * @return void
      */
-    public function setName($exchange_name)
+    public function setName($exchangeName)
     {
     }
 
@@ -234,11 +234,11 @@ class AMQPExchange
      * Set the type of the exchange. This can be any of AMQP_EX_TYPE_DIRECT,
      * AMQP_EX_TYPE_FANOUT, AMQP_EX_TYPE_HEADERS or AMQP_EX_TYPE_TOPIC.
      *
-     * @param string|null $exchange_type The type of exchange as a string.
+     * @param string|null $exchangeType The type of exchange as a string.
      *
      * @return void
      */
-    public function setType($exchange_type)
+    public function setType($exchangeType)
     {
     }
 

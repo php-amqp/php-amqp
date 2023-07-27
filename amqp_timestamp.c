@@ -97,16 +97,19 @@ static PHP_METHOD(amqp_timestamp_class, __toString)
 }
 /* }}} */
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-    ZEND_ARG_INFO(0, timestamp)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
+    ZEND_ARG_TYPE_INFO(0, timestamp, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_getTimestamp, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_timestamp_class_getTimestamp,
+    ZEND_SEND_BY_VAL,
+    ZEND_RETURN_VALUE,
+    IS_STRING,
+    0
+)
 ZEND_END_ARG_INFO()
 
-#if PHP_MAJOR_VERSION < 8
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_toString, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-#else
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
     arginfo_amqp_timestamp_class_toString,
     ZEND_SEND_BY_VAL,
@@ -114,7 +117,6 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
     IS_STRING,
     0
 )
-#endif
 ZEND_END_ARG_INFO()
 
 zend_function_entry amqp_timestamp_class_functions[] = {

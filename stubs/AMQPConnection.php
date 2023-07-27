@@ -486,10 +486,10 @@ class AMQPConnection
     /**
      * set authentication method
      *
-     * @param int $method AMQP_SASL_METHOD_PLAIN | AMQP_SASL_METHOD_EXTERNAL
+     * @param int $saslMethod AMQP_SASL_METHOD_PLAIN | AMQP_SASL_METHOD_EXTERNAL
      * @return void
      */
-    public function setSaslMethod($method)
+    public function setSaslMethod($saslMethod)
     {
     }
 
@@ -501,10 +501,10 @@ class AMQPConnection
     }
 
     /**
-     * @param string|null $connection_name
+     * @param string|null $connectionName
      * @return void
      */
-    public function setConnectionName($connection_name)
+    public function setConnectionName($connectionName)
     {
     }
 

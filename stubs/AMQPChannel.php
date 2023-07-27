@@ -21,14 +21,14 @@ class AMQPChannel
     /**
      * Create an instance of an AMQPChannel object.
      *
-     * @param AMQPConnection $amqp_connection An instance of AMQPConnection
+     * @param AMQPConnection $connection An instance of AMQPConnection
      *                                        with an active connection to a
      *                                        broker.
      *
      * @throws AMQPConnectionException        If the connection to the broker
      *                                        was lost.
      */
-    public function __construct(AMQPConnection $amqp_connection)
+    public function __construct(AMQPConnection $connection)
     {
     }
 
@@ -82,7 +82,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function qos($size, $count, $global)
+    public function qos($size, $count, $global = false)
     {
     }
 
@@ -266,11 +266,11 @@ class AMQPChannel
      * Note, basic.nack server method will only be delivered if an internal error occurs in the Erlang process
      * responsible for a queue (see https://www.rabbitmq.com/confirms.html for details).
      *
-     * @param callable|null $ack_callback
-     * @param callable|null $nack_callback
+     * @param callable|null $ackCallback
+     * @param callable|null $nackCallback
      * @return void
      */
-    public function setConfirmCallback(callable $ack_callback=null, callable $nack_callback=null)
+    public function setConfirmCallback(?callable $ackCallback, callable $nackCallback = null)
     {
     }
 
@@ -303,10 +303,10 @@ class AMQPChannel
      *
      * and should return boolean false when wait loop should be canceled.
      *
-     * @param callable|null $return_callback
+     * @param callable|null $returnCallback
      * @return void
      */
-    public function setReturnCallback(callable $return_callback=null)
+    public function setReturnCallback(?callable $returnCallback)
     {
     }
 

@@ -20,17 +20,15 @@ final class AMQPTimestamp
      *
      * @throws AMQPValueException
      */
-    public function __construct($timestamp)
+    public function __construct(string $timestamp)
     {
     }
 
-    /** @return string */
-    public function getTimestamp()
+    public function getTimestamp(): string
     {
     }
 
-    /** @return string */
-    public function __toString()
+    public function __toString(): string
     {
     }
 }

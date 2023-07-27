@@ -6,36 +6,36 @@
 class AMQPBasicProperties
 {
     /**
-     * @param string $content_type
-     * @param string $content_encoding
+     * @param string $contentType
+     * @param string $contentEncoding
      * @param array  $headers
-     * @param int    $delivery_mode
+     * @param int    $deliveryMode
      * @param int    $priority
-     * @param string $correlation_id
-     * @param string $reply_to
+     * @param string $correlationId
+     * @param string $replyTo
      * @param string $expiration
-     * @param string $message_id
+     * @param string $messageId
      * @param int    $timestamp
      * @param string $type
-     * @param string $user_id
-     * @param string $app_id
-     * @param string $cluster_id
+     * @param string $userId
+     * @param string $appId
+     * @param string $clusterId
      */
     public function __construct(
-        $content_type = "",
-        $content_encoding = "",
+        $contentType = "",
+        $contentEncoding = "",
         array $headers = [],
-        $delivery_mode = AMQP_DELIVERY_MODE_TRANSIENT,
+        $deliveryMode = AMQP_DELIVERY_MODE_TRANSIENT,
         $priority = 0,
-        $correlation_id = "",
-        $reply_to = "",
+        $correlationId = "",
+        $replyTo = "",
         $expiration = "",
-        $message_id = "",
+        $messageId = "",
         $timestamp = 0,
         $type = "",
-        $user_id = "",
-        $app_id = "",
-        $cluster_id = ""
+        $userId = "",
+        $appId = "",
+        $clusterId = ""
     ) {
     }
 

@@ -52,6 +52,9 @@ jobs:
           - name: Check stubs
             run: ./tools/check-stubs.sh
 
+          - name: Validate stubs
+            run: ./tools/validate-stubs.sh
+
     test:
         name: Test php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         runs-on: ${{ matrix.os }}

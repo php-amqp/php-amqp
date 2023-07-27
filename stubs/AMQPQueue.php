@@ -8,13 +8,13 @@ class AMQPQueue
     /**
      * Create an instance of an AMQPQueue object.
      *
-     * @param AMQPChannel $amqp_channel The amqp channel to use.
+     * @param AMQPChannel $channel The amqp channel to use.
      *
      * @throws AMQPQueueException      When amqp_channel is not connected to a
      *                                 broker.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      */
-    public function __construct(AMQPChannel $amqp_channel)
+    public function __construct(AMQPChannel $channel)
     {
     }
 
@@ -25,40 +25,40 @@ class AMQPQueue
      * without the AMQP_AUTOACK flag through AMQPQueue::get() or
      * AMQPQueue::consume()
      *
-     * @param integer $delivery_tag The message delivery tag of which to
+     * @param integer $deliveryTag The message delivery tag of which to
      *                              acknowledge receipt.
      * @param integer $flags        The only valid flag that can be passed is
      *                              AMQP_MULTIPLE.
      *
-     * @throws AMQPChannelException    If the channel is not open.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
      * @return void
+     *@throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
      */
-    public function ack($delivery_tag, $flags = AMQP_NOPARAM)
+    public function ack($deliveryTag, $flags = AMQP_NOPARAM)
     {
     }
 
     /**
      * Bind the given queue to a routing key on an exchange.
      *
-     * @param string $exchange_name Name of the exchange to bind to.
-     * @param string $routing_key   Pattern or routing key to bind with.
+     * @param string $exchangeName Name of the exchange to bind to.
+     * @param string $routingKey   Pattern or routing key to bind with.
      * @param array  $arguments     Additional binding arguments.
      *
-     * @throws AMQPChannelException    If the channel is not open.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
      * @return void
+     *@throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
      */
-    public function bind($exchange_name, $routing_key = null, array $arguments = array())
+    public function bind($exchangeName, $routingKey = null, array $arguments = array())
     {
     }
 
     /**
      * Cancel a queue that is already bound to an exchange and routing key.
      *
-     * @param string $consumer_tag The consumer tag to cancel. If no tag is provided,
+     * @param string $consumerTag The consumer tag to cancel. If no tag is provided,
      *                             or it is empty string, the latest consumer
      *                             tag on this queue will be taken and after
      *                             the successful cancellation request it will set to null.
@@ -70,12 +70,12 @@ class AMQPQueue
      *                             the internal consumer tag will be set to null, so that
      *                             `AMQPQueue::getConsumerTag()` will return null afterwards.
      *
-     * @throws AMQPChannelException    If the channel is not open.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
      * @return void
+     *@throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
      */
-    public function cancel($consumer_tag = '')
+    public function cancel($consumerTag = '')
     {
     }
 
@@ -200,7 +200,7 @@ class AMQPQueue
     /**
      * Get all set arguments as an array of key/value pairs.
      *
-     * @return array An array containing all of the set key/value pairs.
+     * @return array An array containing all the set key/value pairs.
      */
     public function getArguments()
     {
@@ -238,17 +238,17 @@ class AMQPQueue
      * behavior of calling this method while connected to any other broker is
      * undefined.
      *
-     * @param integer $delivery_tag Delivery tag of last message to reject.
+     * @param integer $deliveryTag Delivery tag of last message to reject.
      * @param integer $flags        AMQP_REQUEUE to requeue the message(s),
      *                              AMQP_MULTIPLE to nack all previous
      *                              unacked messages as well.
      *
-     * @throws AMQPChannelException    If the channel is not open.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
      * @return void
+     *@throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
      */
-    public function nack($delivery_tag, $flags = AMQP_NOPARAM)
+    public function nack($deliveryTag, $flags = AMQP_NOPARAM)
     {
     }
 
@@ -261,15 +261,15 @@ class AMQPQueue
      * AMQPQueue::consume() and AMQPQueue::get() and using the AMQP_AUTOACK
      * flag are not eligible.
      *
-     * @param integer $delivery_tag Delivery tag of the message to reject.
+     * @param integer $deliveryTag Delivery tag of the message to reject.
      * @param integer $flags        AMQP_REQUEUE to requeue the message(s).
      *
-     * @throws AMQPChannelException    If the channel is not open.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
      * @return void
+     *@throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
      */
-    public function reject($delivery_tag, $flags = AMQP_NOPARAM)
+    public function reject($deliveryTag, $flags = AMQP_NOPARAM)
     {
     }
 
@@ -339,29 +339,29 @@ class AMQPQueue
     /**
      * Set the queue name.
      *
-     * @param string $queue_name The name of the queue.
+     * @param string $queueName The name of the queue.
      *
      * @return void
      */
-    public function setName($queue_name)
+    public function setName($queueName)
     {
     }
 
     /**
      * Remove a routing key binding on an exchange from the given queue.
      *
-     * @param string $exchange_name The name of the exchange on which the
+     * @param string $exchangeName The name of the exchange on which the
      *                              queue is bound.
-     * @param string $routing_key   The binding routing key used by the
+     * @param string $routingKey   The binding routing key used by the
      *                              queue.
      * @param array  $arguments     Additional binding arguments.
      *
-     * @throws AMQPChannelException    If the channel is not open.
-     * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
      * @return void
+     *@throws AMQPConnectionException If the connection to the broker was lost.
+     *
+     * @throws AMQPChannelException    If the channel is not open.
      */
-    public function unbind($exchange_name, $routing_key = null, array $arguments = array())
+    public function unbind($exchangeName, $routingKey = null, array $arguments = array())
     {
     }
 
