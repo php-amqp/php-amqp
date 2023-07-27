@@ -157,7 +157,7 @@ class AMQPExchange
      * Publish a message to the exchange represented by the AMQPExchange object.
      *
      * @param string  $message     The message to publish.
-     * @param string  $routingKey The optional routing key to which to
+     * @param string|null  $routingKey The optional routing key to which to
      *                             publish to.
      * @param integer $flags       One or more of AMQP_MANDATORY and
      *                             AMQP_IMMEDIATE.
@@ -172,7 +172,7 @@ class AMQPExchange
      */
     public function publish(
         string $message,
-        string $routingKey = "",
+        ?string $routingKey = null,
         int $flags = AMQP_NOPARAM,
         array $headers = []
     ): void
