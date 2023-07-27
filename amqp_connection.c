@@ -946,24 +946,21 @@ static PHP_METHOD(amqp_connection_class, pdisconnect)
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
     if (!connection->connection_resource || !connection->connection_resource->is_connected) {
-        RETURN_TRUE;
+        return;
     }
 
     assert(connection->connection_resource != NULL);
 
     if (!connection->connection_resource->is_persistent) {
-        php_error_docref(
-            NULL TSRMLS_CC,
-            E_WARNING,
-            "Attempt to close persistent connection while transient one already established. Abort."
+        zend_throw_exception(
+            amqp_connection_exception_class_entry,
+            "Attempted to close a persistent connection while a transient connection is established. Call 'disconnect' instead",
+            0 TSRMLS_CC
         );
-
-        RETURN_FALSE;
+        return;
     }
 
     php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -980,24 +977,21 @@ static PHP_METHOD(amqp_connection_class, disconnect)
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
     if (!connection->connection_resource || !connection->connection_resource->is_connected) {
-        RETURN_TRUE;
+        return;
     }
 
     if (connection->connection_resource->is_persistent) {
-        php_error_docref(
-            NULL TSRMLS_CC,
-            E_WARNING,
-            "Attempt to close transient connection while persistent one already established. Abort."
+        zend_throw_exception(
+            amqp_connection_exception_class_entry,
+            "Attempted to close a transient connection while a persistent connection is established. Call 'pdisconnect' instead",
+            0 TSRMLS_CC
         );
-
-        RETURN_FALSE;
+        return;
     }
 
     assert(connection->connection_resource != NULL);
 
     php_amqp_disconnect(connection->connection_resource TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 
 /* }}} */
@@ -1646,8 +1640,6 @@ static PHP_METHOD(amqp_connection_class, setCACert)
     }
 
     zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cacert"), str, str_len TSRMLS_CC);
-
-    RETURN_TRUE;
 }
 /* }}} */
 

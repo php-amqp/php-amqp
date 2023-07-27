@@ -66,7 +66,8 @@ class AMQPConnection
      *
      * This method will close an open connection with the AMQP broker.
      *
-     * @return boolean true if connection was successfully closed, false otherwise.
+     * @throws AMQPConnectionException When attempting to disconnect a persistent connection
+     * @return void
      */
     public function disconnect()
     {
@@ -147,9 +148,8 @@ class AMQPConnection
      * This method will close an open persistent connection with the AMQP
      * broker.
      *
-     * @return boolean true if connection was found and closed,
-     *                 false if no persistent connection with this host,
-     *                 port, vhost and login could be found,
+     * @throws AMQPConnectionException When attempting to disconnect a transient connection
+     * @return void
      */
     public function pdisconnect()
     {
@@ -417,7 +417,7 @@ class AMQPConnection
      * Set path to the CA cert file in PEM format
      *
      * @param string $cacert
-     * @return boolean
+     * @return void
      */
     public function setCACert($cacert)
     {
