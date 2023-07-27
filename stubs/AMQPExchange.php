@@ -212,7 +212,7 @@ class AMQPExchange
      *
      * @return void
      */
-    public function setFlags(int $flags): void
+    public function setFlags(?int $flags): void
     {
     }
 

@@ -185,7 +185,7 @@ static PHP_METHOD(amqp_exchange_class, setFlags)
     zend_long flags = AMQP_NOPARAM;
     zend_bool flags_is_null = 1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flags, &flags_is_null) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l!", &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
@@ -854,7 +854,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_exchange_class_getFlags, ZE
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_exchange_class_setFlags, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
-    ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+    ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_exchange_class_getType, ZEND_SEND_BY_VAL, 0, IS_STRING, 1)
