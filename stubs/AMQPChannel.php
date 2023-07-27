@@ -14,7 +14,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function commitTransaction()
+    public function commitTransaction(): void
     {
     }
 
@@ -37,7 +37,7 @@ class AMQPChannel
      *
      * @return bool Indicates whether the channel is connected.
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
     }
 
@@ -46,7 +46,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function close()
+    public function close(): void
     {
     }
 
@@ -55,7 +55,7 @@ class AMQPChannel
      *
      * @return integer
      */
-    public function getChannelId()
+    public function getChannelId(): int
     {
     }
 
@@ -82,7 +82,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function qos($size, $count, $global = false)
+    public function qos(int $size, int $count, bool $global = false): void
     {
     }
 
@@ -98,7 +98,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function rollbackTransaction()
+    public function rollbackTransaction(): void
     {
     }
 
@@ -114,7 +114,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function setPrefetchCount($count)
+    public function setPrefetchCount(int $count): void
     {
     }
 
@@ -123,7 +123,7 @@ class AMQPChannel
      *
      * @return integer
      */
-    public function getPrefetchCount()
+    public function getPrefetchCount(): int
     {
     }
 
@@ -143,7 +143,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function setPrefetchSize($size)
+    public function setPrefetchSize(int $size): void
     {
     }
 
@@ -152,7 +152,7 @@ class AMQPChannel
      *
      * @return integer
      */
-    public function getPrefetchSize()
+    public function getPrefetchSize(): int
     {
     }
 
@@ -168,7 +168,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function setGlobalPrefetchCount($count)
+    public function setGlobalPrefetchCount(int $count): void
     {
     }
 
@@ -177,7 +177,7 @@ class AMQPChannel
      *
      * @return integer
      */
-    public function getGlobalPrefetchCount()
+    public function getGlobalPrefetchCount(): int
     {
     }
 
@@ -197,7 +197,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function setGlobalPrefetchSize($size)
+    public function setGlobalPrefetchSize(int $size): void
     {
     }
 
@@ -206,7 +206,7 @@ class AMQPChannel
      *
      * @return integer
      */
-    public function getGlobalPrefetchSize()
+    public function getGlobalPrefetchSize(): int
     {
     }
 
@@ -220,7 +220,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function startTransaction()
+    public function startTransaction(): void
     {
     }
 
@@ -229,7 +229,7 @@ class AMQPChannel
      *
      * @return AMQPConnection
      */
-    public function getConnection()
+    public function getConnection(): AMQPConnection
     {
     }
 
@@ -239,7 +239,7 @@ class AMQPChannel
      * @param bool $requeue
      * @return void
      */
-    public function basicRecover($requeue = true)
+    public function basicRecover(bool $requeue = true): void
     {
     }
 
@@ -248,7 +248,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function confirmSelect()
+    public function confirmSelect(): void
     {
     }
 
@@ -270,7 +270,7 @@ class AMQPChannel
      * @param callable|null $nackCallback
      * @return void
      */
-    public function setConfirmCallback(?callable $ackCallback, callable $nackCallback = null)
+    public function setConfirmCallback(?callable $ackCallback, callable $nackCallback = null): void
     {
     }
 
@@ -285,7 +285,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function waitForConfirm($timeout = 0.0)
+    public function waitForConfirm(float $timeout = 0.0): void
     {
     }
 
@@ -306,7 +306,7 @@ class AMQPChannel
      * @param callable|null $returnCallback
      * @return void
      */
-    public function setReturnCallback(?callable $returnCallback)
+    public function setReturnCallback(?callable $returnCallback): void
     {
     }
 
@@ -319,7 +319,7 @@ class AMQPChannel
      *
      * @return void
      */
-    public function waitForBasicReturn($timeout = 0.0)
+    public function waitForBasicReturn(float $timeout = 0.0): void
     {
     }
 
@@ -328,7 +328,7 @@ class AMQPChannel
      *
      * @return AMQPQueue[]
      */
-    public function getConsumers()
+    public function getConsumers(): array
     {
     }
 }

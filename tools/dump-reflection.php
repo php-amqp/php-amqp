@@ -111,10 +111,18 @@ function getClassMetadata(string $class): array {
                 error("%s(…%s…) contains underscore\n", $class. '::' . $method->getName(), $parameter->getName());
             }
 
+            $default = 'unknown';
+            if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
+                // Cannot set default values before 8.0 in native extension
+                $default = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : 'none';
+            }
+
             $methodMetadata['parameters'][] = [
                 'methodName' => $class. '::' . $method->getName(),
                 'name' => $parameter->getName(),
+                'default' => $default,
                 'type' => getTypeMetadata($parameter->getType()),
+                'byRef' => $parameter->isPassedByReference(),
             ];
         }
 

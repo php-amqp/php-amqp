@@ -11,7 +11,7 @@ class AMQPExchange
      * Bind an exchange to another exchange using the specified routing key.
      *
      * @param string $exchangeName Name of the exchange to bind.
-     * @param string $routingKey   The routing key to use for binding.
+     * @param string|null $routingKey   The routing key to use for binding.
      * @param array  $arguments     Additional binding arguments.
      *
      * @return void
@@ -19,7 +19,7 @@ class AMQPExchange
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPExchangeException   On failure.
      */
-    public function bind($exchangeName, $routingKey = '', array $arguments = array())
+    public function bind(string $exchangeName, ?string $routingKey = null, array $arguments = array()): void
     {
     }
 
@@ -29,7 +29,7 @@ class AMQPExchange
      * Remove a routing key binding on an another exchange from the given exchange.
      *
      * @param string $exchangeName Name of the exchange to bind.
-     * @param string $routingKey   The routing key to use for binding.
+     * @param string|null $routingKey   The routing key to use for binding.
      * @param array  $arguments     Additional binding arguments.
      *
      * @return void
@@ -37,7 +37,7 @@ class AMQPExchange
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPExchangeException   On failure.
      */
-    public function unbind($exchangeName, $routingKey = '', array $arguments = array())
+    public function unbind(string $exchangeName, ?string $routingKey = null, array $arguments = array()): void
     {
     }
 
@@ -68,7 +68,7 @@ class AMQPExchange
      *
      * @return void
      */
-    public function declareExchange()
+    public function declareExchange(): void
     {
     }
 
@@ -87,7 +87,7 @@ class AMQPExchange
      *
      * @return void
      */
-    public function delete($exchangeName = null, $flags = AMQP_NOPARAM)
+    public function delete(?string $exchangeName = null, int $flags = AMQP_NOPARAM): void
     {
     }
 
@@ -100,7 +100,7 @@ class AMQPExchange
      *                                with the given key, or FALSE if the key
      *                                is not set.
      */
-    public function getArgument($argumentName)
+    public function getArgument(string $argumentName)
     {
     }
 
@@ -111,7 +111,7 @@ class AMQPExchange
      *
      * @return boolean
      */
-    public function hasArgument($argumentName)
+    public function hasArgument(string $argumentName): bool
     {
     }
     /**
@@ -119,7 +119,7 @@ class AMQPExchange
      *
      * @return array An array containing all the set key/value pairs.
      */
-    public function getArguments()
+    public function getArguments(): array
     {
     }
 
@@ -129,7 +129,7 @@ class AMQPExchange
      * @return int An integer bitmask of all the flags currently set on this
      *             exchange object.
      */
-    public function getFlags()
+    public function getFlags(): int
     {
     }
 
@@ -138,7 +138,7 @@ class AMQPExchange
      *
      * @return string|null The configured name as a string.
      */
-    public function getName()
+    public function getName(): ?string
     {
     }
 
@@ -147,7 +147,7 @@ class AMQPExchange
      *
      * @return string|null The configured type as a string.
      */
-    public function getType()
+    public function getType(): ?string
     {
     }
 
@@ -161,23 +161,22 @@ class AMQPExchange
      *                             publish to.
      * @param integer $flags       One or more of AMQP_MANDATORY and
      *                             AMQP_IMMEDIATE.
-     * @param array   headers      One of content_type, content_encoding,
+     * @param array   $headers      One of content_type, content_encoding,
      *                             message_id, user_id, app_id, delivery_mode,
      *                             priority, timestamp, expiration, type
      *                             or reply_to, headers.
-     *
-     * @return void
-     *@throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPChannelException    If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
      * @throws AMQPExchangeException   On failure.
+     * @return void
      */
     public function publish(
-        $message,
-        $routingKey = null,
-        $flags = AMQP_NOPARAM,
-        array $headers = array()
-    ) {
+        string $message,
+        string $routingKey = "",
+        int $flags = AMQP_NOPARAM,
+        array $headers = []
+    ): void
+    {
     }
 
     /**
@@ -188,7 +187,7 @@ class AMQPExchange
      *
      * @return void
      */
-    public function setArgument($argumentName, $argumentValue)
+    public function setArgument(string $argumentName, $argumentValue): void
     {
     }
 
@@ -199,21 +198,21 @@ class AMQPExchange
      *
      * @return void
      */
-    public function setArguments(array $arguments)
+    public function setArguments(array $arguments): void
     {
     }
 
     /**
      * Set the flags on an exchange.
      *
-     * @param integer|null $flags A bitmask of flags. This call currently only
+     * @param integer $flags A bitmask of flags. This call currently only
      *                            considers the following flags:
      *                            AMQP_DURABLE, AMQP_PASSIVE
      *                            (and AMQP_DURABLE, if librabbitmq version >= 0.5.3)
      *
      * @return void
      */
-    public function setFlags($flags)
+    public function setFlags(int $flags): void
     {
     }
 
@@ -224,7 +223,7 @@ class AMQPExchange
      *
      * @return void
      */
-    public function setName($exchangeName)
+    public function setName(?string $exchangeName): void
     {
     }
 
@@ -238,7 +237,7 @@ class AMQPExchange
      *
      * @return void
      */
-    public function setType($exchangeType)
+    public function setType(?string $exchangeType): void
     {
     }
 
@@ -247,7 +246,7 @@ class AMQPExchange
      *
      * @return AMQPChannel
      */
-    public function getChannel()
+    public function getChannel(): AMQPChannel
     {
     }
 
@@ -256,7 +255,7 @@ class AMQPExchange
      *
      * @return AMQPConnection
      */
-    public function getConnection()
+    public function getConnection(): AMQPConnection
     {
     }
 }

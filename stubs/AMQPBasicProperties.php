@@ -22,20 +22,20 @@ class AMQPBasicProperties
      * @param string $clusterId
      */
     public function __construct(
-        $contentType = "",
-        $contentEncoding = "",
+        string $contentType = "",
+        string $contentEncoding = "",
         array $headers = [],
-        $deliveryMode = AMQP_DELIVERY_MODE_TRANSIENT,
-        $priority = 0,
-        $correlationId = "",
-        $replyTo = "",
-        $expiration = "",
-        $messageId = "",
-        $timestamp = 0,
-        $type = "",
-        $userId = "",
-        $appId = "",
-        $clusterId = ""
+        int $deliveryMode = AMQP_DELIVERY_MODE_TRANSIENT,
+        int $priority = 0,
+        string $correlationId = "",
+        string $replyTo = "",
+        string $expiration = "",
+        string $messageId = "",
+        int $timestamp = 0,
+        string $type = "",
+        string $userId = "",
+        string $appId = "",
+        string $clusterId = ""
     ) {
     }
 

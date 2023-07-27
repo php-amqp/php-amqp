@@ -81,6 +81,11 @@ extern zend_module_entry amqp_module_entry;
     #define zend_ini_parse_quantity_warn(v, name) (zend_atol(ZSTR_VAL(v), ZSTR_LEN(v)))
 #endif
 
+#if PHP_VERSION_ID < 80000
+    #define ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, type_hint, allow_null, default_value)             \
+        ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
+#endif
+
 #include "amqp_connection_resource.h"
 
 #define AMQP_NOPARAM 0
