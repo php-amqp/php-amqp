@@ -1,7 +1,14 @@
 #!/usr/bin/env sh
 set -e
 
-php -n tools/compare-stubs.php stubs.json
-php -n -dextension=modules/amqp.so tools/compare-stubs.php impl.json
+SHARED_JSON=`php -n -r 'echo !extension_loaded("json") ? "true" : "false";'`
+
+args="-n"
+if [ "${SHARED_JSON}" = "true" ]; then
+  args="${args} -d extension=json.so"
+fi
+
+php $args tools/dump-reflection.php stubs.json
+php $args -d extension=modules/amqp.so tools/dump-reflection.php impl.json
 
 diff -10 -u stubs.json impl.json
