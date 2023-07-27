@@ -5,6 +5,21 @@
  */
 class AMQPBasicProperties
 {
+    private $content_type;
+    private $content_encoding;
+    private $headers;
+    private $delivery_mode;
+    private $priority;
+    private $correlation_id;
+    private $reply_to;
+    private $expiration;
+    private $message_id;
+    private $timestamp;
+    private $type;
+    private $user_id;
+    private $app_id;
+    private $cluster_id;
+
     /**
      * @param string $contentType
      * @param string $contentEncoding

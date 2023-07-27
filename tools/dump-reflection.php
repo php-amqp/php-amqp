@@ -43,14 +43,19 @@ const MAGIC_METHODS = [
 ];
 
 function getClassMetadata(string $class): array {
-    $r = new ReflectionClass($class);
+    $refl = new ReflectionClass($class);
     $classMetadata = [
-        'name' => $r->getName(),
+        'name' => $refl->getName(),
         'constants' => [],
+        'properties' =>  [],
         'methods' => [],
     ];
 
-    foreach ($r->getReflectionConstants() as $constant) {
+    foreach ($refl->getReflectionConstants() as $constant) {
+        if ($constant->getDeclaringClass()->getName() !== $refl->getName()) {
+            continue;
+        }
+
         $classMetadata['constants'][] = [
             'name' => $class. '::' . $constant->getName(),
             'value' => $constant->getValue(),
@@ -58,7 +63,11 @@ function getClassMetadata(string $class): array {
         ];
     }
 
-    foreach ($r->getMethods() as $method) {
+    foreach ($refl->getMethods() as $method) {
+        if ($method->getDeclaringClass()->getName() !== $refl->getName()) {
+            continue;
+        }
+
         $methodMetadata = [
             'name' => $class. '::' . $method->getName(),
             'visibility' => $method->isPublic() ? 'public' : ($method->isProtected() ? 'protected' : ($method->isPrivate() ? 'private' : 'unknown')),
@@ -76,7 +85,7 @@ function getClassMetadata(string $class): array {
 
         $prefix = substr($method->getName(), 0, 3);
         if (in_array($prefix, ['set', 'has', 'get'], true) && !in_array($method->getName(), ['set', 'has', 'get'], true)) {
-            $hasPlural = $r->hasMethod($method->getName() . 's');
+            $hasPlural = $refl->hasMethod($method->getName() . 's');
             $isPlural = substr($method->getName(), -1) === 's';
 
             if ($prefix === 'get' && $method->getNumberOfParameters() !== 0 && !$hasPlural) {
@@ -129,8 +138,22 @@ function getClassMetadata(string $class): array {
         $classMetadata['methods'][] = $methodMetadata;
     }
 
-    $classMetadata['methods'] = sortByName($classMetadata['methods']);
+    foreach ($refl->getProperties() as $property) {
+        if ($property->getDeclaringClass()->getName() !== $refl->getName()) {
+            continue;
+        }
+        $propertyMetadata = [
+            'name' => $property->getName(),
+            'visibility' => $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : ($property->isPrivate() ? 'private' : 'unknown')),
+            'type' => getTypeMetadata($property->getType()),
+        ];
+
+        $classMetadata['properties'][] = $propertyMetadata;
+    }
+
+    $classMetadata['properties'] = sortByName($classMetadata['properties']);
     $classMetadata['constants'] = sortByName($classMetadata['constants']);
+    $classMetadata['methods'] = sortByName($classMetadata['methods']);
 
     return $classMetadata;
 }

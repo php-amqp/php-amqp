@@ -5,7 +5,24 @@
  */
 class AMQPConnection
 {
-
+    private $login;
+    private $password;
+    private $host;
+    private $vhost;
+    private $port;
+    private $read_timeout;
+    private $write_timeout;
+    private $connect_timeout;
+    private $rpc_timeout;
+    private $channel_max;
+    private $frame_max;
+    private $heartbeat;
+    private $cacert;
+    private $key;
+    private $cert;
+    private $verify;
+    private $sasl_method;
+    private $connection_name;
     /**
      * Create an instance of AMQPConnection.
      *

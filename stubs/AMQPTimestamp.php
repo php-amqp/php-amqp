@@ -15,6 +15,8 @@ final class AMQPTimestamp
      */
     const MAX = 18446744073709551616;
 
+    private $timestamp;
+
     /**
      * @param float $timestamp
      *

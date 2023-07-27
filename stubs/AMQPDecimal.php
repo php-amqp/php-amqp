@@ -25,6 +25,9 @@ final class AMQPDecimal
      */
     const SIGNIFICAND_MAX = 4294967295;
 
+    private $exponent;
+    private $significand;
+
     /**
      * @param int $exponent
      * @param int $significand

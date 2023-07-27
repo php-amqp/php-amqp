@@ -5,6 +5,16 @@
  */
 class AMQPQueue
 {
+    private $connection;
+    private $channel;
+    private $name;
+    private $consumer_tag;
+    private $passive;
+    private $durable;
+    private $exclusive;
+    private $auto_delete;
+    private $arguments;
+
     /**
      * Create an instance of an AMQPQueue object.
      *

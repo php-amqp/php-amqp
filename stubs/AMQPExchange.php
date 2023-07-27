@@ -5,6 +5,16 @@
  */
 class AMQPExchange
 {
+    private $connection;
+    private $channel;
+    private $name;
+    private $type;
+    private $passive;
+    private $durable;
+    private $auto_delete;
+    private $internal;
+    private $arguments;
+
     /**
      * Bind to another exchange.
      *
