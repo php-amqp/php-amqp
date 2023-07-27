@@ -945,7 +945,8 @@ static PHP_METHOD(amqp_connection_class, pconnect)
 }
 /* }}} */
 
-#define PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE "Attempted to %s a %s connection while a %s connection is established. Call '%s' instead"
+#define PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE                                                                         \
+    "Attempted to %s a %s connection while a %s connection is established. Call '%s' instead"
 
 /* {{{ proto amqp:pdisconnect()
 destroy amqp persistent connection */
