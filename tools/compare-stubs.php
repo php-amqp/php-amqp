@@ -27,6 +27,14 @@ function getTypeMetadata(?ReflectionType $type): ?array {
     ];
 }
 
+$error = false;
+function error(string $message, ...$args): void
+{
+    global $error;
+    vprintf('ERROR: ' . $message, $args);
+    $error = true;
+}
+
 const MAGIC_METHODS = [
     '__construct',
     '__toString',
@@ -63,7 +71,7 @@ function getClassMetadata(string $class): array {
         ];
 
         if (!in_array($method->getName(), MAGIC_METHODS, true) && strpos($method->getName(), '_') !== false) {
-            printf("ERROR: %s contains underscore\n", $class. '::' . $method->getName());
+            error("%s contains underscore\n", $class. '::' . $method->getName());
         }
 
         $prefix = substr($method->getName(), 0, 3);
@@ -72,35 +80,35 @@ function getClassMetadata(string $class): array {
             $isPlural = substr($method->getName(), -1) === 's';
 
             if ($prefix === 'get' && $method->getNumberOfParameters() !== 0 && !$hasPlural) {
-                printf("ERROR: %s() should have no arguments\n", $class. '::' . $method->getName());
+                error("%s() should have no arguments\n", $class. '::' . $method->getName());
             }
 
             if ($prefix === 'set' && $isPlural) {
                 if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3)))) {
-                    printf("ERROR: %s(%s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
+                    error("%s(%s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
                 }
             }
 
             if ($prefix === 'get' && $hasPlural) {
                 if ($method->getNumberOfRequiredParameters() !== 1 || $method->getNumberOfParameters() !== 1) {
-                    printf("ERROR: %s() should have exactly one required parameter\n", $class. '::' . $method->getName());
+                    error("%s() should have exactly one required parameter\n", $class. '::' . $method->getName());
                 }
             }
 
             if ($hasPlural) {
                 if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3) . 'Name'))) {
-                    printf("ERROR: %s(%s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
+                    error("%s(%s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
                 }
 
                 if ($prefix === 'set' && $method->getParameters()[1]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3) . 'Value'))) {
-                    printf("ERROR: %s(…, %s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[1]->getName(), $expectedName);
+                    error("%s(…, %s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[1]->getName(), $expectedName);
                 }
             }
         }
 
         foreach ($method->getParameters() as $parameter) {
             if (strpos($parameter->getName(), '_') !== false) {
-                printf("ERROR: %s(…%s…) contains underscore\n", $class. '::' . $method->getName(), $parameter->getName());
+                error("%s(…%s…) contains underscore\n", $class. '::' . $method->getName(), $parameter->getName());
             }
 
             $methodMetadata['parameters'][] = [
@@ -170,3 +178,7 @@ $filename = $_SERVER['argv'][1] ?? null;
 assert($filename !== null, 'Output filename must be passed');
 
 file_put_contents($filename, json_encode($symbols, JSON_PRETTY_PRINT));
+
+if ($error) {
+    exit(1);
+}
