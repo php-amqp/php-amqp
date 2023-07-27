@@ -94,24 +94,24 @@ class AMQPExchange
     /**
      * Get the argument associated with the given key.
      *
-     * @param string $key The key to look up.
+     * @param string $argumentName The key to look up.
      *
      * @return string|integer|boolean The string or integer value associated
      *                                with the given key, or FALSE if the key
      *                                is not set.
      */
-    public function getArgument($key)
+    public function getArgument($argumentName)
     {
     }
 
     /**
      * Check whether argument associated with the given key exists.
      *
-     * @param string $key The key to look up.
+     * @param string $argumentName The key to look up.
      *
      * @return boolean
      */
-    public function hasArgument($key)
+    public function hasArgument($argumentName)
     {
     }
     /**
@@ -183,12 +183,12 @@ class AMQPExchange
     /**
      * Set the value for the given key.
      *
-     * @param string         $key   Name of the argument to set.
-     * @param string|integer $value Value of the argument to set.
+     * @param string         $argumentName   Name of the argument to set.
+     * @param string|integer $argumentValue Value of the argument to set.
      *
      * @return void
      */
-    public function setArgument($key, $value)
+    public function setArgument($argumentName, $argumentValue)
     {
     }
 

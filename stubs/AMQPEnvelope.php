@@ -71,22 +71,22 @@ class AMQPEnvelope extends AMQPBasicProperties
     /**
      * Get a specific message header.
      *
-     * @param string $name Name of the header to get the value from.
+     * @param string $headerName Name of the header to get the value from.
      *
      * @return string|null The contents of the specified header or null if not set.
      */
-    public function getHeader($name)
+    public function getHeader($headerName)
     {
     }
 
     /**
      * Check whether specific message header exists.
      *
-     * @param string $name Name of the header to check.
+     * @param string $headerName Name of the header to check.
      *
      * @return boolean
      */
-    public function hasHeader($name)
+    public function hasHeader($headerName)
     {
     }
 }

@@ -66,8 +66,39 @@ function getClassMetadata(string $class): array {
             printf("ERROR: %s contains underscore\n", $class. '::' . $method->getName());
         }
 
-        foreach ($method->getParameters() as $parameter) {
+        $prefix = substr($method->getName(), 0, 3);
+        if (in_array($prefix, ['set', 'has', 'get'], true) && !in_array($method->getName(), ['set', 'has', 'get'], true)) {
+            $hasPlural = $r->hasMethod($method->getName() . 's');
+            $isPlural = substr($method->getName(), -1) === 's';
 
+            if ($prefix === 'get' && $method->getNumberOfParameters() !== 0 && !$hasPlural) {
+                printf("ERROR: %s() should have no arguments\n", $class. '::' . $method->getName());
+            }
+
+            if ($prefix === 'set' && $isPlural) {
+                if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3)))) {
+                    printf("ERROR: %s(%s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
+                }
+            }
+
+            if ($prefix === 'get' && $hasPlural) {
+                if ($method->getNumberOfRequiredParameters() !== 1 || $method->getNumberOfParameters() !== 1) {
+                    printf("ERROR: %s() should have exactly one required parameter\n", $class. '::' . $method->getName());
+                }
+            }
+
+            if ($hasPlural) {
+                if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3) . 'Name'))) {
+                    printf("ERROR: %s(%s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
+                }
+
+                if ($prefix === 'set' && $method->getParameters()[1]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3) . 'Value'))) {
+                    printf("ERROR: %s(…, %s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[1]->getName(), $expectedName);
+                }
+            }
+        }
+
+        foreach ($method->getParameters() as $parameter) {
             if (strpos($parameter->getName(), '_') !== false) {
                 printf("ERROR: %s(…%s…) contains underscore\n", $class. '::' . $method->getName(), $parameter->getName());
             }

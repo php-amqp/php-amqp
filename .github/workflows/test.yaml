@@ -8,6 +8,7 @@ on:
 env:
     ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     TEST_TIMEOUT: 120
+    CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
 
 jobs:
     checkstyle:
@@ -51,6 +52,12 @@ jobs:
 
           - name: Check stubs
             run: ./tools/check-stubs.sh
+
+          - name: Build librabbitmq
+            run: sudo ./provision/install_rabbitmq-c.sh master
+
+          - name: Build PHP extension
+            run: phpize && ./configure && make
 
           - name: Validate stubs
             run: ./tools/validate-stubs.sh
@@ -183,8 +190,6 @@ jobs:
               run: pkg-config librabbitmq --debug
 
             - name: Build PHP extension
-              env:
-                CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
               run: phpize && ./configure && make
 
             - name: Test PHP extension
