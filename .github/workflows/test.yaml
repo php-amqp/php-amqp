@@ -28,6 +28,30 @@ jobs:
           - name: Check style
             run: clang-format-17 --dry-run --Werror  *.c *.h
 
+    stubs:
+        name: Check stubs
+        runs-on: ubuntu-22.04
+
+        strategy:
+            matrix:
+              php-version: [8.2, 8.1, 8.0, 7.4]
+
+              steps:
+                - name: Checkout
+                  uses: actions/checkout@v3.5.3
+
+                - name: Install packages
+                  run: sudo apt-get install -y cmake valgrind
+
+                - name: Setup PHP
+                  uses: shivammathur/setup-php@2.25.4
+                  with:
+                    php-version: ${{ matrix.php-version }}
+                    coverage: none
+
+                - name: Check stubs
+                  run: ./tools/check-stubs.sh
+
     test:
         name: php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         runs-on: ${{ matrix.os }}
