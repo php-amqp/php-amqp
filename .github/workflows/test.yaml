@@ -65,7 +65,7 @@ jobs:
             run: ./tools/validate-stubs.sh
 
     test:
-        name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && ' thread safe' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
+        name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         # librabbitmq < 0.11 needs older OpenSSL version
         runs-on: ${{ matrix.librabbitmq-version == 'v0.10.0' && 'ubuntu-20.04' || 'ubuntu-22.04' }}
 
