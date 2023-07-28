@@ -165,7 +165,7 @@ static PHP_METHOD(amqp_exchange_class, getFlags)
         flags |= AMQP_DURABLE;
     }
 
-    if (PHP_AMQP_READ_THIS_PROP_BOOL("auto_delete")) {
+    if (PHP_AMQP_READ_THIS_PROP_BOOL("autoDelete")) {
         flags |= AMQP_AUTODELETE;
     }
 
@@ -207,7 +207,7 @@ static PHP_METHOD(amqp_exchange_class, setFlags)
     zend_update_property_bool(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("auto_delete"),
+        ZEND_STRL("autoDelete"),
         IS_AUTODELETE(flags) TSRMLS_CC
     );
     zend_update_property_bool(
@@ -406,7 +406,7 @@ static PHP_METHOD(amqp_exchange_class, declareExchange)
         amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("type")),
         PHP_AMQP_READ_THIS_PROP_BOOL("passive"),
         PHP_AMQP_READ_THIS_PROP_BOOL("durable"),
-        PHP_AMQP_READ_THIS_PROP_BOOL("auto_delete"),
+        PHP_AMQP_READ_THIS_PROP_BOOL("autoDelete"),
         PHP_AMQP_READ_THIS_PROP_BOOL("internal"),
         *arguments
     );
@@ -963,7 +963,7 @@ PHP_MINIT_FUNCTION(amqp_exchange)
     zend_declare_property_null(this_ce, ZEND_STRL("type"), ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_bool(this_ce, ZEND_STRL("passive"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_bool(this_ce, ZEND_STRL("durable"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_bool(this_ce, ZEND_STRL("auto_delete"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_bool(this_ce, ZEND_STRL("autoDelete"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_bool(this_ce, ZEND_STRL("internal"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_null(this_ce, ZEND_STRL("arguments"), ZEND_ACC_PRIVATE TSRMLS_CC);
 

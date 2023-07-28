@@ -11,7 +11,7 @@ class AMQPExchange
     private $type;
     private $passive;
     private $durable;
-    private $auto_delete;
+    private $autoDelete;
     private $internal;
     private $arguments;
 

@@ -2,7 +2,7 @@
 AMQPEnvelope construct
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
+if (!extension_loaded("amqp")) {
   print "skip";
 }
 --FILE--
@@ -11,45 +11,45 @@ var_dump(new AMQPEnvelope());
 ?>
 --EXPECT--
 object(AMQPEnvelope)#1 (20) {
-  ["content_type":"AMQPBasicProperties":private]=>
+  ["contentType":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["content_encoding":"AMQPBasicProperties":private]=>
+  ["contentEncoding":"AMQPBasicProperties":private]=>
   string(0) ""
   ["headers":"AMQPBasicProperties":private]=>
   array(0) {
   }
-  ["delivery_mode":"AMQPBasicProperties":private]=>
+  ["deliveryMode":"AMQPBasicProperties":private]=>
   int(1)
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
-  ["correlation_id":"AMQPBasicProperties":private]=>
+  ["correlationId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["reply_to":"AMQPBasicProperties":private]=>
+  ["replyTo":"AMQPBasicProperties":private]=>
   string(0) ""
   ["expiration":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["message_id":"AMQPBasicProperties":private]=>
+  ["messageId":"AMQPBasicProperties":private]=>
   string(0) ""
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["user_id":"AMQPBasicProperties":private]=>
+  ["userId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["app_id":"AMQPBasicProperties":private]=>
+  ["appId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["cluster_id":"AMQPBasicProperties":private]=>
+  ["clusterId":"AMQPBasicProperties":private]=>
   string(0) ""
   ["body":"AMQPEnvelope":private]=>
   string(0) ""
-  ["consumer_tag":"AMQPEnvelope":private]=>
+  ["consumerTag":"AMQPEnvelope":private]=>
   NULL
-  ["delivery_tag":"AMQPEnvelope":private]=>
+  ["deliveryTag":"AMQPEnvelope":private]=>
   NULL
-  ["is_redelivery":"AMQPEnvelope":private]=>
+  ["isRedelivery":"AMQPEnvelope":private]=>
   NULL
-  ["exchange_name":"AMQPEnvelope":private]=>
+  ["exchangeName":"AMQPEnvelope":private]=>
   NULL
-  ["routing_key":"AMQPEnvelope":private]=>
+  ["routingKey":"AMQPEnvelope":private]=>
   string(0) ""
 }

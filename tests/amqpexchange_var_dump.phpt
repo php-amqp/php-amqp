@@ -2,7 +2,7 @@
 AMQPExchange var_dump
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
+if (!extension_loaded("amqp")) {
   print "skip";
 }
 --FILE--
@@ -32,7 +32,7 @@ object(AMQPExchange)#3 (9) {
   bool(false)
   ["durable":"AMQPExchange":private]=>
   bool(false)
-  ["auto_delete":"AMQPExchange":private]=>
+  ["autoDelete":"AMQPExchange":private]=>
   bool(false)
   ["internal":"AMQPExchange":private]=>
   bool(false)
@@ -53,7 +53,7 @@ object(AMQPExchange)#3 (9) {
   bool(false)
   ["durable":"AMQPExchange":private]=>
   bool(false)
-  ["auto_delete":"AMQPExchange":private]=>
+  ["autoDelete":"AMQPExchange":private]=>
   bool(false)
   ["internal":"AMQPExchange":private]=>
   bool(false)

@@ -154,14 +154,14 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("content_type"),
+        ZEND_STRL("contentType"),
         content_type,
         content_type_len TSRMLS_CC
     );
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("content_encoding"),
+        ZEND_STRL("contentEncoding"),
         content_encoding,
         content_encoding_len TSRMLS_CC
     );
@@ -175,7 +175,7 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
     zend_update_property_long(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("delivery_mode"),
+        ZEND_STRL("deliveryMode"),
         delivery_mode TSRMLS_CC
     );
     zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("priority"), priority TSRMLS_CC);
@@ -183,14 +183,14 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("correlation_id"),
+        ZEND_STRL("correlationId"),
         correlation_id,
         correlation_id_len TSRMLS_CC
     );
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("reply_to"),
+        ZEND_STRL("replyTo"),
         reply_to,
         reply_to_len TSRMLS_CC
     );
@@ -204,7 +204,7 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("message_id"),
+        ZEND_STRL("messageId"),
         message_id,
         message_id_len TSRMLS_CC
     );
@@ -221,21 +221,21 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("user_id"),
+        ZEND_STRL("userId"),
         user_id,
         user_id_len TSRMLS_CC
     );
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("app_id"),
+        ZEND_STRL("appId"),
         app_id,
         app_id_len TSRMLS_CC
     );
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("cluster_id"),
+        ZEND_STRL("clusterId"),
         cluster_id,
         cluster_id_len TSRMLS_CC
     );
@@ -247,7 +247,7 @@ static PHP_METHOD(AMQPBasicProperties, getContentType)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("content_type");
+    PHP_AMQP_RETURN_THIS_PROP("contentType");
 }
 /* }}} */
 
@@ -256,7 +256,7 @@ static PHP_METHOD(AMQPBasicProperties, getContentEncoding)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("content_encoding");
+    PHP_AMQP_RETURN_THIS_PROP("contentEncoding");
 }
 /* }}} */
 
@@ -274,7 +274,7 @@ static PHP_METHOD(AMQPBasicProperties, getDeliveryMode)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("delivery_mode");
+    PHP_AMQP_RETURN_THIS_PROP("deliveryMode");
 }
 /* }}} */
 
@@ -292,7 +292,7 @@ static PHP_METHOD(AMQPBasicProperties, getCorrelationId)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("correlation_id");
+    PHP_AMQP_RETURN_THIS_PROP("correlationId");
 }
 /* }}} */
 
@@ -301,7 +301,7 @@ static PHP_METHOD(AMQPBasicProperties, getReplyTo)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("reply_to");
+    PHP_AMQP_RETURN_THIS_PROP("replyTo");
 }
 /* }}} */
 
@@ -320,7 +320,7 @@ static PHP_METHOD(AMQPBasicProperties, getMessageId)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("message_id");
+    PHP_AMQP_RETURN_THIS_PROP("messageId");
 }
 /* }}} */
 
@@ -347,7 +347,7 @@ static PHP_METHOD(AMQPBasicProperties, getUserId)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("user_id");
+    PHP_AMQP_RETURN_THIS_PROP("userId");
 }
 /* }}} */
 
@@ -356,7 +356,7 @@ static PHP_METHOD(AMQPBasicProperties, getAppId)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("app_id");
+    PHP_AMQP_RETURN_THIS_PROP("appId");
 }
 /* }}} */
 
@@ -365,7 +365,7 @@ static PHP_METHOD(AMQPBasicProperties, getClusterId)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("cluster_id");
+    PHP_AMQP_RETURN_THIS_PROP("clusterId");
 }
 /* }}} */
 
@@ -535,30 +535,30 @@ PHP_MINIT_FUNCTION(amqp_basic_properties)
     INIT_CLASS_ENTRY(ce, "AMQPBasicProperties", amqp_basic_properties_class_functions);
     this_ce = zend_register_internal_class(&ce TSRMLS_CC);
 
-    zend_declare_property_stringl(this_ce, ZEND_STRL("content_type"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_stringl(this_ce, ZEND_STRL("content_encoding"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("contentType"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("contentEncoding"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
 
     zend_declare_property_null(this_ce, ZEND_STRL("headers"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
     zend_declare_property_long(
         this_ce,
-        ZEND_STRL("delivery_mode"),
+        ZEND_STRL("deliveryMode"),
         AMQP_DELIVERY_NONPERSISTENT,
         ZEND_ACC_PRIVATE TSRMLS_CC
     );
     zend_declare_property_long(this_ce, ZEND_STRL("priority"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
 
-    zend_declare_property_stringl(this_ce, ZEND_STRL("correlation_id"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_stringl(this_ce, ZEND_STRL("reply_to"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("correlationId"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("replyTo"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_stringl(this_ce, ZEND_STRL("expiration"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_stringl(this_ce, ZEND_STRL("message_id"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("messageId"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
 
     zend_declare_property_long(this_ce, ZEND_STRL("timestamp"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
 
     zend_declare_property_stringl(this_ce, ZEND_STRL("type"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_stringl(this_ce, ZEND_STRL("user_id"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_stringl(this_ce, ZEND_STRL("app_id"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_stringl(this_ce, ZEND_STRL("cluster_id"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("userId"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("appId"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_stringl(this_ce, ZEND_STRL("clusterId"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
 
     return SUCCESS;
 }
@@ -726,20 +726,20 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("content_type"),
+            ZEND_STRL("contentType"),
             (const char *) p->content_type.bytes,
             (size_t) p->content_type.len TSRMLS_CC
         );
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("content_type"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("contentType"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_CONTENT_ENCODING_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("content_encoding"),
+            ZEND_STRL("contentEncoding"),
             (const char *) p->content_encoding.bytes,
             (size_t) p->content_encoding.len TSRMLS_CC
         );
@@ -748,7 +748,7 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("content_encoding"),
+            ZEND_STRL("contentEncoding"),
             "",
             0 TSRMLS_CC
         );
@@ -764,7 +764,7 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
         zend_update_property_long(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("delivery_mode"),
+            ZEND_STRL("deliveryMode"),
             (zend_long) p->delivery_mode TSRMLS_CC
         );
     } else {
@@ -772,7 +772,7 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
         zend_update_property_long(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("delivery_mode"),
+            ZEND_STRL("deliveryMode"),
             AMQP_DELIVERY_NONPERSISTENT TSRMLS_CC
         );
     }
@@ -793,26 +793,26 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("correlation_id"),
+            ZEND_STRL("correlationId"),
             (const char *) p->correlation_id.bytes,
             (size_t) p->correlation_id.len TSRMLS_CC
         );
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("correlation_id"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("correlationId"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_REPLY_TO_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("reply_to"),
+            ZEND_STRL("replyTo"),
             (const char *) p->reply_to.bytes,
             (size_t) p->reply_to.len TSRMLS_CC
         );
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("reply_to"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("replyTo"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_EXPIRATION_FLAG) {
@@ -832,13 +832,13 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("message_id"),
+            ZEND_STRL("messageId"),
             (const char *) p->message_id.bytes,
             (size_t) p->message_id.len TSRMLS_CC
         );
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("message_id"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("messageId"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_TIMESTAMP_FLAG) {
@@ -870,26 +870,26 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj TSR
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("user_id"),
+            ZEND_STRL("userId"),
             (const char *) p->user_id.bytes,
             (size_t) p->user_id.len TSRMLS_CC
         );
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("user_id"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("userId"), "", 0 TSRMLS_CC);
     }
 
     if (p->_flags & AMQP_BASIC_APP_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
-            ZEND_STRL("app_id"),
+            ZEND_STRL("appId"),
             (const char *) p->app_id.bytes,
             (size_t) p->app_id.len TSRMLS_CC
         );
     } else {
         /* BC */
-        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("app_id"), "", 0 TSRMLS_CC);
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("appId"), "", 0 TSRMLS_CC);
     }
 
     zval_ptr_dtor(&headers);

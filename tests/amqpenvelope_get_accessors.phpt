@@ -37,48 +37,48 @@ var_dump($header);
 ?>
 --EXPECTF--
 object(AMQPEnvelope)#5 (20) {
-  ["content_type":"AMQPBasicProperties":private]=>
+  ["contentType":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
-  ["content_encoding":"AMQPBasicProperties":private]=>
+  ["contentEncoding":"AMQPBasicProperties":private]=>
   string(0) ""
   ["headers":"AMQPBasicProperties":private]=>
   array(1) {
     ["foo"]=>
     string(3) "bar"
   }
-  ["delivery_mode":"AMQPBasicProperties":private]=>
+  ["deliveryMode":"AMQPBasicProperties":private]=>
   int(1)
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
-  ["correlation_id":"AMQPBasicProperties":private]=>
+  ["correlationId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["reply_to":"AMQPBasicProperties":private]=>
+  ["replyTo":"AMQPBasicProperties":private]=>
   string(0) ""
   ["expiration":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["message_id":"AMQPBasicProperties":private]=>
+  ["messageId":"AMQPBasicProperties":private]=>
   string(0) ""
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["user_id":"AMQPBasicProperties":private]=>
+  ["userId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["app_id":"AMQPBasicProperties":private]=>
+  ["appId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["cluster_id":"AMQPBasicProperties":private]=>
+  ["clusterId":"AMQPBasicProperties":private]=>
   string(0) ""
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
-  ["consumer_tag":"AMQPEnvelope":private]=>
+  ["consumerTag":"AMQPEnvelope":private]=>
   string(0) ""
-  ["delivery_tag":"AMQPEnvelope":private]=>
+  ["deliveryTag":"AMQPEnvelope":private]=>
   int(1)
-  ["is_redelivery":"AMQPEnvelope":private]=>
+  ["isRedelivery":"AMQPEnvelope":private]=>
   bool(false)
-  ["exchange_name":"AMQPEnvelope":private]=>
+  ["exchangeName":"AMQPEnvelope":private]=>
   string(%d) "exchange-%f"
-  ["routing_key":"AMQPEnvelope":private]=>
+  ["routingKey":"AMQPEnvelope":private]=>
   string(9) "routing.1"
 }
 AMQPEnvelope

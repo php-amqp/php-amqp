@@ -2,7 +2,7 @@
 AMQPExchange setFlags()
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
+if (!extension_loaded("amqp")) {
   print "skip";
 }
 --FILE--
@@ -31,7 +31,7 @@ object(AMQPExchange)#3 (9) {
   bool(true)
   ["durable":"AMQPExchange":private]=>
   bool(true)
-  ["auto_delete":"AMQPExchange":private]=>
+  ["autoDelete":"AMQPExchange":private]=>
   bool(true)
   ["internal":"AMQPExchange":private]=>
   bool(true)

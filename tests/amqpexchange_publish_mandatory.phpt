@@ -91,34 +91,34 @@ array(6) {
   string(11) "routing.key"
   [4]=>
   object(AMQPBasicProperties)#7 (14) {
-    ["content_type":"AMQPBasicProperties":private]=>
+    ["contentType":"AMQPBasicProperties":private]=>
     string(10) "text/plain"
-    ["content_encoding":"AMQPBasicProperties":private]=>
+    ["contentEncoding":"AMQPBasicProperties":private]=>
     string(0) ""
     ["headers":"AMQPBasicProperties":private]=>
     array(0) {
     }
-    ["delivery_mode":"AMQPBasicProperties":private]=>
+    ["deliveryMode":"AMQPBasicProperties":private]=>
     int(1)
     ["priority":"AMQPBasicProperties":private]=>
     int(0)
-    ["correlation_id":"AMQPBasicProperties":private]=>
+    ["correlationId":"AMQPBasicProperties":private]=>
     string(0) ""
-    ["reply_to":"AMQPBasicProperties":private]=>
+    ["replyTo":"AMQPBasicProperties":private]=>
     string(0) ""
     ["expiration":"AMQPBasicProperties":private]=>
     string(0) ""
-    ["message_id":"AMQPBasicProperties":private]=>
+    ["messageId":"AMQPBasicProperties":private]=>
     string(0) ""
     ["timestamp":"AMQPBasicProperties":private]=>
     int(0)
     ["type":"AMQPBasicProperties":private]=>
     string(0) ""
-    ["user_id":"AMQPBasicProperties":private]=>
+    ["userId":"AMQPBasicProperties":private]=>
     string(0) ""
-    ["app_id":"AMQPBasicProperties":private]=>
+    ["appId":"AMQPBasicProperties":private]=>
     string(0) ""
-    ["cluster_id":"AMQPBasicProperties":private]=>
+    ["clusterId":"AMQPBasicProperties":private]=>
     string(0) ""
   }
   [5]=>

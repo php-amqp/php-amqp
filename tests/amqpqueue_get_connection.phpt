@@ -2,7 +2,7 @@
 AMQPQueue getConnection test
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
+if (!extension_loaded("amqp")) {
     print "skip";
 }
 ?>

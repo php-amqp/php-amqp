@@ -55,7 +55,7 @@ object(AMQPExchange)#3 (9) {
   bool(false)
   ["durable":"AMQPExchange":private]=>
   bool(false)
-  ["auto_delete":"AMQPExchange":private]=>
+  ["autoDelete":"AMQPExchange":private]=>
   bool(true)
   ["internal":"AMQPExchange":private]=>
   bool(false)
@@ -76,7 +76,7 @@ object(AMQPExchange)#4 (9) {
   bool(false)
   ["durable":"AMQPExchange":private]=>
   bool(false)
-  ["auto_delete":"AMQPExchange":private]=>
+  ["autoDelete":"AMQPExchange":private]=>
   bool(true)
   ["internal":"AMQPExchange":private]=>
   bool(false)
@@ -107,7 +107,7 @@ object(AMQPExchange)#4 (9) {
   bool(false)
   ["durable":"AMQPExchange":private]=>
   bool(false)
-  ["auto_delete":"AMQPExchange":private]=>
+  ["autoDelete":"AMQPExchange":private]=>
   bool(true)
   ["internal":"AMQPExchange":private]=>
   bool(false)
