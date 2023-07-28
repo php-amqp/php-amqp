@@ -31,7 +31,7 @@ $error = false;
 function error(string $message, ...$args): void
 {
     global $error;
-    vprintf('ERROR: ' . $message, $args);
+    vprintf('ERROR: ' . $message . PHP_EOL, $args);
     $error = true;
 }
 
@@ -80,7 +80,7 @@ function getClassMetadata(string $class): array {
         ];
 
         if (!in_array($method->getName(), MAGIC_METHODS, true) && strpos($method->getName(), '_') !== false) {
-            error("%s contains underscore\n", $class. '::' . $method->getName());
+            error("%s::%s contains underscore", $class, $method->getName());
         }
 
         $prefix = substr($method->getName(), 0, 3);
@@ -89,35 +89,35 @@ function getClassMetadata(string $class): array {
             $isPlural = substr($method->getName(), -1) === 's';
 
             if ($prefix === 'get' && $method->getNumberOfParameters() !== 0 && !$hasPlural) {
-                error("%s() should have no arguments\n", $class. '::' . $method->getName());
+                error("%s::%s() should have no arguments", $class, $method->getName());
             }
 
             if ($prefix === 'set' && $isPlural) {
                 if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3)))) {
-                    error("%s(%s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
+                    error("%s::%s(%s) must be \"%s\"", $class, $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
                 }
             }
 
             if ($prefix === 'get' && $hasPlural) {
                 if ($method->getNumberOfRequiredParameters() !== 1 || $method->getNumberOfParameters() !== 1) {
-                    error("%s() should have exactly one required parameter\n", $class. '::' . $method->getName());
+                    error("%s::%s() should have exactly one required parameter", $class, $method->getName());
                 }
             }
 
             if ($hasPlural) {
                 if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3) . 'Name'))) {
-                    error("%s(%s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
+                    error("%s::%s(%s) must be \"%s\"", $class, $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
                 }
 
                 if ($prefix === 'set' && $method->getParameters()[1]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3) . 'Value'))) {
-                    error("%s(…, %s) must be \"%s\"\n", $class. '::' . $method->getName(), $method->getParameters()[1]->getName(), $expectedName);
+                    error("%s::%s(…, %s) must be \"%s\"", $class, $method->getName(), $method->getParameters()[1]->getName(), $expectedName);
                 }
             }
         }
 
         foreach ($method->getParameters() as $parameter) {
             if (strpos($parameter->getName(), '_') !== false) {
-                error("%s(…%s…) contains underscore\n", $class. '::' . $method->getName(), $parameter->getName());
+                error("%s::%s(…%s…) contains underscore", $class, $method->getName(), $parameter->getName());
             }
 
             $default = 'unknown';
@@ -127,8 +127,7 @@ function getClassMetadata(string $class): array {
             }
 
             $methodMetadata['parameters'][] = [
-                'methodName' => $class. '::' . $method->getName(),
-                'name' => $parameter->getName(),
+                'name' => $class. '::' . $method->getName(),
                 'default' => $default,
                 'type' => getTypeMetadata($parameter->getType()),
                 'byRef' => $parameter->isPassedByReference(),
@@ -142,8 +141,11 @@ function getClassMetadata(string $class): array {
         if ($property->getDeclaringClass()->getName() !== $refl->getName()) {
             continue;
         }
+        if (strpos($property->getName(), '_') !== false) {
+            error('Property %s::%s contains underscore', $class, $property->getName());
+        }
         $propertyMetadata = [
-            'name' => $property->getName(),
+            'name' => $class . '::' . $property->getName(),
             'visibility' => $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : ($property->isPrivate() ? 'private' : 'unknown')),
             'type' => getTypeMetadata($property->getType()),
         ];
