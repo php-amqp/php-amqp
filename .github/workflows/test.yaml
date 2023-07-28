@@ -65,7 +65,7 @@ jobs:
             run: ./tools/validate-stubs.sh
 
     test:
-        name: Test php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
+        name: Test php-${{ matrix.php-version }}{{ matrix.php-thread-safe && ' thread safe' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         runs-on: ${{ matrix.os }}
 
         env:
@@ -74,95 +74,17 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
+                php-version: ['8.2', '8.1', '8.0', '7.4']
+                php-thread-safe: [true, false]
+                librabbitmq-version: ['master', 'v0.13.0', 'v0.11.0', 'v0.10.0']
                 include:
-                    - php-version: '8.2-zts'
-                      librabbitmq-version: 'master'
-                      experimental: false
-                      os: ubuntu-22.04
                     - php-version: '8.2'
                       librabbitmq-version: 'master'
                       test-php-args: '-m'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.2'
-                      librabbitmq-version: 'v0.13.0'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.2'
-                      librabbitmq-version: 'v0.11.0'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.2'
-                      librabbitmq-version: 'v0.10.0'
-                      experimental: false
-                      os: ubuntu-20.04
 
-                    - php-version: '8.1-zts'
-                      librabbitmq-version: 'master'
-                      experimental: false
-                      os: ubuntu-22.04
                     - php-version: '8.1'
                       librabbitmq-version: 'master'
                       test-php-args: '-m'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.1'
-                      librabbitmq-version: 'v0.13.0'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.1'
-                      librabbitmq-version: 'v0.11.0'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.1'
-                      librabbitmq-version: 'v0.10.0'
-                      experimental: false
-                      os: ubuntu-20.04
-
-                    - php-version: '8.0-zts'
-                      librabbitmq-version: 'master'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.0'
-                      librabbitmq-version: 'master'
-                      test-php-args: '-m'
-                      experimental: true
-                      os: ubuntu-22.04
-                    - php-version: '8.0'
-                      librabbitmq-version: 'v0.13.0'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.0'
-                      librabbitmq-version: 'v0.11.0'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '8.0'
-                      librabbitmq-version: 'v0.10.0'
-                      experimental: false
-                      os: ubuntu-20.04
-
-                    - php-version: '7.4-zts'
-                      librabbitmq-version: 'master'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '7.4'
-                      librabbitmq-version: 'v0.13.0'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '7.4'
-                      librabbitmq-version: 'v0.13.0'
-                      test-php-args: '-m'
-                      experimental: true
-                      os: ubuntu-22.04
-                    - php-version: '7.4'
-                      librabbitmq-version: 'v0.11.0'
-                      experimental: false
-                      os: ubuntu-22.04
-                    - php-version: '7.4'
-                      librabbitmq-version: 'v0.10.0'
-                      experimental: false
-                      os: ubuntu-20.04
-
         services:
             rabbitmq:
                 image: rabbitmq:3
@@ -184,6 +106,8 @@ jobs:
               with:
                   php-version: ${{ matrix.php-version }}
                   coverage: none
+              env:
+                phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
 
             - name: Build librabbitmq
               run: sudo ./provision/install_rabbitmq-c.sh ${{ matrix.librabbitmq-version }}
@@ -202,4 +126,3 @@ jobs:
 
             - name: Dump report
               run: sh test-report.sh
-              continue-on-error: ${{ matrix.experimental }}
