@@ -6,13 +6,12 @@ on:
         types: [opened, synchronize, edited, reopened]
 
 env:
-    ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     TEST_TIMEOUT: 120
     CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
 
 jobs:
     checkstyle:
-        name: Check coding style
+        name: Check C formatting
         runs-on: ubuntu-22.04
         steps:
           - name: install clang-format

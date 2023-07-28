@@ -8,11 +8,11 @@ class AMQPQueue
     private $connection;
     private $channel;
     private $name;
-    private $consumer_tag;
+    private $consumerTag;
     private $passive;
     private $durable;
     private $exclusive;
-    private $auto_delete;
+    private $autoDelete;
     private $arguments;
 
     /**

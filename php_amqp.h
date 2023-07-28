@@ -64,27 +64,61 @@ extern zend_module_entry amqp_module_entry;
     #include "TSRM.h"
 #endif
 
-/* Small change to let it build after a major internal change for php8.0
- * More info:
- * https://github.com/php/php-src/blob/php-8.0.0alpha3/UPGRADING.INTERNALS#L47
- */
-#if PHP_MAJOR_VERSION >= 8
+#define php_amqp_declare_typed_property_ex(class_entry, name, visibility, extra_declaration, type_info)                \
+    {                                                                                                                  \
+        zval _val;                                                                                                     \
+        ZVAL_UNDEF(&_val);                                                                                             \
+        zend_string *_name = zend_string_init(ZEND_STRL(name), 1);                                                     \
+        extra_declaration;                                                                                             \
+        zend_declare_typed_property(class_entry, _name, &_val, visibility, NULL, type_info);                           \
+        zend_string_release(_name);                                                                                    \
+    }
+
+#if PHP_VERSION_ID >= 80000
     #define TSRMLS_DC
     #define TSRMLS_D
     #define TSRMLS_CC
     #define TSRMLS_C
     #define PHP_AMQP_COMPAT_OBJ_P(zv) Z_OBJ_P(zv)
+
+    #define php_amqp_declare_typed_property(class_entry, name, visibility, type, nullable)                             \
+        php_amqp_declare_typed_property_ex(                                                                            \
+            class_entry,                                                                                               \
+            name,                                                                                                      \
+            visibility,                                                                                                \
+            ,                                                                                                          \
+            (zend_type) ZEND_TYPE_INIT_CODE(type, nullable, 0)                                                         \
+        )
+    #define php_amqp_declare_typed_property_obj(class_entry, name, visibility, class_name, nullable)                   \
+        php_amqp_declare_typed_property_ex(                                                                            \
+            class_entry,                                                                                               \
+            name,                                                                                                      \
+            visibility,                                                                                                \
+            zend_string *_class_name = zend_string_init(ZEND_STRL(#class_name), 1),                                    \
+            (zend_type) ZEND_TYPE_INIT_CLASS(_class_name, nullable, 0)                                                 \
+        )
+
 #else
     #define PHP_AMQP_COMPAT_OBJ_P(zv) (zv)
+
+    #define ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, type_hint, allow_null, default_value)             \
+        ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
+
+    #define php_amqp_declare_typed_property(class_entry, name, visibility, type, nullable)                             \
+        php_amqp_declare_typed_property_ex(class_entry, name, visibility, , ZEND_TYPE_ENCODE(type, nullable))
+    #define php_amqp_declare_typed_property_obj(class_entry, name, visibility, class_name, nullable)                   \
+        php_amqp_declare_typed_property_ex(                                                                            \
+            class_entry,                                                                                               \
+            name,                                                                                                      \
+            visibility,                                                                                                \
+            zend_string *_class_name = zend_string_init(ZEND_STRL(#class_name), 1),                                    \
+            ZEND_TYPE_ENCODE_CLASS(_class_name, nullable)                                                              \
+        )
 #endif
 #if PHP_VERSION_ID < 80200
     #define zend_ini_parse_quantity_warn(v, name) (zend_atol(ZSTR_VAL(v), ZSTR_LEN(v)))
 #endif
 
-#if PHP_VERSION_ID < 80000
-    #define ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, type_hint, allow_null, default_value)             \
-        ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
-#endif
 
 #include "amqp_connection_resource.h"
 

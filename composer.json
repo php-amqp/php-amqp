@@ -18,8 +18,11 @@
     }
   ],
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.4",
     "ext-dom": "*",
     "ext-simplexml": "*"
+  },
+  "require-dev": {
+    "ext-json": "*"
   }
 }

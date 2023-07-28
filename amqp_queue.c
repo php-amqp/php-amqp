@@ -175,7 +175,7 @@ static PHP_METHOD(amqp_queue_class, getFlags)
         flags |= AMQP_EXCLUSIVE;
     }
 
-    if (PHP_AMQP_READ_THIS_PROP_BOOL("auto_delete")) {
+    if (PHP_AMQP_READ_THIS_PROP_BOOL("autoDelete")) {
         flags |= AMQP_AUTODELETE;
     }
 
@@ -219,7 +219,7 @@ static PHP_METHOD(amqp_queue_class, setFlags)
     zend_update_property_bool(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("auto_delete"),
+        ZEND_STRL("autoDelete"),
         IS_AUTODELETE(flags) TSRMLS_CC
     );
 }
@@ -356,7 +356,7 @@ static PHP_METHOD(amqp_queue_class, declareQueue)
         PHP_AMQP_READ_THIS_PROP_BOOL("passive"),
         PHP_AMQP_READ_THIS_PROP_BOOL("durable"),
         PHP_AMQP_READ_THIS_PROP_BOOL("exclusive"),
-        PHP_AMQP_READ_THIS_PROP_BOOL("auto_delete"),
+        PHP_AMQP_READ_THIS_PROP_BOOL("autoDelete"),
         *arguments
     );
 
@@ -658,7 +658,7 @@ static PHP_METHOD(amqp_queue_class, consume)
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("consumer_tag"),
+            ZEND_STRL("consumerTag"),
             (const char *) r->consumer_tag.bytes,
             (size_t) r->consumer_tag.len TSRMLS_CC
         );
@@ -675,7 +675,7 @@ static PHP_METHOD(amqp_queue_class, consume)
     double read_timeout = PHP_AMQP_READ_OBJ_PROP_DOUBLE(
         amqp_connection_class_entry,
         PHP_AMQP_READ_THIS_PROP("connection"),
-        "read_timeout"
+        "readTimeout"
     );
 
     if (read_timeout > 0) {
@@ -1051,7 +1051,7 @@ static PHP_METHOD(amqp_queue_class, purge)
 /* }}} */
 
 
-/* {{{ proto int AMQPQueue::cancel([string consumer_tag]);
+/* {{{ proto int AMQPQueue::cancel([string consumerTag]);
 cancel queue to consumer
 */
 static PHP_METHOD(amqp_queue_class, cancel)
@@ -1076,7 +1076,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
         &rv TSRMLS_CC
     );
     zend_bool previous_consumer_tag_exists =
-        (zend_bool) (IS_STRING == Z_TYPE_P(PHP_AMQP_READ_THIS_PROP("consumer_tag")));
+        (zend_bool) (IS_STRING == Z_TYPE_P(PHP_AMQP_READ_THIS_PROP("consumerTag")));
 
     if (IS_ARRAY != Z_TYPE_P(consumers)) {
         zend_throw_exception(
@@ -1090,7 +1090,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(channel_zv);
     PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not cancel queue.");
 
-    if (!consumer_tag_len && (!previous_consumer_tag_exists || !PHP_AMQP_READ_THIS_PROP_STRLEN("consumer_tag"))) {
+    if (!consumer_tag_len && (!previous_consumer_tag_exists || !PHP_AMQP_READ_THIS_PROP_STRLEN("consumerTag"))) {
         return;
     }
 
@@ -1098,7 +1098,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
         channel_resource->connection_resource->connection_state,
         channel_resource->channel_id,
         consumer_tag_len > 0 ? amqp_cstring_bytes(consumer_tag)
-                             : amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("consumer_tag"))
+                             : amqp_cstring_bytes(PHP_AMQP_READ_THIS_PROP_STR("consumerTag"))
     );
 
     if (!r) {
@@ -1122,8 +1122,8 @@ static PHP_METHOD(amqp_queue_class, cancel)
     }
 
     if (!consumer_tag_len ||
-        (previous_consumer_tag_exists && strcmp(consumer_tag, PHP_AMQP_READ_THIS_PROP_STR("consumer_tag")) == 0)) {
-        zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("consumer_tag") TSRMLS_CC);
+        (previous_consumer_tag_exists && strcmp(consumer_tag, PHP_AMQP_READ_THIS_PROP_STR("consumerTag")) == 0)) {
+        zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("consumerTag") TSRMLS_CC);
     }
 
     zend_hash_str_del_ind(Z_ARRVAL_P(consumers), r->consumer_tag.bytes, r->consumer_tag.len);
@@ -1277,7 +1277,7 @@ static PHP_METHOD(amqp_queue_class, getConsumerTag)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("consumer_tag");
+    PHP_AMQP_RETURN_THIS_PROP("consumerTag");
 }
 
 /* }}} */
@@ -1428,13 +1428,13 @@ PHP_MINIT_FUNCTION(amqp_queue)
     zend_declare_property_null(this_ce, ZEND_STRL("channel"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
     zend_declare_property_stringl(this_ce, ZEND_STRL("name"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("consumer_tag"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_null(this_ce, ZEND_STRL("consumerTag"), ZEND_ACC_PRIVATE TSRMLS_CC);
 
     zend_declare_property_bool(this_ce, ZEND_STRL("passive"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_bool(this_ce, ZEND_STRL("durable"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
     zend_declare_property_bool(this_ce, ZEND_STRL("exclusive"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
     /* By default, the auto_delete flag should be set */
-    zend_declare_property_bool(this_ce, ZEND_STRL("auto_delete"), 1, ZEND_ACC_PRIVATE TSRMLS_CC);
+    zend_declare_property_bool(this_ce, ZEND_STRL("autoDelete"), 1, ZEND_ACC_PRIVATE TSRMLS_CC);
 
 
     zend_declare_property_null(this_ce, ZEND_STRL("arguments"), ZEND_ACC_PRIVATE TSRMLS_CC);

@@ -5,12 +5,12 @@
  */
 class AMQPChannel
 {
-    private $connection;
-    private $prefetch_count;
-    private $prefetch_size;
-    private $global_prefetch_count;
-    private $global_prefetch_size;
-    private $consumers;
+    private AMQPConnection $connection;
+    private ?int $prefetchCount = null;
+    private ?int $prefetchSize;
+    private ?int $globalPrefetchCount;
+    private ?int $globalPrefetchSize;
+    private array $consumers = [];
 
     /**
      * Commit a pending transaction.
