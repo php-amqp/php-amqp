@@ -321,6 +321,8 @@ function setStability(string $nextVersion): void
         : 'stable';
     $stability = $stability === 'dev' ? 'devel' : $stability;
     $stability = strpos($stability, 'RC') === 0 ? 'beta' : $stability;
+    $stability = strpos($stability, 'alpha') === 0 ? 'alpha' : $stability;
+    $stability = strpos($stability, 'beta') === 0 ? 'beta' : $stability;
 
     $xml->stability->release = $stability;
     $xml->stability->api = $stability;
