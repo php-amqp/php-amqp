@@ -3,7 +3,7 @@ name: Test
 on:
     push:
     pull_request:
-        types: [opened, synchronize, edited, reopened]
+        types: [opened, synchronize, reopened]
 
 env:
     TEST_TIMEOUT: 120
