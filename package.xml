@@ -23,41 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2023-07-29</date>
-    <time>08:51:15</time>
+    <time>09:34:19</time>
     <version>
-        <release>2.0.0alpha1</release>
-        <api>2.0.0alpha1</api>
+        <release>2.0.0dev</release>
+        <api>2.0.0dev</api>
     </version>
     <stability>
-        <release>alpha</release>
-        <api>alpha</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- The big fat API renovation (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/437)
- - Handle alpha/beta stability correctly (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/5546436)
- - Expose better version information (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/438)
- - Auto-format the codebase (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/436)
- - More consistent return types for AMQPEnvelope (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/435)
- - Update stubs (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
- - Fix parameter error handling in AMQPConnection and AMQPChannel (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/434)
- - Increase credentials and identifier limits (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/433)
- - Reliably clear consumer tag on AMQPQueue::cancel (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/432)
- - Ignore failures on experimental builds (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/25)
- - Update branch name (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/7)
- - Bump shivammathur/setup-php from 2.25.3 to 2.25.4 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/431)
- - PHP 8.2 refactorings (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/430)
- - Fix php version check for static building (Misha Kulakovsky <m@klkvsk.ru>) (https://github.com/php-amqp/php-amqp/issues/425)
- - Fix stub exception class (closes #427) (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
- - Document custom connection name in stubs (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/700000)
- - Expose Delivery Mode through constants (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/420)
- - Fix deprecation issue in PHP 8.1 for $consumerTag argument to AMQPQueue::consume() method (Liviu-Ionut Iosif) (https://github.com/php-amqp/php-amqp/issues/421)
- - Fix: Deprecated: Creation of dynamic property (8.2) (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/418)
- - Fix AMQPEnvelope::getDeliveryTag() return type (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/415)
- - Fix ack/nack/reject param documentation (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/414)
- - Mention time units in all timeout-related methods (Andrii Dembitskyi <andrew.dembitskiy@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/410)
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v1.11.0...v2.0.0alpha1]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha1...latest
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -310,6 +290,44 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...v2.0.0alpha1]]></notes>
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2023-07-29</date>
+            <time>08:51:15</time>
+            <version>
+                <release>2.0.0alpha1</release>
+                <api>2.0.0alpha1</api>
+            </version>
+            <stability>
+                <release>alpha</release>
+                <api>alpha</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- The big fat API renovation (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/437)
+ - Handle alpha/beta stability correctly (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/5546436)
+ - Expose better version information (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/438)
+ - Auto-format the codebase (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/436)
+ - More consistent return types for AMQPEnvelope (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/435)
+ - Update stubs (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Fix parameter error handling in AMQPConnection and AMQPChannel (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/434)
+ - Increase credentials and identifier limits (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/433)
+ - Reliably clear consumer tag on AMQPQueue::cancel (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/432)
+ - Ignore failures on experimental builds (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/25)
+ - Update branch name (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/7)
+ - Bump shivammathur/setup-php from 2.25.3 to 2.25.4 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/431)
+ - PHP 8.2 refactorings (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/430)
+ - Fix php version check for static building (Misha Kulakovsky <m@klkvsk.ru>) (https://github.com/php-amqp/php-amqp/issues/425)
+ - Fix stub exception class (closes #427) (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Document custom connection name in stubs (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/700000)
+ - Expose Delivery Mode through constants (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/420)
+ - Fix deprecation issue in PHP 8.1 for $consumerTag argument to AMQPQueue::consume() method (Liviu-Ionut Iosif) (https://github.com/php-amqp/php-amqp/issues/421)
+ - Fix: Deprecated: Creation of dynamic property (8.2) (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/418)
+ - Fix AMQPEnvelope::getDeliveryTag() return type (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/415)
+ - Fix ack/nack/reject param documentation (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/414)
+ - Mention time units in all timeout-related methods (Andrii Dembitskyi <andrew.dembitskiy@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/410)
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v1.11.0...v2.0.0alpha1]]></notes>
+        </release>
         <release>
             <date>2021-12-01</date>
             <time>11:13:57</time>
