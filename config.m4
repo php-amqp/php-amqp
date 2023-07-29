@@ -44,8 +44,8 @@ if test "$PHP_AMQP" != "no"; then
 			AC_MSG_ERROR([librabbitmq not found])
 		fi
 
-		PHP_AMQP_VERSION=`$PKG_CONFIG librabbitmq --modversion`
-		AC_MSG_RESULT([found version $PHP_AMQP_VERSION])
+		LIBRABBITMQ_VERSION=`$PKG_CONFIG librabbitmq --modversion`
+		AC_MSG_RESULT([found version $LIBRABBITMQ_VERSION])
 
 		if ! $PKG_CONFIG librabbitmq --atleast-version 0.10.0 ; then
 			AC_MSG_ERROR([librabbitmq must be version 0.10.0 or greater])

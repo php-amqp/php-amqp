@@ -480,7 +480,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
     struct timeval *tv_ptr = &tv;
 
     char *std_datetime;
-    amqp_table_entry_t client_properties_entries[5];
+    amqp_table_entry_t client_properties_entries[4];
     amqp_table_t client_properties_table;
 
     amqp_table_entry_t custom_properties_entries[2];
@@ -580,17 +580,13 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
     client_properties_entries[1].value.kind = AMQP_FIELD_KIND_UTF8;
     client_properties_entries[1].value.value.bytes = amqp_cstring_bytes(PHP_AMQP_VERSION);
 
-    client_properties_entries[2].key = amqp_cstring_bytes("revision");
+    client_properties_entries[2].key = amqp_cstring_bytes("connection type");
     client_properties_entries[2].value.kind = AMQP_FIELD_KIND_UTF8;
-    client_properties_entries[2].value.value.bytes = amqp_cstring_bytes(PHP_AMQP_REVISION);
+    client_properties_entries[2].value.value.bytes = amqp_cstring_bytes(persistent ? "persistent" : "transient");
 
-    client_properties_entries[3].key = amqp_cstring_bytes("connection type");
+    client_properties_entries[3].key = amqp_cstring_bytes("connection started");
     client_properties_entries[3].value.kind = AMQP_FIELD_KIND_UTF8;
-    client_properties_entries[3].value.value.bytes = amqp_cstring_bytes(persistent ? "persistent" : "transient");
-
-    client_properties_entries[4].key = amqp_cstring_bytes("connection started");
-    client_properties_entries[4].value.kind = AMQP_FIELD_KIND_UTF8;
-    client_properties_entries[4].value.value.bytes = amqp_cstring_bytes(std_datetime);
+    client_properties_entries[3].value.value.bytes = amqp_cstring_bytes(std_datetime);
 
     client_properties_table.entries = client_properties_entries;
     client_properties_table.num_entries = sizeof(client_properties_entries) / sizeof(amqp_table_entry_t);
