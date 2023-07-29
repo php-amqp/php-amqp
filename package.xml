@@ -22,22 +22,42 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2021-12-01</date>
-    <time>11:14:28</time>
+    <date>2023-07-29</date>
+    <time>08:51:15</time>
     <version>
-        <release>2.0.0dev</release>
-        <api>2.0.0dev</api>
+        <release>2.0.0alpha1</release>
+        <api>2.0.0alpha1</api>
     </version>
     <stability>
-        <release>devel</release>
-        <api>devel</api>
+        <release>alpha</release>
+        <api>alpha</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[
+    <notes><![CDATA[- The big fat API renovation (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/437)
+ - Handle alpha/beta stability correctly (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/5546436)
+ - Expose better version information (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/438)
+ - Auto-format the codebase (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/436)
+ - More consistent return types for AMQPEnvelope (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/435)
+ - Update stubs (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Fix parameter error handling in AMQPConnection and AMQPChannel (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/434)
+ - Increase credentials and identifier limits (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/433)
+ - Reliably clear consumer tag on AMQPQueue::cancel (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/432)
+ - Ignore failures on experimental builds (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/25)
+ - Update branch name (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/7)
+ - Bump shivammathur/setup-php from 2.25.3 to 2.25.4 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/431)
+ - PHP 8.2 refactorings (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/430)
+ - Fix php version check for static building (Misha Kulakovsky <m@klkvsk.ru>) (https://github.com/php-amqp/php-amqp/issues/425)
+ - Fix stub exception class (closes #427) (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Document custom connection name in stubs (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/700000)
+ - Expose Delivery Mode through constants (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/420)
+ - Fix deprecation issue in PHP 8.1 for $consumerTag argument to AMQPQueue::consume() method (Liviu-Ionut Iosif) (https://github.com/php-amqp/php-amqp/issues/421)
+ - Fix: Deprecated: Creation of dynamic property (8.2) (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/418)
+ - Fix AMQPEnvelope::getDeliveryTag() return type (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/415)
+ - Fix ack/nack/reject param documentation (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/414)
+ - Mention time units in all timeout-related methods (Andrii Dembitskyi <andrew.dembitskiy@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/410)
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
-]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v1.11.0...v2.0.0alpha1]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -72,9 +92,11 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="amqp_type.c" role="src"/>
             <file name="amqp_type.h" role="src"/>
             <file name="php_amqp.h" role="src"/>
+            <file name="php_amqp_version.h" role="src"/>
             <file name="tests/003-channel-consumers.phpt" role="test"/>
             <file name="tests/004-queue-consume-nested.phpt" role="test"/>
             <file name="tests/004-queue-consume-orphaned.phpt" role="test"/>
+            <file name="tests/amqp_version.phpt" role="test"/>
             <file name="tests/amqpbasicproperties.phpt" role="test"/>
             <file name="tests/amqpchannel_basicRecover.phpt" role="test"/>
             <file name="tests/amqpchannel_close.phpt" role="test"/>
@@ -94,6 +116,7 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="tests/amqpchannel_set_prefetch_count.phpt" role="test"/>
             <file name="tests/amqpchannel_set_prefetch_size.phpt" role="test"/>
             <file name="tests/amqpchannel_slots_usage.phpt" role="test"/>
+            <file name="tests/amqpchannel_validation.phpt" role="test"/>
             <file name="tests/amqpchannel_var_dump.phpt" role="test"/>
             <file name="tests/amqpconnection_connect_login_failure.phpt" role="test"/>
             <file name="tests/amqpconnection_connection_getters.phpt" role="test"/>
@@ -114,6 +137,7 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="tests/amqpconnection_heartbeat.phpt" role="test"/>
             <file name="tests/amqpconnection_heartbeat_with_consumer.phpt" role="test"/>
             <file name="tests/amqpconnection_heartbeat_with_persistent.phpt" role="test"/>
+            <file name="tests/amqpconnection_nullable_setters.phpt" role="test"/>
             <file name="tests/amqpconnection_persistent_construct_basic.phpt" role="test"/>
             <file name="tests/amqpconnection_persistent_in_use.phpt" role="test"/>
             <file name="tests/amqpconnection_persistent_reusable.phpt" role="test"/>
@@ -147,6 +171,7 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="tests/amqpconnection_ssl.phpt" role="test"/>
             <file name="tests/amqpconnection_ssl_by_cert.phpt" role="test"/>
             <file name="tests/amqpconnection_toomanychannels.phpt" role="test"/>
+            <file name="tests/amqpconnection_validation.phpt" role="test"/>
             <file name="tests/amqpconnection_var_dump.phpt" role="test"/>
             <file name="tests/amqpdecimal.phpt" role="test"/>
             <file name="tests/amqpenvelope_construct.phpt" role="test"/>
@@ -169,13 +194,14 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="tests/amqpexchange_get_channel.phpt" role="test"/>
             <file name="tests/amqpexchange_get_connection.phpt" role="test"/>
             <file name="tests/amqpexchange_invalid_type.phpt" role="test"/>
+            <file name="tests/amqpexchange_name.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_basic.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_confirms.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_confirms_consume.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_empty_routing_key.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_mandatory.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_mandatory_consume.phpt" role="test"/>
-            <file name="tests/amqpexchange_publish_mandatory_multiple_channels_pitfal.phpt" role="test"/>
+            <file name="tests/amqpexchange_publish_mandatory_multiple_channels_pitfall.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_null_routing_key.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_with_decimal_header.phpt" role="test"/>
             <file name="tests/amqpexchange_publish_with_null.phpt" role="test"/>
@@ -189,6 +215,7 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="tests/amqpexchange_setArgument.phpt" role="test"/>
             <file name="tests/amqpexchange_set_flag.phpt" role="test"/>
             <file name="tests/amqpexchange_set_flags.phpt" role="test"/>
+            <file name="tests/amqpexchange_type.phpt" role="test"/>
             <file name="tests/amqpexchange_unbind.phpt" role="test"/>
             <file name="tests/amqpexchange_unbind_with_arguments.phpt" role="test"/>
             <file name="tests/amqpexchange_unbind_without_key.phpt" role="test"/>
@@ -230,10 +257,11 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="tests/amqpqueue_unbind_basic_headers_arguments.phpt" role="test"/>
             <file name="tests/amqpqueue_var_dump.phpt" role="test"/>
             <file name="tests/amqptimestamp.phpt" role="test"/>
-            <file name="tests/amqptimestamp_php8.phpt" role="test"/>
             <file name="tests/bug_17831.phpt" role="test"/>
             <file name="tests/bug_19707.phpt" role="test"/>
             <file name="tests/bug_19840.phpt" role="test"/>
+            <file name="tests/bug_351.phpt" role="test"/>
+            <file name="tests/bug_385.phpt" role="test"/>
             <file name="tests/bug_61533.phpt" role="test"/>
             <file name="tests/bug_62354.phpt" role="test"/>
             <file name="tests/bug_gh147.phpt" role="test"/>
@@ -246,6 +274,7 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="tests/bug_gh53.phpt" role="test"/>
             <file name="tests/bug_gh72-1.phpt" role="test"/>
             <file name="tests/bug_gh72-2.phpt" role="test"/>
+            <file name="tests/ini_validation_failure.phpt" role="test"/>
             <file name="tests/package-version.phpt" role="test"/>
             <file name="stubs/AMQP.php" role="doc"/>
             <file name="stubs/AMQPBasicProperties.php" role="doc"/>
