@@ -59,6 +59,7 @@ extern zend_module_entry amqp_module_entry;
     #include "TSRM.h"
 #endif
 
+#include "php_amqp_version.h"
 
 #if PHP_VERSION_ID >= 80000
     #define PHP_AMQP_COMPAT_OBJ_P(zv) Z_OBJ_P(zv)
@@ -430,14 +431,6 @@ ZEND_TSRMLS_CACHE_EXTERN();
     #else
         #define PHP_AMQP_G(v) (amqp_globals.v)
     #endif
-#endif
-
-#ifndef PHP_AMQP_VERSION
-    #define PHP_AMQP_VERSION "2.0.0dev"
-#endif
-
-#ifndef PHP_AMQP_REVISION
-    #define PHP_AMQP_REVISION "release"
 #endif
 
 int php_amqp_error(

@@ -26,7 +26,16 @@ const STABILITY_REGEX = '(?:alpha|beta|dev|RC)\d*';
 const MAJOR_MINOR_PATCH = '\d+\.\d+\.\d+';
 const VERSION_REGEX = MAJOR_MINOR_PATCH . '(?:' . STABILITY_REGEX . ')?';
 const VERSION_REGEX_DEV = MAJOR_MINOR_PATCH . 'dev';
-const HEADER_VERSION_FILE = BASE_DIR . '/php_amqp.h';
+const HEADER_VERSION_FILE = BASE_DIR . '/php_amqp_version.h';
+const HEADER_VERSION_TEMPLATE = <<<'EOS'
+#define PHP_AMQP_VERSION_MAJOR {major}
+#define PHP_AMQP_VERSION_MINOR {minor}
+#define PHP_AMQP_VERSION_PATCH {patch}
+#define PHP_AMQP_VERSION_EXTRA "{extra}"
+#define PHP_AMQP_VERSION "{major}.{minor}.{patch}{extra}"
+#define PHP_AMQP_VERSION_ID {id}
+
+EOS;
 const PACKAGE_XML = BASE_DIR . '/package.xml';
 const ISSUE_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/issues/%d';
 const COMMIT_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/issues/%d';
@@ -188,12 +197,29 @@ function getSourceVersion(): string
 
 function setSourceVersion(string $nextVersion): void
 {
+    [$major, $minor, $patchExtra] = explode('.', $nextVersion);
+    assert(preg_match('/^(?P<patch>\d+)(?P<extra>\w*)$/', $patchExtra, $matches) === 1);
+    $patch = $matches['patch'];
+    $extra = $matches['extra'];
+
+    if ($major > 0) {
+        $id = sprintf('%d%02d%02d', $major, $minor, $patch);
+    } else {
+        $id = sprintf('%02d%02d', $minor, $patch);
+    }
+    assert(strlen($id) === 5);
+
     file_put_contents(
         HEADER_VERSION_FILE,
-        preg_replace(
-            re(SOURCE_VERSION_REGEX),
-            '\1"' . $nextVersion . '"',
-            file_get_contents(HEADER_VERSION_FILE)
+        strtr(
+            HEADER_VERSION_TEMPLATE,
+            [
+                '{major}' => $major,
+                '{minor}' => $minor,
+                '{patch}' => $patch,
+                '{extra}' => $extra,
+                '{id}' => $id
+            ]
         )
     );
 }
@@ -258,7 +284,7 @@ function buildChangelog(string $nextTag, string $previousTag): string
 $changes
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/${previousTag}...${nextTag}
+https://github.com/php-amqp/php-amqp/compare/$previousTag...$nextTag
 
 EOT;
 
@@ -340,7 +366,7 @@ function gitCommit(int $step, string $nextVersion, string $message): void {
 function gitTag(int $step, string $nextVersion): void {
     $nextTag = versionToTag($nextVersion);
 
-    executeCommand("git tag ${nextTag}");
+    executeCommand("git tag $nextTag");
 
     printf("%d) Run \"git push origin %s\"\n", $step, $nextTag);
 }
