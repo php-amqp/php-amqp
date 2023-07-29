@@ -180,8 +180,18 @@ if (!extension_loaded('amqp')) {
     require_once __DIR__ . '/../stubs/AMQP.php';
 }
 
+const NON_DETERMINISTIC_CONSTANTS = [
+    'AMQP_OS_SOCKET_TIMEOUT_ERRNO',
+    'AMQP_EXTENSION_VERSION',
+    'AMQP_EXTENSION_VERSION_MAJOR',
+    'AMQP_EXTENSION_VERSION_MINOR',
+    'AMQP_EXTENSION_VERSION_PATCH',
+    'AMQP_EXTENSION_VERSION_EXTRA',
+    'AMQP_EXTENSION_VERSION_ID',
+];
+
 foreach (get_defined_constants() as $constant => $value) {
-    if ($constant === 'AMQP_OS_SOCKET_TIMEOUT_ERRNO') {
+    if (in_array($constant, NON_DETERMINISTIC_CONSTANTS, true)) {
         // Value differs across OS, so normalize
         $value = 0xDEADBEEF;
     }

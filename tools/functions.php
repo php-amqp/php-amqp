@@ -201,7 +201,12 @@ function setSourceVersion(string $nextVersion): void
     assert(preg_match('/^(?P<patch>\d+)(?P<extra>\w*)$/', $patchExtra, $matches) === 1);
     $patch = $matches['patch'];
     $extra = $matches['extra'];
-    $id = sprintf('%d%02d%02d', $major, $minor, $patch);
+
+    if ($major > 0) {
+        $id = sprintf('%d%02d%02d', $major, $minor, $patch);
+    } else {
+        $id = sprintf('%02d%02d', $minor, $patch);
+    }
     assert(strlen($id) === 5);
 
     file_put_contents(
