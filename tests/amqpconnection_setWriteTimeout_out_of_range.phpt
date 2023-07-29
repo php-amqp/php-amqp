@@ -15,4 +15,4 @@ try {
 ?>
 --EXPECT--
 AMQPConnectionException
-Parameter 'write_timeout' must be greater than or equal to zero.
+Parameter 'writeTimeout' must be greater than or equal to zero.

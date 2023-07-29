@@ -30,7 +30,7 @@
 /* True global resources - no need for thread safety here */
 extern zend_class_entry *amqp_exception_class_entry, *amqp_connection_exception_class_entry,
     *amqp_channel_exception_class_entry, *amqp_exchange_exception_class_entry, *amqp_queue_exception_class_entry,
-    *amqp_envelope_exception_class_entry, *amqp_value_exception_class_entry;
+    *amqp_value_exception_class_entry;
 
 
 typedef struct _amqp_connection_resource amqp_connection_resource;
@@ -39,11 +39,6 @@ typedef struct _amqp_channel_object amqp_channel_object;
 typedef struct _amqp_channel_resource amqp_channel_resource;
 typedef struct _amqp_channel_callbacks amqp_channel_callbacks;
 typedef struct _amqp_callback_bucket amqp_callback_bucket;
-
-#if PHP_VERSION_ID < 50600
-    // should never get her, but just in case
-    #error PHP >= 5.6 required
-#endif
 
 #if HAVE_LIBRABBITMQ_NEW_LAYOUT
     #include <rabbitmq-c/amqp.h>
@@ -64,22 +59,71 @@ extern zend_module_entry amqp_module_entry;
     #include "TSRM.h"
 #endif
 
-/* Small change to let it build after a major internal change for php8.0
- * More info:
- * https://github.com/php/php-src/blob/php-8.0.0alpha3/UPGRADING.INTERNALS#L47
- */
-#if PHP_MAJOR_VERSION >= 8
-    #define TSRMLS_DC
-    #define TSRMLS_D
-    #define TSRMLS_CC
-    #define TSRMLS_C
+
+#if PHP_VERSION_ID >= 80000
     #define PHP_AMQP_COMPAT_OBJ_P(zv) Z_OBJ_P(zv)
+    #define PHP_AMQP_DECLARE_PROPERTY_TYPE(type, nullable) (zend_type) ZEND_TYPE_INIT_CODE(type, nullable, 0)
+    #define PHP_AMQP_DECLARE_PROPERTY_OBJ_TYPE(class_name, nullable)                                                   \
+        (zend_type) ZEND_TYPE_INIT_CLASS(class_name, nullable, 0)
 #else
     #define PHP_AMQP_COMPAT_OBJ_P(zv) (zv)
+    #define ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, type_hint, allow_null, default_value)             \
+        ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
+    #define PHP_AMQP_DECLARE_PROPERTY_TYPE(type, nullable) ZEND_TYPE_ENCODE(type, nullable)
+    #define PHP_AMQP_DECLARE_PROPERTY_OBJ_TYPE(class_name, nullable) ZEND_TYPE_ENCODE_CLASS(class_name, nullable)
 #endif
 #if PHP_VERSION_ID < 80200
     #define zend_ini_parse_quantity_warn(v, name) (zend_atol(ZSTR_VAL(v), ZSTR_LEN(v)))
 #endif
+
+#define PHP_AMQP_NULLABLE_DEFAULT_INIT(val, nullable)                                                                  \
+    zval val;                                                                                                          \
+    if (nullable) {                                                                                                    \
+        ZVAL_NULL(&val);                                                                                               \
+    } else {                                                                                                           \
+        ZVAL_UNDEF(&val);                                                                                              \
+    }
+#define PHP_AMQP_DECLARE_TYPED_PROPERTY_ZVAL(class_entry, name, flags, type_info, val)                                 \
+    {                                                                                                                  \
+        zend_string *__name = zend_string_init(ZEND_STRL(name), 1);                                                    \
+        zend_declare_typed_property(class_entry, __name, &(val), flags, NULL, type_info);                              \
+        zend_string_release(__name);                                                                                   \
+    }
+#define PHP_AMQP_DECLARE_TYPED_PROPERTY(class_entry, name, flags, type, nullable)                                      \
+    {                                                                                                                  \
+        PHP_AMQP_NULLABLE_DEFAULT_INIT(__val, nullable);                                                               \
+        PHP_AMQP_DECLARE_TYPED_PROPERTY_ZVAL(                                                                          \
+            class_entry,                                                                                               \
+            name,                                                                                                      \
+            flags,                                                                                                     \
+            PHP_AMQP_DECLARE_PROPERTY_TYPE(type, nullable),                                                            \
+            __val                                                                                                      \
+        )                                                                                                              \
+    }
+#define PHP_AMQP_DECLARE_TYPED_PROPERTY_WITH_DEFAULT(class_entry, name, flags, type, nullable, init)                   \
+    {                                                                                                                  \
+        zval __val;                                                                                                    \
+        init(&__val);                                                                                                  \
+        PHP_AMQP_DECLARE_TYPED_PROPERTY_ZVAL(                                                                          \
+            class_entry,                                                                                               \
+            name,                                                                                                      \
+            flags,                                                                                                     \
+            PHP_AMQP_DECLARE_PROPERTY_TYPE(type, nullable),                                                            \
+            __val                                                                                                      \
+        )                                                                                                              \
+    }
+#define PHP_AMQP_DECLARE_TYPED_PROPERTY_OBJ(class_entry, name, flags, class_name, nullable)                            \
+    {                                                                                                                  \
+        PHP_AMQP_NULLABLE_DEFAULT_INIT(__val, nullable);                                                               \
+        zend_string *__class_name = zend_string_init(ZEND_STRL(#class_name), 1);                                       \
+        PHP_AMQP_DECLARE_TYPED_PROPERTY_ZVAL(                                                                          \
+            class_entry,                                                                                               \
+            name,                                                                                                      \
+            flags,                                                                                                     \
+            PHP_AMQP_DECLARE_PROPERTY_OBJ_TYPE(__class_name, nullable),                                                \
+            __val                                                                                                      \
+        )                                                                                                              \
+    }
 
 #include "amqp_connection_resource.h"
 
@@ -176,7 +220,7 @@ struct _amqp_connection_object {
 #define DEFAULT_PREFETCH_SIZE "0"
 #define DEFAULT_GLOBAL_PREFETCH_COUNT "0"
 #define DEFAULT_GLOBAL_PREFETCH_SIZE "0"
-#define DEFAULT_SASL_METHOD "0"
+#define DEFAULT_SASL_METHOD AMQP_SASL_METHOD_PLAIN
 
 /* Usually, default is 0 which means 65535, but underlying rabbitmq-c library pool allocates minimal pool for each channel,
  * so it takes a lot of memory to keep all that channels. Even after channel closing that buffer still keep memory allocation.
@@ -224,10 +268,6 @@ struct _amqp_connection_object {
 #define IS_EXCLUSIVE(bitmask) (AMQP_EXCLUSIVE & (bitmask)) ? 1 : 0
 #define IS_AUTODELETE(bitmask) (AMQP_AUTODELETE & (bitmask)) ? 1 : 0
 #define IS_INTERNAL(bitmask) (AMQP_INTERNAL & (bitmask)) ? 1 : 0
-#define IS_NOWAIT(bitmask)                                                                                             \
-    (AMQP_NOWAIT & (bitmask))                                                                                          \
-        ? 1                                                                                                            \
-        : 0 /* NOTE: always 0 in rabbitmq-c internals, so don't use it unless you are clearly understand aftermath*/
 
 #define PHP_AMQP_NOPARAMS()                                                                                            \
     if (zend_parse_parameters_none() == FAILURE) {                                                                     \
@@ -235,17 +275,17 @@ struct _amqp_connection_object {
     }
 
 #define PHP_AMQP_RETURN_THIS_PROP(prop_name)                                                                           \
-    zval *_zv = zend_read_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(prop_name), 0, &rv TSRMLS_CC); \
+    zval *_zv = zend_read_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(prop_name), 0, &rv);           \
     RETURN_ZVAL(_zv, 1, 0);
 
 #define PHP_AMQP_READ_OBJ_PROP(cls, obj, name)                                                                         \
-    zend_read_property((cls), PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL(name), 0, &rv TSRMLS_CC)
+    zend_read_property((cls), PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL(name), 0, &rv)
 #define PHP_AMQP_READ_OBJ_PROP_DOUBLE(cls, obj, name) Z_DVAL_P(PHP_AMQP_READ_OBJ_PROP((cls), (obj), (name)))
 
 #define PHP_AMQP_READ_THIS_PROP_CE(name, ce)                                                                           \
-    zend_read_property((ce), PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), 0, &rv TSRMLS_CC)
+    zend_read_property((ce), PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), 0, &rv)
 #define PHP_AMQP_READ_THIS_PROP(name)                                                                                  \
-    zend_read_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), 0, &rv TSRMLS_CC)
+    zend_read_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), 0, &rv)
 #define PHP_AMQP_READ_THIS_PROP_BOOL(name) Z_TYPE_P(PHP_AMQP_READ_THIS_PROP(name)) == IS_TRUE
 #define PHP_AMQP_READ_THIS_PROP_STR(name) Z_STRVAL_P(PHP_AMQP_READ_THIS_PROP(name))
 #define PHP_AMQP_READ_THIS_PROP_STRLEN(name)                                                                           \
@@ -277,7 +317,7 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
 #define PHP_AMQP_VERIFY_CONNECTION_ERROR(error, reason)                                                                \
     char verify_connection_error_tmp[255];                                                                             \
     snprintf(verify_connection_error_tmp, 255, "%s %s", error, reason);                                                \
-    zend_throw_exception(amqp_connection_exception_class_entry, verify_connection_error_tmp, 0 TSRMLS_CC);             \
+    zend_throw_exception(amqp_connection_exception_class_entry, verify_connection_error_tmp, 0);                       \
     return;
 
 #define PHP_AMQP_VERIFY_CONNECTION(connection, error)                                                                  \
@@ -291,7 +331,7 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
 #define PHP_AMQP_VERIFY_CHANNEL_ERROR(error, reason)                                                                   \
     char verify_channel_error_tmp[255];                                                                                \
     snprintf(verify_channel_error_tmp, 255, "%s %s", error, reason);                                                   \
-    zend_throw_exception(amqp_channel_exception_class_entry, verify_channel_error_tmp, 0 TSRMLS_CC);                   \
+    zend_throw_exception(amqp_channel_exception_class_entry, verify_channel_error_tmp, 0);                             \
     return;
 
 #define PHP_AMQP_VERIFY_CHANNEL_RESOURCE(resource, error)                                                              \
@@ -321,12 +361,8 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
 
 #define PHP_AMQP_MAYBE_ERROR(res, channel_resource)                                                                    \
     ((AMQP_RESPONSE_NORMAL != (res).reply_type) &&                                                                     \
-     PHP_AMQP_RESOURCE_RESPONSE_OK != php_amqp_error(                                                                  \
-                                          res,                                                                         \
-                                          &PHP_AMQP_G(error_message),                                                  \
-                                          (channel_resource)->connection_resource,                                     \
-                                          (channel_resource) TSRMLS_CC                                                 \
-                                      ))
+     PHP_AMQP_RESOURCE_RESPONSE_OK !=                                                                                  \
+         php_amqp_error(res, &PHP_AMQP_G(error_message), (channel_resource)->connection_resource, (channel_resource)))
 
 #define PHP_AMQP_MAYBE_ERROR_RECOVERABLE(res, channel_resource)                                                        \
     ((AMQP_RESPONSE_NORMAL != (res).reply_type) &&                                                                     \
@@ -335,7 +371,7 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
                                           &PHP_AMQP_G(error_message),                                                  \
                                           (channel_resource)->connection_resource,                                     \
                                           (channel_resource),                                                          \
-                                          0 TSRMLS_CC                                                                  \
+                                          0                                                                            \
                                       ))
 
 #define PHP_AMQP_IS_ERROR_RECOVERABLE(res, channel_resource, channel_object)                                           \
@@ -345,7 +381,7 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
                &PHP_AMQP_G(error_message),                                                                             \
                (channel_resource)->connection_resource,                                                                \
                (amqp_channel_t) (channel_resource ? (channel_resource)->channel_id : 0),                               \
-               (channel_object) TSRMLS_CC                                                                              \
+               (channel_object)                                                                                        \
            )))
 
 
@@ -397,7 +433,7 @@ ZEND_TSRMLS_CACHE_EXTERN();
 #endif
 
 #ifndef PHP_AMQP_VERSION
-    #define PHP_AMQP_VERSION "1.12.0dev"
+    #define PHP_AMQP_VERSION "2.0.0dev"
 #endif
 
 #ifndef PHP_AMQP_REVISION
@@ -408,14 +444,14 @@ int php_amqp_error(
     amqp_rpc_reply_t reply,
     char **message,
     amqp_connection_resource *connection_resource,
-    amqp_channel_resource *channel_resource TSRMLS_DC
+    amqp_channel_resource *channel_resource
 );
 int php_amqp_error_advanced(
     amqp_rpc_reply_t reply,
     char **message,
     amqp_connection_resource *connection_resource,
     amqp_channel_resource *channel_resource,
-    int fail_on_errors TSRMLS_DC
+    int fail_on_errors
 );
 
 /**
@@ -425,9 +461,9 @@ void php_amqp_zend_throw_exception(
     amqp_rpc_reply_t reply,
     zend_class_entry *exception_ce,
     const char *message,
-    zend_long code TSRMLS_DC
+    zend_long code
 );
-void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entry *exception_ce TSRMLS_DC);
+void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entry *exception_ce);
 void php_amqp_maybe_release_buffers_on_channel(
     amqp_connection_resource *connection_resource,
     amqp_channel_resource *channel_resource

@@ -4,7 +4,7 @@ if (PHP_AMQP != "no") {
 	if (CHECK_HEADER_ADD_INCLUDE("amqp.h", "CFLAGS_AMQP", PHP_PHP_BUILD + "\\include;" + PHP_PHP_BUILD + "\\include\\librabbitmq;" + PHP_AMQP) &&
 		CHECK_LIB("rabbitmq.4.lib", "amqp", PHP_PHP_BUILD + "\\lib;" + PHP_AMQP)) {
 //		ADD_FLAG("CFLAGS_AMQP", "/D HAVE_AMQP_GETSOCKOPT");
-		EXTENSION('amqp', 'amqp.c amqp_type.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c amqp_timestamp.c amqp_decimal.c');
+		EXTENSION('amqp', 'amqp.c amqp_envelope_exception.c amqp_type.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c amqp_timestamp.c amqp_decimal.c');
 		AC_DEFINE('HAVE_AMQP', 1);
 	} else {
 		WARNING("amqp not enabled; libraries and headers not found");

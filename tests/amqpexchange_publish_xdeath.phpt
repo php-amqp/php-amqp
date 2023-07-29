@@ -76,7 +76,7 @@ function assert_xdeath(AMQPEnvelope $envelope, $exchangeName, $queueName) {
         return 'unexpected-reason: ' . json_encode($header);
     }
 
-    if (!isset($header[0]['time']) || !$header[0]['time'] instanceof AMQPTimestamp) {
+    if (!isset($header[0]['time']) || !$header[0]['time'] instanceof AMQPTimestamp || $header[0]['time']->getTimestamp() < 1690465578) {
         return 'unexpected-time: ' . json_encode($header);
     }
 

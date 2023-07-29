@@ -22,6 +22,6 @@
 */
 extern zend_class_entry *amqp_channel_class_entry;
 
-void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool check_errors TSRMLS_DC);
+void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool check_errors);
 
 PHP_MINIT_FUNCTION(amqp_channel);

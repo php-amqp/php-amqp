@@ -47,7 +47,7 @@ try {
 
 } catch (AMQPEnvelopeException $e) {
     echo  get_class($e), ': ', $e->getMessage(), ':', PHP_EOL, PHP_EOL;
-    var_dump($e->envelope);
+    var_dump($e->getEnvelope());
 }
 
 ?>
@@ -55,45 +55,45 @@ try {
 AMQPEnvelopeException: Orphaned envelope:
 
 object(AMQPEnvelope)#6 (20) {
-  ["content_type":"AMQPBasicProperties":private]=>
+  ["contentType":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
-  ["content_encoding":"AMQPBasicProperties":private]=>
-  string(0) ""
+  ["contentEncoding":"AMQPBasicProperties":private]=>
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(0) {
   }
-  ["delivery_mode":"AMQPBasicProperties":private]=>
+  ["deliveryMode":"AMQPBasicProperties":private]=>
   int(1)
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
-  ["correlation_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["reply_to":"AMQPBasicProperties":private]=>
-  string(0) ""
+  ["correlationId":"AMQPBasicProperties":private]=>
+  NULL
+  ["replyTo":"AMQPBasicProperties":private]=>
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["message_id":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
+  ["messageId":"AMQPBasicProperties":private]=>
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["user_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["app_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["cluster_id":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
+  ["userId":"AMQPBasicProperties":private]=>
+  NULL
+  ["appId":"AMQPBasicProperties":private]=>
+  NULL
+  ["clusterId":"AMQPBasicProperties":private]=>
+  NULL
   ["body":"AMQPEnvelope":private]=>
   string(13) "test orphaned"
-  ["consumer_tag":"AMQPEnvelope":private]=>
+  ["consumerTag":"AMQPEnvelope":private]=>
   string(31) "amq.ctag-%s"
-  ["delivery_tag":"AMQPEnvelope":private]=>
+  ["deliveryTag":"AMQPEnvelope":private]=>
   int(2)
-  ["is_redelivery":"AMQPEnvelope":private]=>
+  ["isRedelivery":"AMQPEnvelope":private]=>
   bool(false)
-  ["exchange_name":"AMQPEnvelope":private]=>
+  ["exchangeName":"AMQPEnvelope":private]=>
   string(%d) "ex1-%f"
-  ["routing_key":"AMQPEnvelope":private]=>
+  ["routingKey":"AMQPEnvelope":private]=>
   string(0) ""
 }

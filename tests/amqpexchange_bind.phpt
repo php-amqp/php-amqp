@@ -26,5 +26,5 @@ var_dump($ex->bind($ex2->getName(), 'test-key-1'));
 
 ?>
 --EXPECT--
-bool(true)
-bool(true)
+NULL
+NULL

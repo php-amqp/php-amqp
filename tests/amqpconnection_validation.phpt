@@ -19,8 +19,8 @@ $parameters = [
     ['write_timeout', 'setWriteTimeout', 'getWriteTimeout', [-1], 30],
     ['connect_timeout', null, 'getConnectTimeout', [-1], 40],
     ['rpc_timeout', 'setRpcTimeout', 'getRpcTimeout', [-1], 50],
-    ['channel_max', null, 'getMaxChannels', [-1, 257], 128],
     ['frame_max', null, 'getMaxFrameSize', [-1, PHP_INT_MAX + 1], 128],
+    ['channel_max', null, 'getMaxChannels', [-1, 257], 128],
     ['heartbeat', null, 'getHeartbeatInterval', [-1, PHP_INT_MAX + 1], 250],
 ];
 
@@ -88,16 +88,16 @@ AMQPConnectionException: Parameter 'timeout' must be greater than or equal to ze
 Deprecated: AMQPConnection::setTimeout(): AMQPConnection::setTimeout($timeout) method is deprecated; use AMQPConnection::setReadTimeout($timeout) instead in %s on line %d
 AMQPConnectionException: Parameter 'timeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'read_timeout' must be greater than or equal to zero.
-AMQPConnectionException: Parameter 'read_timeout' must be greater than or equal to zero.
+AMQPConnectionException: Parameter 'readTimeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'write_timeout' must be greater than or equal to zero.
-AMQPConnectionException: Parameter 'write_timeout' must be greater than or equal to zero.
+AMQPConnectionException: Parameter 'writeTimeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'connect_timeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'rpc_timeout' must be greater than or equal to zero.
-AMQPConnectionException: Parameter 'rpc_timeout' must be greater than or equal to zero.
-AMQPConnectionException: Parameter 'channel_max' is out of range.
-AMQPConnectionException: Parameter 'channel_max' is out of range.
+AMQPConnectionException: Parameter 'rpcTimeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'frame_max' is out of range.
 AMQPConnectionException: Parameter 'frame_max' is out of range.
+AMQPConnectionException: Parameter 'channel_max' is out of range.
+AMQPConnectionException: Parameter 'channel_max' is out of range.
 AMQPConnectionException: Parameter 'heartbeat' is out of range.
 AMQPConnectionException: Parameter 'heartbeat' is out of range.
 ==DONE==

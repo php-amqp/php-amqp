@@ -73,23 +73,18 @@ zend_object_handlers amqp_connection_object_handlers;
 
 #define PHP_AMQP_EXTRACT_CONNECTION_STR(name)                                                                          \
     zdata = NULL;                                                                                                      \
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), (name), sizeof(name))) != NULL) {                     \
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL(name))) != NULL) {                          \
         SEPARATE_ZVAL(zdata);                                                                                          \
         convert_to_string(zdata);                                                                                      \
     }                                                                                                                  \
     if (zdata && Z_STRLEN_P(zdata) > 0) {                                                                              \
+        zend_update_property_string(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), Z_STRVAL_P(zdata));    \
+    } else if (strlen(INI_STR("amqp." name)) > 0) {                                                                    \
         zend_update_property_string(                                                                                   \
             this_ce,                                                                                                   \
             PHP_AMQP_COMPAT_OBJ_P(getThis()),                                                                          \
             ZEND_STRL(name),                                                                                           \
-            Z_STRVAL_P(zdata) TSRMLS_CC                                                                                \
-        );                                                                                                             \
-    } else {                                                                                                           \
-        zend_update_property_string(                                                                                   \
-            this_ce,                                                                                                   \
-            PHP_AMQP_COMPAT_OBJ_P(getThis()),                                                                          \
-            ZEND_STRL(name),                                                                                           \
-            INI_STR("amqp." name) TSRMLS_CC                                                                            \
+            INI_STR("amqp." name)                                                                                      \
         );                                                                                                             \
     }
 
@@ -100,22 +95,12 @@ zend_object_handlers amqp_connection_object_handlers;
         convert_to_long(zdata);                                                                                        \
     }                                                                                                                  \
     if (zdata) {                                                                                                       \
-        zend_update_property_bool(                                                                                     \
-            this_ce,                                                                                                   \
-            PHP_AMQP_COMPAT_OBJ_P(getThis()),                                                                          \
-            ZEND_STRL(name),                                                                                           \
-            Z_LVAL_P(zdata) TSRMLS_CC                                                                                  \
-        );                                                                                                             \
+        zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), Z_LVAL_P(zdata));        \
     } else {                                                                                                           \
-        zend_update_property_bool(                                                                                     \
-            this_ce,                                                                                                   \
-            PHP_AMQP_COMPAT_OBJ_P(getThis()),                                                                          \
-            ZEND_STRL(name),                                                                                           \
-            INI_INT("amqp." name) TSRMLS_CC                                                                            \
-        );                                                                                                             \
+        zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), INI_INT("amqp." name));  \
     }
 
-static int php_amqp_connection_resource_deleter(zval *el, amqp_connection_resource *connection_resource TSRMLS_DC)
+static int php_amqp_connection_resource_deleter(zval *el, amqp_connection_resource *connection_resource)
 {
     if (Z_RES_P(el)->ptr == connection_resource) {
         return ZEND_HASH_APPLY_REMOVE | ZEND_HASH_APPLY_STOP;
@@ -147,7 +132,7 @@ static size_t php_amqp_get_connection_hash(amqp_connection_params *params, char 
     );
 }
 
-static void php_amqp_cleanup_connection_resource(amqp_connection_resource *connection_resource TSRMLS_DC)
+static void php_amqp_cleanup_connection_resource(amqp_connection_resource *connection_resource)
 {
     if (!connection_resource) {
         return;
@@ -163,7 +148,7 @@ static void php_amqp_cleanup_connection_resource(amqp_connection_resource *conne
             zend_hash_apply_with_argument(
                 &EG(persistent_list),
                 (apply_func_arg_t) php_amqp_connection_resource_deleter,
-                (void *) connection_resource TSRMLS_CC
+                (void *) connection_resource
             );
         }
 
@@ -179,18 +164,18 @@ static void php_amqp_cleanup_connection_resource(amqp_connection_resource *conne
     }
 }
 
-static void php_amqp_disconnect(amqp_connection_resource *resource TSRMLS_DC)
+static void php_amqp_disconnect(amqp_connection_resource *resource)
 {
-    php_amqp_prepare_for_disconnect(resource TSRMLS_CC);
-    php_amqp_cleanup_connection_resource(resource TSRMLS_CC);
+    php_amqp_prepare_for_disconnect(resource);
+    php_amqp_cleanup_connection_resource(resource);
 }
 
 
-void php_amqp_disconnect_force(amqp_connection_resource *resource TSRMLS_DC)
+void php_amqp_disconnect_force(amqp_connection_resource *resource)
 {
-    php_amqp_prepare_for_disconnect(resource TSRMLS_CC);
+    php_amqp_prepare_for_disconnect(resource);
     resource->is_dirty = '\1';
-    php_amqp_cleanup_connection_resource(resource TSRMLS_CC);
+    php_amqp_cleanup_connection_resource(resource);
 }
 
 /**
@@ -207,7 +192,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
     if (connection->connection_resource) {
         /* Clean up old memory allocations which are now invalid (new connection) */
-        php_amqp_cleanup_connection_resource(connection->connection_resource TSRMLS_CC);
+        php_amqp_cleanup_connection_resource(connection->connection_resource);
     }
 
     assert(connection->connection_resource == NULL);
@@ -219,20 +204,20 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
     connection_params.vhost = PHP_AMQP_READ_THIS_PROP_STR("vhost");
     connection_params.login = PHP_AMQP_READ_THIS_PROP_STR("login");
     connection_params.password = PHP_AMQP_READ_THIS_PROP_STR("password");
-    connection_params.frame_max = (int) PHP_AMQP_READ_THIS_PROP_LONG("frame_max");
-    connection_params.channel_max = (int) PHP_AMQP_READ_THIS_PROP_LONG("channel_max");
+    connection_params.frame_max = (int) PHP_AMQP_READ_THIS_PROP_LONG("frameMax");
+    connection_params.channel_max = (int) PHP_AMQP_READ_THIS_PROP_LONG("channelMax");
     connection_params.heartbeat = (int) PHP_AMQP_READ_THIS_PROP_LONG("heartbeat");
-    connection_params.read_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout");
-    connection_params.write_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout");
-    connection_params.connect_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("connect_timeout");
-    connection_params.rpc_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("rpc_timeout");
+    connection_params.read_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("readTimeout");
+    connection_params.write_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("writeTimeout");
+    connection_params.connect_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("connectTimeout");
+    connection_params.rpc_timeout = PHP_AMQP_READ_THIS_PROP_DOUBLE("rpcTimeout");
     connection_params.cacert = PHP_AMQP_READ_THIS_PROP_STRLEN("cacert") ? PHP_AMQP_READ_THIS_PROP_STR("cacert") : NULL;
     connection_params.cert = PHP_AMQP_READ_THIS_PROP_STRLEN("cert") ? PHP_AMQP_READ_THIS_PROP_STR("cert") : NULL;
     connection_params.key = PHP_AMQP_READ_THIS_PROP_STRLEN("key") ? PHP_AMQP_READ_THIS_PROP_STR("key") : NULL;
     connection_params.verify = (int) PHP_AMQP_READ_THIS_PROP_BOOL("verify");
-    connection_params.sasl_method = (int) PHP_AMQP_READ_THIS_PROP_LONG("sasl_method");
+    connection_params.sasl_method = (int) PHP_AMQP_READ_THIS_PROP_LONG("saslMethod");
     connection_params.connection_name =
-        PHP_AMQP_READ_THIS_PROP_STRLEN("connection_name") ? PHP_AMQP_READ_THIS_PROP_STR("connection_name") : NULL;
+        PHP_AMQP_READ_THIS_PROP_STRLEN("connectionName") ? PHP_AMQP_READ_THIS_PROP_STR("connectionName") : NULL;
 
     if (persistent) {
         zend_resource *le = NULL;
@@ -245,6 +230,11 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
             if (le->type != le_amqp_connection_resource_persistent) {
                 /* hash conflict, given name associate with non-amqp persistent connection resource */
+                zend_throw_exception(
+                    amqp_connection_exception_class_entry,
+                    "Connection hash conflict detected. Persistent connection found that does not belong to AMQP.",
+                    0
+                );
                 return 0;
             }
 
@@ -259,7 +249,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
                 zend_throw_exception(
                     amqp_connection_exception_class_entry,
                     "There are already established persistent connection to the same resource.",
-                    0 TSRMLS_CC
+                    0
                 );
                 return 0;
             }
@@ -273,18 +263,18 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
             /* Set desired timeouts */
             if (php_amqp_set_resource_read_timeout(
                     connection->connection_resource,
-                    PHP_AMQP_READ_THIS_PROP_DOUBLE("read_timeout") TSRMLS_CC
+                    PHP_AMQP_READ_THIS_PROP_DOUBLE("readTimeout")
                 ) == 0 ||
                 php_amqp_set_resource_write_timeout(
                     connection->connection_resource,
-                    PHP_AMQP_READ_THIS_PROP_DOUBLE("write_timeout") TSRMLS_CC
+                    PHP_AMQP_READ_THIS_PROP_DOUBLE("writeTimeout")
                 ) == 0 ||
                 php_amqp_set_resource_rpc_timeout(
                     connection->connection_resource,
-                    PHP_AMQP_READ_THIS_PROP_DOUBLE("rpc_timeout") TSRMLS_CC
+                    PHP_AMQP_READ_THIS_PROP_DOUBLE("rpcTimeout")
                 ) == 0) {
 
-                php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+                php_amqp_disconnect_force(connection->connection_resource);
                 return 0;
             }
 
@@ -298,7 +288,7 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
         efree(key);
     }
 
-    connection->connection_resource = connection_resource_constructor(&connection_params, persistent TSRMLS_CC);
+    connection->connection_resource = connection_resource_constructor(&connection_params, persistent);
 
     if (connection->connection_resource == NULL) {
         return 0;
@@ -322,11 +312,18 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
 
         /* Store a reference in the persistence list */
         new_le.ptr = connection->connection_resource;
-        new_le.type = persistent ? le_amqp_connection_resource_persistent : le_amqp_connection_resource;
+        new_le.type = le_amqp_connection_resource_persistent;
 
         if (!zend_hash_str_update_mem(&EG(persistent_list), key, key_len, &new_le, sizeof(zend_resource))) {
             efree(key);
-            php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+            php_amqp_disconnect_force(connection->connection_resource);
+
+            zend_throw_exception(
+                amqp_connection_exception_class_entry,
+                "Could not store persistent connection in pool.",
+                0
+            );
+
             return 0;
         }
         efree(key);
@@ -335,23 +332,23 @@ int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, I
     return 1;
 }
 
-void amqp_connection_free(zend_object *object TSRMLS_DC)
+void amqp_connection_free(zend_object *object)
 {
     amqp_connection_object *connection = PHP_AMQP_FETCH_CONNECTION(object);
 
     if (connection->connection_resource) {
-        php_amqp_disconnect(connection->connection_resource TSRMLS_CC);
+        php_amqp_disconnect(connection->connection_resource);
     }
 
-    zend_object_std_dtor(&connection->zo TSRMLS_CC);
+    zend_object_std_dtor(&connection->zo);
 }
 
-zend_object *amqp_connection_ctor(zend_class_entry *ce TSRMLS_DC)
+zend_object *amqp_connection_ctor(zend_class_entry *ce)
 {
     amqp_connection_object *connection =
         (amqp_connection_object *) ecalloc(1, sizeof(amqp_connection_object) + zend_object_properties_size(ce));
 
-    zend_object_std_init(&connection->zo, ce TSRMLS_CC);
+    zend_object_std_init(&connection->zo, ce);
     AMQP_OBJECT_PROPERTIES_INIT(connection->zo, ce);
 
     connection->zo.handlers = &amqp_connection_object_handlers;
@@ -370,13 +367,13 @@ static PHP_METHOD(amqp_connection_class, __construct)
     zval *zdata = NULL;
 
     /* Parse out the method parameters */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a/", &ini_arr) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|a/", &ini_arr) == FAILURE) {
         return;
     }
 
     /* Pull the login out of the $params array */
     zdata = NULL;
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "login", sizeof("login") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("login"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -385,26 +382,26 @@ static PHP_METHOD(amqp_connection_class, __construct)
         if (!php_amqp_is_valid_credential(Z_STR_P(zdata))) {
             zend_throw_exception_ex(
                 amqp_connection_exception_class_entry,
-                0 TSRMLS_CC,
+                0,
                 "Parameter 'login' exceeds %d character limit.",
                 PHP_AMQP_MAX_CREDENTIALS_LENGTH
             );
             return;
         }
 
-        zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("login"), zdata TSRMLS_CC);
+        zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("login"), zdata);
     } else {
         zend_update_property_string(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("login"),
-            INI_STR("amqp.login") TSRMLS_CC
+            INI_STR("amqp.login")
         );
     }
 
     /* Pull the password out of the $params array */
     zdata = NULL;
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "password", sizeof("password") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("password"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -413,7 +410,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         if (!php_amqp_is_valid_credential(Z_STR_P(zdata))) {
             zend_throw_exception_ex(
                 amqp_connection_exception_class_entry,
-                0 TSRMLS_CC,
+                0,
                 "Parameter 'password' exceeds %d character limit.",
                 PHP_AMQP_MAX_CREDENTIALS_LENGTH
             );
@@ -425,20 +422,20 @@ static PHP_METHOD(amqp_connection_class, __construct)
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("password"),
             Z_STRVAL_P(zdata),
-            Z_STRLEN_P(zdata) TSRMLS_CC
+            Z_STRLEN_P(zdata)
         );
     } else {
         zend_update_property_string(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("password"),
-            INI_STR("amqp.password") TSRMLS_CC
+            INI_STR("amqp.password")
         );
     }
 
     /* Pull the host out of the $params array */
     zdata = NULL;
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "host", sizeof("host") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("host"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -447,7 +444,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         if (!php_amqp_is_valid_identifier(Z_STR_P(zdata))) {
             zend_throw_exception_ex(
                 amqp_connection_exception_class_entry,
-                0 TSRMLS_CC,
+                0,
                 "Parameter 'host' exceeds %d character limit.",
                 PHP_AMQP_MAX_IDENTIFIER_LENGTH
             );
@@ -459,20 +456,15 @@ static PHP_METHOD(amqp_connection_class, __construct)
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("host"),
             Z_STRVAL_P(zdata),
-            Z_STRLEN_P(zdata) TSRMLS_CC
+            Z_STRLEN_P(zdata)
         );
     } else {
-        zend_update_property_string(
-            this_ce,
-            PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("host"),
-            INI_STR("amqp.host") TSRMLS_CC
-        );
+        zend_update_property_string(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), INI_STR("amqp.host"));
     }
 
     /* Pull the vhost out of the $params array */
     zdata = NULL;
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "vhost", sizeof("vhost") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("vhost"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -481,7 +473,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         if (!php_amqp_is_valid_identifier(Z_STR_P(zdata))) {
             zend_throw_exception_ex(
                 amqp_connection_exception_class_entry,
-                0 TSRMLS_CC,
+                0,
                 "Parameter 'vhost' exceeds %d character limit.",
                 PHP_AMQP_MAX_IDENTIFIER_LENGTH
             );
@@ -493,32 +485,27 @@ static PHP_METHOD(amqp_connection_class, __construct)
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("vhost"),
             Z_STRVAL_P(zdata),
-            Z_STRLEN_P(zdata) TSRMLS_CC
+            Z_STRLEN_P(zdata)
         );
     } else {
         zend_update_property_string(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("vhost"),
-            INI_STR("amqp.vhost") TSRMLS_CC
+            INI_STR("amqp.vhost")
         );
     }
 
-    zend_update_property_long(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("port"),
-        INI_INT("amqp.port") TSRMLS_CC
-    );
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("port"), INI_INT("amqp.port"));
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "port", sizeof("port") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("port"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
 
         if (!php_amqp_is_valid_port(Z_LVAL_P(zdata))) {
             zend_throw_exception_ex(
                 amqp_connection_exception_class_entry,
-                0 TSRMLS_CC,
+                0,
                 "Parameter 'port' must be a valid port number  between %d and %d.",
                 PHP_AMQP_MIN_PORT,
                 PHP_AMQP_MAX_PORT
@@ -526,22 +513,17 @@ static PHP_METHOD(amqp_connection_class, __construct)
             return;
         }
 
-        zend_update_property_long(
-            this_ce,
-            PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("port"),
-            Z_LVAL_P(zdata) TSRMLS_CC
-        );
+        zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("port"), Z_LVAL_P(zdata));
     }
 
     zend_update_property_double(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("read_timeout"),
-        INI_FLT("amqp.read_timeout") TSRMLS_CC
+        ZEND_STRL("readTimeout"),
+        INI_FLT("amqp.read_timeout")
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "read_timeout", sizeof("read_timeout") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("read_timeout"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
 
@@ -549,7 +531,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             zend_throw_exception(
                 amqp_connection_exception_class_entry,
                 "Parameter 'read_timeout' must be greater than or equal to zero.",
-                0 TSRMLS_CC
+                0
             );
             return;
         }
@@ -557,18 +539,18 @@ static PHP_METHOD(amqp_connection_class, __construct)
         zend_update_property_double(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("read_timeout"),
-            Z_DVAL_P(zdata) TSRMLS_CC
+            ZEND_STRL("readTimeout"),
+            Z_DVAL_P(zdata)
         );
 
-        if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "timeout", sizeof("timeout") - 1)) != NULL) {
+        if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("timeout"))) != NULL) {
             /* 'read_timeout' takes precedence on 'timeout' but users have to know this */
-            php_error_docref(NULL TSRMLS_CC, E_NOTICE, "Parameter 'timeout' is deprecated, 'read_timeout' used instead");
+            php_error_docref(NULL, E_NOTICE, "Parameter 'timeout' is deprecated, 'read_timeout' used instead");
         }
 
-    } else if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "timeout", sizeof("timeout") - 1)) != NULL) {
+    } else if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("timeout"))) != NULL) {
 
-        php_error_docref(NULL TSRMLS_CC, E_DEPRECATED, "Parameter 'timeout' is deprecated; use 'read_timeout' instead");
+        php_error_docref(NULL, E_DEPRECATED, "Parameter 'timeout' is deprecated; use 'read_timeout' instead");
 
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
@@ -577,7 +559,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             zend_throw_exception(
                 amqp_connection_exception_class_entry,
                 "Parameter 'timeout' must be greater than or equal to zero.",
-                0 TSRMLS_CC
+                0
             );
             return;
         }
@@ -585,15 +567,15 @@ static PHP_METHOD(amqp_connection_class, __construct)
         zend_update_property_double(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("read_timeout"),
-            Z_DVAL_P(zdata) TSRMLS_CC
+            ZEND_STRL("readTimeout"),
+            Z_DVAL_P(zdata)
         );
     } else {
 
         assert(DEFAULT_TIMEOUT != NULL);
         if (strcmp(DEFAULT_TIMEOUT, INI_STR("amqp.timeout")) != 0) {
             php_error_docref(
-                NULL TSRMLS_CC,
+                NULL,
                 E_DEPRECATED,
                 "INI setting 'amqp.timeout' is deprecated; use 'amqp.read_timeout' instead"
             );
@@ -602,28 +584,28 @@ static PHP_METHOD(amqp_connection_class, __construct)
                 zend_update_property_double(
                     this_ce,
                     PHP_AMQP_COMPAT_OBJ_P(getThis()),
-                    ZEND_STRL("read_timeout"),
-                    INI_FLT("amqp.timeout") TSRMLS_CC
+                    ZEND_STRL("readTimeout"),
+                    INI_FLT("amqp.timeout")
                 );
             } else {
                 php_error_docref(
-                    NULL TSRMLS_CC,
+                    NULL,
                     E_NOTICE,
                     "INI setting 'amqp.read_timeout' will be used instead of 'amqp.timeout'"
                 );
                 zend_update_property_double(
                     this_ce,
                     PHP_AMQP_COMPAT_OBJ_P(getThis()),
-                    ZEND_STRL("read_timeout"),
-                    INI_FLT("amqp.read_timeout") TSRMLS_CC
+                    ZEND_STRL("readTimeout"),
+                    INI_FLT("amqp.read_timeout")
                 );
             }
         } else {
             zend_update_property_double(
                 this_ce,
                 PHP_AMQP_COMPAT_OBJ_P(getThis()),
-                ZEND_STRL("read_timeout"),
-                INI_FLT("amqp.read_timeout") TSRMLS_CC
+                ZEND_STRL("readTimeout"),
+                INI_FLT("amqp.read_timeout")
             );
         }
     }
@@ -631,12 +613,11 @@ static PHP_METHOD(amqp_connection_class, __construct)
     zend_update_property_double(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("write_timeout"),
-        INI_FLT("amqp.write_timeout") TSRMLS_CC
+        ZEND_STRL("writeTimeout"),
+        INI_FLT("amqp.write_timeout")
     );
 
-    if (ini_arr &&
-        (zdata = zend_hash_str_find(HASH_OF(ini_arr), "write_timeout", sizeof("write_timeout") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("write_timeout"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
 
@@ -644,7 +625,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             zend_throw_exception(
                 amqp_connection_exception_class_entry,
                 "Parameter 'write_timeout' must be greater than or equal to zero.",
-                0 TSRMLS_CC
+                0
             );
             return;
         }
@@ -652,19 +633,19 @@ static PHP_METHOD(amqp_connection_class, __construct)
         zend_update_property_double(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("write_timeout"),
-            Z_DVAL_P(zdata) TSRMLS_CC
+            ZEND_STRL("writeTimeout"),
+            Z_DVAL_P(zdata)
         );
     }
 
     zend_update_property_double(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("rpc_timeout"),
-        INI_FLT("amqp.rpc_timeout") TSRMLS_CC
+        ZEND_STRL("rpcTimeout"),
+        INI_FLT("amqp.rpc_timeout")
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "rpc_timeout", sizeof("rpc_timeout") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("rpc_timeout"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
 
@@ -672,7 +653,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             zend_throw_exception(
                 amqp_connection_exception_class_entry,
                 "Parameter 'rpc_timeout' must be greater than or equal to zero.",
-                0 TSRMLS_CC
+                0
             );
             return;
         }
@@ -680,20 +661,19 @@ static PHP_METHOD(amqp_connection_class, __construct)
         zend_update_property_double(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("rpc_timeout"),
-            Z_DVAL_P(zdata) TSRMLS_CC
+            ZEND_STRL("rpcTimeout"),
+            Z_DVAL_P(zdata)
         );
     }
 
     zend_update_property_double(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("connect_timeout"),
-        INI_FLT("amqp.connect_timeout") TSRMLS_CC
+        ZEND_STRL("connectTimeout"),
+        INI_FLT("amqp.connect_timeout")
     );
 
-    if (ini_arr &&
-        (zdata = zend_hash_str_find(HASH_OF(ini_arr), "connect_timeout", sizeof("connect_timeout") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("connect_timeout"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_double(zdata);
 
@@ -701,7 +681,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             zend_throw_exception(
                 amqp_connection_exception_class_entry,
                 "Parameter 'connect_timeout' must be greater than or equal to zero.",
-                0 TSRMLS_CC
+                0
             );
             return;
         }
@@ -709,28 +689,24 @@ static PHP_METHOD(amqp_connection_class, __construct)
         zend_update_property_double(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("connect_timeout"),
-            Z_DVAL_P(zdata) TSRMLS_CC
+            ZEND_STRL("connectTimeout"),
+            Z_DVAL_P(zdata)
         );
     }
 
     zend_update_property_long(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("channel_max"),
-        INI_INT("amqp.channel_max") TSRMLS_CC
+        ZEND_STRL("channelMax"),
+        INI_INT("amqp.channel_max")
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "channel_max", sizeof("channel_max") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("channel_max"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
 
         if (!php_amqp_is_valid_channel_max(Z_LVAL_P(zdata))) {
-            zend_throw_exception(
-                amqp_connection_exception_class_entry,
-                "Parameter 'channel_max' is out of range.",
-                0 TSRMLS_CC
-            );
+            zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'channel_max' is out of range.", 0);
             return;
         }
 
@@ -738,15 +714,15 @@ static PHP_METHOD(amqp_connection_class, __construct)
             zend_update_property_long(
                 this_ce,
                 PHP_AMQP_COMPAT_OBJ_P(getThis()),
-                ZEND_STRL("channel_max"),
-                PHP_AMQP_DEFAULT_CHANNEL_MAX TSRMLS_CC
+                ZEND_STRL("channelMax"),
+                PHP_AMQP_DEFAULT_CHANNEL_MAX
             );
         } else {
             zend_update_property_long(
                 this_ce,
                 PHP_AMQP_COMPAT_OBJ_P(getThis()),
-                ZEND_STRL("channel_max"),
-                Z_LVAL_P(zdata) TSRMLS_CC
+                ZEND_STRL("channelMax"),
+                Z_LVAL_P(zdata)
             );
         }
     }
@@ -754,19 +730,15 @@ static PHP_METHOD(amqp_connection_class, __construct)
     zend_update_property_long(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("frame_max"),
-        INI_INT("amqp.frame_max") TSRMLS_CC
+        ZEND_STRL("frameMax"),
+        INI_INT("amqp.frame_max")
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "frame_max", sizeof("frame_max") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("frame_max"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
         if (!php_amqp_is_valid_frame_size_max(Z_LVAL_P(zdata))) {
-            zend_throw_exception(
-                amqp_connection_exception_class_entry,
-                "Parameter 'frame_max' is out of range.",
-                0 TSRMLS_CC
-            );
+            zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'frame_max' is out of range.", 0);
             return;
         }
 
@@ -774,15 +746,15 @@ static PHP_METHOD(amqp_connection_class, __construct)
             zend_update_property_long(
                 this_ce,
                 PHP_AMQP_COMPAT_OBJ_P(getThis()),
-                ZEND_STRL("frame_max"),
-                PHP_AMQP_DEFAULT_FRAME_MAX TSRMLS_CC
+                ZEND_STRL("frameMax"),
+                PHP_AMQP_DEFAULT_FRAME_MAX
             );
         } else {
             zend_update_property_long(
                 this_ce,
                 PHP_AMQP_COMPAT_OBJ_P(getThis()),
-                ZEND_STRL("frame_max"),
-                Z_LVAL_P(zdata) TSRMLS_CC
+                ZEND_STRL("frameMax"),
+                Z_LVAL_P(zdata)
             );
         }
     }
@@ -791,45 +763,31 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("heartbeat"),
-        INI_INT("amqp.heartbeat") TSRMLS_CC
+        INI_INT("amqp.heartbeat")
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "heartbeat", sizeof("heartbeat") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("heartbeat"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
         if (!php_amqp_is_valid_heartbeat(Z_LVAL_P(zdata))) {
-            zend_throw_exception(
-                amqp_connection_exception_class_entry,
-                "Parameter 'heartbeat' is out of range.",
-                0 TSRMLS_CC
-            );
+            zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'heartbeat' is out of range.", 0);
             return;
         }
 
-        zend_update_property_long(
-            this_ce,
-            PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("heartbeat"),
-            Z_LVAL_P(zdata) TSRMLS_CC
-        );
+        zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("heartbeat"), Z_LVAL_P(zdata));
     }
 
     zend_update_property_long(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("sasl_method"),
-        INI_INT("amqp.sasl_method") TSRMLS_CC
+        ZEND_STRL("saslMethod"),
+        INI_INT("amqp.sasl_method")
     );
 
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), "sasl_method", sizeof("sasl_method") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("sasl_method"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_long(zdata);
-        zend_update_property_long(
-            this_ce,
-            PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("sasl_method"),
-            Z_LVAL_P(zdata) TSRMLS_CC
-        );
+        zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("saslMethod"), Z_LVAL_P(zdata));
     }
 
 
@@ -841,8 +799,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
     /* Pull the connection_name out of the $params array */
     zdata = NULL;
-    if (ini_arr &&
-        (zdata = zend_hash_str_find(HASH_OF(ini_arr), "connection_name", sizeof("connection_name") - 1)) != NULL) {
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("connection_name"))) != NULL) {
         SEPARATE_ZVAL(zdata);
         convert_to_string(zdata);
     }
@@ -850,8 +807,8 @@ static PHP_METHOD(amqp_connection_class, __construct)
         zend_update_property_string(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("connection_name"),
-            Z_STRVAL_P(zdata) TSRMLS_CC
+            ZEND_STRL("connectionName"),
+            Z_STRVAL_P(zdata)
         );
     }
 }
@@ -869,13 +826,7 @@ static PHP_METHOD(amqp_connection_class, isConnected)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    /* If the channel_connect is 1, we have a connection */
-    if (connection->connection_resource != NULL && connection->connection_resource->is_connected) {
-        RETURN_TRUE;
-    }
-
-    /* We have no connection */
-    RETURN_FALSE;
+    RETURN_BOOL(connection->connection_resource != NULL && connection->connection_resource->is_connected);
 }
 /* }}} */
 
@@ -894,7 +845,7 @@ static PHP_METHOD(amqp_connection_class, connect)
     if (connection->connection_resource && connection->connection_resource->is_connected) {
         if (connection->connection_resource->is_persistent) {
             php_error_docref(
-                NULL TSRMLS_CC,
+                NULL,
                 E_WARNING,
                 "Attempt to start transient connection while persistent transient one already established. Continue."
             );
@@ -904,7 +855,7 @@ static PHP_METHOD(amqp_connection_class, connect)
     }
 
     /* Actually connect this resource to the broker */
-    RETURN_BOOL(php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU));
+    php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
@@ -925,7 +876,7 @@ static PHP_METHOD(amqp_connection_class, pconnect)
         assert(connection->connection_resource != NULL);
         if (!connection->connection_resource->is_persistent) {
             php_error_docref(
-                NULL TSRMLS_CC,
+                NULL,
                 E_WARNING,
                 "Attempt to start persistent connection while transient one already established. Continue."
             );
@@ -935,10 +886,12 @@ static PHP_METHOD(amqp_connection_class, pconnect)
     }
 
     /* Actually connect this resource to the broker or use stored connection */
-    RETURN_BOOL(php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU));
+    php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
+#define PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE                                                                         \
+    "Attempted to %s a %s connection while a %s connection is established. Call '%s' instead"
 
 /* {{{ proto amqp:pdisconnect()
 destroy amqp persistent connection */
@@ -952,24 +905,25 @@ static PHP_METHOD(amqp_connection_class, pdisconnect)
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
     if (!connection->connection_resource || !connection->connection_resource->is_connected) {
-        RETURN_TRUE;
+        return;
     }
 
     assert(connection->connection_resource != NULL);
 
     if (!connection->connection_resource->is_persistent) {
-        php_error_docref(
-            NULL TSRMLS_CC,
-            E_WARNING,
-            "Attempt to close persistent connection while transient one already established. Abort."
+        zend_throw_exception_ex(
+            amqp_connection_exception_class_entry,
+            0,
+            PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE,
+            "close",
+            "persistent",
+            "transient",
+            "disconnect"
         );
-
-        RETURN_FALSE;
+        return;
     }
 
-    php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
-
-    RETURN_TRUE;
+    php_amqp_disconnect_force(connection->connection_resource);
 }
 /* }}} */
 
@@ -986,24 +940,25 @@ static PHP_METHOD(amqp_connection_class, disconnect)
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
     if (!connection->connection_resource || !connection->connection_resource->is_connected) {
-        RETURN_TRUE;
+        return;
     }
 
     if (connection->connection_resource->is_persistent) {
-        php_error_docref(
-            NULL TSRMLS_CC,
-            E_WARNING,
-            "Attempt to close transient connection while persistent one already established. Abort."
+        zend_throw_exception_ex(
+            amqp_connection_exception_class_entry,
+            0,
+            PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE,
+            "close",
+            "transient",
+            "persistent",
+            "pdisconnect"
         );
-
-        RETURN_FALSE;
+        return;
     }
 
     assert(connection->connection_resource != NULL);
 
-    php_amqp_disconnect(connection->connection_resource TSRMLS_CC);
-
-    RETURN_TRUE;
+    php_amqp_disconnect(connection->connection_resource);
 }
 
 /* }}} */
@@ -1024,19 +979,22 @@ static PHP_METHOD(amqp_connection_class, reconnect)
         assert(connection->connection_resource != NULL);
 
         if (connection->connection_resource->is_persistent) {
-            php_error_docref(
-                NULL TSRMLS_CC,
-                E_WARNING,
-                "Attempt to reconnect persistent connection while transient one already established. Abort."
+            zend_throw_exception_ex(
+                amqp_connection_exception_class_entry,
+                0,
+                PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE,
+                "reconnect",
+                "transient",
+                "persistent",
+                "preconnect"
             );
-
-            RETURN_FALSE;
+            return;
         }
 
-        php_amqp_disconnect(connection->connection_resource TSRMLS_CC);
+        php_amqp_disconnect(connection->connection_resource);
     }
 
-    RETURN_BOOL(php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU));
+    php_amqp_connect(connection, 0, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
@@ -1057,19 +1015,22 @@ static PHP_METHOD(amqp_connection_class, preconnect)
         assert(connection->connection_resource != NULL);
 
         if (!connection->connection_resource->is_persistent) {
-            php_error_docref(
-                NULL TSRMLS_CC,
-                E_WARNING,
-                "Attempt to reconnect transient connection while persistent one already established. Abort."
+            zend_throw_exception_ex(
+                amqp_connection_exception_class_entry,
+                0,
+                PERSISTENT_TRANSIENT_EXCEPTION_MESSAGE,
+                "reconnect",
+                "persistent",
+                "transient",
+                "reconnect"
             );
-
-            RETURN_FALSE;
+            return;
         }
 
-        php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+        php_amqp_disconnect_force(connection->connection_resource);
     }
 
-    RETURN_BOOL(php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU));
+    php_amqp_connect(connection, 1, INTERNAL_FUNCTION_PARAM_PASSTHRU);
 }
 /* }}} */
 
@@ -1093,7 +1054,7 @@ static PHP_METHOD(amqp_connection_class, setLogin)
     size_t login_len = 0;
 
     /* Get the login from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &login, &login_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &login, &login_len) == FAILURE) {
         return;
     }
 
@@ -1101,22 +1062,14 @@ static PHP_METHOD(amqp_connection_class, setLogin)
     if (login_len > PHP_AMQP_MAX_CREDENTIALS_LENGTH) {
         zend_throw_exception_ex(
             amqp_connection_exception_class_entry,
-            0 TSRMLS_CC,
+            0,
             "Parameter 'login' exceeds %d character limit.",
             PHP_AMQP_MAX_CREDENTIALS_LENGTH
         );
         return;
     }
 
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("login"),
-        login,
-        login_len TSRMLS_CC
-    );
-
-    RETURN_TRUE;
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("login"), login, login_len);
 }
 /* }}} */
 
@@ -1139,7 +1092,7 @@ static PHP_METHOD(amqp_connection_class, setPassword)
     size_t password_len = 0;
 
     /* Get the password from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &password, &password_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &password, &password_len) == FAILURE) {
         return;
     }
 
@@ -1147,7 +1100,7 @@ static PHP_METHOD(amqp_connection_class, setPassword)
     if (password_len > PHP_AMQP_MAX_CREDENTIALS_LENGTH) {
         zend_throw_exception_ex(
             amqp_connection_exception_class_entry,
-            0 TSRMLS_CC,
+            0,
             "Parameter 'password' exceeds %d character limit.",
             PHP_AMQP_MAX_CREDENTIALS_LENGTH
         );
@@ -1159,10 +1112,8 @@ static PHP_METHOD(amqp_connection_class, setPassword)
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("password"),
         password,
-        password_len TSRMLS_CC
+        password_len
     );
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1186,7 +1137,7 @@ static PHP_METHOD(amqp_connection_class, setHost)
     size_t host_len = 0;
 
     /* Get the host from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &host, &host_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &host, &host_len) == FAILURE) {
         return;
     }
 
@@ -1194,16 +1145,14 @@ static PHP_METHOD(amqp_connection_class, setHost)
     if (host_len > PHP_AMQP_MAX_IDENTIFIER_LENGTH) {
         zend_throw_exception_ex(
             amqp_connection_exception_class_entry,
-            0 TSRMLS_CC,
+            0,
             "Parameter 'host' exceeds %d character limit.",
             PHP_AMQP_MAX_IDENTIFIER_LENGTH
         );
         return;
     }
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), host, host_len TSRMLS_CC);
-
-    RETURN_TRUE;
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), host, host_len);
 }
 /* }}} */
 
@@ -1227,7 +1176,7 @@ static PHP_METHOD(amqp_connection_class, setPort)
     int port;
 
     /* Get the port from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z/", &zvalPort) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z/", &zvalPort) == FAILURE) {
         return;
     }
 
@@ -1252,14 +1201,12 @@ static PHP_METHOD(amqp_connection_class, setPort)
         zend_throw_exception(
             amqp_connection_exception_class_entry,
             "Invalid port given. Value must be between 1 and 65535.",
-            0 TSRMLS_CC
+            0
         );
         return;
     }
 
-    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("port"), port TSRMLS_CC);
-
-    RETURN_TRUE;
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("port"), port);
 }
 /* }}} */
 
@@ -1281,7 +1228,7 @@ static PHP_METHOD(amqp_connection_class, setVhost)
     char *vhost = NULL;
     size_t vhost_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &vhost, &vhost_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &vhost, &vhost_len) == FAILURE) {
         return;
     }
 
@@ -1289,22 +1236,14 @@ static PHP_METHOD(amqp_connection_class, setVhost)
     if (vhost_len > PHP_AMQP_MAX_IDENTIFIER_LENGTH) {
         zend_throw_exception_ex(
             amqp_connection_exception_class_entry,
-            0 TSRMLS_CC,
+            0,
             "Parameter 'vhost' exceeds %d characters limit.",
             PHP_AMQP_MAX_IDENTIFIER_LENGTH
         );
         return;
     }
 
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("vhost"),
-        vhost,
-        vhost_len TSRMLS_CC
-    );
-
-    RETURN_TRUE;
+    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("vhost"), vhost, vhost_len);
 }
 /* }}} */
 
@@ -1314,14 +1253,14 @@ get the timeout */
 static PHP_METHOD(amqp_connection_class, getTimeout)
 {
     php_error_docref(
-        NULL TSRMLS_CC,
+        NULL,
         E_DEPRECATED,
         "AMQPConnection::getTimeout() method is deprecated; use AMQPConnection::getReadTimeout() instead"
     );
 
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("read_timeout");
+    PHP_AMQP_RETURN_THIS_PROP("readTimeout");
 }
 /* }}} */
 
@@ -1334,14 +1273,14 @@ static PHP_METHOD(amqp_connection_class, setTimeout)
     double read_timeout;
 
     php_error_docref(
-        NULL TSRMLS_CC,
+        NULL,
         E_DEPRECATED,
         "AMQPConnection::setTimeout($timeout) method is deprecated; use AMQPConnection::setReadTimeout($timeout) "
         "instead"
     );
 
     /* Get the timeout from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &read_timeout) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &read_timeout) == FAILURE) {
         return;
     }
 
@@ -1350,7 +1289,7 @@ static PHP_METHOD(amqp_connection_class, setTimeout)
         zend_throw_exception(
             amqp_connection_exception_class_entry,
             "Parameter 'timeout' must be greater than or equal to zero.",
-            0 TSRMLS_CC
+            0
         );
         return;
     }
@@ -1358,23 +1297,16 @@ static PHP_METHOD(amqp_connection_class, setTimeout)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    zend_update_property_double(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("read_timeout"),
-        read_timeout TSRMLS_CC
-    );
+    zend_update_property_double(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("readTimeout"), read_timeout);
 
     if (connection->connection_resource && connection->connection_resource->is_connected) {
-        if (php_amqp_set_resource_read_timeout(connection->connection_resource, read_timeout TSRMLS_CC) == 0) {
+        if (php_amqp_set_resource_read_timeout(connection->connection_resource, read_timeout) == 0) {
 
-            php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+            php_amqp_disconnect_force(connection->connection_resource);
 
-            RETURN_FALSE;
+            zend_throw_exception(amqp_connection_exception_class_entry, "Could not set read timeout", 0);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1384,7 +1316,7 @@ static PHP_METHOD(amqp_connection_class, getReadTimeout)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("read_timeout");
+    PHP_AMQP_RETURN_THIS_PROP("readTimeout");
 }
 /* }}} */
 
@@ -1396,7 +1328,7 @@ static PHP_METHOD(amqp_connection_class, setReadTimeout)
     double read_timeout;
 
     /* Get the timeout from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &read_timeout) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &read_timeout) == FAILURE) {
         return;
     }
 
@@ -1404,8 +1336,8 @@ static PHP_METHOD(amqp_connection_class, setReadTimeout)
     if (!php_amqp_is_valid_timeout(read_timeout)) {
         zend_throw_exception(
             amqp_connection_exception_class_entry,
-            "Parameter 'read_timeout' must be greater than or equal to zero.",
-            0 TSRMLS_CC
+            "Parameter 'readTimeout' must be greater than or equal to zero.",
+            0
         );
         return;
     }
@@ -1413,23 +1345,16 @@ static PHP_METHOD(amqp_connection_class, setReadTimeout)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    zend_update_property_double(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("read_timeout"),
-        read_timeout TSRMLS_CC
-    );
+    zend_update_property_double(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("readTimeout"), read_timeout);
 
     if (connection->connection_resource && connection->connection_resource->is_connected) {
-        if (php_amqp_set_resource_read_timeout(connection->connection_resource, read_timeout TSRMLS_CC) == 0) {
+        if (php_amqp_set_resource_read_timeout(connection->connection_resource, read_timeout) == 0) {
 
-            php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+            php_amqp_disconnect_force(connection->connection_resource);
 
-            RETURN_FALSE;
+            zend_throw_exception(amqp_connection_exception_class_entry, "Could not set read timeout", 0);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1439,7 +1364,7 @@ static PHP_METHOD(amqp_connection_class, getWriteTimeout)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("write_timeout");
+    PHP_AMQP_RETURN_THIS_PROP("writeTimeout");
 }
 /* }}} */
 
@@ -1451,7 +1376,7 @@ static PHP_METHOD(amqp_connection_class, setWriteTimeout)
     double write_timeout;
 
     /* Get the timeout from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &write_timeout) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &write_timeout) == FAILURE) {
         return;
     }
 
@@ -1459,8 +1384,8 @@ static PHP_METHOD(amqp_connection_class, setWriteTimeout)
     if (!php_amqp_is_valid_timeout(write_timeout)) {
         zend_throw_exception(
             amqp_connection_exception_class_entry,
-            "Parameter 'write_timeout' must be greater than or equal to zero.",
-            0 TSRMLS_CC
+            "Parameter 'writeTimeout' must be greater than or equal to zero.",
+            0
         );
         return;
     }
@@ -1468,23 +1393,16 @@ static PHP_METHOD(amqp_connection_class, setWriteTimeout)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    zend_update_property_double(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("write_timeout"),
-        write_timeout TSRMLS_CC
-    );
+    zend_update_property_double(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("writeTimeout"), write_timeout);
 
     if (connection->connection_resource && connection->connection_resource->is_connected) {
-        if (php_amqp_set_resource_write_timeout(connection->connection_resource, write_timeout TSRMLS_CC) == 0) {
+        if (php_amqp_set_resource_write_timeout(connection->connection_resource, write_timeout) == 0) {
 
-            php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+            php_amqp_disconnect_force(connection->connection_resource);
 
-            RETURN_FALSE;
+            zend_throw_exception(amqp_connection_exception_class_entry, "Could not set write timeout", 0);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1494,7 +1412,7 @@ static PHP_METHOD(amqp_connection_class, getConnectTimeout)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("connect_timeout");
+    PHP_AMQP_RETURN_THIS_PROP("connectTimeout");
 }
 /* }}} */
 
@@ -1504,7 +1422,7 @@ static PHP_METHOD(amqp_connection_class, getRpcTimeout)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("rpc_timeout");
+    PHP_AMQP_RETURN_THIS_PROP("rpcTimeout");
 }
 /* }}} */
 
@@ -1516,7 +1434,7 @@ static PHP_METHOD(amqp_connection_class, setRpcTimeout)
     double rpc_timeout;
 
     /* Get the timeout from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "d", &rpc_timeout) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &rpc_timeout) == FAILURE) {
         return;
     }
 
@@ -1524,8 +1442,8 @@ static PHP_METHOD(amqp_connection_class, setRpcTimeout)
     if (!php_amqp_is_valid_timeout(rpc_timeout)) {
         zend_throw_exception(
             amqp_connection_exception_class_entry,
-            "Parameter 'rpc_timeout' must be greater than or equal to zero.",
-            0 TSRMLS_CC
+            "Parameter 'rpcTimeout' must be greater than or equal to zero.",
+            0
         );
         return;
     }
@@ -1533,23 +1451,16 @@ static PHP_METHOD(amqp_connection_class, setRpcTimeout)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    zend_update_property_double(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("rpc_timeout"),
-        rpc_timeout TSRMLS_CC
-    );
+    zend_update_property_double(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("rpcTimeout"), rpc_timeout);
 
     if (connection->connection_resource && connection->connection_resource->is_connected) {
-        if (php_amqp_set_resource_rpc_timeout(connection->connection_resource, rpc_timeout TSRMLS_CC) == 0) {
+        if (php_amqp_set_resource_rpc_timeout(connection->connection_resource, rpc_timeout) == 0) {
 
-            php_amqp_disconnect_force(connection->connection_resource TSRMLS_CC);
+            php_amqp_disconnect_force(connection->connection_resource);
 
-            RETURN_FALSE;
+            zend_throw_exception(amqp_connection_exception_class_entry, "Could not set connect timeout", 0);
         }
     }
-
-    RETURN_TRUE;
 }
 /* }}} */
 
@@ -1566,7 +1477,7 @@ static PHP_METHOD(amqp_connection_class, getUsedChannels)
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
     if (!connection->connection_resource || !connection->connection_resource->is_connected) {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "Connection is not connected.");
+        php_error_docref(NULL, E_WARNING, "Connection is not connected.");
 
         RETURN_LONG(0);
     }
@@ -1591,7 +1502,7 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
         RETURN_LONG(connection->connection_resource->max_slots);
     }
 
-    PHP_AMQP_RETURN_THIS_PROP("channel_max");
+    PHP_AMQP_RETURN_THIS_PROP("channelMax");
 }
 /* }}} */
 
@@ -1611,7 +1522,7 @@ static PHP_METHOD(amqp_connection_class, getMaxFrameSize)
         RETURN_LONG(amqp_get_frame_max(connection->connection_resource->connection_state));
     }
 
-    PHP_AMQP_RETURN_THIS_PROP("frame_max");
+    PHP_AMQP_RETURN_THIS_PROP("frameMax");
 }
 /* }}} */
 
@@ -1665,13 +1576,15 @@ static PHP_METHOD(amqp_connection_class, setCACert)
     char *str = NULL;
     size_t str_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &str, &str_len) == FAILURE) {
         return;
     }
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cacert"), str, str_len TSRMLS_CC);
-
-    RETURN_TRUE;
+    if (str == NULL) {
+        zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cacert"));
+    } else {
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cacert"), str, str_len);
+    }
 }
 /* }}} */
 
@@ -1690,13 +1603,15 @@ static PHP_METHOD(amqp_connection_class, setCert)
     char *str = NULL;
     size_t str_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &str, &str_len) == FAILURE) {
         return;
     }
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cert"), str, str_len TSRMLS_CC);
-
-    RETURN_TRUE;
+    if (str == NULL) {
+        zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cert"));
+    } else {
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("cert"), str, str_len);
+    }
 }
 /* }}} */
 
@@ -1715,13 +1630,15 @@ static PHP_METHOD(amqp_connection_class, setKey)
     char *str = NULL;
     size_t str_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &str, &str_len) == FAILURE) {
         return;
     }
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("key"), str, str_len TSRMLS_CC);
-
-    RETURN_TRUE;
+    if (str == NULL) {
+        zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("key"));
+    } else {
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("key"), str, str_len);
+    }
 }
 /* }}} */
 
@@ -1740,13 +1657,11 @@ static PHP_METHOD(amqp_connection_class, setVerify)
 {
     zend_bool verify = 1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "b", &verify) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "b", &verify) == FAILURE) {
         return;
     }
 
-    zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("verify"), verify TSRMLS_CC);
-
-    RETURN_TRUE;
+    zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("verify"), verify);
 }
 /* }}} */
 
@@ -1756,7 +1671,7 @@ static PHP_METHOD(amqp_connection_class, getSaslMethod)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("sasl_method");
+    PHP_AMQP_RETURN_THIS_PROP("saslMethod");
 }
 /* }}} */
 
@@ -1767,7 +1682,7 @@ static PHP_METHOD(amqp_connection_class, setSaslMethod)
     long method;
 
     /* Get the port from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &method) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &method) == FAILURE) {
         return;
     }
 
@@ -1776,14 +1691,12 @@ static PHP_METHOD(amqp_connection_class, setSaslMethod)
         zend_throw_exception(
             amqp_connection_exception_class_entry,
             "Invalid SASL method given. Method must be AMQP_SASL_METHOD_PLAIN or AMQP_SASL_METHOD_EXTERNAL.",
-            0 TSRMLS_CC
+            0
         );
         return;
     }
 
-    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("sasl_method"), method TSRMLS_CC);
-
-    RETURN_TRUE;
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("saslMethod"), method);
 }
 /* }}} */
 
@@ -1792,7 +1705,7 @@ static PHP_METHOD(amqp_connection_class, getConnectionName)
 {
     zval rv;
     PHP_AMQP_NOPARAMS();
-    PHP_AMQP_RETURN_THIS_PROP("connection_name");
+    PHP_AMQP_RETURN_THIS_PROP("connectionName");
 }
 /* }}} */
 
@@ -1802,173 +1715,200 @@ static PHP_METHOD(amqp_connection_class, setConnectionName)
     char *str = NULL;
     size_t str_len = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s!", &str, &str_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &str, &str_len) == FAILURE) {
         return;
     }
     if (str == NULL) {
-        zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("connection_name") TSRMLS_CC);
+        zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("connectionName"));
     } else {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
-            ZEND_STRL("connection_name"),
+            ZEND_STRL("connectionName"),
             str,
-            str_len TSRMLS_CC
+            str_len
         );
     }
-
-
-    RETURN_TRUE;
 }
 /* }}} */
 
 /* amqp_connection_class ARG_INFO definition */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
-    ZEND_ARG_ARRAY_INFO(0, credentials, 0)
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, credentials, IS_ARRAY, 0, "[]")
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_isConnected, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_isConnected, ZEND_SEND_BY_VAL, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_connect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_connect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_pconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_pconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_pdisconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_pdisconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_disconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_disconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_reconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_reconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_preconnect, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_preconnect, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getLogin, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setLogin, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, login)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setLogin, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, login, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getPassword, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getPassword, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setPassword, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, password)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setPassword, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, password, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getHost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getHost, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setHost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, host)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setHost, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, host, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getPort, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getPort, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setPort, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, port)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setPort, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, port, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getVhost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getVhost, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setVhost, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, vhost)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setVhost, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, vhost, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getTimeout, ZEND_SEND_BY_VAL, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setTimeout, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getReadTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getReadTimeout, ZEND_SEND_BY_VAL, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setReadTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setReadTimeout, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getWriteTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_getWriteTimeout,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_DOUBLE,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setWriteTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setWriteTimeout, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getConnectTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_getConnectTimeout,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_DOUBLE,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getRpcTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getRpcTimeout, ZEND_SEND_BY_VAL, 0, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setRpcTimeout, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setRpcTimeout, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getUsedChannels, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getUsedChannels, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getMaxChannels, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getMaxChannels, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getMaxFrameSize, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getMaxFrameSize, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getHeartbeatInterval, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_getHeartbeatInterval,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_LONG,
+    0
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_isPersistent, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_isPersistent, ZEND_SEND_BY_VAL, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getCACert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getCACert, ZEND_SEND_BY_VAL, 0, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setCACert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, cacert)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setCACert, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, cacert, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getCert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getCert, ZEND_SEND_BY_VAL, 0, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setCert, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, cert)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setCert, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, cert, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getKey, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getKey, ZEND_SEND_BY_VAL, 0, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setKey, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, key)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setKey, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getVerify, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getVerify, ZEND_SEND_BY_VAL, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setVerify, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, verify)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setVerify, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, verify, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getSaslMethod, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_getSaslMethod, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setSaslMethod, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, sasl_method)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_connection_class_setSaslMethod, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, saslMethod, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_getConnectionName, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_getConnectionName,
+    ZEND_SEND_BY_VAL,
+    0,
+    IS_STRING,
+    1
+)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class_setConnectionName, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-    ZEND_ARG_INFO(0, connection_name)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
+    arginfo_amqp_connection_class_setConnectionName,
+    ZEND_SEND_BY_VAL,
+    1,
+    IS_VOID,
+    0
+)
+    ZEND_ARG_TYPE_INFO(0, connectionName, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
 
@@ -2039,38 +1979,45 @@ zend_function_entry amqp_connection_class_functions[] = {
     {NULL, NULL, NULL}
 };
 
-
 PHP_MINIT_FUNCTION(amqp_connection)
 {
     zend_class_entry ce;
 
     INIT_CLASS_ENTRY(ce, "AMQPConnection", amqp_connection_class_functions);
     ce.create_object = amqp_connection_ctor;
-    this_ce = zend_register_internal_class(&ce TSRMLS_CC);
+    this_ce = zend_register_internal_class(&ce);
 
-    zend_declare_property_null(this_ce, ZEND_STRL("login"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("password"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("host"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("vhost"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("port"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "login", ZEND_ACC_PRIVATE, IS_STRING, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "password", ZEND_ACC_PRIVATE, IS_STRING, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "host", ZEND_ACC_PRIVATE, IS_STRING, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "vhost", ZEND_ACC_PRIVATE, IS_STRING, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "port", ZEND_ACC_PRIVATE, IS_LONG, 0);
 
-    zend_declare_property_null(this_ce, ZEND_STRL("read_timeout"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("write_timeout"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("connect_timeout"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("rpc_timeout"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "readTimeout", ZEND_ACC_PRIVATE, IS_DOUBLE, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "writeTimeout", ZEND_ACC_PRIVATE, IS_DOUBLE, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "connectTimeout", ZEND_ACC_PRIVATE, IS_DOUBLE, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "rpcTimeout", ZEND_ACC_PRIVATE, IS_DOUBLE, 0);
 
-    zend_declare_property_null(this_ce, ZEND_STRL("channel_max"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("frame_max"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("heartbeat"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "frameMax", ZEND_ACC_PRIVATE, IS_LONG, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "channelMax", ZEND_ACC_PRIVATE, IS_LONG, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "heartbeat", ZEND_ACC_PRIVATE, IS_LONG, 0);
 
-    zend_declare_property_null(this_ce, ZEND_STRL("cacert"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("key"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("cert"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("verify"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "cacert", ZEND_ACC_PRIVATE, IS_STRING, 1);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "key", ZEND_ACC_PRIVATE, IS_STRING, 1);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "cert", ZEND_ACC_PRIVATE, IS_STRING, 1);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY_WITH_DEFAULT(this_ce, "verify", ZEND_ACC_PRIVATE, _IS_BOOL, 0, ZVAL_TRUE);
 
-    zend_declare_property_null(this_ce, ZEND_STRL("sasl_method"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    zval default_sasl_method;
+    ZVAL_LONG(&default_sasl_method, DEFAULT_SASL_METHOD);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY_ZVAL(
+        this_ce,
+        "saslMethod",
+        ZEND_ACC_PRIVATE,
+        PHP_AMQP_DECLARE_PROPERTY_TYPE(IS_LONG, 0),
+        default_sasl_method
+    );
 
-    zend_declare_property_null(this_ce, ZEND_STRL("connection_name"), ZEND_ACC_PRIVATE TSRMLS_CC);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "connectionName", ZEND_ACC_PRIVATE, IS_STRING, 1);
 
     memcpy(&amqp_connection_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 

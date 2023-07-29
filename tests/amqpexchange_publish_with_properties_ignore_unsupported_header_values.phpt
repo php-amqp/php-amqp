@@ -22,7 +22,7 @@ $attrs = array(
     ),
 );
 
-echo $ex->publish('message', 'routing.key', AMQP_NOPARAM, $attrs) ? 'true' : 'false';
+var_dump($ex->publish('message', 'routing.key', AMQP_NOPARAM, $attrs));
 
 $ex->delete();
 
@@ -32,4 +32,4 @@ $ex->delete();
 Warning: AMQPExchange::publish(): Ignoring field 'object' due to unsupported value type (object) in %s on line %d
 
 Warning: AMQPExchange::publish(): Ignoring field 'resource' due to unsupported value type (resource) in %s on line %d
-true
+NULL

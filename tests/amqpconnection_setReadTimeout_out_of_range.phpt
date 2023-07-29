@@ -15,4 +15,4 @@ try {
 ?>
 --EXPECT--
 AMQPConnectionException
-Parameter 'read_timeout' must be greater than or equal to zero.
+Parameter 'readTimeout' must be greater than or equal to zero.

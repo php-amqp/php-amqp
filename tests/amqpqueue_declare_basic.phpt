@@ -14,12 +14,16 @@ $ex->setType(AMQP_EX_TYPE_DIRECT);
 $ex->declareExchange();
 
 $queue = new AMQPQueue($ch);
-$queue->setName("queue-" . microtime(true));
-$queue->declareQueue();
+var_dump($queue->setName("queue-" . microtime(true)));
+var_dump($queue->declareQueue());
 var_dump($queue->bind($ex->getName(), 'routing.key'));
 
-$queue->delete();
-$ex->delete();
+var_dump($queue->delete());
+var_dump($ex->delete());
 ?>
 --EXPECT--
-bool(true)
+NULL
+int(0)
+NULL
+int(0)
+NULL

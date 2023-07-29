@@ -39,7 +39,7 @@ extern int le_amqp_connection_resource_persistent;
     #include <amqp.h>
 #endif
 
-void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_DC);
+void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource);
 
 typedef struct _amqp_connection_params {
     char *login;
@@ -67,22 +67,22 @@ int php_amqp_connection_resource_error(
     amqp_rpc_reply_t reply,
     char **message,
     amqp_connection_resource *resource,
-    amqp_channel_t channel_id TSRMLS_DC
+    amqp_channel_t channel_id
 );
 int php_amqp_connection_resource_error_advanced(
     amqp_rpc_reply_t reply,
     char **message,
     amqp_connection_resource *resource,
     amqp_channel_t channel_id,
-    amqp_channel_object *channel TSRMLS_DC
+    amqp_channel_object *channel
 );
 
 /* Socket-related functions */
-int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double read_timeout TSRMLS_DC);
-int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double write_timeout TSRMLS_DC);
+int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double read_timeout);
+int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double write_timeout);
 
 /*Not socket-related rpc timeout function */
-int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double rpc_timeout TSRMLS_DC);
+int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double rpc_timeout);
 
 /* Channel-related functions */
 amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connection_resource *resource);
@@ -94,10 +94,7 @@ int php_amqp_connection_resource_register_channel(
 );
 
 /* Creating and destroying resource */
-amqp_connection_resource *connection_resource_constructor(
-    amqp_connection_params *params,
-    zend_bool persistent TSRMLS_DC
-);
+amqp_connection_resource *connection_resource_constructor(amqp_connection_params *params, zend_bool persistent);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor);
 

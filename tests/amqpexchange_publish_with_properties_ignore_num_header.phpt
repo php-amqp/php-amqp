@@ -15,8 +15,8 @@ $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
 
-echo $ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => 'ignored')) ? 'true' : 'false', PHP_EOL;
-echo $ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => array(2 => 'ignore_me'))) ? 'true' : 'false', PHP_EOL;
+var_dump($ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => 'ignored')));
+var_dump($ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => array(2 => 'ignore_me'))));
 
 $ex->delete();
 
@@ -24,7 +24,7 @@ $ex->delete();
 ?>
 --EXPECTF--
 Warning: AMQPExchange::publish(): Ignoring non-string header field '0' in %s on line %d
-true
+NULL
 
 Warning: AMQPExchange::publish(): Ignoring non-string header field '2' in %s on line %d
-true
+NULL

@@ -14,16 +14,20 @@ $ex->setType(AMQP_EX_TYPE_DIRECT);
 $ex->declareExchange();
 
 $queue = new AMQPQueue($ch);
-$queue->setName("queue-" . microtime(true));
-$queue->setArgument('x-dead-letter-exchange', '');
-$queue->setArgument('x-dead-letter-routing-key', 'some key');
-$queue->setArgument('x-message-ttl', 42);
-$queue->setFlags(AMQP_AUTODELETE);
-$res = $queue->declareQueue();
+var_dump($queue->setName("queue-" . microtime(true)));
+var_dump($queue->setArgument('x-dead-letter-exchange', ''));
+var_dump($queue->setArgument('x-dead-letter-routing-key', 'some key'));
+var_dump($queue->setArgument('x-message-ttl', 42));
+var_dump($queue->setFlags(AMQP_AUTODELETE));
+var_dump($queue->declareQueue());
 
-var_dump($res);
-
-$queue->delete();
+var_dump($queue->delete());
 ?>
 --EXPECT--
+NULL
+NULL
+NULL
+NULL
+NULL
+int(0)
 int(0)

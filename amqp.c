@@ -56,6 +56,7 @@
 #include "amqp_connection_resource.h"
 #include "amqp_channel.h"
 #include "amqp_envelope.h"
+#include "amqp_envelope_exception.h"
 #include "amqp_exchange.h"
 #include "amqp_queue.h"
 #include "amqp_timestamp.h"
@@ -71,7 +72,7 @@
 
 zend_class_entry *amqp_exception_class_entry, *amqp_connection_exception_class_entry,
     *amqp_channel_exception_class_entry, *amqp_queue_exception_class_entry, *amqp_exchange_exception_class_entry,
-    *amqp_envelope_exception_class_entry, *amqp_value_exception_class_entry;
+    *amqp_value_exception_class_entry;
 
 /* {{{ amqp_functions[]
 *
@@ -245,18 +246,9 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
         module_number
     );
 
-    PHP_MINIT(amqp_connection)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(amqp_channel)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(amqp_queue)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(amqp_exchange)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(amqp_basic_properties)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(amqp_envelope)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(amqp_timestamp)(INIT_FUNC_ARGS_PASSTHRU);
-    PHP_MINIT(amqp_decimal)(INIT_FUNC_ARGS_PASSTHRU);
-
     /* Class Exceptions */
     INIT_CLASS_ENTRY(ce, "AMQPException", NULL);
-    amqp_exception_class_entry = zend_register_internal_class_ex(&ce, zend_exception_get_default(TSRMLS_C));
+    amqp_exception_class_entry = zend_register_internal_class_ex(&ce, zend_exception_get_default());
 
     INIT_CLASS_ENTRY(ce, "AMQPConnectionException", NULL);
     amqp_connection_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
@@ -267,15 +259,21 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
     INIT_CLASS_ENTRY(ce, "AMQPQueueException", NULL);
     amqp_queue_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
-    INIT_CLASS_ENTRY(ce, "AMQPEnvelopeException", NULL);
-    amqp_envelope_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
-    zend_declare_property_null(amqp_envelope_exception_class_entry, ZEND_STRL("envelope"), ZEND_ACC_PUBLIC TSRMLS_CC);
-
     INIT_CLASS_ENTRY(ce, "AMQPExchangeException", NULL);
     amqp_exchange_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
 
     INIT_CLASS_ENTRY(ce, "AMQPValueException", NULL);
     amqp_value_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
+
+    PHP_MINIT(amqp_connection)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_channel)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_queue)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_exchange)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_basic_properties)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_envelope)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_envelope_exception)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_timestamp)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_decimal)(INIT_FUNC_ARGS_PASSTHRU);
 
     REGISTER_INI_ENTRIES();
 
@@ -374,10 +372,10 @@ int php_amqp_error(
     amqp_rpc_reply_t reply,
     char **message,
     amqp_connection_resource *connection_resource,
-    amqp_channel_resource *channel_resource TSRMLS_DC
+    amqp_channel_resource *channel_resource
 )
 {
-    return php_amqp_error_advanced(reply, message, connection_resource, channel_resource, 1 TSRMLS_CC);
+    return php_amqp_error_advanced(reply, message, connection_resource, channel_resource, 1);
 }
 
 int php_amqp_error_advanced(
@@ -385,7 +383,7 @@ int php_amqp_error_advanced(
     char **message,
     amqp_connection_resource *connection_resource,
     amqp_channel_resource *channel_resource,
-    int fail_on_errors TSRMLS_DC
+    int fail_on_errors
 )
 {
     assert(connection_resource != NULL);
@@ -399,7 +397,7 @@ int php_amqp_error_advanced(
         reply,
         message,
         connection_resource,
-        (amqp_channel_t) (channel_resource ? channel_resource->channel_id : 0) TSRMLS_CC
+        (amqp_channel_t) (channel_resource ? channel_resource->channel_id : 0)
     );
 
     switch (res) {
@@ -416,7 +414,7 @@ int php_amqp_error_advanced(
             connection_resource->is_connected = '\0';
 
             /* Close connection with all its channels */
-            php_amqp_disconnect_force(connection_resource TSRMLS_CC);
+            php_amqp_disconnect_force(connection_resource);
 
             break;
         case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED:
@@ -426,7 +424,7 @@ int php_amqp_error_advanced(
                 channel_resource->is_connected = '\0';
 
                 /* Close channel */
-                php_amqp_close_channel(channel_resource, 1 TSRMLS_CC);
+                php_amqp_close_channel(channel_resource, 1);
             }
             /* No more error handling necessary, returning. */
             break;
@@ -438,16 +436,16 @@ int php_amqp_error_advanced(
     return res;
 }
 
-void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entry *exception_ce TSRMLS_DC)
+void php_amqp_zend_throw_exception_short(amqp_rpc_reply_t reply, zend_class_entry *exception_ce)
 {
-    php_amqp_zend_throw_exception(reply, exception_ce, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code) TSRMLS_CC);
+    php_amqp_zend_throw_exception(reply, exception_ce, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code));
 }
 
 void php_amqp_zend_throw_exception(
     amqp_rpc_reply_t reply,
     zend_class_entry *exception_ce,
     const char *message,
-    zend_long code TSRMLS_DC
+    zend_long code
 )
 {
     switch (reply.reply_type) {
@@ -477,7 +475,7 @@ void php_amqp_zend_throw_exception(
             break;
     }
 
-    zend_throw_exception(exception_ce, message, code TSRMLS_CC);
+    zend_throw_exception(exception_ce, message, code);
 }
 
 

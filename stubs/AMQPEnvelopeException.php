@@ -5,8 +5,8 @@
  */
 class AMQPEnvelopeException extends AMQPException
 {
-    /**
-     * @var AMQPEnvelope
-     */
-    public $envelope;
+    private AMQPEnvelope $envelope;
+    public function getEnvelope(): AMQPEnvelope
+    {
+    }
 }

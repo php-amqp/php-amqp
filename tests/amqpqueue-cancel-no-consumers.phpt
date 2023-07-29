@@ -23,7 +23,7 @@ $exchange_name = 'exchnage-test-.' . $microtime;
 $queue_1 = new \AMQPQueue($extChannel);
 $queue_1->setName($queue_name);
 $queue_1->declareQueue();
-$queue_1->purge();
+var_dump($queue_1->purge());
 
 $exchange = new \AMQPExchange($extChannel);
 $exchange->setType(AMQP_EX_TYPE_DIRECT);
@@ -42,4 +42,5 @@ $queue_1->cancel($consumer_tag);
 
 echo "Canceled", PHP_EOL;
 --EXPECTF--
+int(0)
 Canceled

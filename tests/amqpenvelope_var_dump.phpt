@@ -2,7 +2,7 @@
 AMQPEnvelope var_dump
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp") || version_compare(PHP_VERSION, '5.3', '<')) {
+if (!extension_loaded("amqp")) {
   print "skip";
 }
 --FILE--
@@ -33,90 +33,90 @@ $q->consume("consumeThings");
 ?>
 --EXPECTF--
 object(AMQPEnvelope)#5 (20) {
-  ["content_type":"AMQPBasicProperties":private]=>
+  ["contentType":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
-  ["content_encoding":"AMQPBasicProperties":private]=>
-  string(0) ""
+  ["contentEncoding":"AMQPBasicProperties":private]=>
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(0) {
   }
-  ["delivery_mode":"AMQPBasicProperties":private]=>
+  ["deliveryMode":"AMQPBasicProperties":private]=>
   int(1)
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
-  ["correlation_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["reply_to":"AMQPBasicProperties":private]=>
-  string(0) ""
+  ["correlationId":"AMQPBasicProperties":private]=>
+  NULL
+  ["replyTo":"AMQPBasicProperties":private]=>
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["message_id":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
+  ["messageId":"AMQPBasicProperties":private]=>
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["user_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["app_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["cluster_id":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
+  ["userId":"AMQPBasicProperties":private]=>
+  NULL
+  ["appId":"AMQPBasicProperties":private]=>
+  NULL
+  ["clusterId":"AMQPBasicProperties":private]=>
+  NULL
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
-  ["consumer_tag":"AMQPEnvelope":private]=>
+  ["consumerTag":"AMQPEnvelope":private]=>
   string(31) "amq.ctag-%s"
-  ["delivery_tag":"AMQPEnvelope":private]=>
+  ["deliveryTag":"AMQPEnvelope":private]=>
   int(1)
-  ["is_redelivery":"AMQPEnvelope":private]=>
+  ["isRedelivery":"AMQPEnvelope":private]=>
   bool(false)
-  ["exchange_name":"AMQPEnvelope":private]=>
+  ["exchangeName":"AMQPEnvelope":private]=>
   string(9) "exchange1"
-  ["routing_key":"AMQPEnvelope":private]=>
+  ["routingKey":"AMQPEnvelope":private]=>
   string(9) "routing.1"
 }
 object(AMQPEnvelope)#5 (20) {
-  ["content_type":"AMQPBasicProperties":private]=>
+  ["contentType":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
-  ["content_encoding":"AMQPBasicProperties":private]=>
-  string(0) ""
+  ["contentEncoding":"AMQPBasicProperties":private]=>
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(1) {
     ["test"]=>
     string(6) "passed"
   }
-  ["delivery_mode":"AMQPBasicProperties":private]=>
+  ["deliveryMode":"AMQPBasicProperties":private]=>
   int(1)
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
-  ["correlation_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["reply_to":"AMQPBasicProperties":private]=>
-  string(0) ""
+  ["correlationId":"AMQPBasicProperties":private]=>
+  NULL
+  ["replyTo":"AMQPBasicProperties":private]=>
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["message_id":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
+  ["messageId":"AMQPBasicProperties":private]=>
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["user_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["app_id":"AMQPBasicProperties":private]=>
-  string(0) ""
-  ["cluster_id":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
+  ["userId":"AMQPBasicProperties":private]=>
+  NULL
+  ["appId":"AMQPBasicProperties":private]=>
+  NULL
+  ["clusterId":"AMQPBasicProperties":private]=>
+  NULL
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
-  ["consumer_tag":"AMQPEnvelope":private]=>
+  ["consumerTag":"AMQPEnvelope":private]=>
   string(31) "amq.ctag-%s"
-  ["delivery_tag":"AMQPEnvelope":private]=>
+  ["deliveryTag":"AMQPEnvelope":private]=>
   int(2)
-  ["is_redelivery":"AMQPEnvelope":private]=>
+  ["isRedelivery":"AMQPEnvelope":private]=>
   bool(false)
-  ["exchange_name":"AMQPEnvelope":private]=>
+  ["exchangeName":"AMQPEnvelope":private]=>
   string(9) "exchange1"
-  ["routing_key":"AMQPEnvelope":private]=>
+  ["routingKey":"AMQPEnvelope":private]=>
   string(9) "routing.1"
 }

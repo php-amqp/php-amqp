@@ -38,14 +38,14 @@ array(1) {
   ["headerName"]=>
   object(AMQPTimestamp)#%d (1) {
     ["timestamp":"AMQPTimestamp":private]=>
-    string(10) "1488578462"
+    float(1488578462)
   }
 }
 array(1) {
   ["headerName"]=>
   object(AMQPTimestamp)#%d (1) {
     ["timestamp":"AMQPTimestamp":private]=>
-    string(10) "1488578462"
+    float(1488578462)
   }
 }
 same

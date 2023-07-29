@@ -75,25 +75,25 @@ AMQPEnvelope
     isRedelivery:
         bool(false)
     getContentEncoding:
-        string(0) ""
+        NULL
     getType:
-        string(0) ""
+        NULL
     getTimeStamp:
         int(0)
     getPriority:
         int(0)
     getExpiration:
-        string(0) ""
+        NULL
     getUserId:
-        string(0) ""
+        NULL
     getAppId:
-        string(0) ""
+        NULL
     getMessageId:
-        string(0) ""
+        NULL
     getReplyTo:
-        string(0) ""
+        NULL
     getCorrelationId:
-        string(0) ""
+        NULL
     getHeaders:
         array(1) {
   ["foo"]=>
@@ -119,25 +119,25 @@ AMQPEnvelope
     isRedelivery:
         bool(false)
     getContentEncoding:
-        string(0) ""
+        NULL
     getType:
-        string(0) ""
+        NULL
     getTimeStamp:
         int(0)
     getPriority:
         int(0)
     getExpiration:
-        string(0) ""
+        NULL
     getUserId:
-        string(0) ""
+        NULL
     getAppId:
-        string(0) ""
+        NULL
     getMessageId:
-        string(0) ""
+        NULL
     getReplyTo:
-        string(0) ""
+        NULL
     getCorrelationId:
-        string(0) ""
+        NULL
     getHeaders:
         array(0) {
 }

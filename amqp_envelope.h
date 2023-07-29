@@ -25,6 +25,6 @@
 
 extern zend_class_entry *amqp_envelope_class_entry;
 
-void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelope TSRMLS_DC);
+void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelope);
 
 PHP_MINIT_FUNCTION(amqp_envelope);

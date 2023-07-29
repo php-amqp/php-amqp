@@ -6,31 +6,31 @@
 final class AMQPTimestamp
 {
     /**
-     * @var string
+     * @var float
      */
-    const MIN = "0";
+    const MIN = 0.0;
 
     /**
-     * @var string
+     * @var float
      */
-    const MAX = "18446744073709551616";
+    const MAX = 18446744073709551616;
+
+    private float $timestamp;
 
     /**
-     * @param string $timestamp
+     * @param float $timestamp
      *
      * @throws AMQPValueException
      */
-    public function __construct($timestamp)
+    public function __construct(float $timestamp)
     {
     }
 
-    /** @return string */
-    public function getTimestamp()
+    public function getTimestamp(): float
     {
     }
 
-    /** @return string */
-    public function __toString()
+    public function __toString(): string
     {
     }
 }

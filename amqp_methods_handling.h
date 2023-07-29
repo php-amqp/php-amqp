@@ -47,33 +47,33 @@ int amqp_simple_wait_method_noblock(
     struct timeval *timeout
 );
 
-int php_amqp_call_callback_with_params(zval params, amqp_callback_bucket *cb TSRMLS_DC);
+int php_amqp_call_callback_with_params(zval params, amqp_callback_bucket *cb);
 
-int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *msg, amqp_callback_bucket *cb TSRMLS_DC);
+int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *msg, amqp_callback_bucket *cb);
 int php_amqp_handle_basic_return(
     char **message,
     amqp_connection_resource *resource,
     amqp_channel_t channel_id,
     amqp_channel_object *channel,
-    amqp_method_t *method TSRMLS_DC
+    amqp_method_t *method
 );
 
-int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *cb TSRMLS_DC);
+int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *cb);
 int php_amqp_handle_basic_ack(
     char **message,
     amqp_connection_resource *resource,
     amqp_channel_t channel_id,
     amqp_channel_object *channel,
-    amqp_method_t *method TSRMLS_DC
+    amqp_method_t *method
 );
 
-int php_amqp_call_basic_nack_callback(amqp_basic_nack_t *m, amqp_callback_bucket *cb TSRMLS_DC);
+int php_amqp_call_basic_nack_callback(amqp_basic_nack_t *m, amqp_callback_bucket *cb);
 int php_amqp_handle_basic_nack(
     char **message,
     amqp_connection_resource *resource,
     amqp_channel_t channel_id,
     amqp_channel_object *channel,
-    amqp_method_t *method TSRMLS_DC
+    amqp_method_t *method
 );
 
 #endif

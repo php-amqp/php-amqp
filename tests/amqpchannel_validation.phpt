@@ -57,12 +57,12 @@ try {
 ?>
 ==DONE==
 --EXPECTF--
-AMQPConnectionException: Parameter 'prefetch_size' must be between 0 and 4294967295.
-AMQPConnectionException: Parameter 'prefetch_size' must be between 0 and 4294967295.
-AMQPConnectionException: Parameter 'global_prefetch_size' must be between 0 and 4294967295.
-AMQPConnectionException: Parameter 'global_prefetch_size' must be between 0 and 4294967295.
-AMQPConnectionException: Parameter 'prefetch_count' must be between 0 and 65535.
-AMQPConnectionException: Parameter 'prefetch_count' must be between 0 and 65535.
-AMQPConnectionException: Parameter 'global_prefetch_count' must be between 0 and 65535.
-AMQPConnectionException: Parameter 'global_prefetch_count' must be between 0 and 65535.
+AMQPConnectionException: Parameter 'prefetchSize' must be between 0 and 4294967295.
+AMQPConnectionException: Parameter 'prefetchSize' must be between 0 and 4294967295.
+AMQPConnectionException: Parameter 'globalPrefetchSize' must be between 0 and 4294967295.
+AMQPConnectionException: Parameter 'globalPrefetchSize' must be between 0 and 4294967295.
+AMQPConnectionException: Parameter 'prefetchCount' must be between 0 and 65535.
+AMQPConnectionException: Parameter 'prefetchCount' must be between 0 and 65535.
+AMQPConnectionException: Parameter 'globalPrefetchCount' must be between 0 and 65535.
+AMQPConnectionException: Parameter 'globalPrefetchCount' must be between 0 and 65535.
 ==DONE==

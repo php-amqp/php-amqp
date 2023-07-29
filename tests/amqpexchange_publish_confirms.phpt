@@ -36,8 +36,8 @@ $ex1->setFlags(AMQP_AUTODELETE);
 $ex1->declareExchange();
 
 
-echo $ex1->publish('message 1', 'routing.key') ? 'true' : 'false', PHP_EOL;
-echo $ex1->publish('message 1', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
+var_dump($ex1->publish('message 1', 'routing.key'));
+var_dump($ex1->publish('message 1', 'routing.key', AMQP_MANDATORY));
 
 try {
     $ch->waitForConfirm();
@@ -58,8 +58,8 @@ try {
 }
 
 
-echo $ex1->publish('message 1', 'routing.key') ? 'true' : 'false', PHP_EOL;
-echo $ex1->publish('message 1', 'routing.key', AMQP_MANDATORY) ? 'true' : 'false', PHP_EOL;
+var_dump($ex1->publish('message 1', 'routing.key'));
+var_dump($ex1->publish('message 1', 'routing.key', AMQP_MANDATORY));
 
 // ack_callback(int $delivery_tag, bool $multiple) : bool;
 // nack_callback(int $delivery_tag, bool $multiple, bool $requeue) : bool;
@@ -90,7 +90,7 @@ $ex1->delete();
 
 $ex2 = new AMQPExchange($ch);
 $ex2->setName("exchange-nonexistent-" . microtime(true));
-echo $ex2->publish('message 2', 'routing.key') ? 'true' : 'false', PHP_EOL;
+var_dump($ex2->publish('message 2', 'routing.key'));
 
 try {
     $ch->waitForConfirm(1);
@@ -101,13 +101,13 @@ try {
 ?>
 --EXPECTF--
 AMQPQueueException(0): Wait timeout exceed
-true
-true
+NULL
+NULL
 Unhandled basic.ack method from server received. Use AMQPChannel::setConfirmCallback() to process it.
 Unhandled basic.return method from server received. Use AMQPChannel::setReturnCallback() to process it.
 Unhandled basic.ack method from server received. Use AMQPChannel::setConfirmCallback() to process it.
-true
-true
+NULL
+NULL
 Message acked
 array(2) {
   [0]=>
@@ -123,5 +123,5 @@ array(2) {
   [1]=>
   bool(false)
 }
-true
+NULL
 AMQPChannelException(404): Server channel error: 404, message: NOT_FOUND - no exchange 'exchange-nonexistent-%f' in vhost '/'

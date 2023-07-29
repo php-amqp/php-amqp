@@ -20,33 +20,8 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-#ifdef HAVE_CONFIG_H
-    #include "config.h"
-#endif
-
 #include "php.h"
 
-#if AMQP_VERSION_MINOR >= 13
-    #include <rabbitmq-c/amqp.h>
-#else
-    #include <amqp.h>
-#endif
-#include "php_amqp.h"
+extern zend_class_entry *amqp_envelope_exception_class_entry;
 
-PHP_MINIT_FUNCTION(amqp_type);
-
-char *php_amqp_type_amqp_bytes_to_char(amqp_bytes_t bytes);
-amqp_bytes_t php_amqp_type_char_to_amqp_long(char const *cstr, size_t len);
-
-amqp_table_t *php_amqp_type_convert_zval_to_amqp_table(zval *php_array);
-void php_amqp_type_free_amqp_table(amqp_table_t *object);
-
-/** Internal functions */
-zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, amqp_field_value_t **fieldPtr, char *key);
-void php_amqp_type_internal_convert_zval_array(zval *php_array, amqp_field_value_t **field, zend_bool allow_int_keys);
-void php_amqp_type_internal_convert_zval_to_amqp_table(
-    zval *php_array,
-    amqp_table_t *amqp_table,
-    zend_bool allow_int_keys
-);
-void php_amqp_type_internal_convert_zval_to_amqp_array(zval *php_array, amqp_array_t *amqp_array);
+PHP_MINIT_FUNCTION(amqp_envelope_exception);

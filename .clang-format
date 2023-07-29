@@ -20,7 +20,7 @@ AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
-MacroBlockBegin: "(ZEND_BEGIN_ARG_INFO(_EX)?|PHP_INI_BEGIN)"
+MacroBlockBegin: "(ZEND_BEGIN_ARG_(INFO|WITH_RETURN_(TYPE|OBJ)_INFO)(_EX)?|PHP_INI_BEGIN)"
 MacroBlockEnd: "(ZEND_END_ARG_INFO|PHP_INI_END)"
 Macros:
   - "PHP_ME(a, b, c, d)={a, b, c, d},"
@@ -82,4 +82,4 @@ SortIncludes: Never
 IndentWrappedFunctionNames: true
 InsertNewlineAtEOF: true
 PenaltyReturnTypeOnItsOwnLine: 9999
-PenaltyExcessCharacter: 100
+PenaltyExcessCharacter: 999

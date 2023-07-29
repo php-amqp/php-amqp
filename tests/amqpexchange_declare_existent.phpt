@@ -16,7 +16,7 @@ $exchangge_name = "exchange-" . microtime(true);
 $ex = new AMQPExchange($ch);
 $ex->setName($exchangge_name);
 $ex->setType(AMQP_EX_TYPE_FANOUT);
-echo "Exchange declared: ", $ex->declareExchange() ? "true" : "false", PHP_EOL;
+echo "Exchange declared: ", var_export($ex->declareExchange(), true), PHP_EOL;
 
 try {
     $ex = new AMQPExchange($ch);
@@ -40,7 +40,7 @@ try {
 ?>
 --EXPECTF--
 Channel id: 1
-Exchange declared: true
+Exchange declared: NULL
 AMQPExchangeException(406): Server channel error: 406, message: PRECONDITION_FAILED - %s exchange 'exchange-%f' in vhost '/'%s
 Channel connected: false
 Connection connected: true

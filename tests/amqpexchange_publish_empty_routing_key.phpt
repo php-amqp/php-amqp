@@ -13,8 +13,8 @@ $ex = new AMQPExchange($ch);
 $ex->setName("exchange-" . microtime(true));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
-echo $ex->publish('message') ? 'true' : 'false';
+var_dump($ex->publish('message'));
 $ex->delete();
 ?>
 --EXPECT--
-true
+NULL

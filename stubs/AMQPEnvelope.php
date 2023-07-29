@@ -5,6 +5,13 @@
  */
 class AMQPEnvelope extends AMQPBasicProperties
 {
+    private string $body = '';
+    private ?string $consumerTag = null;
+    private ?int $deliveryTag = null;
+    private bool $isRedelivery = false;
+    private ?string $exchangeName = null;
+    private string $routingKey = '';
+
     public function __construct()
     {
     }
@@ -14,7 +21,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string The contents of the message body.
      */
-    public function getBody()
+    public function getBody(): string
     {
     }
 
@@ -23,7 +30,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string The message routing key.
      */
-    public function getRoutingKey()
+    public function getRoutingKey(): string
     {
     }
 
@@ -32,7 +39,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string|null The consumer tag of the message.
      */
-    public function getConsumerTag()
+    public function getConsumerTag(): ?string
     {
     }
 
@@ -41,7 +48,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return integer|null The delivery tag of the message.
      */
-    public function getDeliveryTag()
+    public function getDeliveryTag(): ?int
     {
     }
 
@@ -50,7 +57,7 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return string|null The exchange name on which the message was published.
      */
-    public function getExchangeName()
+    public function getExchangeName(): ?string
     {
     }
 
@@ -64,29 +71,29 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @return bool TRUE if this is a redelivery, FALSE otherwise.
      */
-    public function isRedelivery()
+    public function isRedelivery(): bool
     {
     }
 
     /**
      * Get a specific message header.
      *
-     * @param string $header_key Name of the header to get the value from.
+     * @param string $headerName Name of the header to get the value from.
      *
      * @return string|null The contents of the specified header or null if not set.
      */
-    public function getHeader($header_key)
+    public function getHeader(string $headerName): ?string
     {
     }
 
     /**
      * Check whether specific message header exists.
      *
-     * @param string $header_key Name of the header to check.
+     * @param string $headerName Name of the header to check.
      *
      * @return boolean
      */
-    public function hasHeader($header_key)
+    public function hasHeader(string $headerName): bool
     {
     }
 }

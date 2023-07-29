@@ -35,34 +35,34 @@ dump_methods($props);
 ?>
 --EXPECT--
 object(AMQPBasicProperties)#1 (14) {
-  ["content_type":"AMQPBasicProperties":private]=>
+  ["contentType":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["content_encoding":"AMQPBasicProperties":private]=>
+  ["contentEncoding":"AMQPBasicProperties":private]=>
   string(0) ""
   ["headers":"AMQPBasicProperties":private]=>
   array(0) {
   }
-  ["delivery_mode":"AMQPBasicProperties":private]=>
+  ["deliveryMode":"AMQPBasicProperties":private]=>
   int(1)
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
-  ["correlation_id":"AMQPBasicProperties":private]=>
+  ["correlationId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["reply_to":"AMQPBasicProperties":private]=>
+  ["replyTo":"AMQPBasicProperties":private]=>
   string(0) ""
   ["expiration":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["message_id":"AMQPBasicProperties":private]=>
+  ["messageId":"AMQPBasicProperties":private]=>
   string(0) ""
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["user_id":"AMQPBasicProperties":private]=>
+  ["userId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["app_id":"AMQPBasicProperties":private]=>
+  ["appId":"AMQPBasicProperties":private]=>
   string(0) ""
-  ["cluster_id":"AMQPBasicProperties":private]=>
+  ["clusterId":"AMQPBasicProperties":private]=>
   string(0) ""
 }
 AMQPBasicProperties
@@ -97,36 +97,36 @@ AMQPBasicProperties
         string(0) ""
 
 object(AMQPBasicProperties)#2 (14) {
-  ["content_type":"AMQPBasicProperties":private]=>
+  ["contentType":"AMQPBasicProperties":private]=>
   string(12) "content_type"
-  ["content_encoding":"AMQPBasicProperties":private]=>
+  ["contentEncoding":"AMQPBasicProperties":private]=>
   string(16) "content_encoding"
   ["headers":"AMQPBasicProperties":private]=>
   array(1) {
     ["test"]=>
     string(7) "headers"
   }
-  ["delivery_mode":"AMQPBasicProperties":private]=>
+  ["deliveryMode":"AMQPBasicProperties":private]=>
   int(42)
   ["priority":"AMQPBasicProperties":private]=>
   int(24)
-  ["correlation_id":"AMQPBasicProperties":private]=>
+  ["correlationId":"AMQPBasicProperties":private]=>
   string(14) "correlation_id"
-  ["reply_to":"AMQPBasicProperties":private]=>
+  ["replyTo":"AMQPBasicProperties":private]=>
   string(8) "reply_to"
   ["expiration":"AMQPBasicProperties":private]=>
   string(10) "expiration"
-  ["message_id":"AMQPBasicProperties":private]=>
+  ["messageId":"AMQPBasicProperties":private]=>
   string(10) "message_id"
   ["timestamp":"AMQPBasicProperties":private]=>
   int(99999)
   ["type":"AMQPBasicProperties":private]=>
   string(4) "type"
-  ["user_id":"AMQPBasicProperties":private]=>
+  ["userId":"AMQPBasicProperties":private]=>
   string(7) "user_id"
-  ["app_id":"AMQPBasicProperties":private]=>
+  ["appId":"AMQPBasicProperties":private]=>
   string(6) "app_id"
-  ["cluster_id":"AMQPBasicProperties":private]=>
+  ["clusterId":"AMQPBasicProperties":private]=>
   string(10) "cluster_id"
 }
 AMQPBasicProperties

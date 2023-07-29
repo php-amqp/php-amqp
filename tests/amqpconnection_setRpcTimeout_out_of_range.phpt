@@ -15,4 +15,4 @@ try {
 ?>
 --EXPECT--
 AMQPConnectionException
-Parameter 'rpc_timeout' must be greater than or equal to zero.
+Parameter 'rpcTimeout' must be greater than or equal to zero.

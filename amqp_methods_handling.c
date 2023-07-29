@@ -92,7 +92,7 @@ int php_amqp_handle_basic_return(
     amqp_connection_resource *resource,
     amqp_channel_t channel_id,
     amqp_channel_object *channel,
-    amqp_method_t *method TSRMLS_DC
+    amqp_method_t *method
 )
 {
     amqp_rpc_reply_t ret;
@@ -106,11 +106,11 @@ int php_amqp_handle_basic_return(
     ret = amqp_read_message(resource->connection_state, channel_id, &msg, 0);
 
     if (AMQP_RESPONSE_NORMAL != ret.reply_type) {
-        return php_amqp_connection_resource_error(ret, message, resource, channel_id TSRMLS_CC);
+        return php_amqp_connection_resource_error(ret, message, resource, channel_id);
     }
 
     if (channel->callbacks.basic_return.fci.size > 0) {
-        status = php_amqp_call_basic_return_callback(m, &msg, &channel->callbacks.basic_return TSRMLS_CC);
+        status = php_amqp_call_basic_return_callback(m, &msg, &channel->callbacks.basic_return);
     } else {
         zend_error(
             E_NOTICE,
@@ -124,7 +124,7 @@ int php_amqp_handle_basic_return(
     return status;
 }
 
-int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *msg, amqp_callback_bucket *cb TSRMLS_DC)
+int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *msg, amqp_callback_bucket *cb)
 {
     zval params;
     zval basic_properties;
@@ -143,13 +143,13 @@ int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *
     add_next_index_stringl(&params, m->exchange.bytes, m->exchange.len);
     add_next_index_stringl(&params, m->routing_key.bytes, m->routing_key.len);
 
-    php_amqp_basic_properties_convert_to_zval(&msg->properties, &basic_properties TSRMLS_CC);
+    php_amqp_basic_properties_convert_to_zval(&msg->properties, &basic_properties);
     add_next_index_zval(&params, &basic_properties);
     Z_ADDREF_P(&basic_properties);
 
     add_next_index_stringl(&params, msg->body.bytes, msg->body.len);
 
-    status = php_amqp_call_callback_with_params(params, cb TSRMLS_CC);
+    status = php_amqp_call_callback_with_params(params, cb);
 
     zval_ptr_dtor(&basic_properties);
 
@@ -161,7 +161,7 @@ int php_amqp_handle_basic_ack(
     amqp_connection_resource *resource,
     amqp_channel_t channel_id,
     amqp_channel_object *channel,
-    amqp_method_t *method TSRMLS_DC
+    amqp_method_t *method
 )
 {
     int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
@@ -171,7 +171,7 @@ int php_amqp_handle_basic_ack(
     amqp_basic_ack_t *m = (amqp_basic_ack_t *) method->decoded;
 
     if (channel->callbacks.basic_ack.fci.size > 0) {
-        status = php_amqp_call_basic_ack_callback(m, &channel->callbacks.basic_ack TSRMLS_CC);
+        status = php_amqp_call_basic_ack_callback(m, &channel->callbacks.basic_ack);
     } else {
         zend_error(
             E_NOTICE,
@@ -183,7 +183,7 @@ int php_amqp_handle_basic_ack(
     return status;
 }
 
-int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *cb TSRMLS_DC)
+int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *cb)
 {
     zval params;
 
@@ -194,7 +194,7 @@ int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *
     add_next_index_long(&params, (zend_long) m->delivery_tag);
     add_next_index_bool(&params, m->multiple);
 
-    return php_amqp_call_callback_with_params(params, cb TSRMLS_CC);
+    return php_amqp_call_callback_with_params(params, cb);
 }
 
 int php_amqp_handle_basic_nack(
@@ -202,7 +202,7 @@ int php_amqp_handle_basic_nack(
     amqp_connection_resource *resource,
     amqp_channel_t channel_id,
     amqp_channel_object *channel,
-    amqp_method_t *method TSRMLS_DC
+    amqp_method_t *method
 )
 {
     int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
@@ -212,7 +212,7 @@ int php_amqp_handle_basic_nack(
     amqp_basic_nack_t *m = (amqp_basic_nack_t *) method->decoded;
 
     if (channel->callbacks.basic_nack.fci.size > 0) {
-        status = php_amqp_call_basic_nack_callback(m, &channel->callbacks.basic_nack TSRMLS_CC);
+        status = php_amqp_call_basic_nack_callback(m, &channel->callbacks.basic_nack);
     } else {
         zend_error(
             E_NOTICE,
@@ -224,7 +224,7 @@ int php_amqp_handle_basic_nack(
     return status;
 }
 
-int php_amqp_call_basic_nack_callback(amqp_basic_nack_t *m, amqp_callback_bucket *cb TSRMLS_DC)
+int php_amqp_call_basic_nack_callback(amqp_basic_nack_t *m, amqp_callback_bucket *cb)
 {
     zval params;
 
@@ -236,10 +236,10 @@ int php_amqp_call_basic_nack_callback(amqp_basic_nack_t *m, amqp_callback_bucket
     add_next_index_bool(&params, m->multiple);
     add_next_index_bool(&params, m->requeue);
 
-    return php_amqp_call_callback_with_params(params, cb TSRMLS_CC);
+    return php_amqp_call_callback_with_params(params, cb);
 }
 
-int php_amqp_call_callback_with_params(zval params, amqp_callback_bucket *cb TSRMLS_DC)
+int php_amqp_call_callback_with_params(zval params, amqp_callback_bucket *cb)
 {
     zval retval;
     zval *retval_ptr = &retval;
@@ -249,12 +249,12 @@ int php_amqp_call_callback_with_params(zval params, amqp_callback_bucket *cb TSR
     ZVAL_NULL(&retval);
 
     /* Convert everything to be callable */
-    zend_fcall_info_args(&cb->fci, &params TSRMLS_CC);
+    zend_fcall_info_args(&cb->fci, &params);
 
     /* Initialize the return value pointer */
     cb->fci.retval = retval_ptr;
 
-    zend_call_function(&cb->fci, &cb->fcc TSRMLS_CC);
+    zend_call_function(&cb->fci, &cb->fcc);
 
     /* Check if user land function wants to bail */
     if (EG(exception) || Z_TYPE_P(retval_ptr) == IS_FALSE) {
