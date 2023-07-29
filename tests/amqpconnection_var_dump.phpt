@@ -49,11 +49,11 @@ object(AMQPConnection)#1 (18) {
   ["heartbeat":"AMQPConnection":private]=>
   int(0)
   ["cacert":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["key":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["cert":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["verify":"AMQPConnection":private]=>
   bool(true)
   ["saslMethod":"AMQPConnection":private]=>
@@ -89,11 +89,11 @@ object(AMQPConnection)#1 (18) {
   ["heartbeat":"AMQPConnection":private]=>
   int(0)
   ["cacert":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["key":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["cert":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["verify":"AMQPConnection":private]=>
   bool(true)
   ["saslMethod":"AMQPConnection":private]=>
@@ -128,11 +128,11 @@ object(AMQPConnection)#1 (18) {
   ["heartbeat":"AMQPConnection":private]=>
   int(0)
   ["cacert":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["key":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["cert":"AMQPConnection":private]=>
-  string(0) ""
+  NULL
   ["verify":"AMQPConnection":private]=>
   bool(true)
   ["saslMethod":"AMQPConnection":private]=>

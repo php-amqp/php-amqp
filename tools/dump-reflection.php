@@ -127,7 +127,8 @@ function getClassMetadata(string $class): array {
             }
 
             $methodMetadata['parameters'][] = [
-                'name' => $class. '::' . $method->getName(),
+                'method' => $class. '::' . $method->getName(),
+                'name' => sprintf('$%s', $parameter->getName()),
                 'default' => $default,
                 'type' => getTypeMetadata($parameter->getType()),
                 'byRef' => $parameter->isPassedByReference(),
@@ -144,10 +145,20 @@ function getClassMetadata(string $class): array {
         if (strpos($property->getName(), '_') !== false) {
             error('Property %s::%s contains underscore', $class, $property->getName());
         }
+        $default = 'unknown';
+        if (version_compare(PHP_VERSION, '8.0.0', '>=')) {
+            // Cannot set default values before 8.0 in native extension
+            $default = $property->isDefault() ? $property->getDefaultValue() : 'none';
+        }
+        $propertyTypeMetadata = getTypeMetadata($property->getType());
+        if ($propertyTypeMetadata === null) {
+            error('Property %s::%s has no type declared', $class, $property->getName());
+        }
         $propertyMetadata = [
             'name' => $class . '::' . $property->getName(),
             'visibility' => $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : ($property->isPrivate() ? 'private' : 'unknown')),
-            'type' => getTypeMetadata($property->getType()),
+            'type' => $propertyTypeMetadata,
+            'default' => $default,
         ];
 
         $classMetadata['properties'][] = $propertyMetadata;

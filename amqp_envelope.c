@@ -65,7 +65,7 @@ zend_class_entry *amqp_envelope_class_entry;
 #define this_ce amqp_envelope_class_entry
 
 
-void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelope TSRMLS_DC)
+void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelope)
 {
     /* Build the envelope */
     object_init_ex(envelope, this_ce);
@@ -79,7 +79,7 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
         PHP_AMQP_COMPAT_OBJ_P(envelope),
         ZEND_STRL("body"),
         (const char *) message->body.bytes,
-        (size_t) message->body.len TSRMLS_CC
+        (size_t) message->body.len
     );
 
     zend_update_property_stringl(
@@ -87,36 +87,36 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
         PHP_AMQP_COMPAT_OBJ_P(envelope),
         ZEND_STRL("consumerTag"),
         (const char *) amqp_envelope->consumer_tag.bytes,
-        (size_t) amqp_envelope->consumer_tag.len TSRMLS_CC
+        (size_t) amqp_envelope->consumer_tag.len
     );
     zend_update_property_long(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(envelope),
         ZEND_STRL("deliveryTag"),
-        (zend_long) amqp_envelope->delivery_tag TSRMLS_CC
+        (zend_long) amqp_envelope->delivery_tag
     );
     zend_update_property_bool(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(envelope),
         ZEND_STRL("isRedelivery"),
-        (zend_long) amqp_envelope->redelivered TSRMLS_CC
+        (zend_long) amqp_envelope->redelivered
     );
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(envelope),
         ZEND_STRL("exchangeName"),
         (const char *) amqp_envelope->exchange.bytes,
-        (size_t) amqp_envelope->exchange.len TSRMLS_CC
+        (size_t) amqp_envelope->exchange.len
     );
     zend_update_property_stringl(
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(envelope),
         ZEND_STRL("routingKey"),
         (const char *) amqp_envelope->routing_key.bytes,
-        (size_t) amqp_envelope->routing_key.len TSRMLS_CC
+        (size_t) amqp_envelope->routing_key.len
     );
 
-    php_amqp_basic_properties_extract(p, envelope TSRMLS_CC);
+    php_amqp_basic_properties_extract(p, envelope);
 }
 
 /* {{{ proto AMQPEnvelope::__construct() */
@@ -125,7 +125,7 @@ static PHP_METHOD(amqp_envelope_class, __construct)
     PHP_AMQP_NOPARAMS();
 
     /* BC */
-    php_amqp_basic_properties_set_empty_headers(getThis() TSRMLS_CC);
+    php_amqp_basic_properties_set_empty_headers(getThis());
 }
 /* }}} */
 
@@ -202,7 +202,7 @@ static PHP_METHOD(amqp_envelope_class, getHeader)
     size_t key_len;
     zval *tmp = NULL;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
         return;
     }
 
@@ -226,7 +226,7 @@ static PHP_METHOD(amqp_envelope_class, hasHeader)
     char *key;
     size_t key_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &key_len) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
         return;
     }
 
@@ -292,15 +292,21 @@ PHP_MINIT_FUNCTION(amqp_envelope)
     zend_class_entry ce;
 
     INIT_CLASS_ENTRY(ce, "AMQPEnvelope", amqp_envelope_class_functions);
-    this_ce = zend_register_internal_class_ex(&ce, amqp_basic_properties_class_entry TSRMLS_CC);
+    this_ce = zend_register_internal_class_ex(&ce, amqp_basic_properties_class_entry);
 
-    zend_declare_property_stringl(this_ce, ZEND_STRL("body"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-
-    zend_declare_property_null(this_ce, ZEND_STRL("consumerTag"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("deliveryTag"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("isRedelivery"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_null(this_ce, ZEND_STRL("exchangeName"), ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_stringl(this_ce, ZEND_STRL("routingKey"), "", 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY_WITH_DEFAULT(this_ce, "body", ZEND_ACC_PRIVATE, IS_STRING, 0, ZVAL_EMPTY_STRING);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "consumerTag", ZEND_ACC_PRIVATE, IS_STRING, 1);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "deliveryTag", ZEND_ACC_PRIVATE, IS_LONG, 1);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY_WITH_DEFAULT(this_ce, "isRedelivery", ZEND_ACC_PRIVATE, _IS_BOOL, 0, ZVAL_FALSE);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY_WITH_DEFAULT(this_ce, "exchangeName", ZEND_ACC_PRIVATE, IS_STRING, 1, ZVAL_NULL);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY_WITH_DEFAULT(
+        this_ce,
+        "routingKey",
+        ZEND_ACC_PRIVATE,
+        IS_STRING,
+        0,
+        ZVAL_EMPTY_STRING
+    );
 
     return SUCCESS;
 }

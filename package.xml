@@ -59,6 +59,8 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0...latest
             <file name="amqp_decimal.h" role="src"/>
             <file name="amqp_envelope.c" role="src"/>
             <file name="amqp_envelope.h" role="src"/>
+            <file name="amqp_envelope_exception.c" role="src"/>
+            <file name="amqp_envelope_exception.h" role="src"/>
             <file name="amqp_exchange.c" role="src"/>
             <file name="amqp_exchange.h" role="src"/>
             <file name="amqp_methods_handling.c" role="src"/>

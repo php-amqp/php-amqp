@@ -43,54 +43,41 @@ static PHP_METHOD(amqp_decimal_class, __construct)
 {
     zend_long exponent, significand;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &exponent, &significand) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &exponent, &significand) == FAILURE) {
         return;
     }
 
     if (exponent < AMQP_DECIMAL_EXPONENT_MIN) {
-        zend_throw_exception_ex(
-            amqp_value_exception_class_entry,
-            0 TSRMLS_CC,
-            "Decimal exponent value must be unsigned."
-        );
+        zend_throw_exception_ex(amqp_value_exception_class_entry, 0, "Decimal exponent value must be unsigned.");
         return;
     }
 
     if (exponent > AMQP_DECIMAL_EXPONENT_MAX) {
         zend_throw_exception_ex(
             amqp_value_exception_class_entry,
-            0 TSRMLS_CC,
+            0,
             "Decimal exponent value must be less than %u.",
             (unsigned) AMQP_DECIMAL_EXPONENT_MAX
         );
         return;
     }
     if (significand < AMQP_DECIMAL_SIGNIFICAND_MIN) {
-        zend_throw_exception_ex(
-            amqp_value_exception_class_entry,
-            0 TSRMLS_CC,
-            "Decimal significand value must be unsigned."
-        );
+        zend_throw_exception_ex(amqp_value_exception_class_entry, 0, "Decimal significand value must be unsigned.");
         return;
     }
 
     if (significand > AMQP_DECIMAL_SIGNIFICAND_MAX) {
         zend_throw_exception_ex(
             amqp_value_exception_class_entry,
-            0 TSRMLS_CC,
+            0,
             "Decimal significand value must be less than %u.",
             (unsigned) AMQP_DECIMAL_SIGNIFICAND_MAX
         );
         return;
     }
 
-    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("exponent"), exponent TSRMLS_CC);
-    zend_update_property_long(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("significand"),
-        significand TSRMLS_CC
-    );
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("exponent"), exponent);
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("significand"), significand);
 }
 /* }}} */
 
@@ -143,16 +130,16 @@ PHP_MINIT_FUNCTION(amqp_decimal)
     zend_class_entry ce;
 
     INIT_CLASS_ENTRY(ce, "AMQPDecimal", amqp_decimal_class_functions);
-    this_ce = zend_register_internal_class(&ce TSRMLS_CC);
+    this_ce = zend_register_internal_class(&ce);
     this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
 
-    zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MIN"), AMQP_DECIMAL_EXPONENT_MIN TSRMLS_CC);
-    zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MAX"), AMQP_DECIMAL_EXPONENT_MAX TSRMLS_CC);
-    zend_declare_class_constant_long(this_ce, ZEND_STRL("SIGNIFICAND_MIN"), AMQP_DECIMAL_SIGNIFICAND_MIN TSRMLS_CC);
-    zend_declare_class_constant_long(this_ce, ZEND_STRL("SIGNIFICAND_MAX"), AMQP_DECIMAL_SIGNIFICAND_MAX TSRMLS_CC);
+    zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MIN"), AMQP_DECIMAL_EXPONENT_MIN);
+    zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MAX"), AMQP_DECIMAL_EXPONENT_MAX);
+    zend_declare_class_constant_long(this_ce, ZEND_STRL("SIGNIFICAND_MIN"), AMQP_DECIMAL_SIGNIFICAND_MIN);
+    zend_declare_class_constant_long(this_ce, ZEND_STRL("SIGNIFICAND_MAX"), AMQP_DECIMAL_SIGNIFICAND_MAX);
 
-    zend_declare_property_long(this_ce, ZEND_STRL("exponent"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
-    zend_declare_property_long(this_ce, ZEND_STRL("significand"), 0, ZEND_ACC_PRIVATE TSRMLS_CC);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "exponent", ZEND_ACC_PRIVATE, IS_LONG, 0);
+    PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "significand", ZEND_ACC_PRIVATE, IS_LONG, 0);
 
     return SUCCESS;
 }

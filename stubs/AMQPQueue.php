@@ -5,15 +5,15 @@
  */
 class AMQPQueue
 {
-    private $connection;
-    private $channel;
-    private $name;
-    private $consumerTag;
-    private $passive;
-    private $durable;
-    private $exclusive;
-    private $autoDelete;
-    private $arguments;
+    private AMQPConnection $connection;
+    private AMQPChannel$channel;
+    private ?string $name = null;
+    private ?string $consumerTag = null;
+    private bool $passive = false;
+    private bool $durable = false;
+    private bool $exclusive = false;
+    private bool $autoDelete = true;
+    private array $arguments = [];
 
     /**
      * Create an instance of an AMQPQueue object.

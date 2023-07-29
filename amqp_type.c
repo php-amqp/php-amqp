@@ -78,11 +78,7 @@ char *php_amqp_type_amqp_bytes_to_char(amqp_bytes_t bytes)
     return res;
 }
 
-void php_amqp_type_internal_convert_zval_array(
-    zval *php_array,
-    amqp_field_value_t **field,
-    zend_bool allow_int_keys TSRMLS_DC
-)
+void php_amqp_type_internal_convert_zval_array(zval *php_array, amqp_field_value_t **field, zend_bool allow_int_keys)
 {
     HashTable *ht;
     zend_string *key;
@@ -100,17 +96,17 @@ void php_amqp_type_internal_convert_zval_array(
 
     if (is_amqp_array) {
         (*field)->kind = AMQP_FIELD_KIND_ARRAY;
-        php_amqp_type_internal_convert_zval_to_amqp_array(php_array, &(*field)->value.array TSRMLS_CC);
+        php_amqp_type_internal_convert_zval_to_amqp_array(php_array, &(*field)->value.array);
     } else {
         (*field)->kind = AMQP_FIELD_KIND_TABLE;
-        php_amqp_type_internal_convert_zval_to_amqp_table(php_array, &(*field)->value.table, allow_int_keys TSRMLS_CC);
+        php_amqp_type_internal_convert_zval_to_amqp_table(php_array, &(*field)->value.table, allow_int_keys);
     }
 }
 
 void php_amqp_type_internal_convert_zval_to_amqp_table(
     zval *php_array,
     amqp_table_t *amqp_table,
-    zend_bool allow_int_keys TSRMLS_DC
+    zend_bool allow_int_keys
 )
 {
     HashTable *ht;
@@ -140,7 +136,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(
                 key = str;
             } else {
                 /* Skip things that are not strings */
-                php_error_docref(NULL TSRMLS_CC, E_WARNING, "Ignoring non-string header field '%lu'", index);
+                php_error_docref(NULL, E_WARNING, "Ignoring non-string header field '%lu'", index);
 
                 continue;
             }
@@ -153,7 +149,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(
         table_entry = &amqp_table->entries[amqp_table->num_entries++];
         field = &table_entry->value;
 
-        if (!php_amqp_type_internal_convert_php_to_amqp_field_value(value, &field, key TSRMLS_CC)) {
+        if (!php_amqp_type_internal_convert_php_to_amqp_field_value(value, &field, key)) {
             /* Reset entries counter back */
             amqp_table->num_entries--;
 
@@ -165,7 +161,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(
     ZEND_HASH_FOREACH_END();
 }
 
-void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amqp_array_t *arguments TSRMLS_DC)
+void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amqp_array_t *arguments)
 {
     HashTable *ht;
 
@@ -183,7 +179,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amq
     ZEND_HASH_FOREACH_STR_KEY_VAL(ht, zkey, value)
         amqp_field_value_t *field = &arguments->entries[arguments->num_entries++];
 
-        if (!php_amqp_type_internal_convert_php_to_amqp_field_value(value, &field, ZSTR_VAL(zkey) TSRMLS_CC)) {
+        if (!php_amqp_type_internal_convert_php_to_amqp_field_value(value, &field, ZSTR_VAL(zkey))) {
             /* Reset entries counter back */
             arguments->num_entries--;
 
@@ -192,11 +188,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amq
     ZEND_HASH_FOREACH_END ();
 }
 
-zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(
-    zval *value,
-    amqp_field_value_t **fieldPtr,
-    char *key TSRMLS_DC
-)
+zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, amqp_field_value_t **fieldPtr, char *key)
 {
     zend_bool result;
     char type[16];
@@ -234,13 +226,13 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(
 
             break;
         case IS_ARRAY:
-            php_amqp_type_internal_convert_zval_array(value, &field, 1 TSRMLS_CC);
+            php_amqp_type_internal_convert_zval_array(value, &field, 1);
             break;
         case IS_NULL:
             field->kind = AMQP_FIELD_KIND_VOID;
             break;
         case IS_OBJECT:
-            if (instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry TSRMLS_CC)) {
+            if (instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry)) {
                 zval result_zv;
 
                 zend_call_method_with_0_params(
@@ -257,7 +249,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(
                 zval_ptr_dtor(&result_zv);
 
                 break;
-            } else if (instanceof_function(Z_OBJCE_P(value), amqp_decimal_class_entry TSRMLS_CC)) {
+            } else if (instanceof_function(Z_OBJCE_P(value), amqp_decimal_class_entry)) {
                 field->kind = AMQP_FIELD_KIND_DECIMAL;
                 zval result_zv;
 
@@ -296,13 +288,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(
                     break;
             }
 
-            php_error_docref(
-                NULL TSRMLS_CC,
-                E_WARNING,
-                "Ignoring field '%s' due to unsupported value type (%s)",
-                key,
-                type
-            );
+            php_error_docref(NULL, E_WARNING, "Ignoring field '%s' due to unsupported value type (%s)", key, type);
             result = 0;
             break;
     }
@@ -310,13 +296,13 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(
     return result;
 }
 
-amqp_table_t *php_amqp_type_convert_zval_to_amqp_table(zval *php_array TSRMLS_DC)
+amqp_table_t *php_amqp_type_convert_zval_to_amqp_table(zval *php_array)
 {
     amqp_table_t *amqp_table;
     /* In setArguments, we are overwriting all the existing values */
     amqp_table = (amqp_table_t *) emalloc(sizeof(amqp_table_t));
 
-    php_amqp_type_internal_convert_zval_to_amqp_table(php_array, amqp_table, 0 TSRMLS_CC);
+    php_amqp_type_internal_convert_zval_to_amqp_table(php_array, amqp_table, 0);
 
     return amqp_table;
 }

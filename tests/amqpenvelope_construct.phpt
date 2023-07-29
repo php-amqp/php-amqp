@@ -12,9 +12,9 @@ var_dump(new AMQPEnvelope());
 --EXPECT--
 object(AMQPEnvelope)#1 (20) {
   ["contentType":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["contentEncoding":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(0) {
   }
@@ -23,23 +23,23 @@ object(AMQPEnvelope)#1 (20) {
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
   ["correlationId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["replyTo":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["messageId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
-  int(0)
+  NULL
   ["type":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["userId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["appId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["clusterId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["body":"AMQPEnvelope":private]=>
   string(0) ""
   ["consumerTag":"AMQPEnvelope":private]=>
@@ -47,7 +47,7 @@ object(AMQPEnvelope)#1 (20) {
   ["deliveryTag":"AMQPEnvelope":private]=>
   NULL
   ["isRedelivery":"AMQPEnvelope":private]=>
-  NULL
+  bool(false)
   ["exchangeName":"AMQPEnvelope":private]=>
   NULL
   ["routingKey":"AMQPEnvelope":private]=>

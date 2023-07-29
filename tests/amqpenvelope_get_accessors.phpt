@@ -40,7 +40,7 @@ object(AMQPEnvelope)#5 (20) {
   ["contentType":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
   ["contentEncoding":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(1) {
     ["foo"]=>
@@ -51,23 +51,23 @@ object(AMQPEnvelope)#5 (20) {
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
   ["correlationId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["replyTo":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["messageId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["userId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["appId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["clusterId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
   ["consumerTag":"AMQPEnvelope":private]=>
@@ -99,25 +99,25 @@ AMQPEnvelope
     isRedelivery:
         bool(false)
     getContentEncoding:
-        string(0) ""
+        NULL
     getType:
-        string(0) ""
+        NULL
     getTimeStamp:
         int(0)
     getPriority:
         int(0)
     getExpiration:
-        string(0) ""
+        NULL
     getUserId:
-        string(0) ""
+        NULL
     getAppId:
-        string(0) ""
+        NULL
     getMessageId:
-        string(0) ""
+        NULL
     getReplyTo:
-        string(0) ""
+        NULL
     getCorrelationId:
-        string(0) ""
+        NULL
     getHeaders:
         array(1) {
   ["foo"]=>

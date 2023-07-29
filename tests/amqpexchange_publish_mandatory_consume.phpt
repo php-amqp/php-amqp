@@ -92,7 +92,7 @@ array(6) {
     ["contentType":"AMQPBasicProperties":private]=>
     string(10) "text/plain"
     ["contentEncoding":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
     ["headers":"AMQPBasicProperties":private]=>
     array(0) {
     }
@@ -101,23 +101,23 @@ array(6) {
     ["priority":"AMQPBasicProperties":private]=>
     int(0)
     ["correlationId":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
     ["replyTo":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
     ["expiration":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
     ["messageId":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
     ["timestamp":"AMQPBasicProperties":private]=>
     int(0)
     ["type":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
     ["userId":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
     ["appId":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
     ["clusterId":"AMQPBasicProperties":private]=>
-    string(0) ""
+    NULL
   }
   [5]=>
   string(9) "message 2"

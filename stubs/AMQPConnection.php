@@ -5,24 +5,25 @@
  */
 class AMQPConnection
 {
-    private $login;
-    private $password;
-    private $host;
-    private $vhost;
-    private $port;
-    private $readTimeout;
-    private $writeTimeout;
-    private $connectTimeout;
-    private $rpcTimeout;
-    private $channelMax;
-    private $frameMax;
-    private $heartbeat;
-    private $cacert;
-    private $key;
-    private $cert;
-    private $verify;
-    private $saslMethod;
-    private $connectionName;
+    private string $login;
+    private string $password;
+    private string $host;
+    private string $vhost;
+    private int $port;
+    private float $readTimeout;
+    private float $writeTimeout;
+    private float $connectTimeout;
+    private float $rpcTimeout;
+    private int $channelMax;
+    private int $frameMax;
+    private int $heartbeat;
+    private ?string $cacert;
+    private ?string $key;
+    private ?string $cert;
+    private bool $verify = true;
+    private int $saslMethod = AMQP_SASL_METHOD_PLAIN;
+    private ?string $connectionName;
+
     /**
      * Create an instance of AMQPConnection.
      *
@@ -427,28 +428,28 @@ class AMQPConnection
     /**
      * Get path to the CA cert file in PEM format
      *
-     * @return string
+     * @return string|null
      */
-    public function getCACert(): string
+    public function getCACert(): ?string
     {
     }
 
     /**
      * Set path to the CA cert file in PEM format
      *
-     * @param string $cacert
+     * @param string|null $cacert
      * @return void
      */
-    public function setCACert(string $cacert): void
+    public function setCACert(?string $cacert): void
     {
     }
 
     /**
      * Get path to the client certificate in PEM format
      *
-     * @return string
+     * @return string|null
      */
-    public function getCert(): string
+    public function getCert(): ?string
     {
     }
 
@@ -458,26 +459,26 @@ class AMQPConnection
      * @param string $cert
      * @return void
      */
-    public function setCert(string $cert): void
+    public function setCert(?string $cert): void
     {
     }
 
     /**
      * Get path to the client key in PEM format
      *
-     * @return string
+     * @return string|null
      */
-    public function getKey(): string
+    public function getKey(): ?string
     {
     }
 
     /**
      * Set path to the client key in PEM format
      *
-     * @param string $key
+     * @param string|null $key
      * @return void
      */
-    public function setKey(string $key): void
+    public function setKey(?string $key): void
     {
     }
 

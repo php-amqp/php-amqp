@@ -74,17 +74,17 @@
 int le_amqp_connection_resource;
 int le_amqp_connection_resource_persistent;
 
-static void connection_resource_destructor(amqp_connection_resource *resource, int persistent TSRMLS_DC);
+static void connection_resource_destructor(amqp_connection_resource *resource, int persistent);
 static void php_amqp_close_connection_from_server(
     amqp_rpc_reply_t reply,
     char **message,
-    amqp_connection_resource *resource TSRMLS_DC
+    amqp_connection_resource *resource
 );
 static void php_amqp_close_channel_from_server(
     amqp_rpc_reply_t reply,
     char **message,
     amqp_connection_resource *resource,
-    amqp_channel_t channel_id TSRMLS_DC
+    amqp_channel_t channel_id
 );
 
 
@@ -93,7 +93,7 @@ int php_amqp_connection_resource_error(
     amqp_rpc_reply_t reply,
     char **message,
     amqp_connection_resource *resource,
-    amqp_channel_t channel_id TSRMLS_DC
+    amqp_channel_t channel_id
 )
 {
     assert(resource != NULL);
@@ -113,11 +113,11 @@ int php_amqp_connection_resource_error(
         case AMQP_RESPONSE_SERVER_EXCEPTION:
             switch (reply.reply.id) {
                 case AMQP_CONNECTION_CLOSE_METHOD: {
-                    php_amqp_close_connection_from_server(reply, message, resource TSRMLS_CC);
+                    php_amqp_close_connection_from_server(reply, message, resource);
                     return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED;
                 }
                 case AMQP_CHANNEL_CLOSE_METHOD: {
-                    php_amqp_close_channel_from_server(reply, message, resource, channel_id TSRMLS_CC);
+                    php_amqp_close_channel_from_server(reply, message, resource, channel_id);
                     return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED;
                 }
             }
@@ -133,7 +133,7 @@ int php_amqp_connection_resource_error(
 static void php_amqp_close_connection_from_server(
     amqp_rpc_reply_t reply,
     char **message,
-    amqp_connection_resource *resource TSRMLS_DC
+    amqp_connection_resource *resource
 )
 {
     amqp_connection_close_t *m = (amqp_connection_close_t *) reply.reply.decoded;
@@ -177,11 +177,7 @@ static void php_amqp_close_connection_from_server(
     );
 
     if (result != AMQP_STATUS_OK) {
-        zend_throw_exception(
-            amqp_channel_exception_class_entry,
-            "An error occurred while closing the connection.",
-            0 TSRMLS_CC
-        );
+        zend_throw_exception(amqp_channel_exception_class_entry, "An error occurred while closing the connection.", 0);
     }
 
     /* Prevent finishing AMQP connection in connection resource destructor */
@@ -192,7 +188,7 @@ static void php_amqp_close_channel_from_server(
     amqp_rpc_reply_t reply,
     char **message,
     amqp_connection_resource *resource,
-    amqp_channel_t channel_id TSRMLS_DC
+    amqp_channel_t channel_id
 )
 {
     assert(channel_id > 0 && channel_id <= resource->max_slots);
@@ -235,11 +231,7 @@ static void php_amqp_close_channel_from_server(
 
         result = amqp_send_method(resource->connection_state, channel_id, AMQP_CHANNEL_CLOSE_OK_METHOD, &decoded);
         if (result != AMQP_STATUS_OK) {
-            zend_throw_exception(
-                amqp_channel_exception_class_entry,
-                "An error occurred while closing channel.",
-                0 TSRMLS_CC
-            );
+            zend_throw_exception(amqp_channel_exception_class_entry, "An error occurred while closing channel.", 0);
         }
     }
 }
@@ -250,7 +242,7 @@ int php_amqp_connection_resource_error_advanced(
     char **message,
     amqp_connection_resource *resource,
     amqp_channel_t channel_id,
-    amqp_channel_object *channel TSRMLS_DC
+    amqp_channel_object *channel
 )
 {
     assert(resource != NULL);
@@ -277,11 +269,11 @@ int php_amqp_connection_resource_error_advanced(
     if (AMQP_FRAME_METHOD == frame.frame_type) {
         switch (frame.payload.method.id) {
             case AMQP_CONNECTION_CLOSE_METHOD: {
-                php_amqp_close_connection_from_server(reply, message, resource TSRMLS_CC);
+                php_amqp_close_connection_from_server(reply, message, resource);
                 return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED;
             }
             case AMQP_CHANNEL_CLOSE_METHOD: {
-                php_amqp_close_channel_from_server(reply, message, resource, channel_id TSRMLS_CC);
+                php_amqp_close_channel_from_server(reply, message, resource, channel_id);
                 return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED;
             }
 
@@ -290,37 +282,19 @@ int php_amqp_connection_resource_error_advanced(
 				 * here is a message being confirmed
 				 */
 
-                return php_amqp_handle_basic_ack(
-                    message,
-                    resource,
-                    channel_id,
-                    channel,
-                    &frame.payload.method TSRMLS_CC
-                );
+                return php_amqp_handle_basic_ack(message, resource, channel_id, channel, &frame.payload.method);
             case AMQP_BASIC_NACK_METHOD:
                 /* if we've turned publisher confirms on, and we've published a message
 				 * here is a message being confirmed
 				 */
 
-                return php_amqp_handle_basic_nack(
-                    message,
-                    resource,
-                    channel_id,
-                    channel,
-                    &frame.payload.method TSRMLS_CC
-                );
+                return php_amqp_handle_basic_nack(message, resource, channel_id, channel, &frame.payload.method);
             case AMQP_BASIC_RETURN_METHOD:
                 /* if a published message couldn't be routed and the mandatory flag was set
 				 * this is what would be returned. The message then needs to be read.
 				 */
 
-                return php_amqp_handle_basic_return(
-                    message,
-                    resource,
-                    channel_id,
-                    channel,
-                    &frame.payload.method TSRMLS_CC
-                );
+                return php_amqp_handle_basic_return(message, resource, channel_id, channel, &frame.payload.method);
             default:
                 if (*message != NULL) {
                     efree(*message);
@@ -345,7 +319,7 @@ int php_amqp_connection_resource_error_advanced(
 }
 
 /* Socket-related functions */
-int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC)
+int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double timeout)
 {
     assert(timeout >= 0.0);
 
@@ -375,18 +349,14 @@ int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, doubl
                  (char *) &read_timeout,
                  sizeof(read_timeout)
              )) {
-        zend_throw_exception(
-            amqp_connection_exception_class_entry,
-            "Socket error: cannot setsockopt SO_RCVTIMEO",
-            0 TSRMLS_CC
-        );
+        zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: cannot setsockopt SO_RCVTIMEO", 0);
         return 0;
     }
 
     return 1;
 }
 
-int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC)
+int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double timeout)
 {
     assert(timeout >= 0.0);
 
@@ -400,11 +370,7 @@ int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double
     rpc_timeout.tv_usec = (int) ((timeout - floor(timeout)) * 1.e+6);
 
     if (AMQP_STATUS_OK != amqp_set_rpc_timeout(resource->connection_state, &rpc_timeout)) {
-        zend_throw_exception(
-            amqp_connection_exception_class_entry,
-            "Library error: cannot set rpc_timeout",
-            0 TSRMLS_CC
-        );
+        zend_throw_exception(amqp_connection_exception_class_entry, "Library error: cannot set rpc_timeout", 0);
         return 0;
     }
 #endif
@@ -412,7 +378,7 @@ int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double
     return 1;
 }
 
-int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double timeout TSRMLS_DC)
+int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, double timeout)
 {
     assert(timeout >= 0.0);
 
@@ -437,11 +403,7 @@ int php_amqp_set_resource_write_timeout(amqp_connection_resource *resource, doub
                  (char *) &write_timeout,
                  sizeof(write_timeout)
              )) {
-        zend_throw_exception(
-            amqp_connection_exception_class_entry,
-            "Socket error: cannot setsockopt SO_SNDTIMEO",
-            0 TSRMLS_CC
-        );
+        zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: cannot setsockopt SO_SNDTIMEO", 0);
         return 0;
     }
 
@@ -512,10 +474,7 @@ int php_amqp_connection_resource_unregister_channel(amqp_connection_resource *re
 
 /* Creating and destroying resource */
 
-amqp_connection_resource *connection_resource_constructor(
-    amqp_connection_params *params,
-    zend_bool persistent TSRMLS_DC
-)
+amqp_connection_resource *connection_resource_constructor(amqp_connection_params *params, zend_bool persistent)
 {
     struct timeval tv = {0};
     struct timeval *tv_ptr = &tv;
@@ -543,7 +502,7 @@ amqp_connection_resource *connection_resource_constructor(
             zend_throw_exception(
                 amqp_connection_exception_class_entry,
                 "Socket error: could not create SSL socket.",
-                0 TSRMLS_CC
+                0
             );
 
             return NULL;
@@ -552,22 +511,14 @@ amqp_connection_resource *connection_resource_constructor(
         resource->socket = amqp_tcp_socket_new(resource->connection_state);
 
         if (!resource->socket) {
-            zend_throw_exception(
-                amqp_connection_exception_class_entry,
-                "Socket error: could not create socket.",
-                0 TSRMLS_CC
-            );
+            zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not create socket.", 0);
 
             return NULL;
         }
     }
 
     if (params->cacert && amqp_ssl_socket_set_cacert(resource->socket, params->cacert)) {
-        zend_throw_exception(
-            amqp_connection_exception_class_entry,
-            "Socket error: could not set CA certificate.",
-            0 TSRMLS_CC
-        );
+        zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not set CA certificate.", 0);
 
         return NULL;
     }
@@ -582,11 +533,7 @@ amqp_connection_resource *connection_resource_constructor(
     }
 
     if (params->cert && params->key && amqp_ssl_socket_set_key(resource->socket, params->cert, params->key)) {
-        zend_throw_exception(
-            amqp_connection_exception_class_entry,
-            "Socket error: could not setting client cert.",
-            0 TSRMLS_CC
-        );
+        zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not setting client cert.", 0);
 
         return NULL;
     }
@@ -601,33 +548,29 @@ amqp_connection_resource *connection_resource_constructor(
     /* Try to connect and verify that no error occurred */
     if (amqp_socket_open_noblock(resource->socket, params->host, params->port, tv_ptr)) {
 
-        zend_throw_exception(
-            amqp_connection_exception_class_entry,
-            "Socket error: could not connect to host.",
-            0 TSRMLS_CC
-        );
+        zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not connect to host.", 0);
 
-        connection_resource_destructor(resource, persistent TSRMLS_CC);
+        connection_resource_destructor(resource, persistent);
 
         return NULL;
     }
 
-    if (!php_amqp_set_resource_read_timeout(resource, params->read_timeout TSRMLS_CC)) {
-        connection_resource_destructor(resource, persistent TSRMLS_CC);
+    if (!php_amqp_set_resource_read_timeout(resource, params->read_timeout)) {
+        connection_resource_destructor(resource, persistent);
         return NULL;
     }
 
-    if (!php_amqp_set_resource_write_timeout(resource, params->write_timeout TSRMLS_CC)) {
-        connection_resource_destructor(resource, persistent TSRMLS_CC);
+    if (!php_amqp_set_resource_write_timeout(resource, params->write_timeout)) {
+        connection_resource_destructor(resource, persistent);
         return NULL;
     }
 
-    if (!php_amqp_set_resource_rpc_timeout(resource, params->rpc_timeout TSRMLS_CC)) {
-        connection_resource_destructor(resource, persistent TSRMLS_CC);
+    if (!php_amqp_set_resource_rpc_timeout(resource, params->rpc_timeout)) {
+        connection_resource_destructor(resource, persistent);
         return NULL;
     }
 
-    std_datetime = php_std_date(time(NULL) TSRMLS_CC);
+    std_datetime = php_std_date(time(NULL));
 
     client_properties_entries[0].key = amqp_cstring_bytes("type");
     client_properties_entries[0].value.kind = AMQP_FIELD_KIND_UTF8;
@@ -687,10 +630,10 @@ amqp_connection_resource *connection_resource_constructor(
     if (AMQP_RESPONSE_NORMAL != res.reply_type) {
         char *message = NULL, *long_message = NULL;
 
-        php_amqp_connection_resource_error(res, &message, resource, 0 TSRMLS_CC);
+        php_amqp_connection_resource_error(res, &message, resource, 0);
 
         spprintf(&long_message, 0, "%s - Potential login failure.", message);
-        zend_throw_exception(amqp_connection_exception_class_entry, long_message, PHP_AMQP_G(error_code) TSRMLS_CC);
+        zend_throw_exception(amqp_connection_exception_class_entry, long_message, PHP_AMQP_G(error_code));
 
         efree(message);
         efree(long_message);
@@ -705,7 +648,7 @@ amqp_connection_resource *connection_resource_constructor(
 		 * (presumably a thread) for a period of several seconds and then to close the network connection. This
 		 * includes syntax errors, over-sized data, and failed attempts to authenticate.
 		 */
-        connection_resource_destructor(resource, persistent TSRMLS_CC);
+        connection_resource_destructor(resource, persistent);
         return NULL;
     }
 
@@ -725,17 +668,17 @@ ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent)
 {
     amqp_connection_resource *resource = (amqp_connection_resource *) res->ptr;
 
-    connection_resource_destructor(resource, 1 TSRMLS_CC);
+    connection_resource_destructor(resource, 1);
 }
 
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor)
 {
     amqp_connection_resource *resource = (amqp_connection_resource *) res->ptr;
 
-    connection_resource_destructor(resource, 0 TSRMLS_CC);
+    connection_resource_destructor(resource, 0);
 }
 
-static void connection_resource_destructor(amqp_connection_resource *resource, int persistent TSRMLS_DC)
+static void connection_resource_destructor(amqp_connection_resource *resource, int persistent)
 {
     assert(resource != NULL);
 
@@ -756,7 +699,7 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
     }
 
     if (resource->slots) {
-        php_amqp_prepare_for_disconnect(resource TSRMLS_CC);
+        php_amqp_prepare_for_disconnect(resource);
 
         pefree(resource->slots, persistent);
         resource->slots = NULL;
@@ -777,7 +720,7 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
     pefree(resource, persistent);
 }
 
-void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_DC)
+void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource)
 {
     if (resource == NULL) {
         return;
@@ -794,7 +737,7 @@ void php_amqp_prepare_for_disconnect(amqp_connection_resource *resource TSRMLS_D
 
         for (slot = 0; slot < resource->max_slots; slot++) {
             if (resource->slots[slot] != 0) {
-                php_amqp_close_channel(resource->slots[slot], 0 TSRMLS_CC);
+                php_amqp_close_channel(resource->slots[slot], 0);
             }
         }
     }

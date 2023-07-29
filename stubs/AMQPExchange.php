@@ -5,15 +5,15 @@
  */
 class AMQPExchange
 {
-    private $connection;
-    private $channel;
-    private $name;
-    private $type;
-    private $passive;
-    private $durable;
-    private $autoDelete;
-    private $internal;
-    private $arguments;
+    private AMQPConnection $connection;
+    private AMQPChannel $channel;
+    private ?string $name = null;
+    private ?string $type = null;
+    private bool $passive = false;
+    private bool $durable = false;
+    private bool $autoDelete = false;
+    private bool $internal = false;
+    private array $arguments = [];
 
     /**
      * Bind to another exchange.
@@ -98,7 +98,8 @@ class AMQPExchange
     /**
      * Delete the exchange from the broker.
      *
-     * @param string  $exchangeName Optional name of exchange to delete.
+     * @param string  $exchangeName Optional name of exchange to delete. If not specified it uses the name of the
+     *                              exchange object
      * @param integer $flags        Optionally AMQP_IFUNUSED can be specified
      *                              to indicate the exchange should not be
      *                              deleted until no clients are connected to

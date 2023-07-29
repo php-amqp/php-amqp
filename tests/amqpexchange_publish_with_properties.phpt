@@ -100,7 +100,7 @@ AMQPEnvelope
     getExpiration:
         string(9) "100000000"
     getUserId:
-        string(0) ""
+        NULL
     getAppId:
         string(1) "5"
     getMessageId:

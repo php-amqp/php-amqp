@@ -7,7 +7,7 @@ PHP_ARG_WITH(librabbitmq-dir,	for amqp,
 [	--with-librabbitmq-dir[=DIR]	 Set the path to librabbitmq install prefix.], yes)
 
 dnl Set test wrapper binary to ignore any local ini settings
-PHP_EXECUTABLE="$PWD/php-test-bin"
+PHP_EXECUTABLE="\$(top_srcdir)/php-test-bin"
 
 if test "$PHP_AMQP" != "no"; then
 	AC_MSG_CHECKING([for supported PHP versions])        
@@ -158,7 +158,7 @@ if test "$PHP_AMQP" != "no"; then
 
 	PHP_SUBST(AMQP_SHARED_LIBADD)
 
-	AMQP_SOURCES="amqp.c amqp_type.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c amqp_timestamp.c amqp_decimal.c"
+	AMQP_SOURCES="amqp.c amqp_envelope_exception.c amqp_type.c amqp_exchange.c amqp_queue.c amqp_connection.c amqp_connection_resource.c amqp_channel.c amqp_envelope.c amqp_basic_properties.c amqp_methods_handling.c amqp_timestamp.c amqp_decimal.c"
 
 	PHP_NEW_EXTENSION(amqp, $AMQP_SOURCES, $ext_shared)
 fi

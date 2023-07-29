@@ -41,21 +41,21 @@ $ex->delete();
 ?>
 --EXPECT--
 message received from get:
-getAppId => ''
+getAppId => NULL
 getBody => 'message'
-getContentEncoding => ''
+getContentEncoding => NULL
 getContentType => 'text/plain'
-getCorrelationId => ''
+getCorrelationId => NULL
 getDeliveryTag => 1
 getExchangeName => 'exchange_testing_19707'
-getExpiration => ''
+getExpiration => NULL
 getHeaders => array (
 )
-getMessageId => ''
+getMessageId => NULL
 getPriority => 0
-getReplyTo => ''
+getReplyTo => NULL
 getRoutingKey => 'routing.key'
 getTimeStamp => 0
-getType => ''
-getUserId => ''
+getType => NULL
+getUserId => NULL
 isRedelivery => false

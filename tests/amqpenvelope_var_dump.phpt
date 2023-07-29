@@ -36,7 +36,7 @@ object(AMQPEnvelope)#5 (20) {
   ["contentType":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
   ["contentEncoding":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(0) {
   }
@@ -45,23 +45,23 @@ object(AMQPEnvelope)#5 (20) {
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
   ["correlationId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["replyTo":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["messageId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["userId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["appId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["clusterId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
   ["consumerTag":"AMQPEnvelope":private]=>
@@ -79,7 +79,7 @@ object(AMQPEnvelope)#5 (20) {
   ["contentType":"AMQPBasicProperties":private]=>
   string(10) "text/plain"
   ["contentEncoding":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(1) {
     ["test"]=>
@@ -90,23 +90,23 @@ object(AMQPEnvelope)#5 (20) {
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
   ["correlationId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["replyTo":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["messageId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
   int(0)
   ["type":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["userId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["appId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["clusterId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["body":"AMQPEnvelope":private]=>
   string(7) "message"
   ["consumerTag":"AMQPEnvelope":private]=>
