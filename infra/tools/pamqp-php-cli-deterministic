@@ -3,14 +3,17 @@
 set -o errexit
 set -o nounset
 
-extensions="json simplexml"
+extensions="json simplexml sodium"
 args="-n -d date.timezone=UTC -d precision=20 -d zend.enable_gc=On"
 
+extension_dir=`php -r "echo ini_get('extension_dir');"`
+
 for extension in $extensions; do
-  code="echo !extension_loaded('$extension') ? 'true' : 'false';"
-  shared=$(php -n -r "$code")
-  if [ "${shared}" = "true" ]; then
-    args="${args} -d extension=$extension.so"
+  code="echo json_encode(extension_loaded('$extension'));"
+  exists=$(php -r "$code")
+  bundled=$(php -n -r "$code")
+  if test "$exists" = "true" -a "${bundled}" = "false"; then
+    args="${args} -d extension=$extension_dir/$extension.so"
   fi
 done
 
