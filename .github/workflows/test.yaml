@@ -118,10 +118,10 @@ jobs:
               run: docker compose logs
 
             - name: Debug SSL
-              run: docker compose exec rabbitmq ls -ld /etc/rabbitmq/tls
+              run: docker compose run rabbitmq ls -ld /etc/rabbitmq/tls
 
             - name: Debug SSL
-              run: docker compose exec rabbitmq ls -l /etc/rabbitmq/tls
+              run: docker compose run rabbitmq ls -l /etc/rabbitmq/tls
 
             - name: Build librabbitmq
               run: ./infra/tools/pamqp-install-rabbitmq-c ${{ matrix.librabbitmq-version }}
