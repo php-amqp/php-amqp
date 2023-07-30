@@ -106,6 +106,7 @@ jobs:
               with:
                   php-version: ${{ matrix.php-version }}
                   coverage: none
+                  extensions: simplexml
               env:
                 phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
 
@@ -120,6 +121,9 @@ jobs:
 
             - name: Test PHP extension
               run: make test | tee result.txt
+
+            - name: Debug
+              run: docker compose logs
 
             - name: Benchmark PHP extension
               run: php -n -c './tmp-php.ini' -d "extension_dir=./modules/" -d "extension=amqp.so" benchmark.php
