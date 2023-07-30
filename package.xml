@@ -22,22 +22,23 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2023-07-29</date>
-    <time>09:34:19</time>
+    <date>2023-07-30</date>
+    <time>20:46:01</time>
     <version>
-        <release>2.0.0dev</release>
-        <api>2.0.0dev</api>
+        <release>2.0.0alpha2</release>
+        <api>2.0.0alpha2</api>
     </version>
     <stability>
-        <release>devel</release>
-        <api>devel</api>
+        <release>alpha</release>
+        <api>alpha</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[
+    <notes><![CDATA[- Widen lowest supported librabbitmq version to >=0.8.0 (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/441)
+ - New Docker-based development environment (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/440)
+ - Prevent duplicate builds (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/442)
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha1...latest
-]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha1...v2.0.0alpha2]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -148,8 +149,9 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha1...latest
             <file name="tests/amqpconnection_setWriteTimeout_int.phpt" role="test"/>
             <file name="tests/amqpconnection_setWriteTimeout_out_of_range.phpt" role="test"/>
             <file name="tests/amqpconnection_setWriteTimeout_string.phpt" role="test"/>
-            <file name="tests/amqpconnection_ssl.phpt" role="test"/>
-            <file name="tests/amqpconnection_ssl_by_cert.phpt" role="test"/>
+            <file name="tests/amqpconnection_tls_basic.phpt" role="test"/>
+            <file name="tests/amqpconnection_tls_mtls.phpt" role="test"/>
+            <file name="tests/amqpconnection_tls_sasl.phpt" role="test"/>
             <file name="tests/amqpconnection_toomanychannels.phpt" role="test"/>
             <file name="tests/amqpconnection_validation.phpt" role="test"/>
             <file name="tests/amqpconnection_var_dump.phpt" role="test"/>
