@@ -44,112 +44,112 @@ jobs:
       - name: Check style
         run: clang-format-17 --dry-run --Werror  *.c *.h
 
-    stubs:
-      name: Check stubs php-${{ matrix.php-version }}
-      runs-on: ubuntu-22.04
-      needs: dedup
-      if: needs.dedup.outputs.should_skip != 'true'
+  stubs:
+    name: Check stubs php-${{ matrix.php-version }}
+    runs-on: ubuntu-22.04
+    needs: dedup
+    if: needs.dedup.outputs.should_skip != 'true'
 
-      strategy:
-        fail-fast: false
-        matrix:
-          php-version: [ "8.2", "8.1", "8.0", "7.4" ]
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [ "8.2", "8.1", "8.0", "7.4" ]
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v3.5.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
 
-        - name: Install packages
-          run: sudo apt-get install -y cmake valgrind
+      - name: Install packages
+        run: sudo apt-get install -y cmake valgrind
 
-        - name: Setup PHP
-          uses: shivammathur/setup-php@2.25.4
-          with:
-            php-version: ${{ matrix.php-version }}
-            extensions: json
-            coverage: none
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.25.4
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: json
+          coverage: none
 
-        - name: Check stubs
-          run: ./infra/tools/pamqp-stubs-lint
+      - name: Check stubs
+        run: ./infra/tools/pamqp-stubs-lint
 
-        - name: Build librabbitmq
-          run: ./infra/tools/pamqp-install-librabbitmq master
+      - name: Build librabbitmq
+        run: ./infra/tools/pamqp-install-librabbitmq master
 
-        - name: Build PHP extension
-          run: phpize && ./configure && make
+      - name: Build PHP extension
+        run: phpize && ./configure && make
 
-        - name: Validate stubs
-          run: ./infra/tools/pamqp-stubs-validate
+      - name: Validate stubs
+        run: ./infra/tools/pamqp-stubs-validate
 
-    test:
-      name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
-      # librabbitmq < 0.11 needs older OpenSSL version
-      runs-on: ${{ (matrix.librabbitmq-version == 'v0.10.0' || matrix.librabbitmq-version == 'v0.9.0' || matrix.librabbitmq-version == 'v0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
-      needs: dedup
-      if: needs.dedup.outputs.should_skip != 'true'
+  test:
+    name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
+    # librabbitmq < 0.11 needs older OpenSSL version
+    runs-on: ${{ (matrix.librabbitmq-version == 'v0.10.0' || matrix.librabbitmq-version == 'v0.9.0' || matrix.librabbitmq-version == 'v0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
+    needs: dedup
+    if: needs.dedup.outputs.should_skip != 'true'
 
-      env:
-        TEST_PHP_ARGS: ${{ matrix.test-php-args }}
+    env:
+      TEST_PHP_ARGS: ${{ matrix.test-php-args }}
 
-      strategy:
-        fail-fast: false
-        matrix:
-          php-version: [ '8.2', '8.1', '8.0', '7.4' ]
-          php-thread-safe: [ true, false ]
-          librabbitmq-version: [ 'master', 'v0.13.0', 'v0.12.0', 'v0.11.0', 'v0.10.0', 'v0.9.0', 'v0.8.0' ]
-          include:
-            - php-version: '8.2'
-              php-thread-safe: false
-              librabbitmq-version: 'master'
-              test-php-args: '-m'
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [ '8.2', '8.1', '8.0', '7.4' ]
+        php-thread-safe: [ true, false ]
+        librabbitmq-version: [ 'master', 'v0.13.0', 'v0.12.0', 'v0.11.0', 'v0.10.0', 'v0.9.0', 'v0.8.0' ]
+        include:
+          - php-version: '8.2'
+            php-thread-safe: false
+            librabbitmq-version: 'master'
+            test-php-args: '-m'
 
-            - php-version: '8.1'
-              php-thread-safe: true
-              librabbitmq-version: 'master'
-              test-php-args: '-m'
+          - php-version: '8.1'
+            php-thread-safe: true
+            librabbitmq-version: 'master'
+            test-php-args: '-m'
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v3.5.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
 
-        - name: Configure hostnames
-          run: sudo echo "127.0.0.1 ${{ env.PHP_AMQP_SSL_HOST }}" | sudo tee -a /etc/hosts
+      - name: Configure hostnames
+        run: sudo echo "127.0.0.1 ${{ env.PHP_AMQP_SSL_HOST }}" | sudo tee -a /etc/hosts
 
-        - name: Generate test certificates
-          run: docker compose up ca
+      - name: Generate test certificates
+        run: docker compose up ca
 
-        - name: Start RabbitMQ
-          run: docker compose up -d rabbitmq
+      - name: Start RabbitMQ
+        run: docker compose up -d rabbitmq
 
-        - name: Install packages
-          run: sudo apt-get install -y cmake valgrind
+      - name: Install packages
+        run: sudo apt-get install -y cmake valgrind
 
-        - name: Setup PHP
-          uses: shivammathur/setup-php@2.25.4
-          with:
-            php-version: ${{ matrix.php-version }}
-            coverage: none
-            extensions: simplexml
-          env:
-            phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.25.4
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+          extensions: simplexml
+        env:
+          phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
 
-        - name: Build librabbitmq
-          run: ./infra/tools/pamqp-install-librabbitmq ${{ matrix.librabbitmq-version }}
+      - name: Build librabbitmq
+        run: ./infra/tools/pamqp-install-librabbitmq ${{ matrix.librabbitmq-version }}
 
-        - name: Print librabbitmq version
-          run: pkg-config librabbitmq --debug
+      - name: Print librabbitmq version
+        run: pkg-config librabbitmq --debug
 
-        - name: Build PHP extension
-          run: phpize && ./configure && make
+      - name: Build PHP extension
+        run: phpize && ./configure && make
 
-        - name: Test PHP extension
-          run: make test | tee result.txt
+      - name: Test PHP extension
+        run: make test | tee result.txt
 
-        - name: Dump RabbitMQ logs
-          run: docker compose logs
+      - name: Dump RabbitMQ logs
+        run: docker compose logs
 
-        - name: Benchmark PHP extension
-          run: php -n -c './tmp-php.ini' -d "extension_dir=./modules/" -d "extension=amqp.so" benchmark.php
+      - name: Benchmark PHP extension
+        run: php -n -c './tmp-php.ini' -d "extension_dir=./modules/" -d "extension=amqp.so" benchmark.php
 
-        - name: Dump report
-          run: sh test-report.sh
+      - name: Dump report
+        run: sh test-report.sh
