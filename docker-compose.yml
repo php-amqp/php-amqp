@@ -49,7 +49,7 @@ services:
     volumes:
       - ./:/src
 
-  "74": &php-base
+  debian-74: &php-base
     build: &php-base-build
       context: infra/php
       target: dev
@@ -61,31 +61,31 @@ services:
       - rabbitmq
     ulimits:
       core: -1
-    working_dir: /src/build/74
+    working_dir: /src/build/debian-74
     links:
       - "rabbitmq:rabbitmq.example.org"
 
-  "80":
+  debian-80:
     <<: *php-base
     build:
       <<: *php-base-build
       additional_contexts:
         php-core: docker-image://php:8.0-fpm-bullseye
-    working_dir: /src/build/80
+    working_dir: /src/build/debian-80
 
-  "81":
+  debian-81:
     <<: *php-base
     build:
       <<: *php-base-build
       additional_contexts:
         php-core: docker-image://php:8.1-fpm-bookworm
-    working_dir: /src/build/81
+    working_dir: /src/build/debian-81
 
-  "82":
+  debian-82:
     <<: *php-base
     build:
       <<: *php-base-build
       target: dev-all
       additional_contexts:
         php-core: docker-image://php:8.2-fpm-bookworm
-    working_dir: /src/build/82
+    working_dir: /src/build/debian-82

@@ -4,12 +4,14 @@ function path(string ...$args): string {
     return implode(DIRECTORY_SEPARATOR, $args);
 }
 
+assert($_SERVER['PHP_AMQP_DOCKER_ENTRYPOINT'] ?? null == '1', 'Must run as a docker entrypoint');
+
 $buildDir = path('/src', 'build');
 if (!is_dir($buildDir)) {
     mkdir($buildDir);
 }
 
-$versionSpecificBuildDir = path($buildDir, PHP_MAJOR_VERSION . PHP_MINOR_VERSION);
+$versionSpecificBuildDir = getcwd();
 if (!is_dir($versionSpecificBuildDir)) {
     mkdir($versionSpecificBuildDir);
 }
