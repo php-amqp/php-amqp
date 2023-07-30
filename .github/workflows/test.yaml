@@ -67,7 +67,7 @@ jobs:
     test:
         name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         # librabbitmq < 0.11 needs older OpenSSL version
-        runs-on: ${{ matrix.librabbitmq-version == 'v0.10.0' || matrix.librabbitmq-version == 'v0.9.0' || matrix.librabbitmq-version == 'v0.8.0' && 'ubuntu-20.04' || 'ubuntu-22.04' }}
+        runs-on: ${{ (matrix.librabbitmq-version == 'v0.10.0' || matrix.librabbitmq-version == 'v0.9.0' || matrix.librabbitmq-version == 'v0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
 
         env:
             TEST_PHP_ARGS: ${{ matrix.test-php-args }}
