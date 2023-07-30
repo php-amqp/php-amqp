@@ -115,7 +115,7 @@ jobs:
                 phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
 
             - name: Debug
-              run: docker compose logs
+              run: docker compose logs --since 100m
 
             - name: Debug SSL
               run: docker compose run rabbitmq ls -ld /etc/rabbitmq/tls
