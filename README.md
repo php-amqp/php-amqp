@@ -5,9 +5,8 @@ Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/r
 ### Requirements:
 
 - PHP >= 7.4 with either ZTS or non-ZTS version.
-- [RabbitMQ C library](https://github.com/alanxz/rabbitmq-c), commonly known as librabbitmq
-  (since php-amqp >= 2.0.0 librabbitmq >= 0.10.0,
-  see [release notes](https://pecl.php.net/package-changelog.php?package=amqp)).
+- Starting with php-amqp 2.0.0 at least version 0.8.0 of [librabbitmq](https://github.com/alanxz/rabbitmq-c) is
+  required (at least 0.10.0 is recommended)
 - to run tests [RabbitMQ server](https://www.rabbitmq.com/) >= 3.4.0 required.
 
 ### Installation

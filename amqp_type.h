@@ -26,7 +26,7 @@
 
 #include "php.h"
 
-#if AMQP_VERSION_MINOR >= 13
+#if HAVE_LIBRABBITMQ_NEW_LAYOUT
     #include <rabbitmq-c/amqp.h>
 #else
     #include <amqp.h>

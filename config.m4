@@ -47,9 +47,13 @@ if test "$PHP_AMQP" != "no"; then
 		LIBRABBITMQ_VERSION=`$PKG_CONFIG librabbitmq --modversion`
 		AC_MSG_RESULT([found version $LIBRABBITMQ_VERSION])
 
-		if ! $PKG_CONFIG librabbitmq --atleast-version 0.10.0 ; then
-			AC_MSG_ERROR([librabbitmq must be version 0.10.0 or greater])
+		if ! $PKG_CONFIG librabbitmq --atleast-version 0.8.0 ; then
+			AC_MSG_ERROR([librabbitmq must be version 0.8.0 or greater])
 		fi
+
+		if ! $PKG_CONFIG librabbitmq --atleast-version 0.10.0 ; then
+            AC_MSG_WARN([librabbitmq 0.10.0 or greater recommended, current version is $LIBRABBITMQ_VERSION])
+        fi
 
 		if test -r `$PKG_CONFIG librabbitmq --variable=includedir`/$NEW_LAYOUT; then
 		    HAVE_LIBRABBITMQ_NEW_LAYOUT=1
@@ -134,12 +138,12 @@ if test "$PHP_AMQP" != "no"; then
 			IFS=$ac_IFS
 			LIBRABBITMQ_API_VERSION=`expr [$]1 \* 1000000 + [$]2 \* 1000 + [$]3`
 
-			if test "$LIBRABBITMQ_API_VERSION" -lt 5001 ; then
-				 AC_MSG_ERROR([librabbitmq must be version 0.5.2 or greater, $ac_cv_librabbitmq_version version given instead])
+			if test "$LIBRABBITMQ_API_VERSION" -lt 8000 ; then
+				 AC_MSG_ERROR([librabbitmq must be version 0.8.0 or greater, $ac_cv_librabbitmq_version version given instead])
 			fi
 
-			if test "$LIBRABBITMQ_API_VERSION" -lt 6000 ; then
-				 AC_MSG_WARN([librabbitmq 0.6.0 or greater recommended, current version is $ac_cv_librabbitmq_version])
+			if test "$LIBRABBITMQ_API_VERSION" -lt 10000 ; then
+				 AC_MSG_WARN([librabbitmq 0.10.0 or greater recommended, current version is $ac_cv_librabbitmq_version])
 			fi
 		else
 			AC_MSG_ERROR([could not determine librabbitmq version])

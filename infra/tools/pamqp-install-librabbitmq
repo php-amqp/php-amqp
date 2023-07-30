@@ -43,7 +43,11 @@ cmake ..
 cmake --build . --parallel $(nproc)
 
 # Install
-sudo cmake --build . --target install
+sudo=""
+if ! test `id -u` -eq 0; then
+  sudo="sudo"
+fi
+$sudo cmake --build . --target install
 
 # Cleanup
 rm -rf $BUILD_TMP
