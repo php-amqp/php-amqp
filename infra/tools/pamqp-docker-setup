@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+function path(string ...$args): string {
+    return implode(DIRECTORY_SEPARATOR, $args);
+}
+
+assert($_SERVER['PHP_AMQP_DOCKER_ENTRYPOINT'] ?? null == '1', 'Must run as a docker entrypoint');
+
+$buildDir = path('/src', 'build');
+if (!is_dir($buildDir)) {
+    mkdir($buildDir);
+}
+
+$versionSpecificBuildDir = getcwd();
+if (!is_dir($versionSpecificBuildDir)) {
+    mkdir($versionSpecificBuildDir);
+}
+
+// Convenience symlink to resolve tests path more easily
+$testsLink = path($versionSpecificBuildDir, 'tests');
+if (file_exists($testsLink)) {
+    unlink($testsLink);
+}
+symlink(path('/src', 'tests'), $testsLink);

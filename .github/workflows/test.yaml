@@ -8,6 +8,7 @@ on:
 env:
     TEST_TIMEOUT: 120
     CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
+    PHP_AMQP_SSL_HOST: rabbitmq.example.org
 
 jobs:
     checkstyle:
@@ -52,16 +53,16 @@ jobs:
               coverage: none
 
           - name: Check stubs
-            run: ./tools/check-stubs.sh
+            run: ./infra/tools/pamqp-stubs-lint
 
           - name: Build librabbitmq
-            run: sudo ./provision/install_rabbitmq-c.sh master
+            run: ./infra/tools/pamqp-install-librabbitmq master
 
           - name: Build PHP extension
             run: phpize && ./configure && make
 
           - name: Validate stubs
-            run: ./tools/validate-stubs.sh
+            run: ./infra/tools/pamqp-stubs-validate
 
     test:
         name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
@@ -87,18 +88,19 @@ jobs:
                       php-thread-safe: true
                       librabbitmq-version: 'master'
                       test-php-args: '-m'
-        services:
-            rabbitmq:
-                image: rabbitmq:3
-                ports:
-                    - 5671:5671
-                    - 5672:5672
-                    - 15671:15671
-                    - 15672:15672
 
         steps:
             - name: Checkout
               uses: actions/checkout@v3.5.3
+
+            - name: Configure hostnames
+              run: sudo echo "127.0.0.1 ${{ env.PHP_AMQP_SSL_HOST }}" | sudo tee -a /etc/hosts
+
+            - name: Generate test certificates
+              run: docker compose up ca
+
+            - name: Start RabbitMQ
+              run: docker compose up -d rabbitmq
 
             - name: Install packages
               run: sudo apt-get install -y cmake valgrind
@@ -108,13 +110,14 @@ jobs:
               with:
                   php-version: ${{ matrix.php-version }}
                   coverage: none
+                  extensions: simplexml
               env:
                 phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
 
             - name: Build librabbitmq
-              run: sudo ./provision/install_rabbitmq-c.sh ${{ matrix.librabbitmq-version }}
+              run: ./infra/tools/pamqp-install-librabbitmq ${{ matrix.librabbitmq-version }}
 
-            - name: Debug librabbitmq
+            - name: Print librabbitmq version
               run: pkg-config librabbitmq --debug
 
             - name: Build PHP extension
@@ -122,6 +125,9 @@ jobs:
 
             - name: Test PHP extension
               run: make test | tee result.txt
+
+            - name: Dump RabbitMQ logs
+              run: docker compose logs
 
             - name: Benchmark PHP extension
               run: php -n -c './tmp-php.ini' -d "extension_dir=./modules/" -d "extension=amqp.so" benchmark.php

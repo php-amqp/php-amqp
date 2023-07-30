@@ -1,5 +1,5 @@
 {
-  "name": "pdezwart/php-amqp",
+  "name": "php-amqp/php-amqp",
   "type": "library",
   "description": "PHP AMQP Binding Library",
   "keywords": [
@@ -8,12 +8,12 @@
     "message",
     "queue"
   ],
-  "homepage": "https://github.com/pdezwart/php-amqp",
+  "homepage": "https://github.com/php-amqp/php-amqp",
   "license": "PHP-3.01",
   "authors": [
     {
-      "name": "Pieter de Zwart",
-      "email": "pdezwart@php.net",
+      "name": "Lars Strojny",
+      "email": "lstrojny@php.net",
       "role": "lead"
     }
   ],

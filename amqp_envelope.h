@@ -20,7 +20,6 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-
 #include "php_amqp.h"
 
 extern zend_class_entry *amqp_envelope_class_entry;

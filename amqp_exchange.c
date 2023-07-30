@@ -25,8 +25,6 @@
 #endif
 
 #include "php.h"
-#include "php_ini.h"
-#include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
 #ifdef PHP_WIN32

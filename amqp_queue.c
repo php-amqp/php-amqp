@@ -26,7 +26,6 @@
 
 #include "php.h"
 #include "php_ini.h"
-#include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
 #ifdef PHP_WIN32
@@ -63,7 +62,6 @@
 #include "amqp_envelope.h"
 #include "amqp_queue.h"
 #include "amqp_type.h"
-#include "php_amqp.h"
 
 zend_class_entry *amqp_queue_class_entry;
 #define this_ce amqp_queue_class_entry

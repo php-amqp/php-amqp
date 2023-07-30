@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
+
+result=0
+for stub in `dirname $0`/../../stubs/*.php; do
+  php -l `realpath $stub` || result=1
+done
+
+exit $result

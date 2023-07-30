@@ -37,7 +37,7 @@ try {
 ?>
 --EXPECTF--
 Parameter 'connect_timeout' must be greater than or equal to zero.
-Socket error: could not connect to host.
+Socket error: could not connect to host, request timed out
 error: %f
 limit: %f
 timings OK
