@@ -10,6 +10,7 @@ $credentials = array(
     'cacert' => __DIR__ . "/../infra/tls/certificates/testca/cacert.pem",
     'cert' => __DIR__ . "/../infra/tls/certificates/client/cert.pem",
     'key' => __DIR__ . "/../infra/tls/certificates/client/key.pem",
+    'verify' => false,
 );
 
 $cnn = new AMQPConnection($credentials);
@@ -28,6 +29,7 @@ $cnn->setHost('rabbitmq.example.org');
 $cnn->setCACert(__DIR__ . "/../infra/tls/certificates/testca/cacert.pem");
 $cnn->setCert(__DIR__ . "/../infra/tls/certificates/client/cert.pem");
 $cnn->setKey(__DIR__ . "/../infra/tls/certificates/client/key.pem");
+$cnn->setVerify(false);
 var_dump($cnn);
 
 $cnn->connect();
