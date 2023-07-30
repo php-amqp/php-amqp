@@ -98,7 +98,7 @@ jobs:
             - run: sudo chown -R 100 infra/tls/certificates
 
             - name: Start dependencies
-              run: docker compose up ca rabbitmq
+              run: docker compose up -d ca rabbitmq
 
             - name: Install packages
               run: sudo apt-get install -y cmake valgrind
