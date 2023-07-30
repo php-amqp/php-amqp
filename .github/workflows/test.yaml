@@ -96,7 +96,7 @@ jobs:
               run: sudo echo "127.0.0.1 rabbitmq.example.org" | sudo tee -a /etc/hosts
 
             - name: Start dependencies
-              run: docker compose up ca rabbitmq -d
+              run: docker compose up ca rabbitmq
 
             - name: Install packages
               run: sudo apt-get install -y cmake valgrind
