@@ -40,7 +40,6 @@ services:
       context: infra/tls
     volumes:
       - ./:/src
-    entrypoint: /src/infra/tools/pamqp-certificates-generate /src/infra/tls/certificates
 
   "74": &php-base
     build: &php-base-build
