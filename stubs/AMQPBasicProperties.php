@@ -6,31 +6,41 @@
 class AMQPBasicProperties
 {
     private ?string $contentType = null;
+
     private ?string $contentEncoding = null;
+
     private array $headers = [];
+
     private int $deliveryMode = AMQP_DELIVERY_MODE_TRANSIENT;
+
     private int $priority = 0;
+
     private ?string $correlationId = null;
+
     private ?string $replyTo = null;
+
     private ?string $expiration = null;
+
     private ?string $messageId = null;
+
     private ?int $timestamp = null;
+
     private ?string $type = null;
+
     private ?string $userId = null;
+
     private ?string $appId = null;
+
     private ?string $clusterId = null;
 
     /**
      * @param ?string $contentType
      * @param ?string $contentEncoding
-     * @param array  $headers
-     * @param int    $deliveryMode
-     * @param int    $priority
      * @param ?string $correlationId
      * @param ?string $replyTo
      * @param ?string $expiration
      * @param ?string $messageId
-     * @param ?int    $timestamp
+     * @param ?int $timestamp
      * @param ?string $type
      * @param ?string $userId
      * @param ?string $appId

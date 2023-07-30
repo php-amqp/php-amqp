@@ -83,6 +83,12 @@ jobs:
       - name: Validate stubs
         run: ./infra/tools/pamqp-stubs-validate
 
+      - name: Install composer dependencies
+        run: composer install
+
+      - name: Check CS
+        run: ./infra/tools/pamqp-stubs-format-check
+
   test:
     name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}
     # librabbitmq < 0.11 needs older OpenSSL version

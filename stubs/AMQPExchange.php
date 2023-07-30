@@ -6,14 +6,40 @@
 class AMQPExchange
 {
     private AMQPConnection $connection;
+
     private AMQPChannel $channel;
+
     private ?string $name = null;
+
     private ?string $type = null;
+
     private bool $passive = false;
+
     private bool $durable = false;
+
     private bool $autoDelete = false;
+
     private bool $internal = false;
+
     private array $arguments = [];
+
+    /**
+     * Create an instance of AMQPExchange.
+     *
+     * Returns a new instance of an AMQPExchange object, associated with the
+     * given AMQPChannel object.
+     *
+     * @param AMQPChannel $channel A valid AMQPChannel object, connected
+     *                             to a broker.
+     *
+     * @throws AMQPExchangeException When amqp_channel is not connected to
+     *                               a broker.
+     * @throws AMQPConnectionException If the connection to the broker was
+     *                                 lost.
+     */
+    public function __construct(AMQPChannel $channel)
+    {
+    }
 
     /**
      * Bind to another exchange.
@@ -21,15 +47,14 @@ class AMQPExchange
      * Bind an exchange to another exchange using the specified routing key.
      *
      * @param string $exchangeName Name of the exchange to bind.
-     * @param string|null $routingKey   The routing key to use for binding.
-     * @param array  $arguments     Additional binding arguments.
+     * @param string|null $routingKey The routing key to use for binding.
+     * @param array $arguments Additional binding arguments.
      *
-     * @return void
-     *@throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPChannelException If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     * @throws AMQPExchangeException   On failure.
+     * @throws AMQPExchangeException On failure.
      */
-    public function bind(string $exchangeName, ?string $routingKey = null, array $arguments = array()): void
+    public function bind(string $exchangeName, ?string $routingKey = null, array $arguments = []): void
     {
     }
 
@@ -39,44 +64,23 @@ class AMQPExchange
      * Remove a routing key binding on an another exchange from the given exchange.
      *
      * @param string $exchangeName Name of the exchange to bind.
-     * @param string|null $routingKey   The routing key to use for binding.
-     * @param array  $arguments     Additional binding arguments.
+     * @param string|null $routingKey The routing key to use for binding.
+     * @param array $arguments Additional binding arguments.
      *
-     * @return void
-     *@throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPChannelException If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     * @throws AMQPExchangeException   On failure.
+     * @throws AMQPExchangeException On failure.
      */
-    public function unbind(string $exchangeName, ?string $routingKey = null, array $arguments = array()): void
-    {
-    }
-
-    /**
-     * Create an instance of AMQPExchange.
-     *
-     * Returns a new instance of an AMQPExchange object, associated with the
-     * given AMQPChannel object.
-     *
-     * @param AMQPChannel $channel A valid AMQPChannel object, connected
-     *                                  to a broker.
-     *
-     * @throws AMQPExchangeException   When amqp_channel is not connected to
-     *                                 a broker.
-     * @throws AMQPConnectionException If the connection to the broker was
-     *                                 lost.
-     */
-    public function __construct(AMQPChannel $channel)
+    public function unbind(string $exchangeName, ?string $routingKey = null, array $arguments = []): void
     {
     }
 
     /**
      * Declare a new exchange on the broker.
      *
-     * @throws AMQPExchangeException   On failure.
-     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPExchangeException On failure.
+     * @throws AMQPChannelException If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
-     * @return void
      */
     public function declareExchange(): void
     {
@@ -85,11 +89,9 @@ class AMQPExchange
     /**
      * Declare a new exchange on the broker.
      *
-     * @throws AMQPExchangeException   On failure.
-     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPExchangeException On failure.
+     * @throws AMQPChannelException If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
-     * @return void
      */
     public function declare(): void
     {
@@ -98,18 +100,16 @@ class AMQPExchange
     /**
      * Delete the exchange from the broker.
      *
-     * @param string  $exchangeName Optional name of exchange to delete. If not specified it uses the name of the
-     *                              exchange object
-     * @param integer $flags        Optionally AMQP_IFUNUSED can be specified
-     *                              to indicate the exchange should not be
-     *                              deleted until no clients are connected to
-     *                              it.
+     * @param string $exchangeName Optional name of exchange to delete. If not specified it uses the name of the
+     *                             exchange object
+     * @param integer $flags Optionally AMQP_IFUNUSED can be specified
+     *                       to indicate the exchange should not be
+     *                       deleted until no clients are connected to
+     *                       it.
      *
-     * @throws AMQPExchangeException   On failure.
-     * @throws AMQPChannelException    If the channel is not open.
+     * @throws AMQPExchangeException On failure.
+     * @throws AMQPChannelException If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     *
-     * @return void
      */
     public function delete(?string $exchangeName = null, int $flags = AMQP_NOPARAM): void
     {
@@ -138,6 +138,7 @@ class AMQPExchange
     public function hasArgument(string $argumentName): bool
     {
     }
+
     /**
      * Get all arguments set on the given exchange.
      *
@@ -180,36 +181,32 @@ class AMQPExchange
      *
      * Publish a message to the exchange represented by the AMQPExchange object.
      *
-     * @param string  $message     The message to publish.
-     * @param string|null  $routingKey The optional routing key to which to
-     *                             publish to.
-     * @param integer $flags       One or more of AMQP_MANDATORY and
-     *                             AMQP_IMMEDIATE.
-     * @param array   $headers      One of content_type, content_encoding,
-     *                             message_id, user_id, app_id, delivery_mode,
-     *                             priority, timestamp, expiration, type
-     *                             or reply_to, headers.
-     * @throws AMQPChannelException    If the channel is not open.
+     * @param string $message The message to publish.
+     * @param string|null $routingKey The optional routing key to which to
+     *                                publish to.
+     * @param integer $flags One or more of AMQP_MANDATORY and
+     *                       AMQP_IMMEDIATE.
+     * @param array $headers One of content_type, content_encoding,
+     *                       message_id, user_id, app_id, delivery_mode,
+     *                       priority, timestamp, expiration, type
+     *                       or reply_to, headers.
+     * @throws AMQPChannelException If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
-     * @throws AMQPExchangeException   On failure.
-     * @return void
+     * @throws AMQPExchangeException On failure.
      */
     public function publish(
         string $message,
         ?string $routingKey = null,
         int $flags = AMQP_NOPARAM,
         array $headers = []
-    ): void
-    {
+    ): void {
     }
 
     /**
      * Set the value for the given key.
      *
-     * @param string         $argumentName   Name of the argument to set.
+     * @param string $argumentName Name of the argument to set.
      * @param string|integer $argumentValue Value of the argument to set.
-     *
-     * @return void
      */
     public function setArgument(string $argumentName, $argumentValue): void
     {
@@ -219,8 +216,6 @@ class AMQPExchange
      * Set all arguments on the exchange.
      *
      * @param array $arguments An array of key/value pairs of arguments.
-     *
-     * @return void
      */
     public function setArguments(array $arguments): void
     {
@@ -230,11 +225,9 @@ class AMQPExchange
      * Set the flags on an exchange.
      *
      * @param integer $flags A bitmask of flags. This call currently only
-     *                            considers the following flags:
-     *                            AMQP_DURABLE, AMQP_PASSIVE
-     *                            (and AMQP_DURABLE, if librabbitmq version >= 0.5.3)
-     *
-     * @return void
+     *                       considers the following flags:
+     *                       AMQP_DURABLE, AMQP_PASSIVE
+     *                       (and AMQP_DURABLE, if librabbitmq version >= 0.5.3)
      */
     public function setFlags(?int $flags): void
     {
@@ -244,8 +237,6 @@ class AMQPExchange
      * Set the name of the exchange.
      *
      * @param string|null $exchangeName The name of the exchange to set as string.
-     *
-     * @return void
      */
     public function setName(?string $exchangeName): void
     {
@@ -258,8 +249,6 @@ class AMQPExchange
      * AMQP_EX_TYPE_FANOUT, AMQP_EX_TYPE_HEADERS or AMQP_EX_TYPE_TOPIC.
      *
      * @param string|null $exchangeType The type of exchange as a string.
-     *
-     * @return void
      */
     public function setType(?string $exchangeType): void
     {
@@ -267,8 +256,6 @@ class AMQPExchange
 
     /**
      * Get the AMQPChannel object in use
-     *
-     * @return AMQPChannel
      */
     public function getChannel(): AMQPChannel
     {
@@ -276,8 +263,6 @@ class AMQPExchange
 
     /**
      * Get the AMQPConnection object in use
-     *
-     * @return AMQPConnection
      */
     public function getConnection(): AMQPConnection
     {

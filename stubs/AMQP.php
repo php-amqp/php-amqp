@@ -112,25 +112,17 @@ const AMQP_EX_TYPE_TOPIC = 'topic';
  */
 const AMQP_EX_TYPE_HEADERS = 'headers';
 
-/**
- *
- */
+
 const AMQP_OS_SOCKET_TIMEOUT_ERRNO = 536870947;
 
 
-/**
- *
- */
+
 const PHP_AMQP_MAX_CHANNELS = 256;
 
-/**
- *
- */
+
 const AMQP_SASL_METHOD_PLAIN = 0;
 
-/**
- *
- */
+
 const AMQP_SASL_METHOD_EXTERNAL = 1;
 
 /**
@@ -156,7 +148,7 @@ const AMQP_EXTENSION_VERSION_MAJOR = 0;
 /**
  * Extension minor version
  */
-const AMQP_EXTENSION_VERSION_MINOR =  1;
+const AMQP_EXTENSION_VERSION_MINOR = 1;
 
 /**
  * Extension patch version

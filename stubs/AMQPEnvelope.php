@@ -6,10 +6,14 @@
 class AMQPEnvelope extends AMQPBasicProperties
 {
     private string $body = '';
+
     private ?string $consumerTag = null;
+
     private ?int $deliveryTag = null;
+
     private bool $isRedelivery = false;
     private ?string $exchangeName = null;
+
     private string $routingKey = '';
 
     public function __construct()

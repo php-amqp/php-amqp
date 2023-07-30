@@ -6,22 +6,39 @@
 class AMQPConnection
 {
     private string $login;
+
     private string $password;
+
     private string $host;
+
     private string $vhost;
+
     private int $port;
+
     private float $readTimeout;
+
     private float $writeTimeout;
+
     private float $connectTimeout;
+
     private float $rpcTimeout;
+
     private int $channelMax;
+
     private int $frameMax;
+
     private int $heartbeat;
+
     private ?string $cacert;
+
     private ?string $key;
+
     private ?string $cert;
+
     private bool $verify = true;
+
     private int $saslMethod = AMQP_SASL_METHOD_PLAIN;
+
     private ?string $connectionName;
 
     /**
@@ -96,7 +113,6 @@ class AMQPConnection
      * This method will initiate a connection with the AMQP broker.
      *
      * @throws AMQPConnectionException
-     * @return void
      */
     public function connect(): void
     {
@@ -108,7 +124,6 @@ class AMQPConnection
      * This method will close an open connection with the AMQP broker.
      *
      * @throws AMQPConnectionException When attempting to disconnect a persistent connection
-     * @return void
      */
     public function disconnect(): void
     {
@@ -118,7 +133,6 @@ class AMQPConnection
      * Close any open transient connections and initiate a new one with the AMQP broker.
      *
      * @throws AMQPConnectionException
-     * @return void
      */
     public function reconnect(): void
     {
@@ -131,7 +145,6 @@ class AMQPConnection
      * or reuse an existing one if present.
      *
      * @throws AMQPConnectionException
-     * @return void
      */
     public function pconnect(): void
     {
@@ -144,7 +157,6 @@ class AMQPConnection
      * broker.
      *
      * @throws AMQPConnectionException When attempting to disconnect a transient connection
-     * @return void
      */
     public function pdisconnect(): void
     {
@@ -154,7 +166,6 @@ class AMQPConnection
      * Close any open persistent connections and initiate a new one with the AMQP broker.
      *
      * @throws AMQPConnectionException
-     * @return void
      */
     public function preconnect(): void
     {
@@ -205,15 +216,12 @@ class AMQPConnection
     {
     }
 
-
     /**
      * Set the hostname used to connect to the AMQP broker.
      *
      * @param string $host The hostname of the AMQP broker.
      *
      * @throws AMQPConnectionException If host is longer then 1024 characters.
-     *
-     * @return void
      */
     public function setHost(string $host): void
     {
@@ -226,8 +234,6 @@ class AMQPConnection
      *                      with the AMQP broker.
      *
      * @throws AMQPConnectionException If login is longer then 32 characters.
-     *
-     * @return void
      */
     public function setLogin(string $login): void
     {
@@ -240,8 +246,6 @@ class AMQPConnection
      *                         with the AMQP broker.
      *
      * @throws AMQPConnectionException If password is longer then 32characters.
-     *
-     * @return void
      */
     public function setPassword(string $password): void
     {
@@ -254,8 +258,6 @@ class AMQPConnection
      *
      * @throws AMQPConnectionException If port is longer not between
      *                                 1 and 65535.
-     *
-     * @return void
      */
     public function setPort(int $port): void
     {
@@ -268,8 +270,6 @@ class AMQPConnection
      *                      broker.
      *
      * @throws AMQPConnectionException If host is longer then 32 characters.
-     *
-     * @return void
      */
     public function setVhost(string $vhost): void
     {
@@ -280,11 +280,7 @@ class AMQPConnection
      *
      * @deprecated use AMQPConnection::setReadTimeout($timeout) instead
      *
-     * @param float $timeout
-     *
      * @throws AMQPConnectionException If timeout is less than 0.
-     *
-     * @return void
      */
     public function setTimeout(float $timeout): void
     {
@@ -295,8 +291,6 @@ class AMQPConnection
      * from AMQP broker
      *
      * @deprecated use AMQPConnection::getReadTimeout() instead
-     *
-     * @return float
      */
     public function getTimeout(): float
     {
@@ -305,11 +299,7 @@ class AMQPConnection
     /**
      * Sets the interval of time (in seconds) to wait for income activity from AMQP broker
      *
-     * @param float $timeout
-     *
      * @throws AMQPConnectionException If timeout is less than 0.
-     *
-     * @return void
      */
     public function setReadTimeout(float $timeout): void
     {
@@ -318,8 +308,6 @@ class AMQPConnection
     /**
      * Get the configured interval of time (in seconds) to wait for income activity
      * from AMQP broker
-     *
-     * @return float
      */
     public function getReadTimeout(): float
     {
@@ -328,11 +316,7 @@ class AMQPConnection
     /**
      * Sets the interval of time (in seconds) to wait for outcome activity to AMQP broker
      *
-     * @param float $timeout
-     *
      * @throws AMQPConnectionException If timeout is less than 0.
-     *
-     * @return void
      */
     public function setWriteTimeout(float $timeout): void
     {
@@ -341,8 +325,6 @@ class AMQPConnection
     /**
      * Get the configured interval of time (in seconds) to wait for outcome activity
      * to AMQP broker
-     *
-     * @return float
      */
     public function getWriteTimeout(): float
     {
@@ -350,8 +332,6 @@ class AMQPConnection
 
     /**
      * Get the configured timeout (in seconds) for connecting to the AMQP broker
-     *
-     * @return float
      */
     public function getConnectTimeout(): float
     {
@@ -360,11 +340,7 @@ class AMQPConnection
     /**
      * Sets the interval of time to wait (in seconds) for RPC activity to AMQP broker
      *
-     * @param float $timeout
-     *
      * @throws AMQPConnectionException If timeout is less than 0.
-     *
-     * @return void
      */
     public function setRpcTimeout(float $timeout): void
     {
@@ -373,8 +349,6 @@ class AMQPConnection
     /**
      * Get the configured interval of time (in seconds) to wait for RPC activity
      * to AMQP broker
-     *
-     * @return float
      */
     public function getRpcTimeout(): float
     {
@@ -382,8 +356,6 @@ class AMQPConnection
 
     /**
      * Return last used channel id during current connection session.
-     *
-     * @return int
      */
     public function getUsedChannels(): int
     {
@@ -394,8 +366,6 @@ class AMQPConnection
      *
      * When connection is connected, effective connection value returned, which is normally the same as original
      * correspondent value passed to constructor, otherwise original value passed to constructor returned.
-     *
-     * @return int
      */
     public function getMaxChannels(): int
     {
@@ -406,8 +376,6 @@ class AMQPConnection
      *
      * When connection is connected, effective connection value returned, which is normally the same as original
      * correspondent value passed to constructor, otherwise original value passed to constructor returned.
-     *
-     * @return int
      */
     public function getMaxFrameSize(): int
     {
@@ -418,8 +386,6 @@ class AMQPConnection
      *
      * When connection is connected, effective connection value returned, which is normally the same as original
      * correspondent value passed to constructor, otherwise original value passed to constructor returned.
-     *
-     * @return int
      */
     public function getHeartbeatInterval(): int
     {
@@ -427,8 +393,6 @@ class AMQPConnection
 
     /**
      * Get path to the CA cert file in PEM format
-     *
-     * @return string|null
      */
     public function getCACert(): ?string
     {
@@ -436,9 +400,6 @@ class AMQPConnection
 
     /**
      * Set path to the CA cert file in PEM format
-     *
-     * @param string|null $cacert
-     * @return void
      */
     public function setCACert(?string $cacert): void
     {
@@ -446,8 +407,6 @@ class AMQPConnection
 
     /**
      * Get path to the client certificate in PEM format
-     *
-     * @return string|null
      */
     public function getCert(): ?string
     {
@@ -457,7 +416,6 @@ class AMQPConnection
      * Set path to the client certificate in PEM format
      *
      * @param string $cert
-     * @return void
      */
     public function setCert(?string $cert): void
     {
@@ -465,8 +423,6 @@ class AMQPConnection
 
     /**
      * Get path to the client key in PEM format
-     *
-     * @return string|null
      */
     public function getKey(): ?string
     {
@@ -474,9 +430,6 @@ class AMQPConnection
 
     /**
      * Set path to the client key in PEM format
-     *
-     * @param string|null $key
-     * @return void
      */
     public function setKey(?string $key): void
     {
@@ -484,8 +437,6 @@ class AMQPConnection
 
     /**
      * Get whether peer verification enabled or disabled
-     *
-     * @return bool
      */
     public function getVerify(): bool
     {
@@ -493,9 +444,6 @@ class AMQPConnection
 
     /**
      * Enable or disable peer verification
-     *
-     * @param bool $verify
-     * @return void
      */
     public function setVerify(bool $verify): void
     {
@@ -505,30 +453,19 @@ class AMQPConnection
      * set authentication method
      *
      * @param int $saslMethod AMQP_SASL_METHOD_PLAIN | AMQP_SASL_METHOD_EXTERNAL
-     * @return void
      */
     public function setSaslMethod(int $saslMethod): void
     {
     }
 
-    /**
-     * @return int
-     */
     public function getSaslMethod(): int
     {
     }
 
-    /**
-     * @param string|null $connectionName
-     * @return void
-     */
     public function setConnectionName(?string $connectionName): void
     {
     }
 
-    /**
-     * @return string|null
-     */
     public function getConnectionName(): ?string
     {
     }

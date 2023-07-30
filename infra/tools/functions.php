@@ -1,4 +1,5 @@
 <?php
+
 namespace phpamqp;
 
 ini_set('assert.bail', true);
@@ -39,10 +40,7 @@ EOS;
 const PACKAGE_XML = BASE_DIR . '/package.xml';
 const ISSUE_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/issues/%d';
 const COMMIT_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/issues/%d';
-const COMMIT_MESSAGE_CHANGELOG_IGNORED = [
-    '[RM]',
-    'Back to dev',
-];
+const COMMIT_MESSAGE_CHANGELOG_IGNORED = ['[RM]', 'Back to dev'];
 const SOURCE_VERSION_REGEX = '(#define\s+PHP_AMQP_VERSION\s+)"(?P<version>' . VERSION_REGEX . ')"';
 
 function re(string ...$regex): string
@@ -139,9 +137,9 @@ function setDate(DateTimeImmutable $now): void
     $xml->time = $now->format('H:i:s');
 }
 
-function addFilesToPackageXml(SimpleXMLElement $dir, string $expression, string $role): void {
+function addFilesToPackageXml(SimpleXMLElement $dir, string $expression, string $role): void
+{
     foreach (glob(BASE_DIR . $expression) as $file) {
-
         $file = str_replace(realpath(BASE_DIR) . '/', '', realpath($file));
 
         if ($file === 'config.h') {
@@ -154,7 +152,8 @@ function addFilesToPackageXml(SimpleXMLElement $dir, string $expression, string 
     }
 }
 
-function removeFromPackageXmlNodes(SimpleXMLElement $el, string $expression): void {
+function removeFromPackageXmlNodes(SimpleXMLElement $el, string $expression): void
+{
     $nodesToDelete = [];
 
     foreach ($el->children() as $file) {
@@ -170,7 +169,8 @@ function removeFromPackageXmlNodes(SimpleXMLElement $el, string $expression): vo
     }
 }
 
-function updateFiles(): void {
+function updateFiles(): void
+{
     $xml = simplexml_import_dom(packageXml());
     assert($xml !== null);
     $sourceExpression = '*.[ch]';
@@ -218,7 +218,7 @@ function setSourceVersion(string $nextVersion): void
                 '{minor}' => $minor,
                 '{patch}' => $patch,
                 '{extra}' => $extra,
-                '{id}' => $id
+                '{id}' => $id,
             ]
         )
     );
@@ -272,7 +272,7 @@ function buildChangelog(string $nextTag, string $previousTag): string
             $issueId = $matches['issueId'];
         }
 
-        $url = $issueId ? sprintf(ISSUE_URL_TEMPLATE, $issueId): sprintf(COMMIT_URL_TEMPLATE, $commit);
+        $url = $issueId ? sprintf(ISSUE_URL_TEMPLATE, $issueId) : sprintf(COMMIT_URL_TEMPLATE, $commit);
         $committer = strpos($committerEmail, '@users.noreply.github.com') !== false
             ? $committerName
             : sprintf('%s <%s>', $committerName, $committerEmail);
@@ -281,17 +281,18 @@ function buildChangelog(string $nextTag, string $previousTag): string
 
     $changes = implode(PHP_EOL, $changeLines);
     $changelog = <<<EOT
-$changes
+{$changes}
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/$previousTag...$nextTag
+https://github.com/php-amqp/php-amqp/compare/{$previousTag}...{$nextTag}
 
 EOT;
 
     return $changelog;
 }
 
-function archiveRelease(): void {
+function archiveRelease(): void
+{
     $dom = packageXml();
     $xml = simplexml_import_dom($dom);
     assert($xml !== null);
@@ -328,7 +329,8 @@ function setStability(string $nextVersion): void
     $xml->stability->api = $stability;
 }
 
-function executeCommand(string $command): string {
+function executeCommand(string $command): string
+{
     exec($command, $output, $returnCode);
 
     if ($returnCode !== 0) {
@@ -341,23 +343,26 @@ function executeCommand(string $command): string {
     return implode("\n", $output);
 }
 
-function validatePackage(): void {
+function validatePackage(): void
+{
     executeCommand('pecl package-validate');
 }
 
-function peclPackage(int $step, string $nextVersion): void {
+function peclPackage(int $step, string $nextVersion): void
+{
     executeCommand('pecl package');
 
     $archive = 'amqp-' . $nextVersion . '.tgz';
     if (!file_exists(BASE_DIR . $archive)) {
-        echo "Could find $archive\n";
+        echo "Could find {$archive}\n";
         exit(1);
     }
 
     printf("%d) Upload %s to PECL\n", $step, $archive);
 }
 
-function gitCommit(int $step, string $nextVersion, string $message): void {
+function gitCommit(int $step, string $nextVersion, string $message): void
+{
     executeCommand(
         sprintf('git commit -m "[RM] %s %s" %s %s', $message, $nextVersion, HEADER_VERSION_FILE, PACKAGE_XML)
     );
@@ -365,7 +370,8 @@ function gitCommit(int $step, string $nextVersion, string $message): void {
     printf("%d) Run \"git push origin latest\"\n", $step);
 }
 
-function gitTag(int $step, string $nextVersion): void {
+function gitTag(int $step, string $nextVersion): void
+{
     $nextTag = versionToTag($nextVersion);
 
     executeCommand(sprintf("git tag %s -m '[RM] release %s'", $nextTag, $nextVersion));

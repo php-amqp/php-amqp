@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
+
+base_dir=`dirname $0`/../../
+
+$base_dir/vendor/bin/ecs $@

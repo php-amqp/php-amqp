@@ -44,7 +44,6 @@ CMakeLists.txt
 # CLion
 .idea/
 /vendor/
-/composer.lock
 
 /config.h.in~
 /configure~
