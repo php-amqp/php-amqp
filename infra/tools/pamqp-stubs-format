@@ -5,4 +5,8 @@ set -o nounset
 
 base_dir=`dirname $0`/../../
 
-$base_dir/vendor/bin/ecs $@
+if test ! -x $base_dir/vendor/bin/ecs; then
+  composer --working-dir=$base_dir install
+fi
+
+$base_dir/vendor/bin/ecs --config=$base_dir/ecs.php $@

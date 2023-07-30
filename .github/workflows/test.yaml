@@ -83,10 +83,7 @@ jobs:
       - name: Validate stubs
         run: ./infra/tools/pamqp-stubs-validate
 
-      - name: Install composer dependencies
-        run: composer install
-
-      - name: Check CS
+      - name: Check stub coding style
         run: ./infra/tools/pamqp-stubs-format
 
   test:
