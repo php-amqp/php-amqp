@@ -100,6 +100,7 @@ jobs:
               run: docker compose up ca
 
             - run: ls -lhR infra/tls/certificates/
+            - run: whoami
 
             - name: Start RabbitMQ
               run: docker compose up -d rabbitmq
