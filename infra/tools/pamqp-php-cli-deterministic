@@ -3,24 +3,35 @@
 set -o errexit
 set -o nounset
 
-extensions="json simplexml sodium"
-args="-n \
-  -d date.timezone=UTC \
-  -d precision=20 \
-  -d zend.enable_gc=On \
-  -d display_errors=On \
-  -d display_startup_errors=On \
-  -d error_reporting=-1"
+cache_dir=${XDG_CACHE_HOME:-${HOME}/.cache}
+args_cache=${XDG_CACHE_HOME:-${HOME}/.cache}/pamqp-args.txt
 
-extension_dir=`php -r "echo ini_get('extension_dir');"`
+if ! test -f "$args_cache"; then
+  extensions="json simplexml sodium"
+  args="-n \
+    -d date.timezone=UTC \
+    -d precision=20 \
+    -d zend.enable_gc=On \
+    -d display_errors=On \
+    -d display_startup_errors=On \
+    -d error_reporting=-1"
 
-for extension in $extensions; do
-  code="echo extension_loaded('$extension') ? 'true' : 'false';"
-  exists=$(php -r "$code")
-  bundled=$(php -n -r "$code")
-  if test "$exists" = "true" -a "${bundled}" = "false"; then
-    args="${args} -d extension=$extension_dir/$extension.so"
-  fi
-done
+  extension_dir=`php -r "echo ini_get('extension_dir');"`
+
+  for extension in $extensions; do
+    code="echo extension_loaded('$extension') ? 'true' : 'false';"
+    exists=$(php -r "$code")
+    bundled=$(php -n -r "$code")
+    if test "$exists" = "true" -a "${bundled}" = "false"; then
+      args="${args} -d extension=$extension_dir/$extension.so"
+    fi
+  done
+
+  mkdir -p "$cache_dir"
+  echo -n $args > $args_cache.$$
+  mv $args_cache.$$ $args_cache
+else
+  args=`cat $args_cache`
+fi
 
 $(which php) ${args} $@
