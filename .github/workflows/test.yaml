@@ -95,6 +95,8 @@ jobs:
             - name: Configure hostnames
               run: sudo echo "127.0.0.1 rabbitmq.example.org" | sudo tee -a /etc/hosts
 
+            - run: sudo chown -R 100 infra/tls/certificates
+
             - name: Start dependencies
               run: docker compose up ca rabbitmq
 
