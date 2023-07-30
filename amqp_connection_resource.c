@@ -527,16 +527,19 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
         amqp_ssl_socket_set_verify(resource->socket, params->verify);
 #endif
 
-        if (params->cert && params->key &&
-            amqp_ssl_socket_set_key(resource->socket, params->cert, params->key) != AMQP_STATUS_OK) {
-            zend_throw_exception(
-                amqp_connection_exception_class_entry,
-                "Socket error: could not setting client cert.",
-                0
-            );
-            connection_resource_destructor(resource, persistent);
+        if (params->cert && params->key) {
+            int client_cert_result = amqp_ssl_socket_set_key(resource->socket, params->cert, params->key);
+            if (client_cert_result != AMQP_STATUS_OK) {
+                zend_throw_exception_ex(
+                    amqp_connection_exception_class_entry,
+                    0,
+                    "Socket error: could not set client cert. %s",
+                    amqp_error_string2(client_cert_result)
+                );
+                connection_resource_destructor(resource, persistent);
 
-            return NULL;
+                return NULL;
+            }
         }
 
     } else {
