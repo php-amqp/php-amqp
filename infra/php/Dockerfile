@@ -11,6 +11,7 @@ RUN apt-get install -yqq socat
 RUN apt-get install -yqq gdb
 RUN apt-get install -yqq valgrind
 RUN apt-get install -yqq git
+RUN apt-get install -yqq unzip
 
 RUN echo 'PATH=$PATH:/src/infra/tools' >> /etc/bash.bashrc
 RUN echo 'CFLAGS="-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror"' >> /etc/bash.bashrc
