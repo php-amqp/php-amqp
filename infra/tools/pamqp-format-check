@@ -3,4 +3,4 @@
 set -o errexit
 set -o nounset
 
-$(basename $0)/pamqp-format --dry-run --Werror
+$(dirname $0)/pamqp-format --dry-run --Werror
