@@ -7,7 +7,7 @@ tools_dir=`dirname $0`
 base_dir=$tools_dir/../../
 real_base_dir=`realpath $base_dir`
 
-sh -x $tools_dir/pamqp-php-cli-deterministic $real_base_dir/infra/tools/pamqp-dump-reflection stubs.json
-sh -x $tools_dir/pamqp-php-cli-deterministic -d extension=modules/amqp.so $real_base_dir/infra/tools/pamqp-dump-reflection impl.json
+$tools_dir/pamqp-php-cli-deterministic $real_base_dir/infra/tools/pamqp-dump-reflection stubs.json
+$tools_dir/pamqp-php-cli-deterministic -d extension=modules/amqp.so $real_base_dir/infra/tools/pamqp-dump-reflection impl.json
 
 diff -10 -u stubs.json impl.json
