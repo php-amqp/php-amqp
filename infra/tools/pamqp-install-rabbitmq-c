@@ -39,7 +39,7 @@ cd build
 cmake ..
 
 # Compile
-cmake --build . --parallel $(nproc)
+CFLAGS="" cmake --build . --parallel $(nproc)
 
 # Install
 sudo cmake --build . --target install
