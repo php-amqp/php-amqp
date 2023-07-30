@@ -32,7 +32,7 @@ jobs:
     if: needs.dedup.outputs.should_skip != 'true'
 
     steps:
-      - name: install clang-format
+      - name: Install clang-format
         uses: myci-actions/add-deb-repo@11
         with:
           repo: "deb https://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main"
@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v3.5.3
 
       - name: Check style
-        run: clang-format-17 --dry-run --Werror  *.c *.h
+        run: ./infra/tools/pamqp-format-check
 
   stubs:
     name: Check stubs php-${{ matrix.php-version }}
@@ -84,7 +84,7 @@ jobs:
         run: ./infra/tools/pamqp-stubs-validate
 
       - name: Check stub coding style
-        run: ./infra/tools/pamqp-stubs-format
+        run: ./infra/tools/pamqp-stubs-format-check
 
   test:
     name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}

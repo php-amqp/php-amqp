@@ -5,4 +5,4 @@ set -o nounset
 
 base_dir=`dirname $0`/../../
 
-clang-format-17 -i $base_dir/*.c $base_dir/*.h
+clang-format-17 -i $base_dir/*.c $base_dir/*.h $@
