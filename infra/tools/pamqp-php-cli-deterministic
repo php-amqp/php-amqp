@@ -4,9 +4,9 @@ set -o errexit
 set -o nounset
 
 cache_dir=${XDG_CACHE_HOME:-${HOME}/.cache}
-args_cache=${XDG_CACHE_HOME:-${HOME}/.cache}/pamqp-args.txt
+cached_script=${XDG_CACHE_HOME:-${HOME}/.cache}/pamqp-php-cli-deterministic-cached.sh
 
-if ! test -f "$args_cache"; then
+if ! test -f "$cached_script"; then
   extensions="json simplexml sodium"
   args="-n \
     -d date.timezone=UTC \
@@ -16,7 +16,7 @@ if ! test -f "$args_cache"; then
     -d display_startup_errors=On \
     -d error_reporting=-1"
 
-  extension_dir=`php -r "echo ini_get('extension_dir');"`
+  extension_dir=$(php -r "echo ini_get('extension_dir');")
 
   for extension in $extensions; do
     code="echo extension_loaded('$extension') ? 'true' : 'false';"
@@ -28,10 +28,9 @@ if ! test -f "$args_cache"; then
   done
 
   mkdir -p "$cache_dir"
-  echo -n $args > $args_cache.$$
-  mv $args_cache.$$ $args_cache
-else
-  args=`cat $args_cache`
+  echo -n "$(which php) $args $@" > $cached_script.$$
+  chmod +x $cached_script.$$
+  mv $cached_script.$$ $cached_script
 fi
 
-$(which php) ${args} $@
+. $cached_script $@
