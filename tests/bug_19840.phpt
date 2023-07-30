@@ -19,4 +19,4 @@ try {
 }
 ?>
 --EXPECT--
-AMQPConnectionException(0): Socket error: could not connect to host.
+AMQPConnectionException(0): Socket error: could not connect to host, hostname lookup failed

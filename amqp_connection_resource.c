@@ -533,7 +533,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
                 zend_throw_exception_ex(
                     amqp_connection_exception_class_entry,
                     0,
-                    "Socket error: could not set client cert. %s",
+                    "Socket error: could not set client cert, %s",
                     amqp_error_string2(client_cert_result)
                 );
                 connection_resource_destructor(resource, persistent);
@@ -566,7 +566,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
         zend_throw_exception_ex(
             amqp_connection_exception_class_entry,
             0,
-            "Socket error: could not connect to host. %s",
+            "Socket error: could not connect to host, %s",
             amqp_error_string2(connection_result)
         );
         connection_resource_destructor(resource, persistent);
