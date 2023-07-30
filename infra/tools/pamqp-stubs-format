@@ -3,4 +3,4 @@
 set -o errexit
 set -o nounset
 
-pamqp-stubs-format-check --fix
+$(basename $0)/pamqp-stubs-format-check --fix
