@@ -91,7 +91,7 @@ jobs:
     if: needs.dedup.outputs.should_skip != 'true'
 
     env:
-      TEST_PHP_ARGS: -j 16 ${{ matrix.test-php-args }}
+      TEST_PHP_ARGS: -j16 ${{ matrix.test-php-args }}
 
     strategy:
       fail-fast: false
