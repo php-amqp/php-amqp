@@ -15,7 +15,7 @@ args="-n \
 extension_dir=`php -r "echo ini_get('extension_dir');"`
 
 for extension in $extensions; do
-  code="echo json_encode(extension_loaded('$extension'));"
+  code="echo extension_loaded('$extension') ? 'true' : 'false';"
   exists=$(php -r "$code")
   bundled=$(php -n -r "$code")
   if test "$exists" = "true" -a "${bundled}" = "false"; then
