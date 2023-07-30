@@ -99,6 +99,9 @@ jobs:
             - name: Generate test certificates
               run: docker compose up ca
 
+            - name: Fix permissions
+              run: docker compose run rabbitmq chown -R rabbitmq /etc/rabbitmq/tls
+
             - name: Start RabbitMQ
               run: docker compose up -d rabbitmq
 
