@@ -368,7 +368,7 @@ function gitCommit(int $step, string $nextVersion, string $message): void {
 function gitTag(int $step, string $nextVersion): void {
     $nextTag = versionToTag($nextVersion);
 
-    executeCommand("git tag $nextTag");
+    executeCommand(sprintf("git tag %s -m '[RM] release %s'", $nextTag, $nextVersion));
 
     printf("%d) Run \"git push origin %s\"\n", $step, $nextTag);
 }
