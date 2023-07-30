@@ -27,7 +27,7 @@ Four different development containers are provided at the moment:
 To enter the container, run this command:
 
 ```
-docker compose exec debian-82
+docker compose exec debian-82 bash
 ```
 
 You will automatically land in `/src/build/debian-82`, which is the container specific build dir. The whole source
