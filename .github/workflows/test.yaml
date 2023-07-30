@@ -55,7 +55,7 @@ jobs:
             run: ./infra/tools/pamqp-stubs-lint
 
           - name: Build librabbitmq
-            run: ./infra/tools/pamqp-install-rabbitmq-c master
+            run: ./infra/tools/pamqp-install-librabbitmq master
 
           - name: Build PHP extension
             run: phpize && ./configure && make
@@ -74,8 +74,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                #php-version: ['8.2', '8.1', '8.0', '7.4']
-                php-version: ['8.2']
+                php-version: ['8.2', '8.1', '8.0', '7.4']
                 php-thread-safe: [true, false]
                 librabbitmq-version: ['master', 'v0.13.0', 'v0.11.0', 'v0.10.0']
                 include:
@@ -115,9 +114,9 @@ jobs:
                 phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
 
             - name: Build librabbitmq
-              run: ./infra/tools/pamqp-install-rabbitmq-c ${{ matrix.librabbitmq-version }}
+              run: ./infra/tools/pamqp-install-librabbitmq ${{ matrix.librabbitmq-version }}
 
-            - name: Debug librabbitmq
+            - name: Print librabbitmq version
               run: pkg-config librabbitmq --debug
 
             - name: Build PHP extension
@@ -126,7 +125,7 @@ jobs:
             - name: Test PHP extension
               run: make test | tee result.txt
 
-            - name: Debug
+            - name: Dump RabbitMQ logs
               run: docker compose logs
 
             - name: Benchmark PHP extension
