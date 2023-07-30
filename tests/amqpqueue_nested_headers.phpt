@@ -11,23 +11,23 @@ $ch = new AMQPChannel($cnn);
 
 // create an error exchange and bind a queue to it:
 $errorXchange = new AMQPExchange($ch);
-$errorXchange->setName('errorXchange' . microtime(true));
+$errorXchange->setName('errorXchange' . bin2hex(random_bytes(32)));
 $errorXchange->setType(AMQP_EX_TYPE_TOPIC);
 $errorXchange->declareExchange();
 
 $errorQ = new AMQPQueue($ch);
-$errorQ->setName('errorQueue' . microtime(true));
+$errorQ->setName('errorQueue' . bin2hex(random_bytes(32)));
 $errorQ->declareQueue();
 $errorQ->bind($errorXchange->getName(), '#');
 
 
 // Declare a new exchange and queue using this dead-letter-exchange:
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-' . microtime(true));
+$ex->setName('exchange-' . bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_TOPIC);
 $ex->declareExchange();
 $q = new AMQPQueue($ch);
-$q->setName('queue-' . microtime(true));
+$q->setName('queue-' . bin2hex(random_bytes(32)));
 $q->setArgument('x-dead-letter-exchange', $errorXchange->getName());
 $q->declareQueue();
 $q->bind($ex->getName(), '#');
@@ -72,14 +72,14 @@ array(1) {
     ["reason"]=>
     string(8) "rejected"
     ["queue"]=>
-    string(%d) "queue-%f"
+    string(%d) "queue-%s"
     ["time"]=>
     object(AMQPTimestamp)#%d (1) {
       ["timestamp":"AMQPTimestamp":private]=>
       float(%d)
     }
     ["exchange"]=>
-    string(%d) "exchange-%f"
+    string(%d) "exchange-%s"
     ["routing-keys"]=>
     array(1) {
       [0]=>

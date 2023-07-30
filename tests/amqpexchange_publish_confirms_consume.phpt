@@ -21,7 +21,7 @@ $ch = new AMQPChannel($cnn);
 $ch->confirmSelect();
 
 $ex = new AMQPExchange($ch);
-$ex->setName("exchange-" . microtime(true));
+$ex->setName("exchange-" . bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->setFlags(AMQP_AUTODELETE);
 $ex->declareExchange();
@@ -30,7 +30,7 @@ var_dump($ex->publish('message 1', 'routing.key', AMQP_MANDATORY));
 
 // Create a new queue
 $q = new AMQPQueue($ch);
-$q->setName('queue-' . microtime(true));
+$q->setName('queue-' . bin2hex(random_bytes(32)));
 $q->setFlags(AMQP_AUTODELETE);
 $q->declareQueue();
 

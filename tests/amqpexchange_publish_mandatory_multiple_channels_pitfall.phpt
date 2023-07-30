@@ -34,7 +34,7 @@ try {
 }
 
 
-$exchange_name = "exchange-" . microtime(true);
+$exchange_name = "exchange-" . bin2hex(random_bytes(32));
 
 $ex1 = new AMQPExchange($ch1);
 $ex1->setName($exchange_name);
@@ -51,7 +51,7 @@ var_dump($ex2->publish('message 2-2', 'routing.key', AMQP_MANDATORY));
 
 // Create a new queue
 $q = new AMQPQueue($ch1);
-$q->setName('queue-' . microtime(true));
+$q->setName('queue-' . bin2hex(random_bytes(32)));
 $q->setFlags(AMQP_AUTODELETE);
 $q->declareQueue();
 

@@ -10,7 +10,7 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($ch);
-$ex->setName("exchange-" . microtime(true));
+$ex->setName("exchange-" . bin2hex(random_bytes(32)));
 $ex->setType("invalid_exchange_type");
 
 echo "Channel ", $ch->isConnected() ? 'connected' : 'disconnected', PHP_EOL;

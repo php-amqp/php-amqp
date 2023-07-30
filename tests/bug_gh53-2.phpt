@@ -10,12 +10,12 @@ $connection->connect();
 $channel = new AMQPChannel($connection);
 
 $exchange = new AMQPExchange($channel);
-$exchange->setName('exchange' . microtime(true));
+$exchange->setName('exchange' . bin2hex(random_bytes(32)));
 $exchange->setType(AMQP_EX_TYPE_TOPIC);
 $exchange->declareExchange();
 
 $queue = new AMQPQueue($channel);
-$queue->setName('queue1' . microtime(true));
+$queue->setName('queue1' . bin2hex(random_bytes(32)));
 $queue->declareQueue();
 $queue->bind($exchange->getName(), '#');
 

@@ -13,7 +13,7 @@ $ch = new AMQPChannel($cnn);
 
 // Create a new queue
 $q = new AMQPQueue($ch);
-$q->setName('queue-' . microtime(true));
+$q->setName('queue-' . bin2hex(random_bytes(32)));
 $q->declareQueue();
 
 var_dump($q->getConsumerTag());

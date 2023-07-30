@@ -11,7 +11,7 @@ $ch = new AMQPChannel($cnn);
 
 echo 'Channel id: ', $ch->getChannelId(), PHP_EOL;
 
-$exchangge_name = "exchange-" . microtime(true);
+$exchangge_name = "exchange-" . bin2hex(random_bytes(32));
 
 $ex = new AMQPExchange($ch);
 $ex->setName($exchangge_name);
@@ -41,7 +41,7 @@ try {
 --EXPECTF--
 Channel id: 1
 Exchange declared: NULL
-AMQPExchangeException(406): Server channel error: 406, message: PRECONDITION_FAILED - %s exchange 'exchange-%f' in vhost '/'%s
+AMQPExchangeException(406): Server channel error: 406, message: PRECONDITION_FAILED - %s exchange 'exchange-%s' in vhost '/'%s
 Channel connected: false
 Connection connected: true
 AMQPChannelException(0): Could not create exchange. No channel available.

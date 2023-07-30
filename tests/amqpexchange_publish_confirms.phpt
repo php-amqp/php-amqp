@@ -30,7 +30,7 @@ try {
 
 
 $ex1 = new AMQPExchange($ch);
-$ex1->setName("exchange-" . microtime(true));
+$ex1->setName("exchange-" . bin2hex(random_bytes(32)));
 $ex1->setType(AMQP_EX_TYPE_FANOUT);
 $ex1->setFlags(AMQP_AUTODELETE);
 $ex1->declareExchange();
@@ -89,7 +89,7 @@ try {
 $ex1->delete();
 
 $ex2 = new AMQPExchange($ch);
-$ex2->setName("exchange-nonexistent-" . microtime(true));
+$ex2->setName("exchange-nonexistent-" . bin2hex(random_bytes(32)));
 var_dump($ex2->publish('message 2', 'routing.key'));
 
 try {
@@ -124,4 +124,4 @@ array(2) {
   bool(false)
 }
 NULL
-AMQPChannelException(404): Server channel error: 404, message: NOT_FOUND - no exchange 'exchange-nonexistent-%f' in vhost '/'
+AMQPChannelException(404): Server channel error: 404, message: NOT_FOUND - no exchange 'exchange-nonexistent-%s' in vhost '/'

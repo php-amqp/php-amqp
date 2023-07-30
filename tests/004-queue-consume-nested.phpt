@@ -10,12 +10,12 @@ AMQPQueue - nested consumers
 function test(AMQPChannel $channel1)
 {
     $ex1 = new AMQPExchange($channel1);
-    $ex1->setName('ex1-' . microtime(true));
+    $ex1->setName('ex1-' . bin2hex(random_bytes(32)));
     $ex1->setType(AMQP_EX_TYPE_FANOUT);
     $ex1->declareExchange();
 
     $q1 = new AMQPQueue($channel1);
-    $q1->setName('q1-' . microtime(true));
+    $q1->setName('q1-' . bin2hex(random_bytes(32)));
     $q1->declareQueue();
     $q1->bind($ex1->getName());
 
@@ -36,12 +36,12 @@ function test(AMQPChannel $channel1)
         $channel2 = new \AMQPChannel($queue->getConnection());
 
         $ex2 = new AMQPExchange($channel2);
-        $ex2->setName('ex2-' . microtime(true));
+        $ex2->setName('ex2-' . bin2hex(random_bytes(32)));
         $ex2->setType(AMQP_EX_TYPE_FANOUT);
         $ex2->declareExchange();
 
         $q2 = new AMQPQueue($channel2);
-        $q2->setName('q2-' . microtime(true));
+        $q2->setName('q2-' . bin2hex(random_bytes(32)));
         $q2->declareQueue();
         $q2->bind($ex2->getName());
 
@@ -88,20 +88,20 @@ test($channel2);
 ?>
 --EXPECTF--
 With default prefetch = 3
-1: ex1-%f [message 1 - 0] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue
-2: ex1-%f [message 1 - 1] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue
-2: ex1-%f [message 1 - 2] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue
-2: ex1-%f [message 1 - 3] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue
-1: ex2-%f [message 2 - 0] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
-2: ex2-%f [message 2 - 1] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
-1: ex2-%f [message 2 - 2] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
-2: ex2-%f [message 2 - 3] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
+1: ex1-%s [message 1 - 0] amq.ctag-%s - amq.ctag-%s (q1-%s): valid queue
+2: ex1-%s [message 1 - 1] amq.ctag-%s - amq.ctag-%s (q1-%s): valid queue
+2: ex1-%s [message 1 - 2] amq.ctag-%s - amq.ctag-%s (q1-%s): valid queue
+2: ex1-%s [message 1 - 3] amq.ctag-%s - amq.ctag-%s (q1-%s): valid queue
+1: ex2-%s [message 2 - 0] amq.ctag-%s - amq.ctag-%s (q2-%s): valid queue
+2: ex2-%s [message 2 - 1] amq.ctag-%s - amq.ctag-%s (q2-%s): valid queue
+1: ex2-%s [message 2 - 2] amq.ctag-%s - amq.ctag-%s (q2-%s): valid queue
+2: ex2-%s [message 2 - 3] amq.ctag-%s - amq.ctag-%s (q2-%s): valid queue
 With prefetch = 1
-1: ex1-%f [message 1 - 0] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue
-2: ex1-%f [message 1 - 1] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue
-2: ex2-%f [message 2 - 0] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
-2: ex2-%f [message 2 - 1] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
-1: ex2-%f [message 2 - 2] amq.ctag-%s - amq.ctag-%s (q2-%f): valid queue
-2: ex%d-%f [message %d - %d] amq.ctag-%s - amq.ctag-%s (q%d-%f): valid queue
-1: ex%d-%f [message %d - %d] amq.ctag-%s - amq.ctag-%s (q%d-%f): valid queue
-2: ex1-%f [message 1 - 3] amq.ctag-%s - amq.ctag-%s (q1-%f): valid queue
+1: ex1-%s [message 1 - 0] amq.ctag-%s - amq.ctag-%s (q1-%s): valid queue
+2: ex1-%s [message 1 - 1] amq.ctag-%s - amq.ctag-%s (q1-%s): valid queue
+2: ex2-%s [message 2 - 0] amq.ctag-%s - amq.ctag-%s (q2-%s): valid queue
+2: ex2-%s [message 2 - 1] amq.ctag-%s - amq.ctag-%s (q2-%s): valid queue
+1: ex2-%s [message 2 - 2] amq.ctag-%s - amq.ctag-%s (q2-%s): valid queue
+2: ex%d-%s [message %d - %d] amq.ctag-%s - amq.ctag-%s (q%d-%s): valid queue
+1: ex%d-%s [message %d - %d] amq.ctag-%s - amq.ctag-%s (q%d-%s): valid queue
+2: ex1-%s [message 1 - 3] amq.ctag-%s - amq.ctag-%s (q1-%s): valid queue

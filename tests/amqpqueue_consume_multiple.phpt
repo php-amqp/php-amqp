@@ -73,9 +73,9 @@ $q2->cancel();
 ?>
 --EXPECTF--
 Message: message1, routing key: routing.one, consumer tag: amq.ctag-%s
-Queue: queue-one-%f, consumer tag: amq.ctag-%s
+Queue: queue-one-%s, consumer tag: amq.ctag-%s
 Queue and message consumer tag matches
 
 Message: message2, routing key: routing.two, consumer tag: amq.ctag-%s
-Queue: queue-two-%f, consumer tag: amq.ctag-%s
+Queue: queue-two-%s, consumer tag: amq.ctag-%s
 Queue and message consumer tag matches
