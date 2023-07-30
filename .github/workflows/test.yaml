@@ -62,7 +62,7 @@ jobs:
             run: phpize && ./configure && make
 
           - name: Validate stubs
-            run: sh -x ./infra/tools/pamqp-stubs-validate
+            run: ./infra/tools/pamqp-stubs-validate
 
     test:
         name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
