@@ -87,7 +87,7 @@ jobs:
         run: composer install
 
       - name: Check CS
-        run: ./infra/tools/pamqp-stubs-format-check
+        run: ./infra/tools/pamqp-stubs-format
 
   test:
     name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}
