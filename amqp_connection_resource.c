@@ -26,8 +26,6 @@
 #endif
 
 #include "php.h"
-#include "php_ini.h"
-#include "ext/standard/info.h"
 #include "ext/standard/datetime.h"
 #include "zend_exceptions.h"
 
@@ -61,7 +59,6 @@
     #include <unistd.h>
 #endif
 
-//#include "amqp_basic_properties.h"
 #include "amqp_methods_handling.h"
 #include "amqp_connection_resource.h"
 #include "amqp_channel.h"

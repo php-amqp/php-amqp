@@ -25,8 +25,6 @@
 #endif
 
 #include "php.h"
-#include "php_ini.h"
-#include "ext/standard/info.h"
 #include "zend_exceptions.h"
 
 #ifdef PHP_WIN32
@@ -37,10 +35,8 @@
     #endif
     #include "win32/signal.h"
 #else
-
     #include <signal.h>
     #include <stdint.h>
-
 #endif
 
 #if HAVE_LIBRABBITMQ_NEW_LAYOUT

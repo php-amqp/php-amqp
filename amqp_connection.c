@@ -41,14 +41,11 @@
     #include <signal.h>
     #include <stdint.h>
 #endif
+
 #if HAVE_LIBRABBITMQ_NEW_LAYOUT
     #include <rabbitmq-c/amqp.h>
-    #include <rabbitmq-c/framing.h>
-    #include <rabbitmq-c/tcp_socket.h>
 #else
     #include <amqp.h>
-    #include <amqp_framing.h>
-    #include <amqp_tcp_socket.h>
 #endif
 
 #ifdef PHP_WIN32
@@ -61,10 +58,6 @@
 #include "amqp_channel.h"
 #include "amqp_connection_resource.h"
 #include "amqp_connection.h"
-
-#ifndef E_DEPRECATED
-    #define E_DEPRECATED E_WARNING
-#endif
 
 zend_class_entry *amqp_connection_class_entry;
 #define this_ce amqp_connection_class_entry

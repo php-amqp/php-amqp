@@ -20,7 +20,8 @@
   | - Jonathan Tansavatdi                                                |
   +----------------------------------------------------------------------+
 */
-extern zend_class_entry *amqp_queue_class_entry;
+#include "php.h"
 
+extern zend_class_entry *amqp_queue_class_entry;
 
 PHP_MINIT_FUNCTION(amqp_queue);
