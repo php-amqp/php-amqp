@@ -20,28 +20,28 @@ services:
     configs:
       - source: rabbitmq_conf
         target: /etc/rabbitmq/rabbitmq.conf
-        uid: rabbitmq
-        gid: rabbitmq
+        uid: "100"
+        gid: "101"
       - source: rabbitmq_enabled_plugins
         target: /etc/rabbitmq/enabled_plugins
-        uid: rabbitmq
-        gid: rabbitmq
+        uid: "100"
+        gid: "101"
       - source: rabbitmq_definitions
         target: /etc/rabbitmq/definitions.json
-        uid: rabbitmq
-        gid: rabbitmq
+        uid: "100"
+        gid: "101"
       - source: ca_cacert
         target: /etc/rabbitmq/tls/cacert.pem
-        uid: rabbitmq
-        gid: rabbitmq
+        uid: "100"
+        gid: "101"
       - source: ca_cert
         target: /etc/rabbitmq/tls/cert.pem
-        uid: rabbitmq
-        gid: rabbitmq
+        uid: "100"
+        gid: "101"
       - source: ca_key
         target: /etc/rabbitmq/tls/key.pem
-        uid: rabbitmq
-        gid: rabbitmq
+        uid: "100"
+        gid: "101"
     ports:
       # Plain TCP
       - "5672:5672/tcp"

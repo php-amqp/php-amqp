@@ -114,7 +114,7 @@ jobs:
                 phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
 
             - name: Debug SSL
-              run: docker compose exec rabbitmq ls -l /etc/rabbitmq/tls
+              run: docker compose exec rabbitmq ls -ld /etc/rabbitmq/tls /etc/rabbitmq/tls/*
 
             - name: Build librabbitmq
               run: ./infra/tools/pamqp-install-rabbitmq-c ${{ matrix.librabbitmq-version }}
