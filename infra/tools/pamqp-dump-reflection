@@ -17,13 +17,13 @@ function sortByName(array $array): array {
     return $array;
 }
 
-function getTypeMetadata(?ReflectionType $type): ?array {
+function getTypeMetadata(?ReflectionNamedType $type): ?array {
     if ($type == null) {
         return null;
     }
 
     return [
-        'name' => (string) $type,
+        'name' => $type->getName(),
         'nullable' => $type->allowsNull()
     ];
 }

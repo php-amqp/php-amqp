@@ -7,7 +7,7 @@ PHP_ARG_WITH(librabbitmq-dir,	for amqp,
 [	--with-librabbitmq-dir[=DIR]	 Set the path to librabbitmq install prefix.], yes)
 
 dnl Set test wrapper binary to ignore any local ini settings
-PHP_EXECUTABLE="\$(top_srcdir)/php-test-bin"
+PHP_EXECUTABLE="\$(top_srcdir)/infra/tools/pamqp-php-cli-deterministic"
 
 if test "$PHP_AMQP" != "no"; then
 	AC_MSG_CHECKING([for supported PHP versions])        
