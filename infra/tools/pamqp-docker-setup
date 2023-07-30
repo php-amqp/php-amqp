@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+function path(string ...$args): string {
+    return implode(DIRECTORY_SEPARATOR, $args);
+}
+
+$buildDir = path('/src', 'build');
+if (!is_dir($buildDir)) {
+    mkdir($buildDir);
+}
+
+$versionSpecificBuildDir = path($buildDir, PHP_MAJOR_VERSION . PHP_MINOR_VERSION);
+if (!is_dir($versionSpecificBuildDir)) {
+    mkdir($versionSpecificBuildDir);
+}
+
+// Convenience symlink to resolve tests path more easily
+$testsLink = path($versionSpecificBuildDir, 'tests');
+if (file_exists($testsLink)) {
+    unlink($testsLink);
+}
+symlink(path('/src', 'tests'), $testsLink);

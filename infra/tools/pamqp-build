@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
+
+base_dir=`dirname $0`/../../
+real_base_dir=`realpath $base_dir`
+
+mode="${1:-}"
+
+if test ! -x $real_base_dir/configure -o "$mode" = "clean"; then
+  (cd $real_base_dir && phpize)
+fi
+
+if test ! -f Makefile -o "$mode" = "clean"; then
+  $real_base_dir/configure
+fi
+
+if test "$mode" = "clean"; then
+  make clean
+fi
+
+make

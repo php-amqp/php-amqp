@@ -507,6 +507,38 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
             return NULL;
         }
+
+
+        if (amqp_ssl_socket_set_cacert(resource->socket, params->cacert) != AMQP_STATUS_OK) {
+            zend_throw_exception(
+                amqp_connection_exception_class_entry,
+                "Socket error: could not set CA certificate.",
+                0
+            );
+            connection_resource_destructor(resource, persistent);
+
+            return NULL;
+        }
+
+#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH >= 80
+        amqp_ssl_socket_set_verify_peer(resource->socket, params->verify);
+        amqp_ssl_socket_set_verify_hostname(resource->socket, params->verify);
+#else
+        amqp_ssl_socket_set_verify(resource->socket, params->verify);
+#endif
+
+        if (params->cert && params->key &&
+            amqp_ssl_socket_set_key(resource->socket, params->cert, params->key) != AMQP_STATUS_OK) {
+            zend_throw_exception(
+                amqp_connection_exception_class_entry,
+                "Socket error: could not setting client cert.",
+                0
+            );
+            connection_resource_destructor(resource, persistent);
+
+            return NULL;
+        }
+
     } else {
         resource->socket = amqp_tcp_socket_new(resource->connection_state);
 
@@ -517,27 +549,6 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
         }
     }
 
-    if (params->cacert && amqp_ssl_socket_set_cacert(resource->socket, params->cacert)) {
-        zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not set CA certificate.", 0);
-
-        return NULL;
-    }
-
-    if (params->cacert) {
-#if AMQP_VERSION_MAJOR * 100 + AMQP_VERSION_MINOR * 10 + AMQP_VERSION_PATCH >= 80
-        amqp_ssl_socket_set_verify_peer(resource->socket, params->verify);
-        amqp_ssl_socket_set_verify_hostname(resource->socket, params->verify);
-#else
-        amqp_ssl_socket_set_verify(resource->socket, params->verify);
-#endif
-    }
-
-    if (params->cert && params->key && amqp_ssl_socket_set_key(resource->socket, params->cert, params->key)) {
-        zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not setting client cert.", 0);
-
-        return NULL;
-    }
-
     if (params->connect_timeout > 0) {
         tv.tv_sec = (long int) params->connect_timeout;
         tv.tv_usec = (long int) ((params->connect_timeout - tv.tv_sec) * 1000000);
@@ -546,10 +557,15 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
     }
 
     /* Try to connect and verify that no error occurred */
-    if (amqp_socket_open_noblock(resource->socket, params->host, params->port, tv_ptr)) {
+    int connection_result = amqp_socket_open_noblock(resource->socket, params->host, params->port, tv_ptr);
+    if (connection_result != AMQP_STATUS_OK) {
 
-        zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not connect to host.", 0);
-
+        zend_throw_exception_ex(
+            amqp_connection_exception_class_entry,
+            0,
+            "Socket error: could not connect to host. %s",
+            amqp_error_string2(connection_result)
+        );
         connection_resource_destructor(resource, persistent);
 
         return NULL;

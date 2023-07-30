@@ -1,0 +1,44 @@
+{
+  "users": [
+    {
+      "name": "guest",
+      "password": "guest",
+      "tags": [
+        "administrator"
+      ]
+    },
+    {
+      "name": "CN=sasl-client.example.org,O=Example Org,L=Lisboa,ST=Lisboa,C=PT",
+      "password": "",
+      "tags": [
+        "administrator"
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "configure": ".*",
+      "read": ".*",
+      "user": "guest",
+      "vhost": "/",
+      "write": ".*"
+    },
+    {
+      "configure": ".*",
+      "read": ".*",
+      "user": "CN=sasl-client.example.org,O=Example Org,L=Lisboa,ST=Lisboa,C=PT",
+      "vhost": "/",
+      "write": ".*"
+    }
+  ],
+  "vhosts": [
+    {
+      "limits": [],
+      "metadata": {
+        "description": "Default virtual host",
+        "tags": []
+      },
+      "name": "/"
+    }
+  ]
+}

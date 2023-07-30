@@ -139,7 +139,7 @@ using `-Y amqp` attribute, just give a try - `tshark -i lo -Y amqp`.
 
 #### Formatting
 
-Run `./tools/dev-format.sh` to automatically format all `.c` and `.h` files. Note: this requires `clang-format` >=17.
+Run `./infra/tools/pamqp-format` to automatically format all `.c` and `.h` files. Note: this requires `clang-format` >=17.
 
 #### Configuring a RabbitMQ server
 
@@ -161,7 +161,7 @@ To reset RabbitMQ application run in CLI (as privileged user) `rabbitmqctl stop_
 
 
 #### Rolling a release
-Say we want to release "1.1000.0" next. We first run `php tools/make-release.php 1.1000.0`. This will update the version
+Say we want to release "1.1000.0" next. We first run `./infra/tools/pamqp-release-cut 1.1000.0`. This will update the version
 numbers and pre-populate the changelog with the latest git commits between the previous version and now. It will prompt
 you to edit the changelog in between. Once the release is done it tells you what to do next.
-Run `php tools/make-dev.php 1.1000.1` to bring latest back into development mode afterwards.
+Run `./infra/tools/pamqp-release-finalize 1.1000.1dev` to bring latest back into development mode afterwards.

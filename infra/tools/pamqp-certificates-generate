@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
+
+cert_dir="${1:-}"
+
+if test -z "$cert_dir"; then
+  echo "`basename $0` <cert_dir>"
+  exit 1
+fi
+
+mkdir -p $cert_dir
+rm -rf $cert_dir/*
+
+mkdir -p $cert_dir/testca/private $cert_dir/server $cert_dir/sasl-client $cert_dir/client
+
+(cd $cert_dir/testca &&
+  openssl req -new -x509 -keyout private/cakey.pem -out cacert.pem -days 365 -nodes -subj "/C=PT/ST=Lisboa/L=Lisboa/O=Example Org")
+
+(cd $cert_dir/server &&
+  openssl genrsa -out key.pem 2048 &&
+  openssl req -new -key key.pem -out req.pem -subj "/C=PT/ST=Lisboa/L=Lisboa/O=Example Org/CN=*.example.org" &&
+  openssl x509 -req -in req.pem -CA ../testca/cacert.pem -CAkey ../testca/private/cakey.pem -CAcreateserial -out cert.pem -days 365)
+
+(cd $cert_dir/sasl-client &&
+  openssl genrsa -out key.pem 2048 &&
+  openssl req -new -key key.pem -out req.pem -subj "/C=PT/ST=Lisboa/L=Lisboa/O=Example Org/CN=sasl-client.example.org" &&
+  openssl x509 -req -in req.pem -CA ../testca/cacert.pem -CAkey ../testca/private/cakey.pem -CAcreateserial -out cert.pem -days 365)
+
+(cd $cert_dir/client &&
+  openssl genrsa -out key.pem 2048 &&
+  openssl req -new -key key.pem -out req.pem -subj "/C=PT/ST=Lisboa/L=Lisboa/O=Example Org/CN=client.example.org" &&
+  openssl x509 -req -in req.pem -CA ../testca/cacert.pem -CAkey ../testca/private/cakey.pem -CAcreateserial -out cert.pem -days 365)

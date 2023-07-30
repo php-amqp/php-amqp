@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    volumes:
+      - type: bind
+        source: ./infra/rabbitmq/rabbitmq.conf
+        target: /etc/rabbitmq/rabbitmq.conf
+        read_only: true
+      - type: bind
+        source: ./infra/rabbitmq/enabled_plugins
+        target: /etc/rabbitmq/enabled_plugins
+        read_only: true
+      - type: bind
+        source: ./infra/rabbitmq/definitions.json
+        target: /etc/rabbitmq/definitions.json
+        read_only: true
+      - type: bind
+        source: ./infra/tls/certificates
+        target: /etc/rabbitmq/certificates
+        read_only: true
+    ports:
+      # Plain TCP
+      - "5672:5672/tcp"
+      # SSL
+      - "5671:5671/tcp"
+      # Management console
+      - "15672:15672/tcp"
+    user: rabbitmq
+    depends_on:
+      ca:
+        condition: service_completed_successfully
+    extra_hosts:
+      - "rabbitmq.example.org:127.0.0.1"
+    restart: always
+
+  ca:
+    build:
+      context: infra/tls
+    volumes:
+      - ./:/src
+    entrypoint: /src/infra/tools/pamqp-certificates-generate /src/infra/tls/certificates
+
+  "74": &php-base
+    build: &php-base-build
+      context: infra/php
+      target: dev
+      additional_contexts:
+        php-core: docker-image://php:7.4-zts-bullseye
+    volumes:
+      - ./:/src
+    depends_on:
+      - rabbitmq
+    ulimits:
+      core: -1
+    working_dir: /src/build/74
+    links:
+      - "rabbitmq:rabbitmq.example.org"
+
+  "80":
+    <<: *php-base
+    build:
+      <<: *php-base-build
+      additional_contexts:
+        php-core: docker-image://php:8.0-fpm-bullseye
+    working_dir: /src/build/80
+
+  "81":
+    <<: *php-base
+    build:
+      <<: *php-base-build
+      additional_contexts:
+        php-core: docker-image://php:8.1-fpm-bookworm
+    working_dir: /src/build/81
+
+  "82":
+    <<: *php-base
+    build:
+      <<: *php-base-build
+      target: dev-all
+      additional_contexts:
+        php-core: docker-image://php:8.2-fpm-bookworm
+    working_dir: /src/build/82

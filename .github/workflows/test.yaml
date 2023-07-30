@@ -52,16 +52,16 @@ jobs:
               coverage: none
 
           - name: Check stubs
-            run: ./tools/check-stubs.sh
+            run: ./infra/tools/pamqp-stubs-lint
 
           - name: Build librabbitmq
-            run: sudo ./provision/install_rabbitmq-c.sh master
+            run: ./infra/tools/pamqp-install-rabbitmq-c master
 
           - name: Build PHP extension
             run: phpize && ./configure && make
 
           - name: Validate stubs
-            run: ./tools/validate-stubs.sh
+            run: ./infra/tools/pamqp-stubs-validate
 
     test:
         name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
@@ -87,18 +87,16 @@ jobs:
                       php-thread-safe: true
                       librabbitmq-version: 'master'
                       test-php-args: '-m'
-        services:
-            rabbitmq:
-                image: rabbitmq:3
-                ports:
-                    - 5671:5671
-                    - 5672:5672
-                    - 15671:15671
-                    - 15672:15672
 
         steps:
             - name: Checkout
               uses: actions/checkout@v3.5.3
+
+            - name: Configure hostnames
+              run: sudo echo "127.0.0.1 rabbitmq.example.org" | sudo tee -a /etc/hosts
+
+            - name: Start dependencies
+              run: docker compose up ca rabbitmq -d
 
             - name: Install packages
               run: sudo apt-get install -y cmake valgrind
@@ -112,7 +110,7 @@ jobs:
                 phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
 
             - name: Build librabbitmq
-              run: sudo ./provision/install_rabbitmq-c.sh ${{ matrix.librabbitmq-version }}
+              run: ./infra/tools/pamqp-install-rabbitmq-c ${{ matrix.librabbitmq-version }}
 
             - name: Debug librabbitmq
               run: pkg-config librabbitmq --debug
