@@ -49,7 +49,6 @@ services:
       - "5671:5671/tcp"
       # Management console
       - "15672:15672/tcp"
-    user: rabbitmq
     depends_on:
       ca:
         condition: service_completed_successfully
