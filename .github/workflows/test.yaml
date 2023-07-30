@@ -99,7 +99,7 @@ jobs:
             - name: Generate test certificates
               run: docker compose up ca
 
-            - run ls -lhR infra/tls/certificates/
+            - run: ls -lhR infra/tls/certificates/
 
             - name: Start RabbitMQ
               run: docker compose up -d rabbitmq
