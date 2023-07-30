@@ -1,25 +1,47 @@
 version: "3.9"
 
+configs:
+  rabbitmq_conf:
+    file: ./infra/rabbitmq/rabbitmq.conf
+  rabbitmq_enabled_plugins:
+    file: ./infra/rabbitmq/enabled_plugins
+  rabbitmq_definitions:
+    file: ./infra/rabbitmq/definitions.json
+  ca_cacert:
+    file: ./infra/tls/certificates/testca/cacert.pem
+  ca_cert:
+    file: ./infra/tls/certificates/server/cert.pem
+  ca_key:
+    file: ./infra/tls/certificates/server/key.pem
+
 services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    volumes:
-      - type: bind
-        source: ./infra/rabbitmq/rabbitmq.conf
+    configs:
+      - source: rabbitmq_conf
         target: /etc/rabbitmq/rabbitmq.conf
-        read_only: true
-      - type: bind
-        source: ./infra/rabbitmq/enabled_plugins
+        uid: rabbitmq
+        gid: rabbitmq
+      - source: rabbitmq_enabled_plugins
         target: /etc/rabbitmq/enabled_plugins
-        read_only: true
-      - type: bind
-        source: ./infra/rabbitmq/definitions.json
+        uid: rabbitmq
+        gid: rabbitmq
+      - source: rabbitmq_definitions
         target: /etc/rabbitmq/definitions.json
-        read_only: true
-      - type: bind
-        source: ./infra/tls/certificates
-        target: /etc/rabbitmq/certificates
-        read_only: true
+        uid: rabbitmq
+        gid: rabbitmq
+      - source: ca_cacert
+        target: /etc/rabbitmq/tls/cacert.pem
+        uid: rabbitmq
+        gid: rabbitmq
+      - source: ca_cert
+        target: /etc/rabbitmq/tls/cert.pem
+        uid: rabbitmq
+        gid: rabbitmq
+      - source: ca_key
+        target: /etc/rabbitmq/tls/key.pem
+        uid: rabbitmq
+        gid: rabbitmq
     ports:
       # Plain TCP
       - "5672:5672/tcp"

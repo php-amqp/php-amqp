@@ -95,8 +95,11 @@ jobs:
             - name: Configure hostnames
               run: sudo echo "127.0.0.1 rabbitmq.example.org" | sudo tee -a /etc/hosts
 
-            - name: Start dependencies
-              run: docker compose up -d ca rabbitmq
+            - name: Generate test certificates
+              run: docker compose up ca
+
+            - name: Start RabbitMQ
+              run: docker compose up -d rabbitmq
 
             - name: Install packages
               run: sudo apt-get install -y cmake valgrind
