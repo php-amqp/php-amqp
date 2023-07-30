@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
+
+extensions="json simplexml"
+args="-n -d date.timezone=UTC -d precision=20 -d zend.enable_gc=On"
+
+for extension in $extensions; do
+  code="echo !extension_loaded('$extension') ? 'true' : 'false';"
+  shared=$(php -n -r "$code")
+  if [ "${shared}" = "true" ]; then
+    args="${args} -d extension=$extension.so"
+  fi
+done
+
+$(which php) ${args} $@
