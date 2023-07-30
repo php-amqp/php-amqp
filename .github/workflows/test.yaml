@@ -65,7 +65,7 @@ jobs:
             run: ./infra/tools/pamqp-stubs-validate
 
     test:
-        name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
+        name: Test php-${{ matrix.php-version }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
         # librabbitmq < 0.11 needs older OpenSSL version
         runs-on: ${{ matrix.librabbitmq-version == 'v0.10.0' || matrix.librabbitmq-version == 'v0.9.0' || matrix.librabbitmq-version == 'v0.8.0' && 'ubuntu-20.04' || 'ubuntu-22.04' }}
 
@@ -76,7 +76,6 @@ jobs:
             fail-fast: false
             matrix:
                 php-version: ['8.2', '8.1', '8.0', '7.4']
-                php-thread-safe: [true, false]
                 librabbitmq-version: ['master', 'v0.13.0', 'v0.12.0', 'v0.11.0', 'v0.10.0', 'v0.9.0', 'v0.8.0']
                 include:
                     - php-version: '8.2'
@@ -112,7 +111,7 @@ jobs:
                   coverage: none
                   extensions: simplexml
               env:
-                phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
+                phpts: ts
 
             - name: Build librabbitmq
               run: ./infra/tools/pamqp-install-librabbitmq ${{ matrix.librabbitmq-version }}
