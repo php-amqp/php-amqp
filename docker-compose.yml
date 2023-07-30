@@ -1,14 +1,5 @@
 version: "3.9"
 
-configs:
-  rabbitmq_conf:
-    file: ./infra/rabbitmq/rabbitmq.conf
-  rabbitmq_plugins:
-    file: ./infra/rabbitmq/enabled_plugins
-  rabbitmq_definitions:
-    file: ./infra/rabbitmq/definitions.json
-
-
 services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -40,7 +31,7 @@ services:
       ca:
         condition: service_completed_successfully
     extra_hosts:
-      - "rabbitmq.example.org:127.0.0.1"
+      - "${PHP_AMQP_SSL_HOST}:127.0.0.1"
     restart: always
 
   ca:
@@ -62,8 +53,9 @@ services:
     ulimits:
       core: -1
     working_dir: /src/build/debian-74
+    env_file: .env
     links:
-      - "rabbitmq:rabbitmq.example.org"
+      - "rabbitmq:${PHP_AMQP_SSL_HOST}"
 
   debian-80:
     <<: *php-base

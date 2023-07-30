@@ -8,6 +8,7 @@ on:
 env:
     TEST_TIMEOUT: 120
     CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
+    PHP_AMQP_SSL_HOST: rabbitmq.example.org
 
 jobs:
     checkstyle:
@@ -93,7 +94,7 @@ jobs:
               uses: actions/checkout@v3.5.3
 
             - name: Configure hostnames
-              run: sudo echo "127.0.0.1 rabbitmq.example.org" | sudo tee -a /etc/hosts
+              run: sudo echo "127.0.0.1 ${{ env.PHP_AMQP_SSL_HOST }}" | sudo tee -a /etc/hosts
 
             - name: Generate test certificates
               run: docker compose up ca

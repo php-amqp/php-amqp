@@ -6,7 +6,7 @@ AMQPConnection - TLS - CA validation only
 <?php
 $credentials = array(
     'port' => 5671,
-    'host' => 'rabbitmq.example.org',
+    'host' => getenv('PHP_AMQP_SSL_HOST'),
     'cacert' => __DIR__ . "/../infra/tls/certificates/testca/cacert.pem",
 );
 
@@ -22,7 +22,7 @@ echo PHP_EOL;
 
 $cnn = new AMQPConnection();
 $cnn->setPort(5671);
-$cnn->setHost('rabbitmq.example.org');
+$cnn->setHost(getenv('PHP_AMQP_SSL_HOST'));
 $cnn->setCACert(__DIR__ . "/../infra/tls/certificates/testca/cacert.pem");
 var_dump($cnn);
 
@@ -37,7 +37,7 @@ object(AMQPConnection)#1 (18) {
   ["password":"AMQPConnection":private]=>
   string(5) "guest"
   ["host":"AMQPConnection":private]=>
-  string(20) "rabbitmq.example.org"
+  string(%d) "%s"
   ["vhost":"AMQPConnection":private]=>
   string(1) "/"
   ["port":"AMQPConnection":private]=>
@@ -77,7 +77,7 @@ object(AMQPConnection)#2 (18) {
   ["password":"AMQPConnection":private]=>
   string(5) "guest"
   ["host":"AMQPConnection":private]=>
-  string(20) "rabbitmq.example.org"
+  string(%d) "%s"
   ["vhost":"AMQPConnection":private]=>
   string(1) "/"
   ["port":"AMQPConnection":private]=>

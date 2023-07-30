@@ -5,7 +5,7 @@ AMQPConnection - TLS - SASL authentication
 --FILE--
 <?php
 $credentials = array(
-    'host' => 'rabbitmq.example.org',
+    'host' => getenv('PHP_AMQP_SSL_HOST'),
     'port' => 5671,
     'cacert' => __DIR__ . "/../infra/tls/certificates/testca/cacert.pem",
     'cert' => __DIR__ . "/../infra/tls/certificates/sasl-client/cert.pem",
@@ -25,7 +25,7 @@ echo ($cnn->isConnected() ? 'connected' : 'disconnected'), PHP_EOL;
 echo PHP_EOL;
 
 $cnn = new AMQPConnection();
-$cnn->setHost('rabbitmq.example.org');
+$cnn->setHost(getenv('PHP_AMQP_SSL_HOST'));
 $cnn->setPort(5671);
 $cnn->setCACert(__DIR__ . "/../infra/tls/certificates/testca/cacert.pem");
 $cnn->setCert(__DIR__ . "/../infra/tls/certificates/sasl-client/cert.pem");
@@ -45,7 +45,7 @@ object(AMQPConnection)#1 (18) {
   ["password":"AMQPConnection":private]=>
   string(5) "guest"
   ["host":"AMQPConnection":private]=>
-  string(20) "rabbitmq.example.org"
+  string(%d) "%s"
   ["vhost":"AMQPConnection":private]=>
   string(1) "/"
   ["port":"AMQPConnection":private]=>
@@ -85,7 +85,7 @@ object(AMQPConnection)#2 (18) {
   ["password":"AMQPConnection":private]=>
   string(5) "guest"
   ["host":"AMQPConnection":private]=>
-  string(20) "rabbitmq.example.org"
+  string(%d) "%s"
   ["vhost":"AMQPConnection":private]=>
   string(1) "/"
   ["port":"AMQPConnection":private]=>

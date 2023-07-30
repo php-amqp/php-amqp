@@ -1,4 +1,4 @@
-# Developing php-amqp
+# PHP AMQP extension development
 
 PHP AMQP comes with a Docker based development environment that offers containers with multiple PHP versions as well
 as a properly configured RabbitMQ instance. The development environment supports building the library against multiple
