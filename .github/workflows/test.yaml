@@ -23,6 +23,7 @@ jobs:
         with:
           skip_after_successful_duplicate: 'true'
           cancel_others: 'true'
+          concurrent_skipping: 'same_content_newer'
 
   checkstyle:
     name: Check C formatting
