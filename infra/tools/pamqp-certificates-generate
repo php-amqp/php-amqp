@@ -32,3 +32,5 @@ mkdir -p $cert_dir/testca/private $cert_dir/server $cert_dir/sasl-client $cert_d
   openssl genrsa -out key.pem 2048 &&
   openssl req -new -key key.pem -out req.pem -subj "/C=PT/ST=Lisboa/L=Lisboa/O=Example Org/CN=client.example.org" &&
   openssl x509 -req -in req.pem -CA ../testca/cacert.pem -CAkey ../testca/private/cakey.pem -CAcreateserial -out cert.pem -days 365)
+
+chmod ugo=rwX $cert_dir
