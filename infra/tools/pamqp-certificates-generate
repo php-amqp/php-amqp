@@ -33,4 +33,7 @@ mkdir -p $cert_dir/testca/private $cert_dir/server $cert_dir/sasl-client $cert_d
   openssl req -new -key key.pem -out req.pem -subj "/C=PT/ST=Lisboa/L=Lisboa/O=Example Org/CN=client.example.org" &&
   openssl x509 -req -in req.pem -CA ../testca/cacert.pem -CAkey ../testca/private/cakey.pem -CAcreateserial -out cert.pem -days 365)
 
-setfacl -R -m u:100:rX $cert_dir
+# Set permissions for the different images consuming the certificates
+#  - 100 is the UID of the rabbitmq user of the rabbitmq image that runs the rabbitmq process
+#  - 1001 is the UID of the GitHub Action runner user that runs the tests
+setfacl -R -m u:100:rX -m u:1001:rX $cert_dir
