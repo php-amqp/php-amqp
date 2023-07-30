@@ -29,7 +29,7 @@ ltmain.sh
 missing
 mkinstalldirs
 modules/*
-run-tests.php
+infra/tools/run-tests.php
 tests/*
 !tests/*.phpt
 !tests/_test_helpers.php.inc

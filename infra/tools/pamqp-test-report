@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
+
+base_dir=`dirname $0`/../../
+real_base_dir=`realpath $base_dir`
+
+result=$(find $base_dir/tests -type f -and -name "*.diff" -or -name "*.out" -or -name "*.mem" |
+  sort |
+  while read -r file; do
+    echo "FILE: ${file}"
+    cat "$file"
+    printf "\n"
+done)
+
+if [ -n "$result" ]; then
+    echo "$result"
+    exit 1
+fi
