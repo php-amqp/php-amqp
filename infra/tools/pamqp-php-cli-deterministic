@@ -4,7 +4,13 @@ set -o errexit
 set -o nounset
 
 extensions="json simplexml sodium"
-args="-n -d date.timezone=UTC -d precision=20 -d zend.enable_gc=On"
+args="-n \
+  -d date.timezone=UTC \
+  -d precision=20 \
+  -d zend.enable_gc=On \
+  -d display_errors=On \
+  -d display_startup_errors=On \
+  -d error_reporting=-1"
 
 extension_dir=`php -r "echo ini_get('extension_dir');"`
 
