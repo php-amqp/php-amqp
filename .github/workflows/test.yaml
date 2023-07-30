@@ -101,6 +101,8 @@ jobs:
 
             - run: ls -lhR infra/tls/certificates/
             - run: whoami
+            - run: id
+            - run: cat infra/tls/certificates/client/key.pem
 
             - name: Start RabbitMQ
               run: docker compose up -d rabbitmq
