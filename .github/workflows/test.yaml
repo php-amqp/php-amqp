@@ -12,6 +12,7 @@ env:
 
 jobs:
   dedup:
+    name: Prevent duplicate builds
     # continue-on-error: true # Uncomment once integration is finished
     runs-on: ubuntu-22.04
     outputs:
