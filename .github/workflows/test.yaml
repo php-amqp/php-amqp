@@ -13,7 +13,7 @@ env:
 jobs:
   dedup:
     name: Prevent duplicate builds
-    # continue-on-error: true # Uncomment once integration is finished
+    continue-on-error: true
     runs-on: ubuntu-22.04
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
