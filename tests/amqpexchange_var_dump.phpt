@@ -12,7 +12,7 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 // Declare a new exchange
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-' . microtime(true));
+$ex->setName('exchange-' . bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 var_dump($ex);
 $ex->setArguments(array("x-ha-policy" => "all"));
@@ -25,7 +25,7 @@ object(AMQPExchange)#3 (9) {
   ["channel":"AMQPExchange":private]=>
   %a
   ["name":"AMQPExchange":private]=>
-  string(%d) "exchange-%f"
+  string(%d) "exchange-%s"
   ["type":"AMQPExchange":private]=>
   string(6) "fanout"
   ["passive":"AMQPExchange":private]=>
@@ -46,7 +46,7 @@ object(AMQPExchange)#3 (9) {
   ["channel":"AMQPExchange":private]=>
   %a
   ["name":"AMQPExchange":private]=>
-  string(%d) "exchange-%f"
+  string(%d) "exchange-%s"
   ["type":"AMQPExchange":private]=>
   string(6) "fanout"
   ["passive":"AMQPExchange":private]=>

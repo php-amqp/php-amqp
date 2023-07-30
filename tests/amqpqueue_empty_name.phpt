@@ -9,7 +9,7 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-' . microtime(true));
+$ex->setName('exchange-' . bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_DIRECT);
 $ex->declareExchange();
 

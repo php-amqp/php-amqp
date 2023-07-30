@@ -11,13 +11,13 @@ $ch = new AMQPChannel($cnn);
 
 // Declare a new exchange
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-unbind-' . microtime(true));
+$ex->setName('exchange-unbind-' . bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
 // Declare a new exchange
 $ex2 = new AMQPExchange($ch);
-$ex2->setName('exchange2-unbind-' . microtime(true));
+$ex2->setName('exchange2-unbind-' . bin2hex(random_bytes(32)));
 $ex2->setType(AMQP_EX_TYPE_FANOUT);
 $ex2->declareExchange();
 

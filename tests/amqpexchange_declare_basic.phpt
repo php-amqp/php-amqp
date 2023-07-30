@@ -10,7 +10,7 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($ch);
-var_dump($ex->setName("exchange-" . microtime(true)));
+var_dump($ex->setName("exchange-" . bin2hex(random_bytes(32))));
 var_dump($ex->setType(AMQP_EX_TYPE_FANOUT));
 var_dump($ex->declareExchange());
 ?>

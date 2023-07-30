@@ -13,13 +13,13 @@ $ch = new AMQPChannel($cnn);
 
 // Declare a new exchange
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-' . microtime(true));
+$ex->setName('exchange-' . bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
 // Create a new queue
 $q = new AMQPQueue($ch);
-$q->setName('nonexistent-' . microtime(true));
+$q->setName('nonexistent-' . bin2hex(random_bytes(32)));
 
 try {
   $q->get();
@@ -29,4 +29,4 @@ try {
 
 ?>
 --EXPECTF--
-AMQPQueueException(404): Server channel error: 404, message: NOT_FOUND - no queue 'nonexistent-%f' in vhost '/'
+AMQPQueueException(404): Server channel error: 404, message: NOT_FOUND - no queue 'nonexistent-%s' in vhost '/'

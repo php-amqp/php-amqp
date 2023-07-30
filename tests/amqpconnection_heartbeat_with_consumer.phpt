@@ -13,8 +13,8 @@ var_dump($cnn);
 
 $ch = new AMQPChannel($cnn);
 
-$q_dead_name = 'test.queue.dead.' . microtime(true);
-$q_name      = 'test.queue.' . microtime(true);
+$q_dead_name = 'test.queue.dead.' . bin2hex(random_bytes(32));
+$q_name      = 'test.queue.' . bin2hex(random_bytes(32));
 
 $e = new AMQPExchange($ch);
 

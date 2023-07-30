@@ -84,21 +84,21 @@ jobs:
         run: ./infra/tools/pamqp-stubs-validate
 
   test:
-    name: Test php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-zts' || '' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.test-php-args == '-m' && 'memory leaks' || '' }}
+    name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}
     # librabbitmq < 0.11 needs older OpenSSL version
-    runs-on: ${{ (matrix.librabbitmq-version == 'v0.10.0' || matrix.librabbitmq-version == 'v0.9.0' || matrix.librabbitmq-version == 'v0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
+    runs-on: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
     needs: dedup
     if: needs.dedup.outputs.should_skip != 'true'
 
     env:
-      TEST_PHP_ARGS: ${{ matrix.test-php-args }}
+      TEST_PHP_ARGS: -j4 ${{ matrix.test-php-args }}
 
     strategy:
       fail-fast: false
       matrix:
         php-version: [ '8.2', '8.1', '8.0', '7.4' ]
         php-thread-safe: [ true, false ]
-        librabbitmq-version: [ 'master', 'v0.13.0', 'v0.12.0', 'v0.11.0', 'v0.10.0', 'v0.9.0', 'v0.8.0' ]
+        librabbitmq-version: [ 'master', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0' ]
         include:
           - php-version: '8.2'
             php-thread-safe: false

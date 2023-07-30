@@ -12,12 +12,12 @@ $connection->connect();
 $channel1 = new AMQPChannel($connection);
 
 $ex1 = new AMQPExchange($channel1);
-$ex1->setName('ex1-' . microtime(true));
+$ex1->setName('ex1-' . bin2hex(random_bytes(32)));
 $ex1->setType(AMQP_EX_TYPE_FANOUT);
 $ex1->declareExchange();
 
 $q1 = new AMQPQueue($channel1);
-$q1->setName('q1-' . microtime(true));
+$q1->setName('q1-' . bin2hex(random_bytes(32)));
 $q1->declareQueue();
 $q1->bind($ex1->getName());
 
@@ -34,7 +34,7 @@ $q1->cancel();
 $q1 = null;
 
 $q2 = new AMQPQueue($channel1);
-$q2->setName('q1-' . microtime(true));
+$q2->setName('q1-' . bin2hex(random_bytes(32)));
 $q2->declareQueue();
 $q2->bind($ex1->getName());
 
@@ -93,7 +93,7 @@ object(AMQPEnvelope)#6 (20) {
   ["isRedelivery":"AMQPEnvelope":private]=>
   bool(false)
   ["exchangeName":"AMQPEnvelope":private]=>
-  string(%d) "ex1-%f"
+  string(%d) "ex1-%s"
   ["routingKey":"AMQPEnvelope":private]=>
   string(0) ""
 }

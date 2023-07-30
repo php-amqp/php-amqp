@@ -10,7 +10,7 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($ch);
-$ex->setName("exchange-" . microtime(true));
+$ex->setName("exchange-" . bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 
@@ -19,7 +19,7 @@ echo "Connection ", $cnn->isConnected() ? 'connected' : 'disconnected', PHP_EOL;
 
 try {
     // NOTE: basic.publish is asynchronous, so ...
-    var_dump($ex->publish('message', 'routing.key', AMQP_NOPARAM, array('user_id' => 'unknown-' . microtime(true))));
+    var_dump($ex->publish('message', 'routing.key', AMQP_NOPARAM, array('user_id' => 'unknown-' . bin2hex(random_bytes(32)))));
 } catch (AMQPException $e) {
     echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
@@ -49,6 +49,6 @@ Connection connected
 NULL
 Channel connected
 Connection connected
-AMQPQueueException(406): Server channel error: 406, message: PRECONDITION_FAILED - user_id property set to 'unknown-%f' but authenticated user was 'guest'
+AMQPQueueException(406): Server channel error: 406, message: PRECONDITION_FAILED - user_id property set to 'unknown-%s' but authenticated user was 'guest'
 Channel disconnected
 Connection connected

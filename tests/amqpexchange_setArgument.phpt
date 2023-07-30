@@ -12,8 +12,8 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
 $heartbeat   = 10;
-$e_name_ae   = 'test.exchange.ae.' . microtime(true);
-$e_name = 'test.exchange.' . microtime(true);
+$e_name_ae   = 'test.exchange.ae.' . bin2hex(random_bytes(32));
+$e_name = 'test.exchange.' . bin2hex(random_bytes(32));
 
 $ex_ae = new AMQPExchange($ch);
 $ex_ae->setName($e_name_ae);
@@ -48,7 +48,7 @@ object(AMQPExchange)#3 (9) {
   ["channel":"AMQPExchange":private]=>
   %a
   ["name":"AMQPExchange":private]=>
-  string(%d) "test.exchange.ae.%f"
+  string(%d) "test.exchange.ae.%s"
   ["type":"AMQPExchange":private]=>
   string(6) "fanout"
   ["passive":"AMQPExchange":private]=>
@@ -69,7 +69,7 @@ object(AMQPExchange)#4 (9) {
   ["channel":"AMQPExchange":private]=>
   %a
   ["name":"AMQPExchange":private]=>
-  string(%d) "test.exchange.%f"
+  string(%d) "test.exchange.%s"
   ["type":"AMQPExchange":private]=>
   string(6) "fanout"
   ["passive":"AMQPExchange":private]=>
@@ -85,11 +85,11 @@ object(AMQPExchange)#4 (9) {
     ["x-ha-policy"]=>
     string(3) "all"
     ["alternate-exchange"]=>
-    string(%d) "test.exchange.ae.%f"
+    string(%d) "test.exchange.ae.%s"
     ["x-empty-string"]=>
     string(0) ""
     ["x-alternate-exchange-one-more-time"]=>
-    string(%d) "test.exchange.ae.%f"
+    string(%d) "test.exchange.ae.%s"
     ["x-numeric-argument"]=>
     int(100000)
   }
@@ -100,7 +100,7 @@ object(AMQPExchange)#4 (9) {
   ["channel":"AMQPExchange":private]=>
   %a
   ["name":"AMQPExchange":private]=>
-  string(%d) "test.exchange.%f"
+  string(%d) "test.exchange.%s"
   ["type":"AMQPExchange":private]=>
   string(6) "fanout"
   ["passive":"AMQPExchange":private]=>
@@ -116,7 +116,7 @@ object(AMQPExchange)#4 (9) {
     ["x-ha-policy"]=>
     string(3) "all"
     ["alternate-exchange"]=>
-    string(%d) "test.exchange.ae.%f"
+    string(%d) "test.exchange.ae.%s"
     ["x-empty-string"]=>
     string(0) ""
     ["x-numeric-argument"]=>

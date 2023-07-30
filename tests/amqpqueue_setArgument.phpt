@@ -12,8 +12,8 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
 $heartbeat   = 10;
-$q_dead_name = 'test.queue.dead.' . microtime(true);
-$q_name      = 'test.queue.' . microtime(true);
+$q_dead_name = 'test.queue.dead.' . bin2hex(random_bytes(32));
+$q_name      = 'test.queue.' . bin2hex(random_bytes(32));
 
 $q = new AMQPQueue($ch);
 $q->setName($q_name);
@@ -42,7 +42,7 @@ object(AMQPQueue)#3 (9) {
   ["channel":"AMQPQueue":private]=>
   %a
   ["name":"AMQPQueue":private]=>
-  string(%d) "test.queue.%f"
+  string(%d) "test.queue.%s"
   ["consumerTag":"AMQPQueue":private]=>
   NULL
   ["passive":"AMQPQueue":private]=>
@@ -63,7 +63,7 @@ object(AMQPQueue)#4 (9) {
   ["channel":"AMQPQueue":private]=>
   %a
   ["name":"AMQPQueue":private]=>
-  string(%d) "test.queue.dead.%f"
+  string(%d) "test.queue.dead.%s"
   ["consumerTag":"AMQPQueue":private]=>
   NULL
   ["passive":"AMQPQueue":private]=>
@@ -79,7 +79,7 @@ object(AMQPQueue)#4 (9) {
     ["x-dead-letter-exchange"]=>
     string(0) ""
     ["x-dead-letter-routing-key"]=>
-    string(%d) "test.queue.%f"
+    string(%d) "test.queue.%s"
     ["x-message-ttl"]=>
     int(100000)
   }
@@ -90,7 +90,7 @@ object(AMQPQueue)#4 (9) {
   ["channel":"AMQPQueue":private]=>
   %a
   ["name":"AMQPQueue":private]=>
-  string(%d) "test.queue.dead.%f"
+  string(%d) "test.queue.dead.%s"
   ["consumerTag":"AMQPQueue":private]=>
   NULL
   ["passive":"AMQPQueue":private]=>

@@ -11,12 +11,12 @@ $cnn->connect();
 $ch = new AMQPChannel($cnn);
 // Declare a new exchange
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-'.microtime(true));
+$ex->setName('exchange-'. bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->declareExchange();
 // Create a new queue
 $q = new AMQPQueue($ch);
-$q->setName('queue1' . microtime(true));
+$q->setName('queue1' . bin2hex(random_bytes(32)));
 $q->declareQueue();
 // Bind it on the exchange to routing.key
 $q->bind($ex->getName(), 'routing.*');
@@ -77,7 +77,7 @@ object(AMQPEnvelope)#5 (20) {
   ["isRedelivery":"AMQPEnvelope":private]=>
   bool(false)
   ["exchangeName":"AMQPEnvelope":private]=>
-  string(%d) "exchange-%f"
+  string(%d) "exchange-%s"
   ["routingKey":"AMQPEnvelope":private]=>
   string(9) "routing.1"
 }
@@ -95,7 +95,7 @@ AMQPEnvelope
     getDeliveryMode:
         int(1)
     getExchangeName:
-        string(%d) "exchange-%f"
+        string(%d) "exchange-%s"
     isRedelivery:
         bool(false)
     getContentEncoding:

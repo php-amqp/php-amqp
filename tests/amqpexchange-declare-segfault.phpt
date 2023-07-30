@@ -7,7 +7,7 @@ AMQPExchange
 $cnn = new AMQPConnection();
 $cnn->connect();
 
-$name = "exchange-" . microtime(true);
+$name = "exchange-" . bin2hex(random_bytes(32));
 
 $ex = new AMQPExchange(new AMQPChannel($cnn));
 $ex->setName($name);

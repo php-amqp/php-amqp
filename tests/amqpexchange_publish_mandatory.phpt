@@ -31,7 +31,7 @@ try {
 
 
 $ex = new AMQPExchange($ch);
-$ex->setName("exchange-" . microtime(true));
+$ex->setName("exchange-" . bin2hex(random_bytes(32)));
 $ex->setType(AMQP_EX_TYPE_FANOUT);
 $ex->setFlags(AMQP_AUTODELETE);
 $ex->declareExchange();
@@ -41,7 +41,7 @@ var_dump($ex->publish('message 2', 'routing.key', AMQP_MANDATORY));
 
 // Create a new queue
 $q = new AMQPQueue($ch);
-$q->setName('queue-' . microtime(true));
+$q->setName('queue-' . bin2hex(random_bytes(32)));
 $q->setFlags(AMQP_AUTODELETE);
 $q->declareQueue();
 
@@ -86,7 +86,7 @@ array(6) {
   [1]=>
   string(8) "NO_ROUTE"
   [2]=>
-  string(%d) "exchange-%f"
+  string(%d) "exchange-%s"
   [3]=>
   string(11) "routing.key"
   [4]=>
