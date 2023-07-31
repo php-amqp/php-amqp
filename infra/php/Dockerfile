@@ -14,7 +14,6 @@ RUN apt-get install -yqq git
 RUN apt-get install -yqq unzip
 
 RUN echo 'PATH=$PATH:/src/infra/tools' >> /etc/bash.bashrc
-RUN echo 'CFLAGS="-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror"' >> /etc/bash.bashrc
 
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 
