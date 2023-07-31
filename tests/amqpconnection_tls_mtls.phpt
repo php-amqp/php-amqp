@@ -1,7 +1,12 @@
 --TEST--
 AMQPConnection - TLS - mTLS support
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!file_exists(__DIR__ . "/../infra/tls/certificates/testca/cacert.pem")) print "skip";
+if (!file_exists(__DIR__ . "/../infra/tls/certificates/client/cert.pem")) print "skip";
+if (!file_exists(__DIR__ . "/../infra/tls/certificates/client/key.pem")) print "skip";
+?>
 --FILE--
 <?php
 $credentials = array(
