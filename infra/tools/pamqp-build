@@ -20,4 +20,4 @@ if test "$mode" = "clean"; then
   make clean
 fi
 
-make ${MAKEOPTS:-}
+make
