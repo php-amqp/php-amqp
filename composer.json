@@ -18,11 +18,18 @@
     }
   ],
   "require": {
-    "php": ">=7.4",
-    "ext-dom": "*",
-    "ext-simplexml": "*"
+    "php": ">=7.4"
   },
   "require-dev": {
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-dom": "*",
+    "ext-simplexml": "*",
+    "symplify/easy-coding-standard": "*",
+    "slevomat/coding-standard": "^8.13"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": false
+    }
   }
 }
