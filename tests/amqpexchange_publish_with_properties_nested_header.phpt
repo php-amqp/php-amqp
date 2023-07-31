@@ -34,7 +34,7 @@ $headers = array(
 
 $ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => $headers));
 
-$message =$q->get(AMQP_AUTOACK);
+$message = $q->get(AMQP_AUTOACK);
 var_dump($message->getHeaders());
 var_dump($headers);
 echo $message->getHeaders() === $headers ? 'same' : 'differs';
@@ -55,7 +55,7 @@ $headers = array(
 
 $ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => $headers));
 
-$message =$q->get(AMQP_AUTOACK);
+$message = $q->get(AMQP_AUTOACK);
 var_dump($message->getHeaders());
 var_dump($headers);
 echo $message->getHeaders() === $headers ? 'same' : 'differs';

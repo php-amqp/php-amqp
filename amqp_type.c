@@ -132,7 +132,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(
                 /* Convert to strings non-string keys */
                 char str[32];
 
-                key_len = sprintf(str, "%lu", index);
+                key_len = snprintf(str, 32, "%lu", index);
                 key = str;
             } else {
                 /* Skip things that are not strings */
@@ -145,6 +145,8 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(
             key = ZSTR_VAL(zkey);
         }
 
+        string_key = estrndup(key, key_len);
+
         /* Build the value */
         table_entry = &amqp_table->entries[amqp_table->num_entries++];
         field = &table_entry->value;
@@ -156,7 +158,6 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(
             continue;
         }
 
-        string_key = estrndup(key, key_len);
         table_entry->key = amqp_cstring_bytes(string_key);
     ZEND_HASH_FOREACH_END();
 }
