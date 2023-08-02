@@ -156,6 +156,12 @@
 
 ## `AMQPConnection` breaking changes
 
+### Public method additions
+
+* `getConnectTimeout(): float`
+* `setConnectionName(?string $connectionName): void`
+* `getConnectionName(): ?string`
+
 ### Public method type changes
 
 ```diff
@@ -303,7 +309,7 @@
 
 ```
 ```diff
-- getHeader(string $header_key): string|bool
+- getHeader(string $header_key): bool|string
 + getHeader(string $headerName): ?string
 
 ```
@@ -317,7 +323,23 @@
 ```
 
 
+## `AMQPEnvelopeException` breaking changes
+
+### Public method additions
+
+* `getEnvelope(): AMQPEnvelope`
+
 ## `AMQPExchange` breaking changes
+
+### Change in semantics
+
+* `setArgument(string $argumentName, null)` no longer unsets the argument `$key` but sets it to `null` instead. To remove an argument use `removeArgument(string $argumentName)` instead
+* `getArgument(string $argumentName)` now throws an `AMQPExchangeException` if the argument does not exist. It returned false previously 
+
+### Public method additions
+
+* `declare(): void`
+* `removeArgument(string $argumentName): void`
 
 ### Public method type changes
 
@@ -342,6 +364,11 @@
 
 ```
 ```diff
+- getArgument(string $key): bool|int|string
++ getArgument(string $argumentName): bool|float|int|string|null
+
+```
+```diff
 - getName(): string
 + getName(): ?string
 
@@ -357,8 +384,8 @@
 
 ```
 ```diff
-- setArgument(string $key, string|int $value): bool
-+ setArgument(string $argumentName, string|int $argumentValue): void
+- setArgument(string $key, int|string $value): bool
++ setArgument(string $argumentName, bool|float|int|string|null $argumentValue): void
 
 ```
 ```diff
@@ -386,12 +413,6 @@
 ```
 
 ```diff
-- getArgument(string $key): string|int|bool
-+ getArgument(string $argumentName): string|int|bool
-
-```
-
-```diff
 - hasArgument(string $key): bool
 + hasArgument(string $argumentName): bool
 
@@ -399,6 +420,16 @@
 
 
 ## `AMQPQueue` breaking changes
+
+### Change in semantics
+
+* `setArgument(string $key, null)` no longer unsets the argument `$key` but sets it to `null` instead. To remove an argument use `removeArgument(string $key)` instead
+* `getArgument(string $argumentName)` now throws an `AMQPQueueException` if the argument does not exist. It returned false previously
+
+### Public method additions
+
+* `declare(): int`
+* `removeArgument(string $argumentName): void`
 
 ### Public method type changes
 
@@ -428,8 +459,8 @@
 
 ```
 ```diff
-- getArgument(string $key): string|int|bool
-+ getArgument(string $argumentName): ?string|?int
+- getArgument(string $key): bool|int|string
++ getArgument(string $argumentName): bool|float|int|string|null
 
 ```
 ```diff
@@ -454,7 +485,7 @@
 ```
 ```diff
 - setArgument(string $key, mixed $value): bool
-+ setArgument(string $argumentName, mixed $argumentValue): void
++ setArgument(string $argumentName, bool|float|int|string|null $argumentValue): void
 
 ```
 ```diff
@@ -464,7 +495,7 @@
 ```
 ```diff
 - setFlags(int $flags): bool
-+ setFlags(int $flags): void
++ setFlags(?int $flags): void
 
 ```
 ```diff
@@ -522,4 +553,3 @@
 + getTimestamp(): float
 
 ```
-

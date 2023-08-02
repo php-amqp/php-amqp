@@ -28,11 +28,13 @@ $q_dead->setName($q_dead_name);
 $q_dead->setArgument('x-dead-letter-exchange', '');
 $q_dead->setArgument('x-dead-letter-routing-key', $q_name);
 $q_dead->setArgument('x-message-ttl', $heartbeat * 10 * 1000);
+$q_dead->setArgument('x-null', null);
 $q_dead->setFlags(AMQP_AUTODELETE);
 $q_dead->declareQueue();
 
 var_dump($q_dead);
-$q_dead->setArgument('x-dead-letter-routing-key', null); // removes this key
+$q_dead->removeArgument('x-null');
+$q_dead->removeArgument('x-does-not-exist');
 var_dump($q_dead);
 ?>
 --EXPECTF--
@@ -75,13 +77,15 @@ object(AMQPQueue)#4 (9) {
   ["autoDelete":"AMQPQueue":private]=>
   bool(true)
   ["arguments":"AMQPQueue":private]=>
-  array(3) {
+  array(4) {
     ["x-dead-letter-exchange"]=>
     string(0) ""
     ["x-dead-letter-routing-key"]=>
     string(%d) "test.queue.%s"
     ["x-message-ttl"]=>
     int(100000)
+    ["x-null"]=>
+    NULL
   }
 }
 object(AMQPQueue)#4 (9) {
@@ -102,9 +106,11 @@ object(AMQPQueue)#4 (9) {
   ["autoDelete":"AMQPQueue":private]=>
   bool(true)
   ["arguments":"AMQPQueue":private]=>
-  array(2) {
+  array(3) {
     ["x-dead-letter-exchange"]=>
     string(0) ""
+    ["x-dead-letter-routing-key"]=>
+    string(%d) "test.queue.%s"
     ["x-message-ttl"]=>
     int(100000)
   }

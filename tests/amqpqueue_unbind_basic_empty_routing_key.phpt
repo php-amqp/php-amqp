@@ -20,9 +20,14 @@ $queue->declareQueue();
 var_dump($queue->bind($ex->getName()));
 var_dump($queue->unbind($ex->getName()));
 
+var_dump($queue->bind($ex->getName(), null));
+var_dump($queue->unbind($ex->getName(), null));
+
 $queue->delete();
 $ex->delete();
 ?>
 --EXPECT--
+NULL
+NULL
 NULL
 NULL

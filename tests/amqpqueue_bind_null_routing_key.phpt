@@ -1,5 +1,5 @@
 --TEST--
-AMQPQueue
+AMQPQueue bind/unbind with explicit null routing key
 --SKIPIF--
 <?php if (!extension_loaded("amqp")) print "skip"; ?>
 --FILE--
@@ -18,6 +18,7 @@ $queue = new AMQPQueue($ch);
 $queue->setName("queue-" . bin2hex(random_bytes(32)));
 var_dump($queue->declareQueue());
 var_dump($queue->bind($ex->getName(), null));
+var_dump($queue->unbind($ex->getName(), null));
 
 var_dump($queue->delete());
 var_dump($ex->delete());
@@ -25,6 +26,7 @@ var_dump($ex->delete());
 --EXPECT--
 NULL
 int(0)
+NULL
 NULL
 int(0)
 NULL

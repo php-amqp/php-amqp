@@ -35,10 +35,12 @@ $ex->setArgument("alternate-exchange", $e_name_ae);
 $ex->setArgument('x-empty-string', '');
 $ex->setArgument('x-alternate-exchange-one-more-time', $e_name_ae);
 $ex->setArgument('x-numeric-argument', $heartbeat * 10 * 1000);
+$ex->setArgument('x-null-argument', null);
 $ex->declareExchange();
 
 var_dump($ex);
-$ex->setArgument('x-alternate-exchange-one-more-time', null); // remov key
+$ex->removeArgument('x-null-argument');
+$ex->removeArgument('x-does-not-exist');
 var_dump($ex);
 ?>
 --EXPECTF--
@@ -81,7 +83,7 @@ object(AMQPExchange)#4 (9) {
   ["internal":"AMQPExchange":private]=>
   bool(false)
   ["arguments":"AMQPExchange":private]=>
-  array(5) {
+  array(6) {
     ["x-ha-policy"]=>
     string(3) "all"
     ["alternate-exchange"]=>
@@ -92,6 +94,8 @@ object(AMQPExchange)#4 (9) {
     string(%d) "test.exchange.ae.%s"
     ["x-numeric-argument"]=>
     int(100000)
+    ["x-null-argument"]=>
+    NULL
   }
 }
 object(AMQPExchange)#4 (9) {
@@ -112,13 +116,15 @@ object(AMQPExchange)#4 (9) {
   ["internal":"AMQPExchange":private]=>
   bool(false)
   ["arguments":"AMQPExchange":private]=>
-  array(4) {
+  array(5) {
     ["x-ha-policy"]=>
     string(3) "all"
     ["alternate-exchange"]=>
     string(%d) "test.exchange.ae.%s"
     ["x-empty-string"]=>
     string(0) ""
+    ["x-alternate-exchange-one-more-time"]=>
+    string(%d) "test.exchange.ae.%s"
     ["x-numeric-argument"]=>
     int(100000)
   }

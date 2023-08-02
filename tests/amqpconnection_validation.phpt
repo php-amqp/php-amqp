@@ -75,10 +75,10 @@ AMQPConnectionException: Parameter 'vhost' exceeds 512 character limit.
 AMQPConnectionException: Parameter 'vhost' exceeds 512 characters limit.
 getVhost after constructor: vhost
 getVhost after setter: vhost
-AMQPConnectionException: Parameter 'port' must be a valid port number  between 1 and 65535.
-AMQPConnectionException: Invalid port given. Value must be between 1 and 65535.
-AMQPConnectionException: Parameter 'port' must be a valid port number  between 1 and 65535.
-AMQPConnectionException: Invalid port given. Value must be between 1 and 65535.
+AMQPConnectionException: Parameter 'port' must be a valid port number between 1 and 65535.
+AMQPConnectionException: Parameter 'port' must be a valid port number between 1 and 65535.
+AMQPConnectionException: Parameter 'port' must be a valid port number between 1 and 65535.
+AMQPConnectionException: Parameter 'port' must be a valid port number between 1 and 65535.
 getPort after constructor: 1234
 getPort after setter: 1234
 

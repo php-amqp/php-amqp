@@ -18,7 +18,15 @@ var_dump($q->setArgument('foo', 'bar'));
 echo 'Initial args: ', count($arr), ', queue args: ', count($q->getArguments()), PHP_EOL;
 
 foreach (array('existent', 'false', 'nonexistent') as $key) {
-    echo "$key: ", var_export($q->hasArgument($key), true), ', ', var_export($q->getArgument($key)), PHP_EOL;
+    echo "$key: ";
+    var_export($q->hasArgument($key));
+    echo ', ';
+    try {
+        var_export($q->getArgument($key));
+    } catch (AMQPQueueException $e) {
+        echo 'Ex: ', $e->getMessage();
+    }
+    echo PHP_EOL;
 }
 
 ?>
@@ -29,4 +37,4 @@ NULL
 Initial args: 2, queue args: 3
 existent: true, 'value'
 false: true, false
-nonexistent: false, NULL
+nonexistent: false, Ex: The argument "nonexistent" does not exist
