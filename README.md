@@ -35,13 +35,16 @@ If you want to stay on the bleeding edge and have the latest version, install ph
 
 ### Documentation
 
-View [RabbitMQ official tutorials](http://www.rabbitmq.com/getstarted.html)
-and [php-amqp specific examples](https://github.com/rabbitmq/rabbitmq-tutorials/tree/main/php-amqp).
+Check out the official [RabbitMQ tutorials](http://www.rabbitmq.com/getstarted.html)
+as well as the [php-amqp specific examples](https://github.com/rabbitmq/rabbitmq-tutorials/tree/main/php-amqp).
 
-There are also available [stub files](https://github.com/php-amqp/php-amqp/tree/latest/stubs) with accurate PHPDoc which
-may be also used in your IDE for code completion, navigation and documentation in-place.
+There are also [stub files](https://github.com/php-amqp/php-amqp/tree/latest/stubs) available that document the API of
+PHP AMQP. These stubs can also be used in your IDE for code completion, navigation and documentation.
 
-Finally, check out the [tests](https://github.com/php-amqp/php-amqp/tree/latest/tests) to see typical usage and edge
+Check out the [upgrading guide](https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md) to check
+breaking changes between versions, e.g. from 1.x to 2.x.
+
+Finally, check out the [tests](https://github.com/php-amqp/php-amqp/tree/latest/tests) to see usage examples and edge
 cases.
 
 ### Notes
