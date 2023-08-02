@@ -156,6 +156,10 @@
 
 ## `AMQPConnection` breaking changes
 
+### Change in semantics
+
+* `connect()`, `pconnect()`, `disconnect()`, `set*()` etc. no longer return true or throw an exception but instead are void and throw
+
 ### Public method additions
 
 * `getConnectTimeout(): float`
@@ -333,6 +337,7 @@
 
 ### Change in semantics
 
+* `declareExchange()`, `bind()` , etc. no longer return true or throw an exception but instead are void and throw
 * `setArgument(string $argumentName, null)` no longer unsets the argument `$key` but sets it to `null` instead. To remove an argument use `removeArgument(string $argumentName)` instead
 * `getArgument(string $argumentName)` now throws an `AMQPExchangeException` if the argument does not exist. It returned false previously 
 
@@ -423,6 +428,8 @@
 
 ### Change in semantics
 
+* `declareQueue`, `ack()`, `nack()`, `bind()`, etc. etc. methods no longer return true or throw an exception but instead are void and throw
+* `get()` now either return null instead of false if no message was received
 * `setArgument(string $key, null)` no longer unsets the argument `$key` but sets it to `null` instead. To remove an argument use `removeArgument(string $key)` instead
 * `getArgument(string $argumentName)` now throws an `AMQPQueueException` if the argument does not exist. It returned false previously
 
