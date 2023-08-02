@@ -88,7 +88,8 @@ jobs:
         run: ./infra/tools/pamqp-stubs-format-check
 
       - name: Validate argument parsing
-        run: php -d extension=modules/amqp.so ./infra/tools/pamqp-arguments-validate
+        run: ./infra/tools/pamqp-php-cli-deterministic -d extension=modules/amqp.so ./infra/tools/pamqp-arguments-validate
+        if: php-version == '8.2'
 
   test:
     name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}
@@ -158,7 +159,7 @@ jobs:
         run: docker compose logs
 
       - name: Benchmark PHP extension
-        run: php -n -c './tmp-php.ini' -d "extension_dir=./modules/" -d "extension=amqp.so" benchmark.php
+        run: ./infra/tools/pamqp-php-cli-deterministic -d extension=modules/amqp.so benchmark.php
 
       - name: Dump report
         run: ./infra/tools/pamqp-test-report
