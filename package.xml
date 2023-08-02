@@ -22,23 +22,33 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2023-07-30</date>
-    <time>20:46:01</time>
+    <date>2023-08-02</date>
+    <time>21:19:41</time>
     <version>
-        <release>2.0.0alpha2</release>
-        <api>2.0.0alpha2</api>
+        <release>2.0.0beta1</release>
+        <api>2.0.0beta1</api>
     </version>
     <stability>
-        <release>alpha</release>
-        <api>alpha</api>
+        <release>beta</release>
+        <api>beta</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- Widen lowest supported librabbitmq version to >=0.8.0 (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/441)
- - New Docker-based development environment (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/440)
- - Prevent duplicate builds (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/442)
+    <notes><![CDATA[- Document BC changes (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Document pseudo-bool method changes (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Fix mangled header on MacOS (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/60)
+ - Validate argument parsing, add AMQPExchange::removeArgument() and AMQPQueue::removeArgument() (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/452)
+ - Skip SSL tests if certificates are missing (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/450)
+ - Bump shivammathur/setup-php from 2.25.4 to 2.25.5 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/449)
+ - Check coding style and formatting of stub files (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/447)
+ - Parallelize test execution (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/444)
+ - Deterministic configuration for PHP CLI (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/443)
+ - Fix tag creation during release management (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Move test-report.sh into infra (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+
+💡Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha1...v2.0.0alpha2]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha2...v2.0.0beta1]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -173,6 +183,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha1...v2.0.0alpha2]]></not
             <file name="tests/amqpexchange_declare_without_name.phpt" role="test"/>
             <file name="tests/amqpexchange_declare_without_type.phpt" role="test"/>
             <file name="tests/amqpexchange_delete_default_exchange.phpt" role="test"/>
+            <file name="tests/amqpexchange_delete_null_name.phpt" role="test"/>
             <file name="tests/amqpexchange_get_channel.phpt" role="test"/>
             <file name="tests/amqpexchange_get_connection.phpt" role="test"/>
             <file name="tests/amqpexchange_invalid_type.phpt" role="test"/>
@@ -215,6 +226,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha1...v2.0.0alpha2]]></not
             <file name="tests/amqpqueue_consume_multiple.phpt" role="test"/>
             <file name="tests/amqpqueue_consume_multiple_no_doubles.phpt" role="test"/>
             <file name="tests/amqpqueue_consume_nonexistent.phpt" role="test"/>
+            <file name="tests/amqpqueue_consume_null_consumer_key.phpt" role="test"/>
             <file name="tests/amqpqueue_consume_timeout.phpt" role="test"/>
             <file name="tests/amqpqueue_declare_basic.phpt" role="test"/>
             <file name="tests/amqpqueue_declare_with_arguments.phpt" role="test"/>
@@ -235,6 +247,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha1...v2.0.0alpha2]]></not
             <file name="tests/amqpqueue_nested_headers.phpt" role="test"/>
             <file name="tests/amqpqueue_purge_basic.phpt" role="test"/>
             <file name="tests/amqpqueue_setArgument.phpt" role="test"/>
+            <file name="tests/amqpqueue_setFlags.phpt" role="test"/>
             <file name="tests/amqpqueue_unbind_basic_empty_routing_key.phpt" role="test"/>
             <file name="tests/amqpqueue_unbind_basic_headers_arguments.phpt" role="test"/>
             <file name="tests/amqpqueue_var_dump.phpt" role="test"/>
