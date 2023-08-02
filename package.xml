@@ -23,32 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2023-08-02</date>
-    <time>21:19:41</time>
+    <time>21:32:45</time>
     <version>
-        <release>2.0.0beta1</release>
-        <api>2.0.0beta1</api>
+        <release>2.0.0dev</release>
+        <api>2.0.0dev</api>
     </version>
     <stability>
-        <release>beta</release>
-        <api>beta</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- Document BC changes (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
- - Document pseudo-bool method changes (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
- - Fix mangled header on MacOS (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/60)
- - Validate argument parsing, add AMQPExchange::removeArgument() and AMQPQueue::removeArgument() (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/452)
- - Skip SSL tests if certificates are missing (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/450)
- - Bump shivammathur/setup-php from 2.25.4 to 2.25.5 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/449)
- - Check coding style and formatting of stub files (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/447)
- - Parallelize test execution (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/444)
- - Deterministic configuration for PHP CLI (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/443)
- - Fix tag creation during release management (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
- - Move test-report.sh into infra (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
-
-💡Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha2...v2.0.0beta1]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.0.0beta1...latest
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -305,6 +294,35 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha2...v2.0.0beta1]]></note
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2023-08-02</date>
+            <time>21:19:41</time>
+            <version>
+                <release>2.0.0beta1</release>
+                <api>2.0.0beta1</api>
+            </version>
+            <stability>
+                <release>beta</release>
+                <api>beta</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- Document BC changes (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Document pseudo-bool method changes (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Fix mangled header on MacOS (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/60)
+ - Validate argument parsing, add AMQPExchange::removeArgument() and AMQPQueue::removeArgument() (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/452)
+ - Skip SSL tests if certificates are missing (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/450)
+ - Bump shivammathur/setup-php from 2.25.4 to 2.25.5 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/449)
+ - Check coding style and formatting of stub files (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/447)
+ - Parallelize test execution (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/444)
+ - Deterministic configuration for PHP CLI (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/443)
+ - Fix tag creation during release management (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+ - Move test-report.sh into infra (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
+
+💡Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha2...v2.0.0beta1]]></notes>
+        </release>
         <release>
             <date>2023-07-29</date>
             <time>08:51:15</time>
