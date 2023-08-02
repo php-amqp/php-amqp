@@ -342,8 +342,8 @@ class AMQPQueue
      * Set the flags on the queue.
      *
      * @param integer|null $flags A bitmask of flags:
-     *                       AMQP_DURABLE, AMQP_PASSIVE,
-     *                       AMQP_EXCLUSIVE, AMQP_AUTODELETE.
+     *                            AMQP_DURABLE, AMQP_PASSIVE,
+     *                            AMQP_EXCLUSIVE, AMQP_AUTODELETE.
      */
     public function setFlags(?int $flags): void
     {
