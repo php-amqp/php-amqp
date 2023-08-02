@@ -89,7 +89,7 @@ jobs:
 
       - name: Validate argument parsing
         run: ./infra/tools/pamqp-php-cli-deterministic -d extension=modules/amqp.so ./infra/tools/pamqp-arguments-validate
-        if: php-version == '8.2'
+        if: matrix.php-version == '8.2'
 
   test:
     name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}
