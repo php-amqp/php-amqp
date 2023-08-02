@@ -1,0 +1,337 @@
+#!/usr/bin/env php
+<?php
+
+const PREV_SUFFIX = '__prev';
+const NEXT_SUFFIX = '__next';
+
+$prev = $_SERVER['argv'][1] ?? null;
+$next = $_SERVER['argv'][2] ?? null;
+
+assert($prev !== null, 'First argument must be path to previous stubs version');
+assert($next !== null, 'First argument must be path to next stubs version');
+
+function pamqp_string_ends_with(string $haystack, string $needle): bool
+{
+    return strrpos($haystack, $needle) === strlen($haystack) - strlen($needle);
+}
+
+spl_autoload_register(function (string $className) use ($prev, $next) {
+    if (strpos($className, 'AMQP') !== 0
+        || !(pamqp_string_ends_with($className, PREV_SUFFIX)
+        || pamqp_string_ends_with($className, NEXT_SUFFIX))) {
+        return;
+    }
+
+    $path = pamqp_string_ends_with($className, PREV_SUFFIX) ? $prev : $next;
+    $realClassName = substr(
+        $className,
+        0,
+        -strlen(pamqp_string_ends_with($className, PREV_SUFFIX) ? PREV_SUFFIX : NEXT_SUFFIX)
+    );
+
+    $source = file_get_contents($path . DIRECTORY_SEPARATOR . $realClassName . '.php');
+    $source = preg_replace('/class\s+' . $realClassName . '/', 'class ' . $className, $source);
+    $source = preg_replace_callback(
+        '/(?<stmt>implements|extends)\s+(?<class>[A-Za-z_]+)/',
+        static function ($matches) use ($className) {
+            $suffix = strpos($matches['class'], 'AMQP') === 0 ?
+                (pamqp_string_ends_with($className, PREV_SUFFIX) ? PREV_SUFFIX : NEXT_SUFFIX)
+                : '';
+
+            return $matches['stmt'] . ' ' . $matches['class'] . $suffix;
+        },
+        $source
+    );
+    $source = preg_replace('/^<\?php.*/', '', $source);
+    eval($source);
+});
+
+function compare(string $className)
+{
+    $prev = new ReflectionClass($className . PREV_SUFFIX);
+    $next = new ReflectionClass($className . NEXT_SUFFIX);
+
+    $prevConstantNames = array_keys($prev->getConstants());
+    $nextConstantNames = array_keys($prev->getConstants());
+
+    $removedConstantNames = array_diff($prevConstantNames, $nextConstantNames);
+
+    $removedConstants = [];
+    foreach ($removedConstantNames as $removedConstantName) {
+        $removedConstants[] = sprintf(' * `%s`', $removedConstantName);
+    }
+
+    $prevMethodNames = getMethodNames($prev);
+    $nextMethodNames = getMethodNames($next);
+    $removedMethodNames = array_diff($prevMethodNames, $nextMethodNames);
+
+    $removedMethods = [];
+    foreach ($removedMethodNames as $removedMethodName) {
+        $removedMethods[] = sprintf(' * `%s()`', $removedMethodName);
+    }
+
+    $constantChanges = [];
+    foreach ($prevConstantNames as $prevConstantName) {
+        $prevValue = $prev->getConstant($prevConstantName);
+        $nextValue = $next->getConstant($prevConstantName);
+
+        if ($prevValue === $nextValue) {
+            continue;
+        }
+
+        $prevConst = sprintf('const %s = %s', $prevConstantName, var_export($prevValue, true));
+        $nextConst = sprintf('const %s = %s', $prevConstantName, var_export($nextValue, true));
+
+        $constantChanges[] = sprintf("```diff\n%s\n```\n", diff($prevConst, $nextConst));
+    }
+
+    $methodTypeChanges = [];
+    $methodParameterNameChanges = [];
+    foreach ($prevMethodNames as $methodName) {
+        $prevSignature = getParameterString($className, $prev->getMethod($methodName));
+        $nextSignature = getParameterString($className, $next->getMethod($methodName));
+
+        if (strtolower($prevSignature) == strtolower($nextSignature)) {
+            continue;
+        }
+
+        $prevSignatureNorm = getParameterString($className, $prev->getMethod($methodName), true);
+        $nextSignatureNorm = getParameterString($className, $next->getMethod($methodName), true);
+
+        if (strtolower($prevSignatureNorm) === strtolower($nextSignatureNorm)) {
+            $methodParameterNameChanges[] = sprintf("```diff\n%s\n```\n", diff($prevSignature, $nextSignature));
+            continue;
+        }
+
+        $methodTypeChanges[] = sprintf("```diff\n%s\n```", diff($prevSignature, $nextSignature));
+    }
+
+    $report = [
+        ...($removedConstants ? ["### Constant removals\n", ...$removedConstants, ''] : []),
+        ...($removedMethods ? ["### Public method removals\n", ...$removedMethods, ''] : []),
+        ...($constantChanges ? ["### Public constant changes\n", ...$constantChanges, ''] : []),
+        ...($methodTypeChanges ? ["### Public method type changes\n", ...$methodTypeChanges, ''] : []),
+        ...($methodParameterNameChanges ? ["### Parameter name changes\n", ...$methodParameterNameChanges, ''] : []),
+    ];
+
+    return $report ? [sprintf("## `%s` breaking changes\n", $className), ...$report] : [];
+}
+
+function diff(string $prev, string $next): string
+{
+    if (strpos($prev, "\n") === false && strpos($next, "\n") === false) {
+        return sprintf("- %s\n+ %s\n", $prev, $next);
+    }
+
+    if (substr_count($prev, "\n") === substr_count($next, "\n")) {
+        return implode("\n", array_map(static function ($old, $new) {
+            return $old === $new ? sprintf('  %s', $new) : sprintf("- %s\n+ %s", $old, $new);
+        }, explode("\n", $prev), explode("\n", $next)));
+    }
+
+    $oldFile = tmpfile();
+    $newFile = tmpfile();
+
+    fwrite($oldFile, $prev);
+    fwrite($newFile, $next);
+
+    exec(
+        sprintf(
+            'diff --suppress-common-lines -d -u %s %s',
+            escapeshellarg(stream_get_meta_data($oldFile)['uri']),
+            escapeshellarg(stream_get_meta_data($newFile)['uri'])
+        ),
+        $output,
+        $exitCode
+    );
+
+    assert($exitCode === 1);
+
+    return implode(
+        "\n",
+        array_filter(
+            $output,
+            static function (string $line) {
+                return !in_array(substr($line, 0, 3), ['---', '+++', '\\ N', '@@ '], true);
+            }
+        )
+    );
+}
+
+function getMethodNames(ReflectionClass $class): array
+{
+    return array_map(
+        static function (ReflectionMethod $m) {
+            return $m->getName();
+        },
+        array_filter(
+            $class->getMethods(ReflectionMethod::IS_PUBLIC),
+            static function (ReflectionMethod $method) use ($class) {
+                return $method->getDeclaringClass()
+                    ->getName() === $class->getName();
+            }
+        )
+    );
+}
+
+const BASE_TYPE_REGEX = '(string|bool(?:ean)?|int(?:eger)?|double|float|array|object|resource|[A-Za-z_\\\]+(?:\[\])?)';
+const TYPE_REGEX = BASE_TYPE_REGEX . '(?:\s*\|\s*(' . BASE_TYPE_REGEX . '))*';
+
+function getParamTypeFromDocBlock(string $docComment, string $parameter): ?string
+{
+    if (!preg_match('/@param\s+(?<type>' . TYPE_REGEX . ')\s+' . '\$' . $parameter . '/', $docComment, $matches)) {
+        return null;
+    }
+
+    return normalizeType($matches['type']);
+}
+
+function getReturnTypeFromDocBlock(string $docComment): ?string
+{
+    if (!preg_match('/@return\s+(?<type>' . TYPE_REGEX . ')/', $docComment, $matches)) {
+        return null;
+    }
+
+    return normalizeType($matches['type']);
+}
+
+function normalizeType(string $type): string
+{
+    $types = [];
+    foreach (explode('|', str_replace(' ', '', $type)) as $actualType) {
+        switch (strtolower($actualType)) {
+            case 'boolean':
+                $actualType = 'bool';
+                break;
+            case 'integer':
+                $actualType = 'int';
+                break;
+            case 'double':
+                $actualType = 'float';
+                break;
+            case 'int':
+            case 'float':
+            case 'string':
+            case 'bool':
+            case 'object':
+            case 'resource':
+            case 'null':
+            case 'array':
+                $actualType = strtolower($actualType);
+                break;
+            default:
+                $actualType = $actualType;
+                break;
+        }
+        // Normalize typed arrays as array
+        if (pamqp_string_ends_with($actualType, '[]')) {
+            $actualType = 'array';
+        }
+        $types[] = $actualType;
+    }
+
+    if (count($types) > 1 && in_array('null', $types, true)) {
+        $types = array_map(static function ($type) {
+            return '?' . $type;
+        }, array_filter($types, static function ($type) {
+            return $type !== 'null';
+        }));
+    }
+
+    return implode('|', $types);
+}
+
+function getParameterString(string $className, ReflectionMethod $method, bool $normalizeNames = false): string
+{
+    $parameters = [];
+
+    foreach ($method->getParameters() as $pos => $reflParameter) {
+        $parameterTokens = [];
+        $typeFound = false;
+        if ($reflParameter->hasType()) {
+            $typeFound = true;
+            $parameterTokens[] = ($reflParameter->allowsNull() || ($reflParameter->isDefaultValueAvailable() && $reflParameter->getDefaultValue() === null) ? '?' : '') . $reflParameter->getType()->getName();
+        } elseif ($method->getDocComment()) {
+            $docBlockParamType = getParamTypeFromDocBlock($method->getDocComment(), $reflParameter->getName());
+            if ($docBlockParamType !== null) {
+                $typeFound = true;
+                $parameterTokens[] = $docBlockParamType;
+            }
+        }
+        if (!$typeFound) {
+            $parameterTokens[] = 'unknown';
+        }
+        $parameterTokens[] = sprintf('$%s', $normalizeNames ? chr($pos + 97) : $reflParameter->getName());
+
+        if ($reflParameter->isDefaultValueAvailable()) {
+            $parameterTokens[] = '=';
+            $defaultValue = $reflParameter->getDefaultValue();
+            $parameterTokens[] = $defaultValue === [] ? '[]' : ($defaultValue === null ? 'null' : var_export(
+                $defaultValue,
+                true
+            ));
+        }
+
+        $parameters[] = implode(' ', $parameterTokens);
+    }
+
+    $returnTypeTokens = [];
+    $returnTypeFound = false;
+    if ($method->hasReturnType()) {
+        $returnTypeFound = true;
+        $returnType = $method->getReturnType();
+        $returnTypeTokens[] = ':';
+        $returnTypeTokens[] = ($returnType->allowsNull() ? '?' : '') . $returnType->getName();
+    } elseif ($method->getDocComment()) {
+        $docBlockReturnType = getReturnTypeFromDocBlock($method->getDocComment());
+        if ($docBlockReturnType !== null) {
+            $returnTypeFound = true;
+            $returnTypeTokens[] = ':';
+            $returnTypeTokens[] = $docBlockReturnType;
+        }
+    }
+    if (!$returnTypeFound && $method->getName() !== '__construct') {
+        $returnTypeTokens[] = ':';
+        $returnTypeTokens[] = 'void';
+    }
+
+    $signature = sprintf('%s(%s)%s', $method->getName(), implode(', ', $parameters), implode(' ', $returnTypeTokens));
+
+    if (strlen($signature) <= 120) {
+        return $signature;
+    }
+
+    return sprintf(
+        "%s(\n    %s\n)%s",
+        $method->getName(),
+        implode(",\n    ", $parameters),
+        implode(' ', $returnTypeTokens)
+    );
+}
+
+$report = [];
+const CLASSES = [
+    'AMQPBasicProperties',
+    'AMQPChannel',
+    'AMQPChannelException',
+    'AMQPConnection',
+    'AMQPConnectionException',
+    'AMQPDecimal',
+    'AMQPEnvelope',
+    'AMQPEnvelopeException',
+    'AMQPException',
+    'AMQPExchange',
+    'AMQPExchangeException',
+    'AMQPQueue',
+    'AMQPQueueException',
+    'AMQPTimestamp',
+    'AMQPValueException',
+];
+
+require $next . '/AMQP.php';
+
+foreach (CLASSES as $class) {
+    $report = [...$report, ...compare($class)];
+}
+echo implode(PHP_EOL, $report);
+echo PHP_EOL;
