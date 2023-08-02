@@ -213,6 +213,15 @@ class AMQPExchange
     }
 
     /**
+     * Set the value for the given key.
+     *
+     * @param string $argumentName Name of the argument to set.
+     */
+    public function removeArgument(string $argumentName): void
+    {
+    }
+
+    /**
      * Set all arguments on the exchange.
      *
      * @param array $arguments An array of key/value pairs of arguments.

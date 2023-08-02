@@ -87,6 +87,9 @@ jobs:
       - name: Check stub coding style
         run: ./infra/tools/pamqp-stubs-format-check
 
+      - name: Validate argument parsing
+        run: php -d extension=modules/amqp.so ./infra/tools/pamqp-arguments-validate
+
   test:
     name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}
     # librabbitmq < 0.11 needs older OpenSSL version

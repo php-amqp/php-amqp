@@ -499,7 +499,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             zend_throw_exception_ex(
                 amqp_connection_exception_class_entry,
                 0,
-                "Parameter 'port' must be a valid port number  between %d and %d.",
+                "Parameter 'port' must be a valid port number between %d and %d.",
                 PHP_AMQP_MIN_PORT,
                 PHP_AMQP_MAX_PORT
             );
@@ -1165,36 +1165,21 @@ static PHP_METHOD(amqp_connection_class, getPort)
 set the port */
 static PHP_METHOD(amqp_connection_class, setPort)
 {
-    zval *zvalPort;
     int port;
 
     /* Get the port from the method params */
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z/", &zvalPort) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &port) == FAILURE) {
         return;
     }
 
-    /* Parse out the port*/
-    switch (Z_TYPE_P(zvalPort)) {
-        case IS_DOUBLE:
-            port = (int) Z_DVAL_P(zvalPort);
-            break;
-        case IS_LONG:
-            port = (int) Z_LVAL_P(zvalPort);
-            break;
-        case IS_STRING:
-            convert_to_long(zvalPort);
-            port = (int) Z_LVAL_P(zvalPort);
-            break;
-        default:
-            port = 0;
-    }
-
     /* Check the port value */
-    if (port <= 0 || port > 65535) {
-        zend_throw_exception(
+    if (!php_amqp_is_valid_port(port)) {
+        zend_throw_exception_ex(
             amqp_connection_exception_class_entry,
-            "Invalid port given. Value must be between 1 and 65535.",
-            0
+            0,
+            "Parameter 'port' must be a valid port number between %d and %d.",
+            PHP_AMQP_MIN_PORT,
+            PHP_AMQP_MAX_PORT
         );
         return;
     }

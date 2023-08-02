@@ -6,25 +6,24 @@ $symbols = [
     'classNames' => [],
 ];
 
-function sortByName(array $array): array {
-    usort(
-        $array,
-        function (array $left, array $right) {
-            return $left['name'] <=> $right['name'];
-        }
-    );
+function sortByName(array $array): array
+{
+    usort($array, static function (array $left, array $right) {
+        return $left['name'] <=> $right['name'];
+    });
 
     return $array;
 }
 
-function getTypeMetadata(?ReflectionNamedType $type): ?array {
+function getTypeMetadata(?ReflectionNamedType $type): ?array
+{
     if ($type == null) {
         return null;
     }
 
     return [
         'name' => $type->getName(),
-        'nullable' => $type->allowsNull()
+        'nullable' => $type->allowsNull(),
     ];
 }
 
@@ -36,19 +35,15 @@ function error(string $message, ...$args): void
     $error = true;
 }
 
-const MAGIC_METHODS = [
-    '__construct',
-    '__toString',
-    '__wakeup',
-    '__clone',
-];
+const MAGIC_METHODS = ['__construct', '__toString', '__wakeup', '__clone'];
 
-function getClassMetadata(string $class): array {
+function getClassMetadata(string $class): array
+{
     $refl = new ReflectionClass($class);
     $classMetadata = [
         'name' => $refl->getName(),
         'constants' => [],
-        'properties' =>  [],
+        'properties' => [],
         'methods' => [],
     ];
 
@@ -58,7 +53,7 @@ function getClassMetadata(string $class): array {
         }
 
         $classMetadata['constants'][] = [
-            'name' => $class. '::' . $constant->getName(),
+            'name' => $class . '::' . $constant->getName(),
             'value' => $constant->getValue(),
             'visibility' => $constant->isPublic() ? 'public' : ($constant->isProtected() ? 'protected' : ($constant->isPrivate() ? 'private' : 'unknown')),
         ];
@@ -70,7 +65,7 @@ function getClassMetadata(string $class): array {
         }
 
         $methodMetadata = [
-            'name' => $class. '::' . $method->getName(),
+            'name' => $class . '::' . $method->getName(),
             'visibility' => $method->isPublic() ? 'public' : ($method->isProtected() ? 'protected' : ($method->isPrivate() ? 'private' : 'unknown')),
             'final' => $method->isFinal(),
             'static' => $method->isStatic(),
@@ -81,44 +76,72 @@ function getClassMetadata(string $class): array {
         ];
 
         if (!in_array($method->getName(), MAGIC_METHODS, true) && strpos($method->getName(), '_') !== false) {
-            error("%s::%s contains underscore", $class, $method->getName());
+            error('%s::%s contains underscore', $class, $method->getName());
         }
 
         $prefix = substr($method->getName(), 0, 3);
-        if (in_array($prefix, ['set', 'has', 'get'], true) && !in_array($method->getName(), ['set', 'has', 'get'], true)) {
+        if (in_array($prefix, ['set', 'has', 'get'], true) && !in_array(
+            $method->getName(),
+            ['set', 'has', 'get'],
+            true
+        )) {
             $hasPlural = $refl->hasMethod($method->getName() . 's');
             $isPlural = substr($method->getName(), -1) === 's';
 
             if ($prefix === 'get' && $method->getNumberOfParameters() !== 0 && !$hasPlural) {
-                error("%s::%s() should have no arguments", $class, $method->getName());
+                error('%s::%s() should have no arguments', $class, $method->getName());
             }
 
             if ($prefix === 'set' && $isPlural) {
-                if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3)))) {
-                    error("%s::%s(%s) must be \"%s\"", $class, $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
+                if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(
+                    substr($method->getName(), 3)
+                ))) {
+                    error(
+                        '%s::%s(%s) must be "%s"',
+                        $class,
+                        $method->getName(),
+                        $method->getParameters()[0]->getName(),
+                        $expectedName
+                    );
                 }
             }
 
             if ($prefix === 'get' && $hasPlural) {
                 if ($method->getNumberOfRequiredParameters() !== 1 || $method->getNumberOfParameters() !== 1) {
-                    error("%s::%s() should have exactly one required parameter", $class, $method->getName());
+                    error('%s::%s() should have exactly one required parameter', $class, $method->getName());
                 }
             }
 
             if ($hasPlural) {
-                if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3) . 'Name'))) {
-                    error("%s::%s(%s) must be \"%s\"", $class, $method->getName(), $method->getParameters()[0]->getName(), $expectedName);
+                if ($method->getParameters()[0]->getName() !== ($expectedName = lcfirst(
+                    substr($method->getName(), 3) . 'Name'
+                ))) {
+                    error(
+                        '%s::%s(%s) must be "%s"',
+                        $class,
+                        $method->getName(),
+                        $method->getParameters()[0]->getName(),
+                        $expectedName
+                    );
                 }
 
-                if ($prefix === 'set' && $method->getParameters()[1]->getName() !== ($expectedName = lcfirst(substr($method->getName(), 3) . 'Value'))) {
-                    error("%s::%s(…, %s) must be \"%s\"", $class, $method->getName(), $method->getParameters()[1]->getName(), $expectedName);
+                if ($prefix === 'set' && $method->getParameters()[1]->getName() !== ($expectedName = lcfirst(
+                    substr($method->getName(), 3) . 'Value'
+                ))) {
+                    error(
+                        '%s::%s(…, %s) must be "%s"',
+                        $class,
+                        $method->getName(),
+                        $method->getParameters()[1]->getName(),
+                        $expectedName
+                    );
                 }
             }
         }
 
         foreach ($method->getParameters() as $parameter) {
             if (strpos($parameter->getName(), '_') !== false) {
-                error("%s::%s(…%s…) contains underscore", $class, $method->getName(), $parameter->getName());
+                error('%s::%s(…%s…) contains underscore', $class, $method->getName(), $parameter->getName());
             }
 
             $default = 'unknown';
@@ -128,7 +151,7 @@ function getClassMetadata(string $class): array {
             }
 
             $methodMetadata['parameters'][] = [
-                'method' => $class. '::' . $method->getName(),
+                'method' => $class . '::' . $method->getName(),
                 'name' => sprintf('$%s', $parameter->getName()),
                 'default' => $default,
                 'type' => getTypeMetadata($parameter->getType()),
@@ -173,7 +196,7 @@ function getClassMetadata(string $class): array {
 }
 
 
-spl_autoload_register(function(string $class) {
+spl_autoload_register(function (string $class) {
     require_once __DIR__ . '/../../stubs/' . $class . '.php';
 });
 
@@ -200,7 +223,7 @@ foreach (get_defined_constants() as $constant => $value) {
     if (strpos($constant, 'AMQP_') === 0) {
         $symbols['constants'][] = [
             'name' => $constant,
-            'value' => $value
+            'value' => $value,
         ];
     }
 }

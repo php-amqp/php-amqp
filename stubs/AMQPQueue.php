@@ -308,6 +308,15 @@ class AMQPQueue
     }
 
     /**
+     * Set a queue argument.
+     *
+     * @param string $argumentName The key to set.
+     */
+    public function removeArgument(string $argumentName): void
+    {
+    }
+
+    /**
      * Set all arguments on the given queue.
      *
      * All other argument settings will be wiped.
@@ -332,11 +341,11 @@ class AMQPQueue
     /**
      * Set the flags on the queue.
      *
-     * @param integer $flags A bitmask of flags:
+     * @param integer|null $flags A bitmask of flags:
      *                       AMQP_DURABLE, AMQP_PASSIVE,
      *                       AMQP_EXCLUSIVE, AMQP_AUTODELETE.
      */
-    public function setFlags(int $flags): void
+    public function setFlags(?int $flags): void
     {
     }
 

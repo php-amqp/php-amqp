@@ -278,8 +278,6 @@ static PHP_METHOD(amqp_queue_class, setArgument)
 
     switch (Z_TYPE_P(value)) {
         case IS_NULL:
-            zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
-            break;
         case IS_TRUE:
         case IS_FALSE:
         case IS_LONG:
@@ -299,6 +297,23 @@ static PHP_METHOD(amqp_queue_class, setArgument)
 }
 /* }}} */
 
+
+/* {{{ proto AMQPQueue::removeArgument(key)
+Get the queue name */
+static PHP_METHOD(amqp_queue_class, removeArgument)
+{
+    zval rv;
+
+    char *key = NULL;
+    size_t key_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
+        return;
+    }
+
+    zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
+}
+/* }}} */
 
 /* {{{ proto int AMQPQueue::declareQueue();
 declare queue
@@ -533,7 +548,7 @@ static PHP_METHOD(amqp_queue_class, consume)
     size_t consumer_tag_len = 0;
     zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|f!ls", &fci, &fci_cache, &flags, &consumer_tag, &consumer_tag_len) ==
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|f!ls!", &fci, &fci_cache, &flags, &consumer_tag, &consumer_tag_len) ==
         FAILURE) {
         return;
     }
@@ -1069,7 +1084,7 @@ static PHP_METHOD(amqp_queue_class, unbind)
 
     if (zend_parse_parameters(
             ZEND_NUM_ARGS(),
-            "s|sa",
+            "s|s!a",
             &exchange_name,
             &exchange_name_len,
             &keyname,
@@ -1209,7 +1224,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_getFlags, ZEND_
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_setFlags, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
-    ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 0)
+    ZEND_ARG_TYPE_INFO(0, flags, IS_LONG, 1)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_queue_class_getArgument, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
@@ -1222,6 +1237,10 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_setArgument, ZEND_SEND_BY_VAL, 2, IS_VOID, 0)
     ZEND_ARG_TYPE_INFO(0, argumentName, IS_STRING, 0)
     ZEND_ARG_INFO(0, argumentValue)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_removeArgument, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, argumentName, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_hasArgument, ZEND_SEND_BY_VAL, 1, _IS_BOOL, 0)
@@ -1304,6 +1323,7 @@ zend_function_entry amqp_queue_class_functions[] = {
     PHP_ME(amqp_queue_class, getArgument,		arginfo_amqp_queue_class_getArgument,		ZEND_ACC_PUBLIC)
     PHP_ME(amqp_queue_class, getArguments,		arginfo_amqp_queue_class_getArguments,		ZEND_ACC_PUBLIC)
     PHP_ME(amqp_queue_class, setArgument,		arginfo_amqp_queue_class_setArgument,		ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_queue_class, removeArgument,		arginfo_amqp_queue_class_removeArgument,		ZEND_ACC_PUBLIC)
     PHP_ME(amqp_queue_class, setArguments,		arginfo_amqp_queue_class_setArguments,		ZEND_ACC_PUBLIC)
     PHP_ME(amqp_queue_class, hasArgument,		arginfo_amqp_queue_class_hasArgument,		ZEND_ACC_PUBLIC)
 

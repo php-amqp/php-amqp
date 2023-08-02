@@ -304,8 +304,6 @@ static PHP_METHOD(amqp_exchange_class, setArgument)
 
     switch (Z_TYPE_P(value)) {
         case IS_NULL:
-            zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
-            break;
         case IS_TRUE:
         case IS_FALSE:
         case IS_LONG:
@@ -325,6 +323,22 @@ static PHP_METHOD(amqp_exchange_class, setArgument)
 }
 /* }}} */
 
+
+/* {{{ proto AMQPExchange::removeArgument(key) */
+static PHP_METHOD(amqp_exchange_class, removeArgument)
+{
+    zval rv;
+
+    char *key = NULL;
+    size_t key_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
+        return;
+    }
+
+    zend_hash_str_del(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
+}
+/* }}} */
 
 /* {{{ proto AMQPExchange::declareExchange();
 declare Exchange
@@ -403,7 +417,7 @@ static PHP_METHOD(amqp_exchange_class, delete)
     size_t name_len = 0;
     zend_long flags = AMQP_NOPARAM;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|sl", &name, &name_len, &flags) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s!l", &name, &name_len, &flags) == FAILURE) {
         return;
     }
 
@@ -837,6 +851,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_exchange_class_setArgument,
     ZEND_ARG_INFO(0, argumentValue)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_exchange_class_removeArgument, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO(0, argumentName, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_exchange_class_setArguments, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
     ZEND_ARG_ARRAY_INFO(0, arguments, 0)
 ZEND_END_ARG_INFO()
@@ -889,6 +907,7 @@ zend_function_entry amqp_exchange_class_functions[] = {
     PHP_ME(amqp_exchange_class, getArgument,	arginfo_amqp_exchange_class_getArgument,	ZEND_ACC_PUBLIC)
     PHP_ME(amqp_exchange_class, getArguments,	arginfo_amqp_exchange_class_getArguments,	ZEND_ACC_PUBLIC)
     PHP_ME(amqp_exchange_class, setArgument,	arginfo_amqp_exchange_class_setArgument,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_exchange_class, removeArgument,	arginfo_amqp_exchange_class_removeArgument,	ZEND_ACC_PUBLIC)
     PHP_ME(amqp_exchange_class, setArguments,	arginfo_amqp_exchange_class_setArguments,	ZEND_ACC_PUBLIC)
     PHP_ME(amqp_exchange_class, hasArgument,	arginfo_amqp_exchange_class_hasArgument,	ZEND_ACC_PUBLIC)
 

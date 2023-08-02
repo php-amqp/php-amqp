@@ -1,0 +1,185 @@
+#!/usr/bin/env php
+<?php
+const CLASSES = [
+    'AMQPBasicProperties',
+    'AMQPChannel',
+    'AMQPChannelException',
+    'AMQPConnection',
+    'AMQPConnectionException',
+    'AMQPDecimal',
+    'AMQPEnvelope',
+    'AMQPEnvelopeException',
+    'AMQPException',
+    'AMQPExchange',
+    'AMQPExchangeException',
+    'AMQPQueue',
+    'AMQPQueueException',
+    'AMQPTimestamp',
+    'AMQPValueException',
+];
+
+function getSource(string $class): ?string
+{
+    assert(preg_match('/([A-Z]+?)([A-Z][a-z]+)+/', $class, $matches) == 1);
+    $fileName = implode('_', array_map('strtolower', array_slice($matches, 1))) . '.c';
+
+    $path = __DIR__ . '/../../' . $fileName;
+
+    if (file_exists($path)) {
+        return file_get_contents($path);
+    }
+
+    return null;
+}
+
+function validate(string $class)
+{
+    $refl = new ReflectionClass($class);
+
+    $source = getSource($class);
+
+    if ($source === null) {
+        // WARNING
+        return;
+    }
+
+    foreach ($refl->getMethods() as $method) {
+        if ($method->getName() == 'declare') {
+            continue;
+        }
+
+        if ($method->getDeclaringClass()->getName() !== $class) {
+            continue;
+        }
+
+        assert(preg_match('/
+                PHP_METHOD\(.*?,\s*' . preg_quote($method->getName(), '/') . '\).*?
+                \{.*?
+                ((?<func>zend_parse_parameters)\(.+?,\s*\"(?<def>.*?)\"|PHP_AMQP_NOPARAMS|zend_parse_parameters_none)
+        /xs', $source, $matches), $class . ' ' . $method->getName());
+
+        $parametersString = $matches['def'] ?? '';
+
+        try {
+            [$types, $numberOfRequiredParameters] = parseParameterString($parametersString);
+        } catch (Throwable $t) {
+            throw new RuntimeException(sprintf(
+                'Could not parse parameter string "%s" for %s::%s',
+                $parametersString,
+                $class,
+                $method->getName()
+            ), 0, $t);
+        }
+
+        if ($method->getNumberOfRequiredParameters() !== $numberOfRequiredParameters) {
+            error(
+                '%s::%s(): Number of required parameters do not match. Parameter parsing: %d (%s). Reflection: %d',
+                $class,
+                $method->getName(),
+                $numberOfRequiredParameters,
+                $parametersString,
+                $method->getNumberOfRequiredParameters()
+            );
+        }
+
+        if ($method->getNumberOfParameters() !== count($types)) {
+            error(
+                '%s::%s(): Number of parameters do not match. Parameter parsing: %d (%s). Reflection: %d',
+                $class,
+                $method->getName(),
+                count($types),
+                $parametersString,
+                $method->getNumberOfParameters()
+            );
+        }
+
+        foreach ($method->getParameters() as $pos => $parameter) {
+            $reflectionType = $parameter->hasType() ? ($parameter->getType()->isBuiltin() ? $parameter->getType()->getName() : 'object') : 'mixed';
+
+            if ($reflectionType !== $types[$pos]['type']) {
+                error(
+                    '%s::%s(): type parsing and Reflection info do not match. Parameter parsing: %s (%s). Reflection: %s',
+                    $class,
+                    $method->getName(),
+                    $types[$pos]['type'],
+                    $parametersString,
+                    $reflectionType
+                );
+            }
+
+            $reflectionNullable = $parameter->allowsNull();
+            if ($reflectionNullable !== $types[$pos]['nullable']) {
+                error(
+                    '%s::%s(%s): type parsing and Reflection nullability differs. Parameter parsing: %s (%s). Reflection: %s',
+                    $class,
+                    $method->getName(),
+                    $parameter->getName(),
+                    $types[$pos]['nullable'] ? 'nullable' : 'not nullable',
+                    $parametersString,
+                    $reflectionNullable ? 'nullable' : 'not nullable'
+                );
+            }
+        }
+    }
+}
+
+$isError = false;
+function error(string $message, ...$args): void
+{
+    global $isError;
+    $isError = true;
+    vprintf('ERROR: ' . $message . PHP_EOL, $args);
+}
+
+function parseParameterString(string $str): array
+{
+    $types = [
+        's' => 'string',
+        'O' => 'object',
+        'l' => 'int',
+        'a' => 'array',
+        'f' => 'callable',
+        'd' => 'float',
+        'b' => 'bool',
+        'z' => 'mixed',
+    ];
+    $parameters = [];
+    $requiredCount = null;
+    $count = 0;
+    foreach (str_split($str) as $pos => $char) {
+        if (isset($types[$char])) {
+            if (isset($currentInfo)) {
+                $parameters[] = $currentInfo;
+            }
+            $currentInfo = [
+                'type' => $types[$char],
+                'nullable' => $types[$char] === 'mixed',
+            ];
+            $count++;
+        } elseif ($char == '!') {
+            $currentInfo['nullable'] = true;
+        } elseif ($char === '|') {
+            $requiredCount = $count;
+        } elseif ($char === '/') {
+            // Ignored
+        } else {
+            throw new InvalidArgumentException($char);
+        }
+    }
+
+    if ($requiredCount === null) {
+        $requiredCount = $count;
+    }
+
+    if (isset($currentInfo)) {
+        $parameters[] = $currentInfo;
+    }
+
+    return [$parameters, $requiredCount];
+}
+
+foreach (CLASSES as $class) {
+    validate($class);
+}
+
+exit((int) $isError);

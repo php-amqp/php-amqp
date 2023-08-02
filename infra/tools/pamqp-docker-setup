@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
-function path(string ...$args): string {
+function path(string ...$args): string
+{
     return implode(DIRECTORY_SEPARATOR, $args);
 }
 

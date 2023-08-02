@@ -12,4 +12,4 @@ try {
 }
 ?>
 --EXPECT--
-Invalid port given. Value must be between 1 and 65535.
+Parameter 'port' must be a valid port number between 1 and 65535.
