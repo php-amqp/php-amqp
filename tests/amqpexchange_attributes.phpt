@@ -22,7 +22,15 @@ $ex->setArgument('foo', 'bar');
 echo 'Initial args: ', count($arr), ', exchange args: ', count($ex->getArguments()), PHP_EOL;
 
 foreach (array('existent', 'false', 'null', 'nonexistent') as $key) {
-    echo "$key: ", var_export($ex->hasArgument($key), true), ', ', var_export($ex->getArgument($key)), PHP_EOL;
+    echo "$key: ";
+    var_export($ex->hasArgument($key));
+    echo ', ';
+    try {
+        var_export($ex->getArgument($key));
+    } catch (AMQPExchangeException $e) {
+        echo "Ex: " . $e->getMessage();
+    }
+    echo PHP_EOL;
 }
 
 ?>
@@ -32,4 +40,4 @@ Initial args: 3, exchange args: 4
 existent: true, 'value'
 false: true, false
 null: true, NULL
-nonexistent: false, false
+nonexistent: false, Ex: The argument "nonexistent" does not exist

@@ -53,21 +53,30 @@ function compare(string $className)
 
     $prevConstantNames = array_keys($prev->getConstants());
     $nextConstantNames = array_keys($prev->getConstants());
-
     $removedConstantNames = array_diff($prevConstantNames, $nextConstantNames);
+    $addedConstantNames = array_diff($nextConstantNames, $prevConstantNames);
 
     $removedConstants = [];
     foreach ($removedConstantNames as $removedConstantName) {
         $removedConstants[] = sprintf(' * `%s`', $removedConstantName);
     }
 
+    $addedConstants = [];
+    foreach ($addedConstantNames as $addedConstantName) {
+        $addedConstants[] = sprintf(' * `%s`', $addedConstantName);
+    }
+
     $prevMethodNames = getMethodNames($prev);
     $nextMethodNames = getMethodNames($next);
-    $removedMethodNames = array_diff($prevMethodNames, $nextMethodNames);
 
     $removedMethods = [];
-    foreach ($removedMethodNames as $removedMethodName) {
+    foreach (array_diff($prevMethodNames, $nextMethodNames) as $removedMethodName) {
         $removedMethods[] = sprintf(' * `%s()`', $removedMethodName);
+    }
+
+    $addedMethods = [];
+    foreach (array_diff($nextMethodNames, $prevMethodNames) as $addedMethodName) {
+        $addedMethods[] = sprintf(' * `%s`', getParameterString($className, $next->getMethod($addedMethodName)));
     }
 
     $constantChanges = [];
@@ -107,9 +116,11 @@ function compare(string $className)
     }
 
     $report = [
+        ...($addedConstants ? ["### Constant additions\n", ...$addedConstants, ''] : []),
         ...($removedConstants ? ["### Constant removals\n", ...$removedConstants, ''] : []),
-        ...($removedMethods ? ["### Public method removals\n", ...$removedMethods, ''] : []),
         ...($constantChanges ? ["### Public constant changes\n", ...$constantChanges, ''] : []),
+        ...($addedMethods ? ["### Public method additions\n", ...$addedMethods, ''] : []),
+        ...($removedMethods ? ["### Public method removals\n", ...$removedMethods, ''] : []),
         ...($methodTypeChanges ? ["### Public method type changes\n", ...$methodTypeChanges, ''] : []),
         ...($methodParameterNameChanges ? ["### Parameter name changes\n", ...$methodParameterNameChanges, ''] : []),
     ];
@@ -230,12 +241,20 @@ function normalizeType(string $type): string
         $types[] = $actualType;
     }
 
-    if (count($types) > 1 && in_array('null', $types, true)) {
+    if (count($types) == 2 && in_array('null', $types, true)) {
         $types = array_map(static function ($type) {
             return '?' . $type;
         }, array_filter($types, static function ($type) {
             return $type !== 'null';
         }));
+    }
+
+    sort($types);
+    $index = array_search('null', $types, true);
+    if ($index !== false) {
+        unset($types[$index]);
+        // Sort to the end
+        $types[] = 'null';
     }
 
     return implode('|', $types);

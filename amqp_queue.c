@@ -213,7 +213,8 @@ static PHP_METHOD(amqp_queue_class, getArgument)
     }
 
     if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
-        RETURN_NULL();
+        zend_throw_exception_ex(amqp_queue_exception_class_entry, 0, "The argument \"%s\" does not exist", key);
+        return;
     }
 
     RETURN_ZVAL(tmp, 1, 0);
@@ -288,8 +289,8 @@ static PHP_METHOD(amqp_queue_class, setArgument)
             break;
         default:
             zend_throw_exception(
-                amqp_exchange_exception_class_entry,
-                "The value parameter must be of type NULL, int, double or string.",
+                amqp_queue_exception_class_entry,
+                "The value parameter must be of type bool, int, double, string, or null.",
                 0
             );
             return;

@@ -100,7 +100,8 @@ function getClassMetadata(string $class): array
                         '%s::%s(%s) must be "%s"',
                         $class,
                         $method->getName(),
-                        $method->getParameters()[0]->getName(),
+                        $method->getParameters()[0]
+                            ->getName(),
                         $expectedName
                     );
                 }
@@ -120,7 +121,8 @@ function getClassMetadata(string $class): array
                         '%s::%s(%s) must be "%s"',
                         $class,
                         $method->getName(),
-                        $method->getParameters()[0]->getName(),
+                        $method->getParameters()[0]
+                            ->getName(),
                         $expectedName
                     );
                 }
@@ -132,7 +134,8 @@ function getClassMetadata(string $class): array
                         '%s::%s(…, %s) must be "%s"',
                         $class,
                         $method->getName(),
-                        $method->getParameters()[1]->getName(),
+                        $method->getParameters()[1]
+                            ->getName(),
                         $expectedName
                     );
                 }

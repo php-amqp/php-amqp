@@ -119,10 +119,8 @@ class AMQPExchange
      * Get the argument associated with the given key.
      *
      * @param string $argumentName The key to look up.
-     *
-     * @return string|integer|boolean The string or integer value associated
-     *                                with the given key, or FALSE if the key
-     *                                is not set.
+     * @throws AMQPExchangeException If key does not exist
+     * @return bool|int|double|string|null
      */
     public function getArgument(string $argumentName)
     {
@@ -206,7 +204,7 @@ class AMQPExchange
      * Set the value for the given key.
      *
      * @param string $argumentName Name of the argument to set.
-     * @param string|integer $argumentValue Value of the argument to set.
+     * @param bool|int|double|string|null $argumentValue Value of the argument to set.
      */
     public function setArgument(string $argumentName, $argumentValue): void
     {
@@ -215,7 +213,7 @@ class AMQPExchange
     /**
      * Set the value for the given key.
      *
-     * @param string $argumentName Name of the argument to set.
+     * @param string $argumentName Name of the argument to remove.
      */
     public function removeArgument(string $argumentName): void
     {

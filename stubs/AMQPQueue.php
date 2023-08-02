@@ -206,10 +206,8 @@ class AMQPQueue
      * Get the argument associated with the given key.
      *
      * @param string $argumentName The key to look up.
-     *
-     * @return string|integer|null The string or integer value associated
-     *                             with the given key, or false if the key
-     *                             is not set.
+     * @throws AMQPQueueException If key does not exist
+     * @return bool|int|double|string|null
      */
     public function getArgument(string $argumentName)
     {
@@ -300,8 +298,8 @@ class AMQPQueue
     /**
      * Set a queue argument.
      *
-     * @param string $argumentName The key to set.
-     * @param mixed $argumentValue The value to set.
+     * @param string $argumentName The argument name to set.
+     * @param bool|int|double|string|null $argumentValue The argument value to set.
      */
     public function setArgument(string $argumentName, $argumentValue): void
     {
@@ -310,7 +308,7 @@ class AMQPQueue
     /**
      * Set a queue argument.
      *
-     * @param string $argumentName The key to set.
+     * @param string $argumentName The argument name to set.
      */
     public function removeArgument(string $argumentName): void
     {
@@ -321,7 +319,7 @@ class AMQPQueue
      *
      * All other argument settings will be wiped.
      *
-     * @param array $arguments An array of key/value pairs of arguments.
+     * @param array $arguments An array of name/value pairs of arguments.
      */
     public function setArguments(array $arguments): void
     {
@@ -330,7 +328,7 @@ class AMQPQueue
     /**
      * Check whether a queue has specific argument.
      *
-     * @param string $argumentName The key to check.
+     * @param string $argumentName The argument name to check.
      *
      * @return boolean
      */
