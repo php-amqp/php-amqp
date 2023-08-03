@@ -1165,7 +1165,7 @@ static PHP_METHOD(amqp_connection_class, getPort)
 set the port */
 static PHP_METHOD(amqp_connection_class, setPort)
 {
-    int port;
+    zend_long port;
 
     /* Get the port from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &port) == FAILURE) {
