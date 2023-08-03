@@ -92,7 +92,7 @@ jobs:
         if: matrix.php-version == '8.2'
 
   test:
-    name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}
+    name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.compiler }}
     # librabbitmq < 0.11 needs older OpenSSL version
     runs-on: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
     needs: dedup
@@ -100,6 +100,7 @@ jobs:
 
     env:
       TEST_PHP_ARGS: -j4 ${{ matrix.test-php-args }}
+      CC: ${{ matrix.compiler }}
 
     strategy:
       fail-fast: false
@@ -107,6 +108,7 @@ jobs:
         php-version: [ '8.2', '8.1', '8.0', '7.4' ]
         php-thread-safe: [ true, false ]
         librabbitmq-version: [ 'master', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0' ]
+        compiler: [gcc, clang]
         include:
           - php-version: '8.2'
             php-thread-safe: false
@@ -132,7 +134,7 @@ jobs:
         run: docker compose up -d rabbitmq
 
       - name: Install packages
-        run: sudo apt-get install -y cmake valgrind
+        run: sudo apt-get install -y cmake valgrind ${{ matrix.compiler }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.25.5
