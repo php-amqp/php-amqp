@@ -92,7 +92,7 @@ jobs:
         if: matrix.php-version == '8.2'
 
   test:
-    name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }}
+    name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }} {{ matrix.compiler }}
     # librabbitmq < 0.11 needs older OpenSSL version
     runs-on: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
     needs: dedup
