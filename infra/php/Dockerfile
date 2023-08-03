@@ -12,7 +12,6 @@ RUN apt-get install -yqq gdb
 RUN apt-get install -yqq valgrind
 RUN apt-get install -yqq git
 RUN apt-get install -yqq unzip
-RUN apt-get install -yqq clang
 
 RUN echo 'PATH=$PATH:/src/infra/tools' >> /etc/bash.bashrc
 

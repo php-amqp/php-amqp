@@ -7,7 +7,7 @@ on:
 
 env:
   TEST_TIMEOUT: 120
-  CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fstack-clash-protection -Wall -Werror -cf-protection
+  CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
   PHP_AMQP_SSL_HOST: rabbitmq.example.org
   MAKEFLAGS: -j4
 
