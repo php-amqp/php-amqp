@@ -22,22 +22,24 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2023-08-02</date>
-    <time>21:32:45</time>
+    <date>2023-08-03</date>
+    <time>06:22:40</time>
     <version>
-        <release>2.0.0dev</release>
-        <api>2.0.0dev</api>
+        <release>2.0.0beta2</release>
+        <api>2.0.0beta2</api>
     </version>
     <stability>
-        <release>devel</release>
-        <api>devel</api>
+        <release>beta</release>
+        <api>beta</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[
+    <notes><![CDATA[- Include stdint.h for PHP >= 8.0 on Windows (Jan Ehrhardt) (https://github.com/php-amqp/php-amqp/issues/456)
+ - Fix segfault in setPort (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/455)
+
+💡Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.0.0beta1...latest
-]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.0.0beta1...v2.0.0beta2]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
