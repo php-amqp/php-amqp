@@ -23,23 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2023-08-03</date>
-    <time>06:22:40</time>
+    <time>06:24:13</time>
     <version>
-        <release>2.0.0beta2</release>
-        <api>2.0.0beta2</api>
+        <release>2.0.0dev</release>
+        <api>2.0.0dev</api>
     </version>
     <stability>
-        <release>beta</release>
-        <api>beta</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- Include stdint.h for PHP >= 8.0 on Windows (Jan Ehrhardt) (https://github.com/php-amqp/php-amqp/issues/456)
- - Fix segfault in setPort (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/455)
-
-💡Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.0.0beta1...v2.0.0beta2]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.0.0beta2...latest
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -296,6 +294,26 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0beta1...v2.0.0beta2]]></notes
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2023-08-03</date>
+            <time>06:22:40</time>
+            <version>
+                <release>2.0.0beta2</release>
+                <api>2.0.0beta2</api>
+            </version>
+            <stability>
+                <release>beta</release>
+                <api>beta</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- Include stdint.h for PHP >= 8.0 on Windows (Jan Ehrhardt) (https://github.com/php-amqp/php-amqp/issues/456)
+ - Fix segfault in setPort (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/455)
+
+💡Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v2.0.0beta1...v2.0.0beta2]]></notes>
+        </release>
         <release>
             <date>2023-08-02</date>
             <time>21:19:41</time>
