@@ -30,7 +30,7 @@
 
 #ifdef PHP_WIN32
     #if PHP_VERSION_ID >= 80000
-        #include "main/php_stdint.h"
+        #include <stdint.h>
     #else
         #include "win32/php_stdint.h"
     #endif
