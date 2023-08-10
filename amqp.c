@@ -101,7 +101,7 @@ zend_bool php_amqp_is_valid_channel_max(zend_long val) { return val > 0 && val <
 
 zend_bool php_amqp_is_valid_frame_size_max(zend_long val) { return val > 0 && val <= PHP_AMQP_MAX_FRAME_SIZE; }
 
-zend_bool php_amqp_is_valid_heartbeat(zend_long val) { return val > 0 && val <= PHP_AMQP_MAX_HEARTBEAT; }
+zend_bool php_amqp_is_valid_heartbeat(zend_long val) { return val >= 0 && val <= PHP_AMQP_MAX_HEARTBEAT; }
 
 zend_bool php_amqp_is_valid_prefetch_size(zend_long val) { return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_SIZE; }
 

@@ -15,13 +15,13 @@ $parameters = [
     ['vhost', 'setVhost', 'getVhost', [str_repeat('X', 513), 'vhost']],
     ['port', 'setPort', 'getPort', [-1, 65536, 1234]],
     ['timeout', 'setTimeout', 'getTimeout', [-1], 10],
-    ['read_timeout', 'setReadTimeout', 'getReadTimeout', [-1], 20],
-    ['write_timeout', 'setWriteTimeout', 'getWriteTimeout', [-1], 30],
-    ['connect_timeout', null, 'getConnectTimeout', [-1], 40],
-    ['rpc_timeout', 'setRpcTimeout', 'getRpcTimeout', [-1], 50],
-    ['frame_max', null, 'getMaxFrameSize', [-1, PHP_INT_MAX + 1], 128],
-    ['channel_max', null, 'getMaxChannels', [-1, 257], 128],
-    ['heartbeat', null, 'getHeartbeatInterval', [-1, PHP_INT_MAX + 1], 250],
+    ['read_timeout', 'setReadTimeout', 'getReadTimeout', [-1, 20]],
+    ['write_timeout', 'setWriteTimeout', 'getWriteTimeout', [-1, 30]],
+    ['connect_timeout', null, 'getConnectTimeout', [-1, 40]],
+    ['rpc_timeout', 'setRpcTimeout', 'getRpcTimeout', [-1, 50]],
+    ['frame_max', null, 'getMaxFrameSize', [-1, PHP_INT_MAX + 1, 128]],
+    ['channel_max', null, 'getMaxChannels', [-1, 257, 128]],
+    ['heartbeat', null, 'getHeartbeatInterval', [-1, PHP_INT_MAX + 1, 250, 0]],
 ];
 
 foreach ($parameters as $args) {
@@ -89,15 +89,26 @@ Deprecated: AMQPConnection::setTimeout(): AMQPConnection::setTimeout($timeout) m
 AMQPConnectionException: Parameter 'timeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'read_timeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'readTimeout' must be greater than or equal to zero.
+getReadTimeout after constructor: 20
+getReadTimeout after setter: 20
 AMQPConnectionException: Parameter 'write_timeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'writeTimeout' must be greater than or equal to zero.
+getWriteTimeout after constructor: 30
+getWriteTimeout after setter: 30
 AMQPConnectionException: Parameter 'connect_timeout' must be greater than or equal to zero.
+getConnectTimeout after constructor: 40
 AMQPConnectionException: Parameter 'rpc_timeout' must be greater than or equal to zero.
 AMQPConnectionException: Parameter 'rpcTimeout' must be greater than or equal to zero.
+getRpcTimeout after constructor: 50
+getRpcTimeout after setter: 50
 AMQPConnectionException: Parameter 'frame_max' is out of range.
 AMQPConnectionException: Parameter 'frame_max' is out of range.
+getMaxFrameSize after constructor: 128
 AMQPConnectionException: Parameter 'channel_max' is out of range.
 AMQPConnectionException: Parameter 'channel_max' is out of range.
+getMaxChannels after constructor: 128
 AMQPConnectionException: Parameter 'heartbeat' is out of range.
 AMQPConnectionException: Parameter 'heartbeat' is out of range.
+getHeartbeatInterval after constructor: 250
+getHeartbeatInterval after constructor: 0
 ==DONE==
