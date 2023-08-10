@@ -226,7 +226,7 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
 static PHP_METHOD(AMQPBasicProperties, getContentType)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("contentType");
 }
 /* }}} */
@@ -235,7 +235,7 @@ static PHP_METHOD(AMQPBasicProperties, getContentType)
 static PHP_METHOD(AMQPBasicProperties, getContentEncoding)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("contentEncoding");
 }
 /* }}} */
@@ -244,7 +244,7 @@ static PHP_METHOD(AMQPBasicProperties, getContentEncoding)
 static PHP_METHOD(AMQPBasicProperties, getHeaders)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("headers");
 }
 /* }}} */
@@ -253,7 +253,7 @@ static PHP_METHOD(AMQPBasicProperties, getHeaders)
 static PHP_METHOD(AMQPBasicProperties, getDeliveryMode)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("deliveryMode");
 }
 /* }}} */
@@ -262,7 +262,7 @@ static PHP_METHOD(AMQPBasicProperties, getDeliveryMode)
 static PHP_METHOD(AMQPBasicProperties, getPriority)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("priority");
 }
 /* }}} */
@@ -271,7 +271,7 @@ static PHP_METHOD(AMQPBasicProperties, getPriority)
 static PHP_METHOD(AMQPBasicProperties, getCorrelationId)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("correlationId");
 }
 /* }}} */
@@ -280,7 +280,7 @@ static PHP_METHOD(AMQPBasicProperties, getCorrelationId)
 static PHP_METHOD(AMQPBasicProperties, getReplyTo)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("replyTo");
 }
 /* }}} */
@@ -290,7 +290,7 @@ check amqp envelope */
 static PHP_METHOD(AMQPBasicProperties, getExpiration)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("expiration");
 }
 /* }}} */
@@ -299,7 +299,7 @@ static PHP_METHOD(AMQPBasicProperties, getExpiration)
 static PHP_METHOD(AMQPBasicProperties, getMessageId)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("messageId");
 }
 /* }}} */
@@ -308,7 +308,7 @@ static PHP_METHOD(AMQPBasicProperties, getMessageId)
 static PHP_METHOD(AMQPBasicProperties, getTimestamp)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("timestamp");
 }
 /* }}} */
@@ -317,7 +317,7 @@ static PHP_METHOD(AMQPBasicProperties, getTimestamp)
 static PHP_METHOD(AMQPBasicProperties, getType)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("type");
 }
 /* }}} */
@@ -326,7 +326,7 @@ static PHP_METHOD(AMQPBasicProperties, getType)
 static PHP_METHOD(AMQPBasicProperties, getUserId)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("userId");
 }
 /* }}} */
@@ -335,7 +335,7 @@ static PHP_METHOD(AMQPBasicProperties, getUserId)
 static PHP_METHOD(AMQPBasicProperties, getAppId)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("appId");
 }
 /* }}} */
@@ -344,7 +344,7 @@ static PHP_METHOD(AMQPBasicProperties, getAppId)
 static PHP_METHOD(AMQPBasicProperties, getClusterId)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("clusterId");
 }
 /* }}} */

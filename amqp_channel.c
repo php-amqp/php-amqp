@@ -444,7 +444,7 @@ static PHP_METHOD(amqp_channel_class, isConnected)
 {
     amqp_channel_resource *channel_resource;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 
@@ -458,7 +458,7 @@ static PHP_METHOD(amqp_channel_class, close)
 {
     amqp_channel_resource *channel_resource;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 
@@ -474,7 +474,7 @@ static PHP_METHOD(amqp_channel_class, getChannelId)
 {
     amqp_channel_resource *channel_resource;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 
@@ -569,7 +569,7 @@ get the number of prefetches */
 static PHP_METHOD(amqp_channel_class, getPrefetchCount)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("prefetchCount")
 }
 /* }}} */
@@ -656,7 +656,7 @@ get the number of prefetches */
 static PHP_METHOD(amqp_channel_class, getPrefetchSize)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("prefetchSize")
 }
 /* }}} */
@@ -723,7 +723,7 @@ get the number of prefetches */
 static PHP_METHOD(amqp_channel_class, getGlobalPrefetchCount)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("globalPrefetchCount")
 }
 /* }}} */
@@ -790,7 +790,7 @@ get the number of prefetches */
 static PHP_METHOD(amqp_channel_class, getGlobalPrefetchSize)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("globalPrefetchSize")
 }
 /* }}} */
@@ -980,7 +980,7 @@ Get the AMQPConnection object in use */
 static PHP_METHOD(amqp_channel_class, getConnection)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("connection")
 }
 /* }}} */
@@ -1366,7 +1366,7 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
 static PHP_METHOD(amqp_channel_class, getConsumers)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("consumers");
 }
 /* }}} */

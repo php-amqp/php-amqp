@@ -75,7 +75,7 @@ Get timestamp */
 static PHP_METHOD(amqp_timestamp_class, getTimestamp)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     PHP_AMQP_RETURN_THIS_PROP("timestamp");
 }
@@ -87,7 +87,7 @@ Return timestamp as string */
 static PHP_METHOD(amqp_timestamp_class, __toString)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     zval *timestamp = zend_read_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), 0, &rv);
 
