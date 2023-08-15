@@ -88,7 +88,8 @@ class AMQPConnection
     /**
      * Check whether the connection to the AMQP broker is still valid.
      *
-     * It does so by checking the return status of the last connect-command.
+     * Cannot reliably detect dropped connections or unusual socket errors, as it does not actively
+     * engage the socket.
      *
      * @return boolean True if connected, false otherwise.
      */
@@ -99,9 +100,10 @@ class AMQPConnection
     /**
      * Whether connection persistent.
      *
-     * When no connection is established, it will always return false
+     * When no connection is established, it will always return false. The same disclaimer as for
+     * {@see AMQPConnection::isConnected()} applies.
      *
-     * @return boolean
+     * @return boolean True if persistently connected, false otherwise.
      */
     public function isPersistent(): bool
     {
