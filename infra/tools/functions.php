@@ -39,7 +39,7 @@ const HEADER_VERSION_TEMPLATE = <<<'EOS'
 EOS;
 const PACKAGE_XML = BASE_DIR . '/package.xml';
 const ISSUE_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/issues/%d';
-const COMMIT_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/issues/%d';
+const COMMIT_URL_TEMPLATE = 'https://github.com/php-amqp/php-amqp/commit/%s';
 const COMMIT_MESSAGE_CHANGELOG_IGNORED = ['[RM]', 'Back to dev'];
 const SOURCE_VERSION_REGEX = '(#define\s+PHP_AMQP_VERSION\s+)"(?P<version>' . VERSION_REGEX . ')"';
 
