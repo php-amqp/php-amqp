@@ -38,7 +38,7 @@ $ex->publish(
     'body', 'routing.1', AMQP_NOPARAM, array(
         'headers' => array(
             'foo' => 'fval',
-            'bar' => array(123, 'a'),
+            'bar' => array(array('aa', 'bb', array('bar_nested' => 'nested'))),
             'baz' => array('a', 'bc', 'def', 123, 'g'),
             'bla' => array('one' => 2),
         )
@@ -72,9 +72,6 @@ $errorQ->delete();
 ?>
 ==DONE==
 --EXPECTF--
-Warning: AMQPExchange::publish(): Ignoring field '0' due to unsupported value type (int) in %s.php on line %d
-
-Warning: AMQPExchange::publish(): Ignoring field '3' due to unsupported value type (int) in %s.php on line %d
 count %s
 array(1) {
   [0]=>
@@ -100,9 +97,19 @@ array(1) {
 string(4) "fval"
 array(1) {
   [0]=>
-  string(1) "a"
+  array(3) {
+    [0]=>
+    string(2) "aa"
+    [1]=>
+    string(2) "bb"
+    [2]=>
+    array(1) {
+      ["bar_nested"]=>
+      string(6) "nested"
+    }
+  }
 }
-array(4) {
+array(5) {
   [0]=>
   string(1) "a"
   [1]=>
@@ -110,6 +117,8 @@ array(4) {
   [2]=>
   string(3) "def"
   [3]=>
+  int(123)
+  [4]=>
   string(1) "g"
 }
 array(1) {

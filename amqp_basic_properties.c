@@ -60,6 +60,9 @@
 #include "amqp_timestamp.h"
 #include "amqp_decimal.h"
 
+void parse_amqp_array(amqp_array_t *array, zval *result);
+zend_bool parse_amqp_value(amqp_field_value_t *value, zval *result);
+
 zend_class_entry *amqp_basic_properties_class_entry;
 #define this_ce amqp_basic_properties_class_entry
 
@@ -240,7 +243,7 @@ static PHP_METHOD(AMQPBasicProperties, getContentEncoding)
 }
 /* }}} */
 
-/* {{{ proto AMQPBasicProperties::getCorrelationId() */
+/* {{{ proto AMQPBasicProperties::getHeaders() */
 static PHP_METHOD(AMQPBasicProperties, getHeaders)
 {
     zval rv;
@@ -559,156 +562,159 @@ PHP_MINIT_FUNCTION(amqp_basic_properties)
     return SUCCESS;
 }
 
+zend_bool parse_amqp_value(amqp_field_value_t *value, zval *result)
+{
+    switch (value->kind) {
+        case AMQP_FIELD_KIND_BOOLEAN:
+            ZVAL_BOOL(result, value->value.boolean);
+            break;
+
+        case AMQP_FIELD_KIND_I8:
+            ZVAL_LONG(result, value->value.i8);
+            break;
+
+        case AMQP_FIELD_KIND_U8:
+            ZVAL_LONG(result, value->value.u8);
+            break;
+
+        case AMQP_FIELD_KIND_I16:
+            ZVAL_LONG(result, value->value.i16);
+            break;
+
+        case AMQP_FIELD_KIND_U16:
+            ZVAL_LONG(result, value->value.u16);
+            break;
+
+        case AMQP_FIELD_KIND_I32:
+            ZVAL_LONG(result, value->value.i32);
+            break;
+
+        case AMQP_FIELD_KIND_U32:
+            ZVAL_LONG(result, value->value.u32);
+            break;
+
+        case AMQP_FIELD_KIND_I64:
+            ZVAL_LONG(result, value->value.i64);
+            break;
+
+        case AMQP_FIELD_KIND_U64:
+            if (value->value.u64 > LONG_MAX) {
+                ZVAL_DOUBLE(result, value->value.u64);
+            } else {
+                ZVAL_LONG(result, value->value.u64);
+            }
+            break;
+
+        case AMQP_FIELD_KIND_F32:
+            ZVAL_DOUBLE(result, value->value.f32);
+            break;
+
+        case AMQP_FIELD_KIND_F64:
+            ZVAL_DOUBLE(result, value->value.f64);
+            break;
+
+        case AMQP_FIELD_KIND_UTF8:
+        case AMQP_FIELD_KIND_BYTES:
+            ZVAL_STRINGL(result, value->value.bytes.bytes, value->value.bytes.len);
+            break;
+
+        case AMQP_FIELD_KIND_VOID:
+            ZVAL_NULL(result);
+            break;
+
+        case AMQP_FIELD_KIND_ARRAY:
+            array_init(result);
+            parse_amqp_array(&(value->value.array), result);
+            break;
+
+        case AMQP_FIELD_KIND_TABLE:
+            array_init(result);
+            parse_amqp_table(&(value->value.table), result);
+            break;
+
+        case AMQP_FIELD_KIND_TIMESTAMP: {
+            zval timestamp;
+            ZVAL_UNDEF(&timestamp);
+
+            ZVAL_DOUBLE(&timestamp, value->value.u64);
+            object_init_ex(result, amqp_timestamp_class_entry);
+
+            zend_call_method_with_1_params(
+                PHP_AMQP_COMPAT_OBJ_P(result),
+                amqp_timestamp_class_entry,
+                NULL,
+                "__construct",
+                NULL,
+                &timestamp
+            );
+            break;
+        }
+
+        case AMQP_FIELD_KIND_DECIMAL: {
+            zval e;
+            zval n;
+            ZVAL_UNDEF(&e);
+            ZVAL_UNDEF(&n);
+
+            ZVAL_LONG(&e, value->value.decimal.decimals);
+            ZVAL_LONG(&n, value->value.decimal.value);
+
+            object_init_ex(result, amqp_decimal_class_entry);
+
+            zend_call_method_with_2_params(
+                PHP_AMQP_COMPAT_OBJ_P(result),
+                amqp_decimal_class_entry,
+                NULL,
+                "__construct",
+                NULL,
+                &e,
+                &n
+            );
+
+            zval_ptr_dtor(&e);
+            zval_ptr_dtor(&n);
+            break;
+        }
+
+        default:
+            return 0;
+    }
+
+    return 1;
+}
+
+void parse_amqp_array(amqp_array_t *array, zval *result)
+{
+    assert(Z_TYPE_P(result) == IS_ARRAY);
+
+    int j;
+    for (j = 0; j < array->num_entries; ++j) {
+        zval result_nested;
+        ZVAL_UNDEF(&result_nested);
+        if (parse_amqp_value(&(array->entries[j]), &result_nested)) {
+            add_next_index_zval(result, &result_nested);
+        }
+    }
+}
 
 void parse_amqp_table(amqp_table_t *table, zval *result)
 {
     int i;
-    zend_bool has_value = 0;
-
-    zval value;
+    zval result_nested;
 
     assert(Z_TYPE_P(result) == IS_ARRAY);
 
     for (i = 0; i < table->num_entries; i++) {
-        ZVAL_UNDEF(&value);
-        has_value = 1;
-
         amqp_table_entry_t *entry = &(table->entries[i]);
-        switch (entry->value.kind) {
-            case AMQP_FIELD_KIND_BOOLEAN:
-                ZVAL_BOOL(&value, entry->value.value.boolean);
-                break;
-            case AMQP_FIELD_KIND_I8:
-                ZVAL_LONG(&value, entry->value.value.i8);
-                break;
-            case AMQP_FIELD_KIND_U8:
-                ZVAL_LONG(&value, entry->value.value.u8);
-                break;
-            case AMQP_FIELD_KIND_I16:
-                ZVAL_LONG(&value, entry->value.value.i16);
-                break;
-            case AMQP_FIELD_KIND_U16:
-                ZVAL_LONG(&value, entry->value.value.u16);
-                break;
-            case AMQP_FIELD_KIND_I32:
-                ZVAL_LONG(&value, entry->value.value.i32);
-                break;
-            case AMQP_FIELD_KIND_U32:
-                ZVAL_LONG(&value, entry->value.value.u32);
-                break;
-            case AMQP_FIELD_KIND_I64:
-                ZVAL_LONG(&value, entry->value.value.i64);
-                break;
-            case AMQP_FIELD_KIND_U64:
-                if (entry->value.value.u64 > LONG_MAX) {
-                    ZVAL_DOUBLE(&value, entry->value.value.u64);
-                } else {
-                    ZVAL_LONG(&value, entry->value.value.u64);
-                }
-                break;
-            case AMQP_FIELD_KIND_F32:
-                ZVAL_DOUBLE(&value, entry->value.value.f32);
-                break;
-            case AMQP_FIELD_KIND_F64:
-                ZVAL_DOUBLE(&value, entry->value.value.f64);
-                break;
-            case AMQP_FIELD_KIND_UTF8:
-            case AMQP_FIELD_KIND_BYTES:
-                ZVAL_STRINGL(&value, entry->value.value.bytes.bytes, entry->value.value.bytes.len);
-                break;
-            case AMQP_FIELD_KIND_ARRAY: {
-                int j;
-                array_init(&value);
-                for (j = 0; j < entry->value.value.array.num_entries; ++j) {
-                    switch (entry->value.value.array.entries[j].kind) {
-                        case AMQP_FIELD_KIND_UTF8:
-                            add_next_index_stringl(
-                                &value,
-                                entry->value.value.array.entries[j].value.bytes.bytes,
-                                entry->value.value.array.entries[j].value.bytes.len
-                            );
-                            break;
-                        case AMQP_FIELD_KIND_TABLE: {
-                            zval subtable;
-                            ZVAL_UNDEF(&subtable);
-                            array_init(&subtable);
-
-                            parse_amqp_table(&(entry->value.value.array.entries[j].value.table), &subtable);
-                            add_next_index_zval(&value, &subtable);
-                        } break;
-                        default:
-                            break;
-                    }
-                }
-            } break;
-            case AMQP_FIELD_KIND_TABLE:
-                array_init(&value);
-                parse_amqp_table(&(entry->value.value.table), &value);
-                break;
-
-            case AMQP_FIELD_KIND_TIMESTAMP: {
-                zval timestamp;
-                ZVAL_UNDEF(&timestamp);
-
-                ZVAL_DOUBLE(&timestamp, entry->value.value.u64);
-                object_init_ex(&value, amqp_timestamp_class_entry);
-
-                zend_call_method_with_1_params(
-                    PHP_AMQP_COMPAT_OBJ_P(&value),
-                    amqp_timestamp_class_entry,
-                    NULL,
-                    "__construct",
-                    NULL,
-                    &timestamp
-                );
-                break;
-            }
-
-            case AMQP_FIELD_KIND_VOID:
-                ZVAL_NULL(&value);
-                break;
-            case AMQP_FIELD_KIND_DECIMAL: {
-
-                zval e;
-                zval n;
-                ZVAL_UNDEF(&e);
-                ZVAL_UNDEF(&n);
-
-                ZVAL_LONG(&e, entry->value.value.decimal.decimals);
-                ZVAL_LONG(&n, entry->value.value.decimal.value);
-
-                object_init_ex(&value, amqp_decimal_class_entry);
-
-                zend_call_method_with_2_params(
-                    PHP_AMQP_COMPAT_OBJ_P(&value),
-                    amqp_decimal_class_entry,
-                    NULL,
-                    "__construct",
-                    NULL,
-                    &e,
-                    &n
-                );
-
-                zval_ptr_dtor(&e);
-                zval_ptr_dtor(&n);
-                break;
-            }
-            default:
-                has_value = 0;
-                break;
-        }
-
-        if (has_value) {
+        ZVAL_UNDEF(&result_nested);
+        if (parse_amqp_value(&(entry->value), &result_nested)) {
             char *key = estrndup(entry->key.bytes, (unsigned) entry->key.len);
-            add_assoc_zval(result, key, &value);
+            add_assoc_zval(result, key, &result_nested);
             efree(key);
         } else {
-            if (!Z_ISUNDEF(value)) {
-                zval_ptr_dtor(&value);
-            }
+            zval_ptr_dtor(&result_nested);
         }
     }
-    return;
 }
 
 void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj)

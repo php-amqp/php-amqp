@@ -7,7 +7,7 @@ class AMQPQueue
 {
     private AMQPConnection $connection;
 
-    private AMQPChannel$channel;
+    private AMQPChannel $channel;
 
     private ?string $name = null;
 

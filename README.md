@@ -49,7 +49,6 @@ cases.
 
 ### Notes & limitations
 
-- Nested header arrays may contain only string values. Other warnings trigger a warning
 - You can't share any of AMQP API objects (`AMQPConnection`, `AMQPChannel`, `AMQPQueue`, `AMQPExchange`)
   between threads. Use a separate connection per thread.
 - There may only be one persistent connection
