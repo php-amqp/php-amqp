@@ -23,24 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2023-08-15</date>
-    <time>22:10:56</time>
+    <time>22:13:13</time>
     <version>
-        <release>2.0.0RC1</release>
-        <api>2.0.0RC1</api>
+        <release>2.0.0dev</release>
+        <api>2.0.0dev</api>
     </version>
     <stability>
-        <release>beta</release>
-        <api>beta</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- Handle nested AMQP value serialization/deserialization (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/461)
- - Document lack of reliability of AMQPConnection::isConnected (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/306)
- - Prevent reuse of channel ID of broken channels (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/460)
- - Gracefully handle zero as a heartbeat value (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/459)
- - Build with the clang compiler on CI (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/457)
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.0.0beta2...v2.0.0RC1]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.0.0RC1...latest
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -297,6 +294,27 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0beta2...v2.0.0RC1]]></notes>
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2023-08-15</date>
+            <time>22:10:56</time>
+            <version>
+                <release>2.0.0RC1</release>
+                <api>2.0.0RC1</api>
+            </version>
+            <stability>
+                <release>beta</release>
+                <api>beta</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- Handle nested AMQP value serialization/deserialization (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/461)
+ - Document lack of reliability of AMQPConnection::isConnected (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/306)
+ - Prevent reuse of channel ID of broken channels (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/460)
+ - Gracefully handle zero as a heartbeat value (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/459)
+ - Build with the clang compiler on CI (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/457)
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v2.0.0beta2...v2.0.0RC1]]></notes>
+        </release>
         <release>
             <date>2023-08-03</date>
             <time>06:22:40</time>
