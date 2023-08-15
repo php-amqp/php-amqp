@@ -40,6 +40,7 @@ $ex->publish(
             'foo' => 'fval',
             'bar' => array(123, 'a'),
             'baz' => array('a', 'bc', 'def', 123, 'g'),
+            'bla' => array('one' => 2),
         )
     )
 );
@@ -62,6 +63,7 @@ var_dump($header);
 var_dump($msg->getHeader('foo'));
 var_dump($msg->getHeader('bar'));
 var_dump($msg->getHeader('baz'));
+var_dump($msg->getHeader('bla'));
 
 $ex->delete();
 $q->delete();
@@ -109,5 +111,9 @@ array(4) {
   string(3) "def"
   [3]=>
   string(1) "g"
+}
+array(1) {
+  ["one"]=>
+  int(2)
 }
 ==DONE==

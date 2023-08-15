@@ -180,24 +180,14 @@ void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amq
 
     ZEND_HASH_FOREACH_KEY_VAL(ht, index, zkey, value)
 
-        if (Z_TYPE_P(value) != IS_STRING) {
-            if (zkey) {
-                php_error_docref(
-                    NULL,
-                    E_WARNING,
-                    "Ignoring field '%s' due to unsupported value type (%s)",
-                    ZSTR_VAL(zkey),
-                    zend_zval_type_name(value)
-                );
-            } else {
-                php_error_docref(
-                    NULL,
-                    E_WARNING,
-                    "Ignoring field '%ld' due to unsupported value type (%s)",
-                    index,
-                    zend_zval_type_name(value)
-                );
-            }
+        if (!zkey && Z_TYPE_P(value) != IS_STRING && Z_TYPE_P(value) != IS_ARRAY && Z_TYPE_P(value) != IS_OBJECT) {
+            php_error_docref(
+                NULL,
+                E_WARNING,
+                "Ignoring field '%ld' due to unsupported value type (%s)",
+                index,
+                zend_zval_type_name(value)
+            );
             continue;
         }
 
