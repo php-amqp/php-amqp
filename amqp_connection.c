@@ -1710,8 +1710,6 @@ static PHP_METHOD(amqp_connection_class, setConnectionName)
 }
 /* }}} */
 
-static PHP_METHOD(amqp_connection_class, tune) { PHP_AMQP_NOPARAMS() }
-
 /* amqp_connection_class ARG_INFO definition */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, credentials, IS_ARRAY, 0, "[]")

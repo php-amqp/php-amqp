@@ -65,7 +65,7 @@ zend_class_entry *amqp_channel_class_entry;
 
 zend_object_handlers amqp_channel_object_handlers;
 
-void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool check_errors)
+void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool throw)
 {
     assert(channel_resource != NULL);
 
@@ -90,16 +90,35 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool c
     if (connection_resource && connection_resource->is_connected && channel_resource->channel_id > 0) {
         assert(connection_resource != NULL);
 
-        amqp_channel_close(connection_resource->connection_state, channel_resource->channel_id, AMQP_REPLY_SUCCESS);
+        amqp_rpc_reply_t close_res =
+            amqp_channel_close(connection_resource->connection_state, channel_resource->channel_id, AMQP_REPLY_SUCCESS);
 
-        amqp_rpc_reply_t res = amqp_get_rpc_reply(connection_resource->connection_state);
-
-        if (check_errors && PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
-            php_amqp_zend_throw_exception_short(res, amqp_channel_exception_class_entry);
-            return;
+        if (throw && PHP_AMQP_MAYBE_ERROR(close_res, channel_resource)) {
+            php_amqp_zend_throw_exception_short(close_res, amqp_channel_exception_class_entry);
+            goto err;
         }
 
-        php_amqp_maybe_release_buffers_on_channel(connection_resource, channel_resource);
+		if (close_res.reply_type != AMQP_RESPONSE_NORMAL) {
+			goto err;
+		}
+
+        amqp_rpc_reply_t reply_res = amqp_get_rpc_reply(connection_resource->connection_state);
+        if (throw && PHP_AMQP_MAYBE_ERROR(reply_res, channel_resource)) {
+            php_amqp_zend_throw_exception_short(reply_res, amqp_channel_exception_class_entry);
+            goto err;
+        }
+
+		if (reply_res.reply_type != AMQP_RESPONSE_NORMAL) {
+			goto err;
+		}
+
+		php_amqp_maybe_release_buffers_on_channel(connection_resource, channel_resource);
+		return;
+
+		err:
+			// Mark failed slot as used
+			connection_resource->used_slots++;
+			return;
     }
 }
 
