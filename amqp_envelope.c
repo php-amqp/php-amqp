@@ -118,7 +118,7 @@ void convert_amqp_envelope_to_zval(amqp_envelope_t *amqp_envelope, zval *envelop
 /* {{{ proto AMQPEnvelope::__construct() */
 static PHP_METHOD(amqp_envelope_class, __construct)
 {
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* BC */
     php_amqp_basic_properties_set_empty_headers(getThis());
@@ -131,7 +131,7 @@ static PHP_METHOD(amqp_envelope_class, getBody)
 {
     zval rv;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     zval *zv = PHP_AMQP_READ_THIS_PROP("body");
 
@@ -147,7 +147,7 @@ static PHP_METHOD(amqp_envelope_class, getBody)
 static PHP_METHOD(amqp_envelope_class, getRoutingKey)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("routingKey");
 }
 /* }}} */
@@ -156,7 +156,7 @@ static PHP_METHOD(amqp_envelope_class, getRoutingKey)
 static PHP_METHOD(amqp_envelope_class, getDeliveryTag)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("deliveryTag");
 }
 /* }}} */
@@ -165,7 +165,7 @@ static PHP_METHOD(amqp_envelope_class, getDeliveryTag)
 static PHP_METHOD(amqp_envelope_class, getConsumerTag)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("consumerTag");
 }
 /* }}} */
@@ -174,7 +174,7 @@ static PHP_METHOD(amqp_envelope_class, getConsumerTag)
 static PHP_METHOD(amqp_envelope_class, getExchangeName)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("exchangeName");
 }
 /* }}} */
@@ -183,7 +183,7 @@ static PHP_METHOD(amqp_envelope_class, getExchangeName)
 static PHP_METHOD(amqp_envelope_class, isRedelivery)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("isRedelivery");
 }
 /* }}} */

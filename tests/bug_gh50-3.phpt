@@ -40,8 +40,8 @@ for ($i = 0; $i < 3; $i++) {
 --EXPECT--
 int(1)
 int(2)
-int(1)
+int(3)
 int(1)
 int(2)
-int(1)
+int(3)
 ==DONE==

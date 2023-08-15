@@ -101,7 +101,7 @@ static PHP_METHOD(amqp_exchange_class, getName)
 {
     zval rv;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     if (PHP_AMQP_READ_THIS_PROP_STRLEN("name") > 0) {
         PHP_AMQP_RETURN_THIS_PROP("name");
@@ -147,7 +147,7 @@ static PHP_METHOD(amqp_exchange_class, getFlags)
 
     zend_long flags = AMQP_NOPARAM;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     if (PHP_AMQP_READ_THIS_PROP_BOOL("passive")) {
         flags |= AMQP_PASSIVE;
@@ -198,7 +198,7 @@ static PHP_METHOD(amqp_exchange_class, getType)
 {
     zval rv;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     if (PHP_AMQP_READ_THIS_PROP_STRLEN("type") > 0) {
         PHP_AMQP_RETURN_THIS_PROP("type");
@@ -269,7 +269,7 @@ Get the exchange arguments */
 static PHP_METHOD(amqp_exchange_class, getArguments)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("arguments");
 }
 /* }}} */
@@ -351,9 +351,7 @@ static PHP_METHOD(amqp_exchange_class, declareExchange)
     amqp_channel_resource *channel_resource;
     amqp_table_t *arguments;
 
-    if (zend_parse_parameters_none() == FAILURE) {
-        return;
-    }
+    PHP_AMQP_NOPARAMS()
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
     PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not declare exchange.");
@@ -795,7 +793,7 @@ Get the AMQPChannel object in use */
 static PHP_METHOD(amqp_exchange_class, getChannel)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("channel");
 }
 /* }}} */
@@ -805,7 +803,7 @@ Get the AMQPConnection object in use */
 static PHP_METHOD(amqp_exchange_class, getConnection)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("connection");
 }
 /* }}} */

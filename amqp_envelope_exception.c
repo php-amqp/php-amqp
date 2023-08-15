@@ -36,7 +36,7 @@ Get AMQPEnvelope object */
 static PHP_METHOD(amqp_envelope_exception_class, getEnvelope)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     PHP_AMQP_RETURN_THIS_PROP("envelope");
 }

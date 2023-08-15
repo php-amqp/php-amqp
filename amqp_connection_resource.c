@@ -422,7 +422,7 @@ amqp_channel_t php_amqp_connection_resource_get_available_channel_id(amqp_connec
 
     amqp_channel_t slot;
 
-    for (slot = 0; slot < resource->max_slots; slot++) {
+    for (slot = resource->used_slots; slot < resource->max_slots; slot++) {
         if (resource->slots[slot] == 0) {
             return (amqp_channel_t) (slot + 1);
         }

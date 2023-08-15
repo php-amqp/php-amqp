@@ -814,7 +814,7 @@ static PHP_METHOD(amqp_connection_class, isConnected)
 {
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -830,7 +830,7 @@ static PHP_METHOD(amqp_connection_class, connect)
 {
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -859,7 +859,7 @@ static PHP_METHOD(amqp_connection_class, pconnect)
 {
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -892,7 +892,7 @@ static PHP_METHOD(amqp_connection_class, pdisconnect)
 {
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -927,7 +927,7 @@ static PHP_METHOD(amqp_connection_class, disconnect)
 {
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -962,7 +962,7 @@ static PHP_METHOD(amqp_connection_class, reconnect)
 {
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -997,7 +997,7 @@ static PHP_METHOD(amqp_connection_class, preconnect)
 {
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -1033,7 +1033,7 @@ get the login */
 static PHP_METHOD(amqp_connection_class, getLogin)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("login");
 }
 /* }}} */
@@ -1071,7 +1071,7 @@ get the password */
 static PHP_METHOD(amqp_connection_class, getPassword)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("password");
 }
 /* }}} */
@@ -1116,7 +1116,7 @@ get the host */
 static PHP_METHOD(amqp_connection_class, getHost)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("host");
 }
 /* }}} */
@@ -1155,7 +1155,7 @@ get the port */
 static PHP_METHOD(amqp_connection_class, getPort)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("port");
 }
 /* }}} */
@@ -1193,7 +1193,7 @@ get the vhost */
 static PHP_METHOD(amqp_connection_class, getVhost)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("vhost");
 }
 /* }}} */
@@ -1237,7 +1237,7 @@ static PHP_METHOD(amqp_connection_class, getTimeout)
     );
 
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("readTimeout");
 }
 /* }}} */
@@ -1293,7 +1293,7 @@ get the read timeout */
 static PHP_METHOD(amqp_connection_class, getReadTimeout)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("readTimeout");
 }
 /* }}} */
@@ -1341,7 +1341,7 @@ get write timeout */
 static PHP_METHOD(amqp_connection_class, getWriteTimeout)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("writeTimeout");
 }
 /* }}} */
@@ -1389,7 +1389,7 @@ get rpc timeout */
 static PHP_METHOD(amqp_connection_class, getConnectTimeout)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("connectTimeout");
 }
 /* }}} */
@@ -1399,7 +1399,7 @@ get rpc timeout */
 static PHP_METHOD(amqp_connection_class, getRpcTimeout)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("rpcTimeout");
 }
 /* }}} */
@@ -1449,7 +1449,7 @@ static PHP_METHOD(amqp_connection_class, getUsedChannels)
     amqp_connection_object *connection;
 
     /* Get the timeout from the method params */
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -1471,7 +1471,7 @@ PHP_METHOD(amqp_connection_class, getMaxChannels)
     zval rv;
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -1491,7 +1491,7 @@ static PHP_METHOD(amqp_connection_class, getMaxFrameSize)
     zval rv;
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -1511,7 +1511,7 @@ static PHP_METHOD(amqp_connection_class, getHeartbeatInterval)
     zval rv;
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
@@ -1530,7 +1530,7 @@ static PHP_METHOD(amqp_connection_class, isPersistent)
 {
     amqp_connection_object *connection;
 
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
@@ -1543,7 +1543,7 @@ static PHP_METHOD(amqp_connection_class, isPersistent)
 static PHP_METHOD(amqp_connection_class, getCACert)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("cacert");
 }
 /* }}} */
@@ -1570,7 +1570,7 @@ static PHP_METHOD(amqp_connection_class, setCACert)
 static PHP_METHOD(amqp_connection_class, getCert)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("cert");
 }
 /* }}} */
@@ -1597,7 +1597,7 @@ static PHP_METHOD(amqp_connection_class, setCert)
 static PHP_METHOD(amqp_connection_class, getKey)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("key");
 }
 /* }}} */
@@ -1625,7 +1625,7 @@ static PHP_METHOD(amqp_connection_class, setKey)
 static PHP_METHOD(amqp_connection_class, getVerify)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("verify");
 }
 /* }}} */
@@ -1648,7 +1648,7 @@ get sasl method */
 static PHP_METHOD(amqp_connection_class, getSaslMethod)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("saslMethod");
 }
 /* }}} */
@@ -1682,7 +1682,7 @@ static PHP_METHOD(amqp_connection_class, setSaslMethod)
 static PHP_METHOD(amqp_connection_class, getConnectionName)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
     PHP_AMQP_RETURN_THIS_PROP("connectionName");
 }
 /* }}} */

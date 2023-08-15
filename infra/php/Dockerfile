@@ -24,7 +24,7 @@ CMD PHP_AMQP_DOCKER_ENTRYPOINT=1 php /src/infra/tools/pamqp-docker-setup && \
 
 FROM dev AS dev-all
 RUN apt-get install -yqq gnupg2
-RUN echo "deb https://apt.llvm.org/bookworm/ llvm-toolchain-bookworm main" > /etc/apt/sources.list.d/llvm.list
+RUN echo "deb https://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-17 main" > /etc/apt/sources.list.d/llvm.list
 RUN curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 RUN apt-get update -yqq
 RUN apt-get install -yqq clang-format-17

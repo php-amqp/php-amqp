@@ -86,7 +86,7 @@ Get exponent */
 static PHP_METHOD(amqp_decimal_class, getExponent)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     PHP_AMQP_RETURN_THIS_PROP("exponent");
 }
@@ -97,7 +97,7 @@ Get E */
 static PHP_METHOD(amqp_decimal_class, getSignificand)
 {
     zval rv;
-    PHP_AMQP_NOPARAMS();
+    PHP_AMQP_NOPARAMS()
 
     PHP_AMQP_RETURN_THIS_PROP("significand");
 }
