@@ -405,6 +405,7 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
 
 #define AMQP_ERROR_CATEGORY_MASK (1 << 29)
 
+#define PHP_AMQP_RECURSION_DEPTH_LIMIT (1 << 7)
 
 #ifdef PHP_WIN32
     #define AMQP_OS_SOCKET_TIMEOUT_ERRNO AMQP_ERROR_CATEGORY_MASK | WSAETIMEDOUT

@@ -143,7 +143,7 @@ int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *
     add_next_index_stringl(&params, m->exchange.bytes, m->exchange.len);
     add_next_index_stringl(&params, m->routing_key.bytes, m->routing_key.len);
 
-    php_amqp_basic_properties_convert_to_zval(&msg->properties, &basic_properties);
+    php_amqp_basic_properties_to_zval(&msg->properties, &basic_properties);
     add_next_index_zval(&params, &basic_properties);
     Z_ADDREF_P(&basic_properties);
 

@@ -60,14 +60,14 @@
 #include "amqp_timestamp.h"
 #include "amqp_decimal.h"
 
-void parse_amqp_array(amqp_array_t *array, zval *result);
-zend_bool parse_amqp_value(amqp_field_value_t *value, zval *result);
+void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, uint8_t depth);
+void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, uint8_t depth);
+zend_bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth);
 
 zend_class_entry *amqp_basic_properties_class_entry;
 #define this_ce amqp_basic_properties_class_entry
 
-
-void php_amqp_basic_properties_convert_to_zval(amqp_basic_properties_t *props, zval *obj)
+void php_amqp_basic_properties_to_zval(amqp_basic_properties_t *props, zval *obj)
 {
     object_init_ex(obj, this_ce);
 
@@ -562,8 +562,18 @@ PHP_MINIT_FUNCTION(amqp_basic_properties)
     return SUCCESS;
 }
 
-zend_bool parse_amqp_value(amqp_field_value_t *value, zval *result)
+zend_bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth)
 {
+    if (depth >= PHP_AMQP_RECURSION_DEPTH_LIMIT) {
+        zend_throw_exception_ex(
+            amqp_exception_class_entry,
+            0,
+            "Recursion depth limit of %d reached while serializing value",
+            PHP_AMQP_RECURSION_DEPTH_LIMIT
+        );
+        return 0;
+    }
+
     switch (value->kind) {
         case AMQP_FIELD_KIND_BOOLEAN:
             ZVAL_BOOL(result, value->value.boolean);
@@ -624,12 +634,12 @@ zend_bool parse_amqp_value(amqp_field_value_t *value, zval *result)
 
         case AMQP_FIELD_KIND_ARRAY:
             array_init(result);
-            parse_amqp_array(&(value->value.array), result);
+            php_amqp_basic_properties_array_to_zval_internal(&(value->value.array), result, depth);
             break;
 
         case AMQP_FIELD_KIND_TABLE:
             array_init(result);
-            parse_amqp_table(&(value->value.table), result);
+            php_amqp_basic_properties_table_to_zval_internal(&(value->value.table), result, depth);
             break;
 
         case AMQP_FIELD_KIND_TIMESTAMP: {
@@ -683,85 +693,87 @@ zend_bool parse_amqp_value(amqp_field_value_t *value, zval *result)
     return 1;
 }
 
-void parse_amqp_array(amqp_array_t *array, zval *result)
+void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, uint8_t depth)
 {
     assert(Z_TYPE_P(result) == IS_ARRAY);
 
-    int j;
-    for (j = 0; j < array->num_entries; ++j) {
+    int i;
+    for (i = 0; i < array->num_entries; ++i) {
         zval result_nested;
         ZVAL_UNDEF(&result_nested);
-        if (parse_amqp_value(&(array->entries[j]), &result_nested)) {
+        if (php_amqp_basic_properties_value_to_zval_internal(&(array->entries[i]), &result_nested, depth)) {
             add_next_index_zval(result, &result_nested);
+        } else if (!Z_ISUNDEF(result_nested)) {
+            zval_ptr_dtor(&result_nested);
         }
     }
 }
 
-void parse_amqp_table(amqp_table_t *table, zval *result)
+void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, uint8_t depth)
 {
     int i;
     zval result_nested;
 
     assert(Z_TYPE_P(result) == IS_ARRAY);
 
-    for (i = 0; i < table->num_entries; i++) {
+    for (i = 0; i < table->num_entries; ++i) {
         amqp_table_entry_t *entry = &(table->entries[i]);
         ZVAL_UNDEF(&result_nested);
-        if (parse_amqp_value(&(entry->value), &result_nested)) {
+        if (php_amqp_basic_properties_value_to_zval_internal(&(entry->value), &result_nested, depth)) {
             char *key = estrndup(entry->key.bytes, (unsigned) entry->key.len);
             add_assoc_zval(result, key, &result_nested);
             efree(key);
-        } else {
+        } else if (!Z_ISUNDEF(result_nested)) {
             zval_ptr_dtor(&result_nested);
         }
     }
 }
 
-void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj)
+void php_amqp_basic_properties_extract(amqp_basic_properties_t *props, zval *obj)
 {
     zval headers;
 
     ZVAL_UNDEF(&headers);
     array_init(&headers);
 
-    if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {
+    if (props->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("contentType"),
-            (const char *) p->content_type.bytes,
-            (size_t) p->content_type.len
+            (const char *) props->content_type.bytes,
+            (size_t) props->content_type.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("contentType"));
     }
 
-    if (p->_flags & AMQP_BASIC_CONTENT_ENCODING_FLAG) {
+    if (props->_flags & AMQP_BASIC_CONTENT_ENCODING_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("contentEncoding"),
-            (const char *) p->content_encoding.bytes,
-            (size_t) p->content_encoding.len
+            (const char *) props->content_encoding.bytes,
+            (size_t) props->content_encoding.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("contentEncoding"));
     }
 
-    if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
-        parse_amqp_table(&(p->headers), &headers);
+    if (props->_flags & AMQP_BASIC_HEADERS_FLAG) {
+        php_amqp_basic_properties_table_to_zval_internal(&(props->headers), &headers, 0);
     }
 
     zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("headers"), &headers);
 
-    if (p->_flags & AMQP_BASIC_DELIVERY_MODE_FLAG) {
+    if (props->_flags & AMQP_BASIC_DELIVERY_MODE_FLAG) {
         zend_update_property_long(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("deliveryMode"),
-            (zend_long) p->delivery_mode
+            (zend_long) props->delivery_mode
         );
     } else {
         /* BC */
@@ -773,110 +785,115 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj)
         );
     }
 
-    if (p->_flags & AMQP_BASIC_PRIORITY_FLAG) {
-        zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("priority"), (zend_long) p->priority);
+    if (props->_flags & AMQP_BASIC_PRIORITY_FLAG) {
+        zend_update_property_long(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(obj),
+            ZEND_STRL("priority"),
+            (zend_long) props->priority
+        );
     } else {
         /* BC */
         zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("priority"), 0);
     }
 
-    if (p->_flags & AMQP_BASIC_CORRELATION_ID_FLAG) {
+    if (props->_flags & AMQP_BASIC_CORRELATION_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("correlationId"),
-            (const char *) p->correlation_id.bytes,
-            (size_t) p->correlation_id.len
+            (const char *) props->correlation_id.bytes,
+            (size_t) props->correlation_id.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("correlationId"));
     }
 
-    if (p->_flags & AMQP_BASIC_REPLY_TO_FLAG) {
+    if (props->_flags & AMQP_BASIC_REPLY_TO_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("replyTo"),
-            (const char *) p->reply_to.bytes,
-            (size_t) p->reply_to.len
+            (const char *) props->reply_to.bytes,
+            (size_t) props->reply_to.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("replyTo"));
     }
 
-    if (p->_flags & AMQP_BASIC_EXPIRATION_FLAG) {
+    if (props->_flags & AMQP_BASIC_EXPIRATION_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("expiration"),
-            (const char *) p->expiration.bytes,
-            (size_t) p->expiration.len
+            (const char *) props->expiration.bytes,
+            (size_t) props->expiration.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("expiration"));
     }
 
-    if (p->_flags & AMQP_BASIC_MESSAGE_ID_FLAG) {
+    if (props->_flags & AMQP_BASIC_MESSAGE_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("messageId"),
-            (const char *) p->message_id.bytes,
-            (size_t) p->message_id.len
+            (const char *) props->message_id.bytes,
+            (size_t) props->message_id.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("messageId"));
     }
 
-    if (p->_flags & AMQP_BASIC_TIMESTAMP_FLAG) {
+    if (props->_flags & AMQP_BASIC_TIMESTAMP_FLAG) {
         zend_update_property_long(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("timestamp"),
-            (zend_long) p->timestamp
+            (zend_long) props->timestamp
         );
     } else {
         /* BC */
         zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("timestamp"), 0);
     }
 
-    if (p->_flags & AMQP_BASIC_TYPE_FLAG) {
+    if (props->_flags & AMQP_BASIC_TYPE_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("type"),
-            (const char *) p->type.bytes,
-            (size_t) p->type.len
+            (const char *) props->type.bytes,
+            (size_t) props->type.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("type"));
     }
 
-    if (p->_flags & AMQP_BASIC_USER_ID_FLAG) {
+    if (props->_flags & AMQP_BASIC_USER_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("userId"),
-            (const char *) p->user_id.bytes,
-            (size_t) p->user_id.len
+            (const char *) props->user_id.bytes,
+            (size_t) props->user_id.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("userId"));
     }
 
-    if (p->_flags & AMQP_BASIC_APP_ID_FLAG) {
+    if (props->_flags & AMQP_BASIC_APP_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("appId"),
-            (const char *) p->app_id.bytes,
-            (size_t) p->app_id.len
+            (const char *) props->app_id.bytes,
+            (size_t) props->app_id.len
         );
     } else {
         /* BC */
