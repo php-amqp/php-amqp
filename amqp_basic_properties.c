@@ -60,11 +60,14 @@
 #include "amqp_timestamp.h"
 #include "amqp_decimal.h"
 
+void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, uint8_t depth);
+void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, uint8_t depth);
+zend_bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth);
+
 zend_class_entry *amqp_basic_properties_class_entry;
 #define this_ce amqp_basic_properties_class_entry
 
-
-void php_amqp_basic_properties_convert_to_zval(amqp_basic_properties_t *props, zval *obj)
+void php_amqp_basic_properties_to_zval(amqp_basic_properties_t *props, zval *obj)
 {
     object_init_ex(obj, this_ce);
 
@@ -240,7 +243,7 @@ static PHP_METHOD(AMQPBasicProperties, getContentEncoding)
 }
 /* }}} */
 
-/* {{{ proto AMQPBasicProperties::getCorrelationId() */
+/* {{{ proto AMQPBasicProperties::getHeaders() */
 static PHP_METHOD(AMQPBasicProperties, getHeaders)
 {
     zval rv;
@@ -559,203 +562,218 @@ PHP_MINIT_FUNCTION(amqp_basic_properties)
     return SUCCESS;
 }
 
+zend_bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth)
+{
+    if (depth >= PHP_AMQP_RECURSION_DEPTH_LIMIT) {
+        zend_throw_exception_ex(
+            amqp_exception_class_entry,
+            0,
+            "Recursion depth limit of %d reached while serializing value",
+            PHP_AMQP_RECURSION_DEPTH_LIMIT
+        );
+        return 0;
+    }
 
-void parse_amqp_table(amqp_table_t *table, zval *result)
+    switch (value->kind) {
+        case AMQP_FIELD_KIND_BOOLEAN:
+            ZVAL_BOOL(result, value->value.boolean);
+            break;
+
+        case AMQP_FIELD_KIND_I8:
+            ZVAL_LONG(result, value->value.i8);
+            break;
+
+        case AMQP_FIELD_KIND_U8:
+            ZVAL_LONG(result, value->value.u8);
+            break;
+
+        case AMQP_FIELD_KIND_I16:
+            ZVAL_LONG(result, value->value.i16);
+            break;
+
+        case AMQP_FIELD_KIND_U16:
+            ZVAL_LONG(result, value->value.u16);
+            break;
+
+        case AMQP_FIELD_KIND_I32:
+            ZVAL_LONG(result, value->value.i32);
+            break;
+
+        case AMQP_FIELD_KIND_U32:
+            ZVAL_LONG(result, value->value.u32);
+            break;
+
+        case AMQP_FIELD_KIND_I64:
+            ZVAL_LONG(result, value->value.i64);
+            break;
+
+        case AMQP_FIELD_KIND_U64:
+            if (value->value.u64 > LONG_MAX) {
+                ZVAL_DOUBLE(result, value->value.u64);
+            } else {
+                ZVAL_LONG(result, value->value.u64);
+            }
+            break;
+
+        case AMQP_FIELD_KIND_F32:
+            ZVAL_DOUBLE(result, value->value.f32);
+            break;
+
+        case AMQP_FIELD_KIND_F64:
+            ZVAL_DOUBLE(result, value->value.f64);
+            break;
+
+        case AMQP_FIELD_KIND_UTF8:
+        case AMQP_FIELD_KIND_BYTES:
+            ZVAL_STRINGL(result, value->value.bytes.bytes, value->value.bytes.len);
+            break;
+
+        case AMQP_FIELD_KIND_VOID:
+            ZVAL_NULL(result);
+            break;
+
+        case AMQP_FIELD_KIND_ARRAY:
+            array_init(result);
+            php_amqp_basic_properties_array_to_zval_internal(&(value->value.array), result, depth);
+            break;
+
+        case AMQP_FIELD_KIND_TABLE:
+            array_init(result);
+            php_amqp_basic_properties_table_to_zval_internal(&(value->value.table), result, depth);
+            break;
+
+        case AMQP_FIELD_KIND_TIMESTAMP: {
+            zval timestamp;
+            ZVAL_UNDEF(&timestamp);
+
+            ZVAL_DOUBLE(&timestamp, value->value.u64);
+            object_init_ex(result, amqp_timestamp_class_entry);
+
+            zend_call_method_with_1_params(
+                PHP_AMQP_COMPAT_OBJ_P(result),
+                amqp_timestamp_class_entry,
+                NULL,
+                "__construct",
+                NULL,
+                &timestamp
+            );
+            break;
+        }
+
+        case AMQP_FIELD_KIND_DECIMAL: {
+            zval e;
+            zval n;
+            ZVAL_UNDEF(&e);
+            ZVAL_UNDEF(&n);
+
+            ZVAL_LONG(&e, value->value.decimal.decimals);
+            ZVAL_LONG(&n, value->value.decimal.value);
+
+            object_init_ex(result, amqp_decimal_class_entry);
+
+            zend_call_method_with_2_params(
+                PHP_AMQP_COMPAT_OBJ_P(result),
+                amqp_decimal_class_entry,
+                NULL,
+                "__construct",
+                NULL,
+                &e,
+                &n
+            );
+
+            zval_ptr_dtor(&e);
+            zval_ptr_dtor(&n);
+            break;
+        }
+
+        default:
+            return 0;
+    }
+
+    return 1;
+}
+
+void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, uint8_t depth)
+{
+    assert(Z_TYPE_P(result) == IS_ARRAY);
+
+    int i;
+    for (i = 0; i < array->num_entries; ++i) {
+        zval result_nested;
+        ZVAL_UNDEF(&result_nested);
+        if (php_amqp_basic_properties_value_to_zval_internal(&(array->entries[i]), &result_nested, depth)) {
+            add_next_index_zval(result, &result_nested);
+        } else if (!Z_ISUNDEF(result_nested)) {
+            zval_ptr_dtor(&result_nested);
+        }
+    }
+}
+
+void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, uint8_t depth)
 {
     int i;
-    zend_bool has_value = 0;
-
-    zval value;
+    zval result_nested;
 
     assert(Z_TYPE_P(result) == IS_ARRAY);
 
-    for (i = 0; i < table->num_entries; i++) {
-        ZVAL_UNDEF(&value);
-        has_value = 1;
-
+    for (i = 0; i < table->num_entries; ++i) {
         amqp_table_entry_t *entry = &(table->entries[i]);
-        switch (entry->value.kind) {
-            case AMQP_FIELD_KIND_BOOLEAN:
-                ZVAL_BOOL(&value, entry->value.value.boolean);
-                break;
-            case AMQP_FIELD_KIND_I8:
-                ZVAL_LONG(&value, entry->value.value.i8);
-                break;
-            case AMQP_FIELD_KIND_U8:
-                ZVAL_LONG(&value, entry->value.value.u8);
-                break;
-            case AMQP_FIELD_KIND_I16:
-                ZVAL_LONG(&value, entry->value.value.i16);
-                break;
-            case AMQP_FIELD_KIND_U16:
-                ZVAL_LONG(&value, entry->value.value.u16);
-                break;
-            case AMQP_FIELD_KIND_I32:
-                ZVAL_LONG(&value, entry->value.value.i32);
-                break;
-            case AMQP_FIELD_KIND_U32:
-                ZVAL_LONG(&value, entry->value.value.u32);
-                break;
-            case AMQP_FIELD_KIND_I64:
-                ZVAL_LONG(&value, entry->value.value.i64);
-                break;
-            case AMQP_FIELD_KIND_U64:
-                if (entry->value.value.u64 > LONG_MAX) {
-                    ZVAL_DOUBLE(&value, entry->value.value.u64);
-                } else {
-                    ZVAL_LONG(&value, entry->value.value.u64);
-                }
-                break;
-            case AMQP_FIELD_KIND_F32:
-                ZVAL_DOUBLE(&value, entry->value.value.f32);
-                break;
-            case AMQP_FIELD_KIND_F64:
-                ZVAL_DOUBLE(&value, entry->value.value.f64);
-                break;
-            case AMQP_FIELD_KIND_UTF8:
-            case AMQP_FIELD_KIND_BYTES:
-                ZVAL_STRINGL(&value, entry->value.value.bytes.bytes, entry->value.value.bytes.len);
-                break;
-            case AMQP_FIELD_KIND_ARRAY: {
-                int j;
-                array_init(&value);
-                for (j = 0; j < entry->value.value.array.num_entries; ++j) {
-                    switch (entry->value.value.array.entries[j].kind) {
-                        case AMQP_FIELD_KIND_UTF8:
-                            add_next_index_stringl(
-                                &value,
-                                entry->value.value.array.entries[j].value.bytes.bytes,
-                                entry->value.value.array.entries[j].value.bytes.len
-                            );
-                            break;
-                        case AMQP_FIELD_KIND_TABLE: {
-                            zval subtable;
-                            ZVAL_UNDEF(&subtable);
-                            array_init(&subtable);
-
-                            parse_amqp_table(&(entry->value.value.array.entries[j].value.table), &subtable);
-                            add_next_index_zval(&value, &subtable);
-                        } break;
-                        default:
-                            break;
-                    }
-                }
-            } break;
-            case AMQP_FIELD_KIND_TABLE:
-                array_init(&value);
-                parse_amqp_table(&(entry->value.value.table), &value);
-                break;
-
-            case AMQP_FIELD_KIND_TIMESTAMP: {
-                zval timestamp;
-                ZVAL_UNDEF(&timestamp);
-
-                ZVAL_DOUBLE(&timestamp, entry->value.value.u64);
-                object_init_ex(&value, amqp_timestamp_class_entry);
-
-                zend_call_method_with_1_params(
-                    PHP_AMQP_COMPAT_OBJ_P(&value),
-                    amqp_timestamp_class_entry,
-                    NULL,
-                    "__construct",
-                    NULL,
-                    &timestamp
-                );
-                break;
-            }
-
-            case AMQP_FIELD_KIND_VOID:
-                ZVAL_NULL(&value);
-                break;
-            case AMQP_FIELD_KIND_DECIMAL: {
-
-                zval e;
-                zval n;
-                ZVAL_UNDEF(&e);
-                ZVAL_UNDEF(&n);
-
-                ZVAL_LONG(&e, entry->value.value.decimal.decimals);
-                ZVAL_LONG(&n, entry->value.value.decimal.value);
-
-                object_init_ex(&value, amqp_decimal_class_entry);
-
-                zend_call_method_with_2_params(
-                    PHP_AMQP_COMPAT_OBJ_P(&value),
-                    amqp_decimal_class_entry,
-                    NULL,
-                    "__construct",
-                    NULL,
-                    &e,
-                    &n
-                );
-
-                zval_ptr_dtor(&e);
-                zval_ptr_dtor(&n);
-                break;
-            }
-            default:
-                has_value = 0;
-                break;
-        }
-
-        if (has_value) {
+        ZVAL_UNDEF(&result_nested);
+        if (php_amqp_basic_properties_value_to_zval_internal(&(entry->value), &result_nested, depth)) {
             char *key = estrndup(entry->key.bytes, (unsigned) entry->key.len);
-            add_assoc_zval(result, key, &value);
+            add_assoc_zval(result, key, &result_nested);
             efree(key);
-        } else {
-            if (!Z_ISUNDEF(value)) {
-                zval_ptr_dtor(&value);
-            }
+        } else if (!Z_ISUNDEF(result_nested)) {
+            zval_ptr_dtor(&result_nested);
         }
     }
-    return;
 }
 
-void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj)
+void php_amqp_basic_properties_extract(amqp_basic_properties_t *props, zval *obj)
 {
     zval headers;
 
     ZVAL_UNDEF(&headers);
     array_init(&headers);
 
-    if (p->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {
+    if (props->_flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("contentType"),
-            (const char *) p->content_type.bytes,
-            (size_t) p->content_type.len
+            (const char *) props->content_type.bytes,
+            (size_t) props->content_type.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("contentType"));
     }
 
-    if (p->_flags & AMQP_BASIC_CONTENT_ENCODING_FLAG) {
+    if (props->_flags & AMQP_BASIC_CONTENT_ENCODING_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("contentEncoding"),
-            (const char *) p->content_encoding.bytes,
-            (size_t) p->content_encoding.len
+            (const char *) props->content_encoding.bytes,
+            (size_t) props->content_encoding.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("contentEncoding"));
     }
 
-    if (p->_flags & AMQP_BASIC_HEADERS_FLAG) {
-        parse_amqp_table(&(p->headers), &headers);
+    if (props->_flags & AMQP_BASIC_HEADERS_FLAG) {
+        php_amqp_basic_properties_table_to_zval_internal(&(props->headers), &headers, 0);
     }
 
     zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("headers"), &headers);
 
-    if (p->_flags & AMQP_BASIC_DELIVERY_MODE_FLAG) {
+    if (props->_flags & AMQP_BASIC_DELIVERY_MODE_FLAG) {
         zend_update_property_long(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("deliveryMode"),
-            (zend_long) p->delivery_mode
+            (zend_long) props->delivery_mode
         );
     } else {
         /* BC */
@@ -767,110 +785,115 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *p, zval *obj)
         );
     }
 
-    if (p->_flags & AMQP_BASIC_PRIORITY_FLAG) {
-        zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("priority"), (zend_long) p->priority);
+    if (props->_flags & AMQP_BASIC_PRIORITY_FLAG) {
+        zend_update_property_long(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(obj),
+            ZEND_STRL("priority"),
+            (zend_long) props->priority
+        );
     } else {
         /* BC */
         zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("priority"), 0);
     }
 
-    if (p->_flags & AMQP_BASIC_CORRELATION_ID_FLAG) {
+    if (props->_flags & AMQP_BASIC_CORRELATION_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("correlationId"),
-            (const char *) p->correlation_id.bytes,
-            (size_t) p->correlation_id.len
+            (const char *) props->correlation_id.bytes,
+            (size_t) props->correlation_id.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("correlationId"));
     }
 
-    if (p->_flags & AMQP_BASIC_REPLY_TO_FLAG) {
+    if (props->_flags & AMQP_BASIC_REPLY_TO_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("replyTo"),
-            (const char *) p->reply_to.bytes,
-            (size_t) p->reply_to.len
+            (const char *) props->reply_to.bytes,
+            (size_t) props->reply_to.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("replyTo"));
     }
 
-    if (p->_flags & AMQP_BASIC_EXPIRATION_FLAG) {
+    if (props->_flags & AMQP_BASIC_EXPIRATION_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("expiration"),
-            (const char *) p->expiration.bytes,
-            (size_t) p->expiration.len
+            (const char *) props->expiration.bytes,
+            (size_t) props->expiration.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("expiration"));
     }
 
-    if (p->_flags & AMQP_BASIC_MESSAGE_ID_FLAG) {
+    if (props->_flags & AMQP_BASIC_MESSAGE_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("messageId"),
-            (const char *) p->message_id.bytes,
-            (size_t) p->message_id.len
+            (const char *) props->message_id.bytes,
+            (size_t) props->message_id.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("messageId"));
     }
 
-    if (p->_flags & AMQP_BASIC_TIMESTAMP_FLAG) {
+    if (props->_flags & AMQP_BASIC_TIMESTAMP_FLAG) {
         zend_update_property_long(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("timestamp"),
-            (zend_long) p->timestamp
+            (zend_long) props->timestamp
         );
     } else {
         /* BC */
         zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("timestamp"), 0);
     }
 
-    if (p->_flags & AMQP_BASIC_TYPE_FLAG) {
+    if (props->_flags & AMQP_BASIC_TYPE_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("type"),
-            (const char *) p->type.bytes,
-            (size_t) p->type.len
+            (const char *) props->type.bytes,
+            (size_t) props->type.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("type"));
     }
 
-    if (p->_flags & AMQP_BASIC_USER_ID_FLAG) {
+    if (props->_flags & AMQP_BASIC_USER_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("userId"),
-            (const char *) p->user_id.bytes,
-            (size_t) p->user_id.len
+            (const char *) props->user_id.bytes,
+            (size_t) props->user_id.len
         );
     } else {
         /* BC */
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("userId"));
     }
 
-    if (p->_flags & AMQP_BASIC_APP_ID_FLAG) {
+    if (props->_flags & AMQP_BASIC_APP_ID_FLAG) {
         zend_update_property_stringl(
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(obj),
             ZEND_STRL("appId"),
-            (const char *) p->app_id.bytes,
-            (size_t) p->app_id.len
+            (const char *) props->app_id.bytes,
+            (size_t) props->app_id.len
         );
     } else {
         /* BC */

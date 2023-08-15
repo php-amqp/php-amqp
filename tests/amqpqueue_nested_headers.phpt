@@ -37,8 +37,10 @@ $q->bind($ex->getName(), '#');
 $ex->publish(
     'body', 'routing.1', AMQP_NOPARAM, array(
         'headers' => array(
-            'foo' => 'bar',
-            'baz' => array('a', 'bc', 'def')
+            'foo' => 'fval',
+            'bar' => array(array('aa', 'bb', array('bar_nested' => 'nested'))),
+            'baz' => array('a', 'bc', 'def', 123, 'g'),
+            'bla' => array('one' => 2),
         )
     )
 );
@@ -53,19 +55,24 @@ $msg = $errorQ->get(AMQP_AUTOACK);
 
 $header = $msg->getHeader('x-death');
 
-echo isset($header[0]['count']) ? 'with' : 'without', ' count ', PHP_EOL;
+echo isset($header[0]['count']) ? 'count found' : 'count not found', PHP_EOL;
 
 unset($header[0]['count']);
 
 var_dump($header);
+var_dump($msg->getHeader('foo'));
+var_dump($msg->getHeader('bar'));
+var_dump($msg->getHeader('baz'));
+var_dump($msg->getHeader('bla'));
 
 $ex->delete();
 $q->delete();
 $errorXchange->delete();
 $errorQ->delete();
 ?>
+==DONE==
 --EXPECTF--
-%s
+count %s
 array(1) {
   [0]=>
   array(5) {
@@ -87,3 +94,35 @@ array(1) {
     }
   }
 }
+string(4) "fval"
+array(1) {
+  [0]=>
+  array(3) {
+    [0]=>
+    string(2) "aa"
+    [1]=>
+    string(2) "bb"
+    [2]=>
+    array(1) {
+      ["bar_nested"]=>
+      string(6) "nested"
+    }
+  }
+}
+array(5) {
+  [0]=>
+  string(1) "a"
+  [1]=>
+  string(2) "bc"
+  [2]=>
+  string(3) "def"
+  [3]=>
+  int(123)
+  [4]=>
+  string(1) "g"
+}
+array(1) {
+  ["one"]=>
+  int(2)
+}
+==DONE==

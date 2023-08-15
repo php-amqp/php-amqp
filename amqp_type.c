@@ -30,6 +30,7 @@
     #include <amqp.h>
 #endif
 #include "Zend/zend_interfaces.h"
+#include "Zend/zend_exceptions.h"
 #include "amqp_decimal.h"
 #include "amqp_timestamp.h"
 #include "amqp_type.h"
@@ -38,8 +39,12 @@
     #define strtoimax _strtoi64
 #endif
 
-static void php_amqp_type_internal_free_amqp_array(amqp_array_t *array);
-static void php_amqp_type_internal_free_amqp_table(amqp_table_t *object, zend_bool clear_root);
+static void php_amqp_type_free_amqp_array_internal(amqp_array_t *array);
+static void php_amqp_type_free_amqp_table_internal(amqp_table_t *object, zend_bool clear_root);
+void php_amqp_type_internal_zval_to_amqp_array(zval *value, amqp_array_t *arguments, uint8_t depth);
+void php_amqp_type_zval_to_amqp_container_internal(zval *array, amqp_field_value_t **field, uint8_t depth);
+void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_table, uint8_t depth);
+zend_bool php_amqp_zval_to_amqp_value_internal(zval *value, amqp_field_value_t **field_ptr, char *key, uint8_t depth);
 
 amqp_bytes_t php_amqp_type_char_to_amqp_long(char const *cstr, size_t len)
 {
@@ -78,12 +83,12 @@ char *php_amqp_type_amqp_bytes_to_char(amqp_bytes_t bytes)
     return res;
 }
 
-void php_amqp_type_internal_convert_zval_array(zval *php_array, amqp_field_value_t **field, zend_bool allow_int_keys)
+void php_amqp_type_zval_to_amqp_container_internal(zval *array, amqp_field_value_t **field, uint8_t depth)
 {
     HashTable *ht;
     zend_string *key;
 
-    ht = Z_ARRVAL_P(php_array);
+    ht = Z_ARRVAL_P(array);
 
     zend_bool is_amqp_array = 1;
 
@@ -96,39 +101,35 @@ void php_amqp_type_internal_convert_zval_array(zval *php_array, amqp_field_value
 
     if (is_amqp_array) {
         (*field)->kind = AMQP_FIELD_KIND_ARRAY;
-        php_amqp_type_internal_convert_zval_to_amqp_array(php_array, &(*field)->value.array);
+        php_amqp_type_internal_zval_to_amqp_array(array, &(*field)->value.array, depth);
     } else {
         (*field)->kind = AMQP_FIELD_KIND_TABLE;
-        php_amqp_type_internal_convert_zval_to_amqp_table(php_array, &(*field)->value.table, allow_int_keys);
+        php_amqp_type_zval_to_amqp_table_internal(array, &(*field)->value.table, depth);
     }
 }
 
-void php_amqp_type_internal_convert_zval_to_amqp_table(
-    zval *php_array,
-    amqp_table_t *amqp_table,
-    zend_bool allow_int_keys
-)
+void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_table, uint8_t depth)
 {
     HashTable *ht;
-    zval *value;
+    zval *value_nested;
     zend_string *zkey;
     zend_ulong index;
     char *key;
     unsigned key_len;
-    ht = Z_ARRVAL_P(php_array);
+    ht = Z_ARRVAL_P(array);
 
     amqp_table->entries =
         (amqp_table_entry_t *) ecalloc((size_t) zend_hash_num_elements(ht), sizeof(amqp_table_entry_t));
     amqp_table->num_entries = 0;
 
-    ZEND_HASH_FOREACH_KEY_VAL(ht, index, zkey, value)
+    ZEND_HASH_FOREACH_KEY_VAL(ht, index, zkey, value_nested)
         char *string_key;
         amqp_table_entry_t *table_entry;
         amqp_field_value_t *field;
 
         /* Now pull the key */
         if (!zkey) {
-            if (allow_int_keys) {
+            if (depth > 0) {
                 /* Convert to strings non-string keys */
                 char str[32];
 
@@ -147,11 +148,11 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(
 
         string_key = estrndup(key, key_len);
 
-        /* Build the value */
+        /* Build the array */
         table_entry = &amqp_table->entries[amqp_table->num_entries++];
         field = &table_entry->value;
 
-        if (!php_amqp_type_internal_convert_php_to_amqp_field_value(value, &field, key)) {
+        if (!php_amqp_zval_to_amqp_value_internal(value_nested, &field, key, depth + 1)) {
             /* Reset entries counter back */
             amqp_table->num_entries--;
 
@@ -162,25 +163,25 @@ void php_amqp_type_internal_convert_zval_to_amqp_table(
     ZEND_HASH_FOREACH_END();
 }
 
-void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amqp_array_t *arguments)
+void php_amqp_type_internal_zval_to_amqp_array(zval *value, amqp_array_t *arguments, uint8_t depth)
 {
     HashTable *ht;
 
-    zval *value;
+    zval *value_nested;
 
     zend_string *zkey;
 
-    ht = Z_ARRVAL_P(zval_arguments);
+    ht = Z_ARRVAL_P(value);
 
     /* Allocate all the memory necessary for storing the arguments */
     arguments->entries =
         (amqp_field_value_t *) ecalloc((size_t) zend_hash_num_elements(ht), sizeof(amqp_field_value_t));
     arguments->num_entries = 0;
 
-    ZEND_HASH_FOREACH_STR_KEY_VAL(ht, zkey, value)
+    ZEND_HASH_FOREACH_STR_KEY_VAL(ht, zkey, value_nested)
         amqp_field_value_t *field = &arguments->entries[arguments->num_entries++];
 
-        if (!php_amqp_type_internal_convert_php_to_amqp_field_value(value, &field, ZSTR_VAL(zkey))) {
+        if (!php_amqp_zval_to_amqp_value_internal(value_nested, &field, ZSTR_VAL(zkey), depth)) {
             /* Reset entries counter back */
             arguments->num_entries--;
 
@@ -189,14 +190,24 @@ void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amq
     ZEND_HASH_FOREACH_END ();
 }
 
-zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, amqp_field_value_t **fieldPtr, char *key)
+zend_bool php_amqp_zval_to_amqp_value_internal(zval *value, amqp_field_value_t **field_ptr, char *key, uint8_t depth)
 {
     zend_bool result;
     char type[16];
     amqp_field_value_t *field;
 
+    if (depth >= PHP_AMQP_RECURSION_DEPTH_LIMIT) {
+        zend_throw_exception_ex(
+            amqp_exception_class_entry,
+            0,
+            "Recursion depth limit of %d reached while serializing value",
+            PHP_AMQP_RECURSION_DEPTH_LIMIT
+        );
+        return 0;
+    }
+
     result = 1;
-    field = *fieldPtr;
+    field = *field_ptr;
 
     switch (Z_TYPE_P(value)) {
         case IS_TRUE:
@@ -227,7 +238,7 @@ zend_bool php_amqp_type_internal_convert_php_to_amqp_field_value(zval *value, am
 
             break;
         case IS_ARRAY:
-            php_amqp_type_internal_convert_zval_array(value, &field, 1);
+            php_amqp_type_zval_to_amqp_container_internal(value, &field, depth + 1);
             break;
         case IS_NULL:
             field->kind = AMQP_FIELD_KIND_VOID;
@@ -303,13 +314,13 @@ amqp_table_t *php_amqp_type_convert_zval_to_amqp_table(zval *php_array)
     /* In setArguments, we are overwriting all the existing values */
     amqp_table = (amqp_table_t *) emalloc(sizeof(amqp_table_t));
 
-    php_amqp_type_internal_convert_zval_to_amqp_table(php_array, amqp_table, 0);
+    php_amqp_type_zval_to_amqp_table_internal(php_array, amqp_table, 0);
 
     return amqp_table;
 }
 
 
-static void php_amqp_type_internal_free_amqp_array(amqp_array_t *array)
+static void php_amqp_type_free_amqp_array_internal(amqp_array_t *array)
 {
     if (!array) {
         return;
@@ -322,10 +333,10 @@ static void php_amqp_type_internal_free_amqp_array(amqp_array_t *array)
 
         switch (entry->kind) {
             case AMQP_FIELD_KIND_TABLE:
-                php_amqp_type_internal_free_amqp_table(&entry->value.table, 0);
+                php_amqp_type_free_amqp_table_internal(&entry->value.table, 0);
                 break;
             case AMQP_FIELD_KIND_ARRAY:
-                php_amqp_type_internal_free_amqp_array(&entry->value.array);
+                php_amqp_type_free_amqp_array_internal(&entry->value.array);
                 break;
             case AMQP_FIELD_KIND_UTF8:
                 if (entry->value.bytes.bytes) {
@@ -343,7 +354,7 @@ static void php_amqp_type_internal_free_amqp_array(amqp_array_t *array)
     }
 }
 
-static void php_amqp_type_internal_free_amqp_table(amqp_table_t *object, zend_bool clear_root)
+static void php_amqp_type_free_amqp_table_internal(amqp_table_t *object, zend_bool clear_root)
 {
     if (!object) {
         return;
@@ -358,10 +369,10 @@ static void php_amqp_type_internal_free_amqp_table(amqp_table_t *object, zend_bo
 
             switch (entry->value.kind) {
                 case AMQP_FIELD_KIND_TABLE:
-                    php_amqp_type_internal_free_amqp_table(&entry->value.value.table, 0);
+                    php_amqp_type_free_amqp_table_internal(&entry->value.value.table, 0);
                     break;
                 case AMQP_FIELD_KIND_ARRAY:
-                    php_amqp_type_internal_free_amqp_array(&entry->value.value.array);
+                    php_amqp_type_free_amqp_array_internal(&entry->value.value.array);
                     break;
                 case AMQP_FIELD_KIND_UTF8:
                     if (entry->value.value.bytes.bytes) {
@@ -380,4 +391,4 @@ static void php_amqp_type_internal_free_amqp_table(amqp_table_t *object, zend_bo
     }
 }
 
-void php_amqp_type_free_amqp_table(amqp_table_t *object) { php_amqp_type_internal_free_amqp_table(object, 1); }
+void php_amqp_type_free_amqp_table(amqp_table_t *object) { php_amqp_type_free_amqp_table_internal(object, 1); }
