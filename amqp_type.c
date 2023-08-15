@@ -169,6 +169,7 @@ void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amq
     zval *value;
 
     zend_string *zkey;
+    zend_ulong index;
 
     ht = Z_ARRVAL_P(zval_arguments);
 
@@ -177,7 +178,29 @@ void php_amqp_type_internal_convert_zval_to_amqp_array(zval *zval_arguments, amq
         (amqp_field_value_t *) ecalloc((size_t) zend_hash_num_elements(ht), sizeof(amqp_field_value_t));
     arguments->num_entries = 0;
 
-    ZEND_HASH_FOREACH_STR_KEY_VAL(ht, zkey, value)
+    ZEND_HASH_FOREACH_KEY_VAL(ht, index, zkey, value)
+
+        if (Z_TYPE_P(value) != IS_STRING) {
+            if (zkey) {
+                php_error_docref(
+                    NULL,
+                    E_WARNING,
+                    "Ignoring field '%s' due to unsupported value type (%s)",
+                    ZSTR_VAL(zkey),
+                    zend_zval_type_name(value)
+                );
+            } else {
+                php_error_docref(
+                    NULL,
+                    E_WARNING,
+                    "Ignoring field '%ld' due to unsupported value type (%s)",
+                    index,
+                    zend_zval_type_name(value)
+                );
+            }
+            continue;
+        }
+
         amqp_field_value_t *field = &arguments->entries[arguments->num_entries++];
 
         if (!php_amqp_type_internal_convert_php_to_amqp_field_value(value, &field, ZSTR_VAL(zkey))) {

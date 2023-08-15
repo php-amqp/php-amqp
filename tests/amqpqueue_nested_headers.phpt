@@ -37,8 +37,9 @@ $q->bind($ex->getName(), '#');
 $ex->publish(
     'body', 'routing.1', AMQP_NOPARAM, array(
         'headers' => array(
-            'foo' => 'bar',
-            'baz' => array('a', 'bc', 'def')
+            'foo' => 'fval',
+            'bar' => array(123, 'a'),
+            'baz' => array('a', 'bc', 'def', 123, 'g'),
         )
     )
 );
@@ -53,19 +54,26 @@ $msg = $errorQ->get(AMQP_AUTOACK);
 
 $header = $msg->getHeader('x-death');
 
-echo isset($header[0]['count']) ? 'with' : 'without', ' count ', PHP_EOL;
+echo isset($header[0]['count']) ? 'count found' : 'count not found', PHP_EOL;
 
 unset($header[0]['count']);
 
 var_dump($header);
+var_dump($msg->getHeader('foo'));
+var_dump($msg->getHeader('bar'));
+var_dump($msg->getHeader('baz'));
 
 $ex->delete();
 $q->delete();
 $errorXchange->delete();
 $errorQ->delete();
 ?>
+==DONE==
 --EXPECTF--
-%s
+Warning: AMQPExchange::publish(): Ignoring field '0' due to unsupported value type (int) in %s.php on line %d
+
+Warning: AMQPExchange::publish(): Ignoring field '3' due to unsupported value type (int) in %s.php on line %d
+count %s
 array(1) {
   [0]=>
   array(5) {
@@ -87,3 +95,19 @@ array(1) {
     }
   }
 }
+string(4) "fval"
+array(1) {
+  [0]=>
+  string(1) "a"
+}
+array(4) {
+  [0]=>
+  string(1) "a"
+  [1]=>
+  string(2) "bc"
+  [2]=>
+  string(3) "def"
+  [3]=>
+  string(1) "g"
+}
+==DONE==

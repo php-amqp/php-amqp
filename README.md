@@ -47,39 +47,31 @@ breaking changes between versions, e.g. from 1.x to 2.x.
 Finally, check out the [tests](https://github.com/php-amqp/php-amqp/tree/latest/tests) to see usage examples and edge
 cases.
 
-### Notes
+### Notes & limitations
 
-- Max channels per connection means how many concurrent channels per connection may be opened at the same time
-  (this limit may be increased later to max AMQP protocol number - 65532 without any problem).
-- Nested header arrays may contain only string values.
-- You can't share none of AMQP API objects (none of `AMQPConnection`, `AMQPChannel`, `AMQPQueue`, `AMQPExchange`)
-  between threads.
-  You have to use separate connection and so on per thread.
+- Nested header arrays may contain only string values. Other warnings trigger a warning
+- You can't share any of AMQP API objects (`AMQPConnection`, `AMQPChannel`, `AMQPQueue`, `AMQPExchange`)
+  between threads. Use a separate connection per thread.
+- There may only be one persistent connection
+  per [connection information](https://github.com/search?q=repo%3Aphp-amqp%2Fphp-amqp+amqp_conn_res_h&type=code).
+  If there will be an attempt to create another persistent connection with the same credentials, an exception will be
+  thrown.
+- Channels on persistent connections are not persistent: they are destroyed between requests.
+- Heartbeats are limited to blocking calls only, so if there are no any operations on a connection or no active
+  consumer set, connection may be closed by the broker as dead.
 
 ### Related libraries
 
 * [enqueue/amqp-ext](https://github.com/php-enqueue/amqp-ext) is
-  a [amqp interop](https://github.com/queue-interop/queue-interop#amqp-interop) compatible wrapper.
-
-#### Persistent connection
-
-Limitations:
-
-- there may only be one persistent connection per unique credentials (login+password+host+port+vhost).
-  If there will be an attempt to create another persistent connection with the same credentials, an exception will be
-  thrown.
-- channels on persistent connections are not persistent: they are destroyed between requests.
-- heartbeats are limited to blocking calls only, so if there are no any operations on a connection or no active
-  consumer set, connection may be closed by the broker as dead.
-
-*Developers note: alternatively for built-in persistent connection support [raphf](http://pecl.php.net/package/raphf)
-pecl extension may be used.*
+  an [amqp interop](https://github.com/queue-interop/queue-interop#amqp-interop) compatible wrapper
+* [symfony/amqp-messenger](https://symfony.com/components/AMQP%20Messenger) provides AMQP integration
+  for [symfony/messenger](https://symfony.com/doc/current/messenger.html), the popular messaging component by Symfony.
 
 ### How to report a problem
 
 1. First, search through the closed issues and [stackoverflow.com](http://stackoverflow.com).
 2. Submit an issue with short and definitive title that describe your problem
-3. Provide platform info, PHP interpreter version, SAPI mode (cli, fpm, cgi, etc) extension is used in, php-amqp
+3. Provide platform info, PHP interpreter version, SAPI mode (cli, fpm, cgi, etc) the extension is used in, php-amqp
    extension version, librabbitmq version, make tools version.
 4. Description should provide information on how to reproduce a problem ([gist](https://gist.github.com/) is the most
    preferable way to include large sources) in a definitive way. Use [Vagrant](http://www.vagrantup.com/) to replicate
