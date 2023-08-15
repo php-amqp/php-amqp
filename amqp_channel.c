@@ -98,9 +98,9 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool t
             goto err;
         }
 
-		if (close_res.reply_type != AMQP_RESPONSE_NORMAL) {
-			goto err;
-		}
+        if (close_res.reply_type != AMQP_RESPONSE_NORMAL) {
+            goto err;
+        }
 
         amqp_rpc_reply_t reply_res = amqp_get_rpc_reply(connection_resource->connection_state);
         if (throw && PHP_AMQP_MAYBE_ERROR(reply_res, channel_resource)) {
@@ -108,17 +108,17 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool t
             goto err;
         }
 
-		if (reply_res.reply_type != AMQP_RESPONSE_NORMAL) {
-			goto err;
-		}
+        if (reply_res.reply_type != AMQP_RESPONSE_NORMAL) {
+            goto err;
+        }
 
-		php_amqp_maybe_release_buffers_on_channel(connection_resource, channel_resource);
-		return;
+        php_amqp_maybe_release_buffers_on_channel(connection_resource, channel_resource);
+        return;
 
-		err:
-			// Mark failed slot as used
-			connection_resource->used_slots++;
-			return;
+    err:
+        // Mark failed slot as used
+        connection_resource->used_slots++;
+        return;
     }
 }
 
