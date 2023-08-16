@@ -181,15 +181,14 @@ static PHP_METHOD(amqp_queue_class, getFlags)
 Set the queue parameters */
 static PHP_METHOD(amqp_queue_class, setFlags)
 {
-    zend_long flags;
+    zend_long flags = AMQP_NOPARAM;
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l!", &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
-    /* Set the flags based on the bitmask we were given */
-    flags = flags ? flags & PHP_AMQP_QUEUE_FLAGS : flags;
+    flags = flags & PHP_AMQP_QUEUE_FLAGS;
 
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flags));
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("durable"), IS_DURABLE(flags));

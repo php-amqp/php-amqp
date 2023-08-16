@@ -181,8 +181,7 @@ static PHP_METHOD(amqp_exchange_class, setFlags)
         return;
     }
 
-    /* Set the flags based on the bitmask we were given */
-    flags = flags ? flags & PHP_AMQP_EXCHANGE_FLAGS : flags;
+    flags = flags & PHP_AMQP_EXCHANGE_FLAGS;
 
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flags));
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("durable"), IS_DURABLE(flags));
