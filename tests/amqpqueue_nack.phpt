@@ -38,7 +38,7 @@ $q->nack($env->getDeliveryTag(), AMQP_REQUEUE);
 // read again
 $env2  = $q->get(AMQP_NOPARAM);
 if (false !== $env2) {
-    $q->ack($env2->getDeliveryTag());
+    $q->ack($env2->getDeliveryTag(), null);
     echo $env2->getBody() . PHP_EOL;
     echo $env2->isRedelivery() ? 'true' : 'false';
     echo PHP_EOL;

@@ -189,9 +189,9 @@ struct _amqp_channel_object {
 };
 
 struct _amqp_connection_resource {
-    zend_bool is_connected;
-    zend_bool is_persistent;
-    zend_bool is_dirty;
+    bool is_connected;
+    bool is_persistent;
+    bool is_dirty;
     zend_resource *resource;
     amqp_connection_object *parent;
     amqp_channel_t max_slots;
@@ -463,14 +463,14 @@ void php_amqp_maybe_release_buffers_on_channel(
     amqp_channel_resource *channel_resource
 );
 
-zend_bool php_amqp_is_valid_identifier(zend_string *val);
-zend_bool php_amqp_is_valid_credential(zend_string *val);
-zend_bool php_amqp_is_valid_port(zend_long val);
-zend_bool php_amqp_is_valid_timeout(double timeout);
-zend_bool php_amqp_is_valid_channel_max(zend_long val);
-zend_bool php_amqp_is_valid_frame_size_max(zend_long val);
-zend_bool php_amqp_is_valid_heartbeat(zend_long val);
-zend_bool php_amqp_is_valid_prefetch_count(zend_long val);
-zend_bool php_amqp_is_valid_prefetch_size(zend_long val);
+bool php_amqp_is_valid_identifier(zend_string *val);
+bool php_amqp_is_valid_credential(zend_string *val);
+bool php_amqp_is_valid_port(zend_long val);
+bool php_amqp_is_valid_timeout(double timeout);
+bool php_amqp_is_valid_channel_max(zend_long val);
+bool php_amqp_is_valid_frame_size_max(zend_long val);
+bool php_amqp_is_valid_heartbeat(zend_long val);
+bool php_amqp_is_valid_prefetch_count(zend_long val);
+bool php_amqp_is_valid_prefetch_size(zend_long val);
 
 #endif /* PHP_AMQP_H */

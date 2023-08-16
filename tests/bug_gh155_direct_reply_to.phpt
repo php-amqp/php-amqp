@@ -48,7 +48,7 @@ $q_reply->declareQueue();
 
 echo 'Publishing response...' . PHP_EOL;
 
-$exchange->publish('response', $reply_to, AMQP_NOPARAM);
+$exchange->publish('response', $reply_to);
 
 
 echo 'Waiting for reply...' . PHP_EOL;

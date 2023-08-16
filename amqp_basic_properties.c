@@ -62,7 +62,7 @@
 
 void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, uint8_t depth);
 void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, uint8_t depth);
-zend_bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth);
+bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth);
 
 zend_class_entry *amqp_basic_properties_class_entry;
 #define this_ce amqp_basic_properties_class_entry
@@ -562,7 +562,7 @@ PHP_MINIT_FUNCTION(amqp_basic_properties)
     return SUCCESS;
 }
 
-zend_bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth)
+bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth)
 {
     if (depth >= PHP_AMQP_RECURSION_DEPTH_LIMIT) {
         zend_throw_exception_ex(

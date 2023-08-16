@@ -50,7 +50,7 @@ class AMQPQueue
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException If the channel is not open.
      */
-    public function ack(int $deliveryTag, int $flags = AMQP_NOPARAM): void
+    public function ack(int $deliveryTag, ?int $flags = null): void
     {
     }
 
@@ -125,11 +125,8 @@ class AMQPQueue
      * @throws AMQPEnvelopeException When no queue found for envelope.
      * @throws AMQPQueueException If timeout occurs or queue is not exists.
      */
-    public function consume(
-        callable $callback = null,
-        int $flags = AMQP_NOPARAM,
-        ?string $consumerTag = null
-    ): void {
+    public function consume(callable $callback = null, ?int $flags = null, ?string $consumerTag = null): void
+    {
     }
 
     /**
@@ -173,7 +170,7 @@ class AMQPQueue
      *
      * @return integer The number of deleted messages.
      */
-    public function delete(int $flags = AMQP_NOPARAM): int
+    public function delete(?int $flags = null): int
     {
     }
 
@@ -198,7 +195,7 @@ class AMQPQueue
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPQueueException If queue is not exist.
      */
-    public function get(int $flags = AMQP_NOPARAM): ?AMQPEnvelope
+    public function get(?int $flags = null): ?AMQPEnvelope
     {
     }
 
@@ -261,7 +258,7 @@ class AMQPQueue
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException If the channel is not open.
      */
-    public function nack(int $deliveryTag, int $flags = AMQP_NOPARAM): void
+    public function nack(int $deliveryTag, ?int $flags = null): void
     {
     }
 
@@ -279,7 +276,7 @@ class AMQPQueue
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException If the channel is not open.
      */
-    public function reject(int $deliveryTag, int $flags = AMQP_NOPARAM): void
+    public function reject(int $deliveryTag, ?int $flags = null): void
     {
     }
 
