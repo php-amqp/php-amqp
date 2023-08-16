@@ -27,6 +27,8 @@
     #include "config.h"
 #endif
 
+#include <stdbool.h>
+
 /* True global resources - no need for thread safety here */
 extern zend_class_entry *amqp_exception_class_entry, *amqp_connection_exception_class_entry,
     *amqp_channel_exception_class_entry, *amqp_exchange_exception_class_entry, *amqp_queue_exception_class_entry,
