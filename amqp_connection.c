@@ -176,7 +176,7 @@ void php_amqp_disconnect_force(amqp_connection_resource *resource)
  *	handles connecting to amqp
  *	called by connect(), pconnect(), reconnect(), preconnect()
  */
-int php_amqp_connect(amqp_connection_object *connection, zend_bool persistent, INTERNAL_FUNCTION_PARAMETERS)
+int php_amqp_connect(amqp_connection_object *connection, bool persistent, INTERNAL_FUNCTION_PARAMETERS)
 {
     zval rv;
 
@@ -1633,7 +1633,7 @@ static PHP_METHOD(amqp_connection_class, getVerify)
 /* {{{ proto amqp::setVerify(bool verify) */
 static PHP_METHOD(amqp_connection_class, setVerify)
 {
-    zend_bool verify = 1;
+    bool verify = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "b", &verify) == FAILURE) {
         return;

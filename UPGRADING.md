@@ -162,9 +162,9 @@
 
 ### Public method additions
 
-* `getConnectTimeout(): float`
-* `setConnectionName(?string $connectionName): void`
-* `getConnectionName(): ?string`
+ * `getConnectTimeout(): float`
+ * `setConnectionName(?string $connectionName): void`
+ * `getConnectionName(): ?string`
 
 ### Public method type changes
 
@@ -331,7 +331,7 @@
 
 ### Public method additions
 
-* `getEnvelope(): AMQPEnvelope`
+ * `getEnvelope(): AMQPEnvelope`
 
 ## `AMQPExchange` breaking changes
 
@@ -365,7 +365,7 @@
 ```
 ```diff
 - delete(string $exchangeName = null, int $flags = 0): bool
-+ delete(?string $exchangeName = null, int $flags = 0): void
++ delete(?string $exchangeName = null, ?int $flags = null): void
 
 ```
 ```diff
@@ -385,7 +385,7 @@
 ```
 ```diff
 - publish(string $message, string $routing_key = null, int $flags = 0, array $attributes = []): bool
-+ publish(string $message, ?string $routingKey = null, int $flags = 0, array $headers = []): void
++ publish(string $message, ?string $routingKey = null, ?int $flags = null, array $headers = []): void
 
 ```
 ```diff
@@ -442,7 +442,7 @@
 
 ```diff
 - ack(string $delivery_tag, int $flags = 0): bool
-+ ack(int $deliveryTag, int $flags = 0): void
++ ack(int $deliveryTag, ?int $flags = null): void
 
 ```
 ```diff
@@ -457,12 +457,17 @@
 ```
 ```diff
 - consume(?callable $callback = null, int $flags = 0, string $consumerTag = null): void
-+ consume(?callable $callback = null, int $flags = 0, ?string $consumerTag = null): void
++ consume(?callable $callback = null, ?int $flags = null, ?string $consumerTag = null): void
+
+```
+```diff
+- delete(int $flags = 0): int
++ delete(?int $flags = null): int
 
 ```
 ```diff
 - get(int $flags = 0): AMQPEnvelope|bool
-+ get(int $flags = 0): ?AMQPEnvelope
++ get(?int $flags = null): ?AMQPEnvelope
 
 ```
 ```diff
@@ -477,12 +482,12 @@
 ```
 ```diff
 - nack(string $delivery_tag, int $flags = 0): bool
-+ nack(int $deliveryTag, int $flags = 0): void
++ nack(int $deliveryTag, ?int $flags = null): void
 
 ```
 ```diff
 - reject(string $delivery_tag, int $flags = 0): bool
-+ reject(int $deliveryTag, int $flags = 0): void
++ reject(int $deliveryTag, ?int $flags = null): void
 
 ```
 ```diff

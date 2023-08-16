@@ -175,14 +175,13 @@ Set the exchange parameters */
 static PHP_METHOD(amqp_exchange_class, setFlags)
 {
     zend_long flags = AMQP_NOPARAM;
-    zend_bool flags_is_null = 1;
+    bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l!", &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
-    /* Set the flags based on the bitmask we were given */
-    flags = flags ? flags & PHP_AMQP_EXCHANGE_FLAGS : flags;
+    flags = flags & PHP_AMQP_EXCHANGE_FLAGS;
 
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flags));
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("durable"), IS_DURABLE(flags));
@@ -415,8 +414,9 @@ static PHP_METHOD(amqp_exchange_class, delete)
     char *name = NULL;
     size_t name_len = 0;
     zend_long flags = AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s!l", &name, &name_len, &flags) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s!l!", &name, &name_len, &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
@@ -464,6 +464,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
     char *msg = NULL;
     size_t msg_len = 0;
     zend_long flags = AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
 #ifndef PHP_WIN32
     /* Storage for previous signal handler during SIGPIPE override */
@@ -472,8 +473,17 @@ static PHP_METHOD(amqp_exchange_class, publish)
 
     amqp_basic_properties_t props;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|s!la/", &msg, &msg_len, &key_name, &key_len, &flags, &ini_arr) ==
-        FAILURE) {
+    if (zend_parse_parameters(
+            ZEND_NUM_ARGS(),
+            "s|s!l!a/",
+            &msg,
+            &msg_len,
+            &key_name,
+            &key_len,
+            &flags,
+            &flags_is_null,
+            &ini_arr
+        ) == FAILURE) {
         return;
     }
 
@@ -875,13 +885,13 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_exchange_class_delete, ZEND_RETURN_VALUE, 0, IS_VOID, 0)
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, exchangeName, IS_STRING, 1, "null")
-    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "AMQP_NOPARAM")
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_exchange_class_publish, ZEND_RETURN_VALUE, 1, IS_VOID, 0)
     ZEND_ARG_TYPE_INFO(0, message, IS_STRING, 0)
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, routingKey, IS_STRING, 1, "null")
-    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "AMQP_NOPARAM")
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, headers, IS_ARRAY, 0, "[]")
 ZEND_END_ARG_INFO()
 

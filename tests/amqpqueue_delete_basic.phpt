@@ -19,7 +19,7 @@ $queue->declareQueue();
 $queue->bind($ex->getName());
 
 var_dump($queue->delete());
-var_dump($queue->delete());
+var_dump($queue->delete(null));
 
 $queue->declareQueue();
 $queue->bind($ex->getName());

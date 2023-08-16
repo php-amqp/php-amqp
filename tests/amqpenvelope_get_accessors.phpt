@@ -21,10 +21,10 @@ $q->declareQueue();
 // Bind it on the exchange to routing.key
 $q->bind($ex->getName(), 'routing.*');
 // Publish a message to the exchange with a routing key
-$ex->publish('message', 'routing.1', AMQP_NOPARAM, array('headers' => array('foo' => 'bar')));
+$ex->publish('message', 'routing.1', null, array('headers' => array('foo' => 'bar')));
 
 // Read from the queue
-$msg = $q->get();
+$msg = $q->get(null);
 var_dump($msg);
 dump_message($msg);
 

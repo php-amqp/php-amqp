@@ -8,7 +8,7 @@ $prev = $_SERVER['argv'][1] ?? null;
 $next = $_SERVER['argv'][2] ?? null;
 
 assert($prev !== null, 'First argument must be path to previous stubs version');
-assert($next !== null, 'First argument must be path to next stubs version');
+assert($next !== null, 'Second argument must be path to next stubs version');
 
 function pamqp_string_ends_with(string $haystack, string $needle): bool
 {

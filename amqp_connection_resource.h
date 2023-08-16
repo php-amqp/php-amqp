@@ -94,7 +94,7 @@ int php_amqp_connection_resource_register_channel(
 );
 
 /* Creating and destroying resource */
-amqp_connection_resource *connection_resource_constructor(amqp_connection_params *params, zend_bool persistent);
+amqp_connection_resource *connection_resource_constructor(amqp_connection_params *params, bool persistent);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor_persistent);
 ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor);
 

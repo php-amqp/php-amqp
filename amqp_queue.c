@@ -181,15 +181,14 @@ static PHP_METHOD(amqp_queue_class, getFlags)
 Set the queue parameters */
 static PHP_METHOD(amqp_queue_class, setFlags)
 {
-    zend_long flags;
-    zend_bool flags_is_null = 1;
+    zend_long flags = AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l!", &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
-    /* Set the flags based on the bitmask we were given */
-    flags = flags ? flags & PHP_AMQP_QUEUE_FLAGS : flags;
+    flags = flags & PHP_AMQP_QUEUE_FLAGS;
 
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("passive"), IS_PASSIVE(flags));
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("durable"), IS_DURABLE(flags));
@@ -454,9 +453,9 @@ static PHP_METHOD(amqp_queue_class, get)
     zval message;
 
     zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
-    /* Parse out the method parameters */
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|l", &flags) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|l!", &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
@@ -546,9 +545,18 @@ static PHP_METHOD(amqp_queue_class, consume)
     char *consumer_tag = NULL;
     size_t consumer_tag_len = 0;
     zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|f!ls!", &fci, &fci_cache, &flags, &consumer_tag, &consumer_tag_len) ==
-        FAILURE) {
+    if (zend_parse_parameters(
+            ZEND_NUM_ARGS(),
+            "|f!l!s!",
+            &fci,
+            &fci_cache,
+            &flags,
+            &flags_is_null,
+            &consumer_tag,
+            &consumer_tag_len
+        ) == FAILURE) {
         return;
     }
 
@@ -814,8 +822,9 @@ static PHP_METHOD(amqp_queue_class, ack)
 
     zend_long deliveryTag = 0;
     zend_long flags = AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l", &deliveryTag, &flags) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l!", &deliveryTag, &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
@@ -862,8 +871,9 @@ static PHP_METHOD(amqp_queue_class, nack)
 
     zend_long deliveryTag = 0;
     zend_long flags = AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l", &deliveryTag, &flags) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l!", &deliveryTag, &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
@@ -911,8 +921,9 @@ static PHP_METHOD(amqp_queue_class, reject)
 
     zend_long deliveryTag = 0;
     zend_long flags = AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l", &deliveryTag, &flags) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l!", &deliveryTag, &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
@@ -1009,8 +1020,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
     zval *channel_zv = PHP_AMQP_READ_THIS_PROP("channel");
     zval *consumers =
         zend_read_property(amqp_channel_class_entry, PHP_AMQP_COMPAT_OBJ_P(channel_zv), ZEND_STRL("consumers"), 0, &rv);
-    zend_bool previous_consumer_tag_exists =
-        (zend_bool) (IS_STRING == Z_TYPE_P(PHP_AMQP_READ_THIS_PROP("consumerTag")));
+    bool previous_consumer_tag_exists = (bool) (IS_STRING == Z_TYPE_P(PHP_AMQP_READ_THIS_PROP("consumerTag")));
 
     if (IS_ARRAY != Z_TYPE_P(consumers)) {
         zend_throw_exception(
@@ -1134,10 +1144,11 @@ static PHP_METHOD(amqp_queue_class, delete)
     amqp_channel_resource *channel_resource;
 
     zend_long flags = AMQP_NOPARAM;
+    bool flags_is_null = 1;
 
     zend_long message_count;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|l", &flags) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|l!", &flags, &flags_is_null) == FAILURE) {
         return;
     }
 
@@ -1258,28 +1269,28 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_bind, ZEND_RETU
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_amqp_queue_class_get, ZEND_SEND_BY_VAL, 0, AMQPEnvelope, 1)
-    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "AMQP_NOPARAM")
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_consume, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, callback, IS_CALLABLE, 1, "null")
-    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "AMQP_NOPARAM")
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, consumerTag, IS_STRING, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_ack, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
     ZEND_ARG_TYPE_INFO(0, deliveryTag, IS_LONG, 0)
-    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "AMQP_NOPARAM")
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_nack, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
     ZEND_ARG_TYPE_INFO(0, deliveryTag, IS_LONG, 0)
-    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "AMQP_NOPARAM")
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_reject, ZEND_SEND_BY_VAL, 1, IS_VOID, 0)
     ZEND_ARG_TYPE_INFO(0, deliveryTag, IS_LONG, 0)
-    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "AMQP_NOPARAM")
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_purge, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
@@ -1296,7 +1307,7 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_unbind, ZEND_RE
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_delete, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
-    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 0, "AMQP_NOPARAM")
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO(arginfo_amqp_queue_class_getChannel, AMQPChannel, 0)

@@ -83,29 +83,29 @@ zend_function_entry amqp_functions[] = {
 };
 /* }}} */
 
-zend_bool php_amqp_is_valid_identifier(zend_string *val)
+bool php_amqp_is_valid_identifier(zend_string *val)
 {
     return ZSTR_LEN(val) > 0 && ZSTR_LEN(val) <= PHP_AMQP_MAX_IDENTIFIER_LENGTH;
 }
 
-zend_bool php_amqp_is_valid_credential(zend_string *val)
+bool php_amqp_is_valid_credential(zend_string *val)
 {
     return ZSTR_LEN(val) > 0 && ZSTR_LEN(val) <= PHP_AMQP_MAX_CREDENTIALS_LENGTH;
 }
 
-zend_bool php_amqp_is_valid_port(zend_long val) { return val >= PHP_AMQP_MIN_PORT && val <= PHP_AMQP_MAX_PORT; }
+bool php_amqp_is_valid_port(zend_long val) { return val >= PHP_AMQP_MIN_PORT && val <= PHP_AMQP_MAX_PORT; }
 
-zend_bool php_amqp_is_valid_timeout(double timeout) { return timeout >= 0; }
+bool php_amqp_is_valid_timeout(double timeout) { return timeout >= 0; }
 
-zend_bool php_amqp_is_valid_channel_max(zend_long val) { return val > 0 && val <= PHP_AMQP_DEFAULT_CHANNEL_MAX; }
+bool php_amqp_is_valid_channel_max(zend_long val) { return val > 0 && val <= PHP_AMQP_DEFAULT_CHANNEL_MAX; }
 
-zend_bool php_amqp_is_valid_frame_size_max(zend_long val) { return val > 0 && val <= PHP_AMQP_MAX_FRAME_SIZE; }
+bool php_amqp_is_valid_frame_size_max(zend_long val) { return val > 0 && val <= PHP_AMQP_MAX_FRAME_SIZE; }
 
-zend_bool php_amqp_is_valid_heartbeat(zend_long val) { return val >= 0 && val <= PHP_AMQP_MAX_HEARTBEAT; }
+bool php_amqp_is_valid_heartbeat(zend_long val) { return val >= 0 && val <= PHP_AMQP_MAX_HEARTBEAT; }
 
-zend_bool php_amqp_is_valid_prefetch_size(zend_long val) { return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_SIZE; }
+bool php_amqp_is_valid_prefetch_size(zend_long val) { return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_SIZE; }
 
-zend_bool php_amqp_is_valid_prefetch_count(zend_long val) { return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_COUNT; }
+bool php_amqp_is_valid_prefetch_count(zend_long val) { return val >= 0 && val <= PHP_AMQP_MAX_PREFETCH_COUNT; }
 
 static ZEND_INI_MH(onUpdateIdentifier)
 {

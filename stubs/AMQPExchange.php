@@ -111,7 +111,7 @@ class AMQPExchange
      * @throws AMQPChannelException If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      */
-    public function delete(?string $exchangeName = null, int $flags = AMQP_NOPARAM): void
+    public function delete(?string $exchangeName = null, ?int $flags = null): void
     {
     }
 
@@ -195,7 +195,7 @@ class AMQPExchange
     public function publish(
         string $message,
         ?string $routingKey = null,
-        int $flags = AMQP_NOPARAM,
+        ?int $flags = null,
         array $headers = []
     ): void {
     }

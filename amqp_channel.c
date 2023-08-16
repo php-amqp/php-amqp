@@ -65,7 +65,7 @@ zend_class_entry *amqp_channel_class_entry;
 
 zend_object_handlers amqp_channel_object_handlers;
 
-void php_amqp_close_channel(amqp_channel_resource *channel_resource, zend_bool throw)
+void php_amqp_close_channel(amqp_channel_resource *channel_resource, bool throw)
 {
     assert(channel_resource != NULL);
 
@@ -823,7 +823,7 @@ static PHP_METHOD(amqp_channel_class, qos)
     amqp_channel_resource *channel_resource;
     zend_long prefetch_size;
     zend_long prefetch_count;
-    zend_bool global = 0;
+    bool global = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll|b", &prefetch_size, &prefetch_count, &global) == FAILURE) {
         return;
@@ -1012,7 +1012,7 @@ static PHP_METHOD(amqp_channel_class, basicRecover)
 
     amqp_rpc_reply_t res;
 
-    zend_bool requeue = 1;
+    bool requeue = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|b", &requeue) == FAILURE) {
         return;

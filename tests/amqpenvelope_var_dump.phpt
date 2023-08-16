@@ -29,7 +29,7 @@ $ex->publish('message', 'routing.1', AMQP_NOPARAM, array("headers" => array("tes
 
 // Read from the queue
 $q->consume("consumeThings");
-$q->consume("consumeThings");
+$q->consume("consumeThings", null);
 ?>
 --EXPECTF--
 object(AMQPEnvelope)#5 (20) {
