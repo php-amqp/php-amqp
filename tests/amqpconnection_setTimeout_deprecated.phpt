@@ -1,7 +1,9 @@
 --TEST--
 AMQPConnection setTimeout deprecated
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+?>
 --FILE--
 <?php
 $cnn = new AMQPConnection();

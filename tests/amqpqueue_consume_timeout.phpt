@@ -1,16 +1,20 @@
 --TEST--
 AMQPQueue::consume with timeout
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 function nop() {
 }
 
 $timeout = .68;
-$conn = new AMQPConnection(array('read_timeout' => $timeout));
-$conn->connect();
-$chan = new AMQPChannel($conn);
+$cnn = new AMQPConnection(array('read_timeout' => $timeout));
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
+$cnn->connect();
+$chan = new AMQPChannel($cnn);
 $queue = new AMQPQueue($chan);
 $queue->setFlags(AMQP_EXCLUSIVE);
 $queue->declareQueue();

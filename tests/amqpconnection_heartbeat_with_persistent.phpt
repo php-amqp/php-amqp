@@ -1,13 +1,17 @@
 --TEST--
 AMQPConnection - heartbeats support with persistent connections
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 $heartbeat = 2;
 $credentials = array('heartbeat' => $heartbeat);
 
 $cnn = new AMQPConnection($credentials);
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 
 echo 'heartbeat: ', var_export($cnn->getHeartbeatInterval(), true), PHP_EOL;
 echo 'connected: ', var_export($cnn->isConnected(), true), PHP_EOL;
@@ -37,6 +41,7 @@ echo 'persistent: ', var_export($cnn->isPersistent(), true), PHP_EOL;
 echo PHP_EOL;
 
 $cnn = new AMQPConnection($credentials);
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->pconnect();
 
 echo 'heartbeat: ', var_export($cnn->getHeartbeatInterval(), true), PHP_EOL;

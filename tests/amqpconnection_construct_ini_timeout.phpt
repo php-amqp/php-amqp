@@ -1,12 +1,16 @@
 --TEST--
 AMQPConnection constructor with amqp.timeout ini value set
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --INI--
 amqp.timeout=101.101
 --FILE--
 <?php
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 var_dump($cnn->getReadTimeout());
 ?>
 --EXPECTF--

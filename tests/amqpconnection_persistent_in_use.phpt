@@ -1,10 +1,14 @@
 --TEST--
 AMQPConnection persitent connection resource can't be used by multiple connection
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 echo get_class($cnn), PHP_EOL;
 $cnn->pconnect();
 echo $cnn->isConnected() ? 'true' : 'false', PHP_EOL;
@@ -12,6 +16,7 @@ echo $cnn->isConnected() ? 'true' : 'false', PHP_EOL;
 echo PHP_EOL;
 
 $cnn2 = new AMQPConnection();
+$cnn2->setHost(getenv('PHP_AMQP_HOST'));
 echo get_class($cnn), PHP_EOL;
 
 try {

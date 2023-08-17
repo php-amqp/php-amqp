@@ -1,7 +1,9 @@
 --TEST--
-AMQPConnection constructor with write_timeout parameter in creadentials
+AMQPConnection constructor with write_timeout parameter in $cnntials
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+?>
 --FILE--
 <?php
 $credentials = array('write_timeout' => 303.303);

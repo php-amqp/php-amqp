@@ -2,8 +2,9 @@
 Params are passed by value in AMQPConnection::__construct()
 
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) die("Skip: ext/amqp must be installed."); ?>
-
+<?php
+if (!extension_loaded("amqp")) print "skip";
+?>
 --FILE--
 <?php
 
@@ -19,7 +20,7 @@ $params = [
     'connection_name' => 'custom_connection_name'
 ];
 
-$conn = new \AMQPConnection($params);
+$cnn = new AMQPConnection($params);
 
 echo gettype($params['host']) . PHP_EOL;
 echo gettype($params['port']) . PHP_EOL;

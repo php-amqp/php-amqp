@@ -3,6 +3,7 @@ AMQPConnection - TLS - SASL authentication
 --SKIPIF--
 <?php
 if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_SSL_HOST")) print "skip";
 if (!file_exists(__DIR__ . "/../infra/tls/certificates/testca/cacert.pem")) print "skip";
 if (!file_exists(__DIR__ . "/../infra/tls/certificates/sasl-client/cert.pem")) print "skip";
 if (!file_exists(__DIR__ . "/../infra/tls/certificates/sasl-client/key.pem")) print "skip";

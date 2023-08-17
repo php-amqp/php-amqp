@@ -1,12 +1,16 @@
 --TEST--
 AMQPConnection persistent connection are reusable
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 $manual = false; // set to true when you want to check via RabbitMQ Management panel that connection really persists.
 
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->pconnect();
 echo get_class($cnn), PHP_EOL;
 echo $cnn->isConnected() ? 'true' : 'false', PHP_EOL;
@@ -25,6 +29,7 @@ if ($manual) {
 }
 
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->pconnect();
 echo get_class($cnn), PHP_EOL;
 echo $cnn->isConnected() ? 'true' : 'false', PHP_EOL;

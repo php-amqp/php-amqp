@@ -1,7 +1,9 @@
 --TEST--
 AMQP extension version constants
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+?>
 --FILE--
 <?php
 var_dump(AMQP_EXTENSION_VERSION);

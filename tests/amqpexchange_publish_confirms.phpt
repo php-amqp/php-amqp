@@ -1,7 +1,10 @@
 --TEST--
 AMQPExchange::publish() - publish with confirms
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 <?php //print "skip - WIP"; ?>
 --FILE--
 <?php
@@ -15,6 +18,7 @@ set_error_handler('exception_error_handler');
 
 
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 //$cnn->setReadTimeout(2);
 $cnn->connect();
 

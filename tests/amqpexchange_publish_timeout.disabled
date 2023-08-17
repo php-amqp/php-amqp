@@ -9,10 +9,10 @@ if (getenv("SKIP_SLOW_TESTS")) print "skip slow test"   ;
 <?php
 
 $timeout = .68;
-$conn = new AMQPConnection(array('write_timeout' => $timeout));
-$conn->connect();
+$cnn = new AMQPConnection(array('write_timeout' => $timeout));
+$cnn->connect();
 
-$chan = new AMQPChannel($conn);
+$chan = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($chan);
 $ex->setName("exchange-pub-timeout-" . time());

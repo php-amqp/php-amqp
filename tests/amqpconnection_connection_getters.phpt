@@ -2,13 +2,13 @@
 AMQPConnection - connection-specific getters
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) {
-  print "skip";
-}
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
 ?>
 --FILE--
 <?php
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 
 echo 'connected: ', var_export($cnn->isConnected(), true), PHP_EOL;
 echo 'channel_max: ', var_export($cnn->getMaxChannels(), true), PHP_EOL;
@@ -34,6 +34,7 @@ echo PHP_EOL;
 
 
 $cnn = new AMQPConnection(array('channel_max' => '10', 'frame_max' => 10240, 'heartbeat' => 10));
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 
 echo 'connected: ', var_export($cnn->isConnected(), true), PHP_EOL;
 echo 'channel_max: ', var_export($cnn->getMaxChannels(), true), PHP_EOL;

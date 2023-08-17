@@ -1,15 +1,17 @@
 --TEST--
 AMQPQueue - orphaned envelope
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) {
-    print "skip";
-} ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
-$connection = new AMQPConnection();
-$connection->connect();
+$cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
+$cnn->connect();
 
-$channel1 = new AMQPChannel($connection);
+$channel1 = new AMQPChannel($cnn);
 
 $ex1 = new AMQPExchange($channel1);
 $ex1->setName('ex1-' . bin2hex(random_bytes(32)));

@@ -2,18 +2,18 @@
 AMQPChannel::close
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) {
-    print "skip";
-}
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
 ?>
 --FILE--
 <?php
 $time = microtime(true);
 
-$connection_1 = new AMQPConnection();
-$connection_1->connect();
+$cnn_1 = new AMQPConnection();
+$cnn_1->setHost(getenv('PHP_AMQP_HOST'));
+$cnn_1->connect();
 
-$channel_1 = new AMQPChannel($connection_1);
+$channel_1 = new AMQPChannel($cnn_1);
 $channel_1->setPrefetchCount(5);
 
 $exchange_1 = new AMQPExchange($channel_1);

@@ -1,17 +1,21 @@
 --TEST--
 AMQPQueue cancel
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 function create_connection() {
-	$conn = new AMQPConnection();
-	$conn->connect();
-	return $conn;
+	$cnn = new AMQPConnection();
+	$cnn->setHost(getenv('PHP_AMQP_HOST'));
+	$cnn->connect();
+	return $cnn;
 }
 
-function create_channel($connection) {
-	$channel = new AMQPChannel($connection);
+function create_channel($cnn) {
+	$channel = new AMQPChannel($cnn);
 	$channel->setPrefetchCount(1);
 	return $channel;
 }

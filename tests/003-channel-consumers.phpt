@@ -1,22 +1,24 @@
 --TEST--
 AMQPChannel - consumers
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) {
-    print "skip";
-} ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
-$connection = new AMQPConnection();
-$connection->connect();
+$cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
+$cnn->connect();
 
-$channel1 = new AMQPChannel($connection);
+$channel1 = new AMQPChannel($cnn);
 
 $q1 = new AMQPQueue($channel1);
 $q1->setName('q1-' . bin2hex(random_bytes(32)));
 $q1->declareQueue();
 
 
-$channel2 = new AMQPChannel($connection);
+$channel2 = new AMQPChannel($cnn);
 
 $q2_0 = new AMQPQueue($channel2);
 $q2_0->setName('q2.0-' . bin2hex(random_bytes(32)));

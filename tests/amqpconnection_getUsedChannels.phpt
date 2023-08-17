@@ -1,10 +1,14 @@
 --TEST--
 AMQPConnection::getUsedChannels()
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 echo get_class($cnn), '::getUsedChannels():', $cnn->getUsedChannels(), PHP_EOL;
 $cnn->connect();
 echo get_class($cnn), '::getUsedChannels():', $cnn->getUsedChannels(), PHP_EOL;

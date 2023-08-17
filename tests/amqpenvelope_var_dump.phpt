@@ -2,14 +2,15 @@
 AMQPEnvelope var_dump
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) {
-  print "skip";
-}
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 require '_test_helpers.php.inc';
 
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->connect();
 $ch = new AMQPChannel($cnn);
 // Declare a new exchange

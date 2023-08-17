@@ -1,7 +1,9 @@
 --TEST--
 Bug 19840: Connection Exception
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+?>
 --FILE--
 <?php
 $lServer['host'] = 'ip.ad.dr.ess';
@@ -11,8 +13,8 @@ $lServer['user'] = 'test';
 $lServer['password'] = 'test';
 
 try {
-    $conn = new AMQPConnection($lServer);
-	$conn->connect();
+    $cnn = new AMQPConnection($lServer);
+	$cnn->connect();
     echo "No exception thrown\n";
 } catch (Exception $e) {
     echo get_class($e), "({$e->getCode()}): ", $e->getMessage();
