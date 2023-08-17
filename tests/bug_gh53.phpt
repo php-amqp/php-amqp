@@ -1,13 +1,17 @@
 --TEST--
 Upgrade to RabbitMQ 3.1.0-1: AMQPConnectionException: connection closed unexpectedly
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
-$connection = new AMQPConnection();
-$connection->connect();
+$cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
+$cnn->connect();
 
-$channel = new AMQPChannel($connection);
+$channel = new AMQPChannel($cnn);
 var_dump($channel->getPrefetchSize());
 var_dump($channel->getPrefetchCount());
 
@@ -23,7 +27,7 @@ try {
     echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 var_dump($channel->isConnected());
-var_dump($connection->isConnected());
+var_dump($cnn->isConnected());
 var_dump($channel->getPrefetchSize());
 var_dump($channel->getPrefetchCount());
 

@@ -1,7 +1,10 @@
 --TEST--
 AMQPConnection connect login failure
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 //ini_set('amqp.connect_timeout', 60);
@@ -9,6 +12,7 @@ AMQPConnection connect login failure
 //ini_set('amqp.write_timeout', 60);
 
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->setLogin('nonexistent-login-'. bin2hex(random_bytes(32)));
 $cnn->setPassword('nonexistent-password-'. bin2hex(random_bytes(32)));
 

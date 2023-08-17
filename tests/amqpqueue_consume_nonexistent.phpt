@@ -1,12 +1,16 @@
 --TEST--
 AMQPQueue::consume from nonexistent queue
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 function noop () {return false;}
 
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->setReadTimeout(10); // both are empirical values that should be far enough to deal with busy RabbitMQ broker
 $cnn->setWriteTimeout(10);
 $cnn->connect();

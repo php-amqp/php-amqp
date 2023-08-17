@@ -4,9 +4,12 @@ AMQPChannel - constructor with amqp.global_prefetch_size ini value set
 <?php
 if (!extension_loaded("amqp")) {
     print "skip";
+} elseif (!getenv('PHP_AMQP_HOST')) {
+    print "skip";
 } else {
     try {
         $cnn = new AMQPConnection();
+        $cnn->setHost(getenv('PHP_AMQP_HOST'));
         $cnn->connect();
         $ch = new AMQPChannel($cnn);
         $ch->setGlobalPrefetchSize(123);
@@ -22,6 +25,7 @@ amqp.global_prefetch_size=123
 --FILE--
 <?php
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->connect();
 $ch = new AMQPChannel($cnn);
 

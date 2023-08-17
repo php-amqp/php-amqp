@@ -2,13 +2,13 @@
 AMQPChannel var_dump
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) {
-  print "skip";
-}
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
 ?>
 --FILE--
 <?php
 $cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->connect();
 $ch = new AMQPChannel($cnn);
 
@@ -17,7 +17,7 @@ $cnn->disconnect();
 var_dump($ch);
 
 ?>
---EXPECT--
+--EXPECTF--
 object(AMQPChannel)#2 (6) {
   ["connection":"AMQPChannel":private]=>
   object(AMQPConnection)#1 (18) {
@@ -26,7 +26,7 @@ object(AMQPChannel)#2 (6) {
     ["password":"AMQPConnection":private]=>
     string(5) "guest"
     ["host":"AMQPConnection":private]=>
-    string(9) "localhost"
+    string(%d) "%s"
     ["vhost":"AMQPConnection":private]=>
     string(1) "/"
     ["port":"AMQPConnection":private]=>
@@ -78,7 +78,7 @@ object(AMQPChannel)#2 (6) {
     ["password":"AMQPConnection":private]=>
     string(5) "guest"
     ["host":"AMQPConnection":private]=>
-    string(9) "localhost"
+    string(%d) "%s"
     ["vhost":"AMQPConnection":private]=>
     string(1) "/"
     ["port":"AMQPConnection":private]=>

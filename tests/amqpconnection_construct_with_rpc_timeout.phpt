@@ -1,7 +1,9 @@
 --TEST--
-AMQPConnection constructor with rpc_timeout parameter in creadentials
+AMQPConnection constructor with rpc_timeout parameter in credentials
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+?>
 --FILE--
 <?php
 $credentials = array('rpc_timeout' => 303.303);

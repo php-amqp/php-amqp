@@ -1,12 +1,16 @@
 --TEST--
 AMQPExchange::delete with explicit null as exchange name
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
-$con = new AMQPConnection();
-$con->connect();
-$chan = new AMQPChannel($con);
+$cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
+$cnn->connect();
+$chan = new AMQPChannel($cnn);
 
 $ex = new AMQPExchange($chan);
 $ex->setName('test.queue.' . bin2hex(random_bytes(32)));

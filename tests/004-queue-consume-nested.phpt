@@ -1,9 +1,10 @@
 --TEST--
 AMQPQueue - nested consumers
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) {
-    print "skip";
-} ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 
@@ -63,22 +64,24 @@ function test(AMQPChannel $channel1)
     });
 }
 
-$connection1 = new AMQPConnection();
-$connection1->connect();
-$channel1 = new AMQPChannel($connection1);
+$cnn1 = new AMQPConnection();
+$cnn1->setHost(getenv('PHP_AMQP_HOST'));
+$cnn1->connect();
+$channel1 = new AMQPChannel($cnn1);
 echo 'With default prefetch = 3', PHP_EOL;
 test($channel1);
 
 $channel1->close();
 $channel1 = null;
-$connection1->disconnect();
-$connection1 = null;
+$cnn1->disconnect();
+$cnn1 = null;
 
 // var_dump($channel1);
-$connection2 = new AMQPConnection();
-$connection2->connect();
+$cnn2 = new AMQPConnection();
+$cnn2->setHost(getenv('PHP_AMQP_HOST'));
+$cnn2->connect();
 
-$channel2 = new AMQPChannel($connection2);
+$channel2 = new AMQPChannel($cnn2);
 $channel2->setPrefetchCount(1);
 echo 'With prefetch = 1', PHP_EOL;
 test($channel2);

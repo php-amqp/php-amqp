@@ -1,7 +1,9 @@
 --TEST--
 AMQPQueue - declare with stalled reference
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+?>
 --FILE--
 <?php
 class ConnectionMock extends  AMQPConnection {

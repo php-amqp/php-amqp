@@ -1,7 +1,9 @@
 --TEST--
 AMQPBasicProperties
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+?>
 --FILE--
 <?php
 require '_test_helpers.php.inc';

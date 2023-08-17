@@ -1,7 +1,10 @@
 --TEST--
 #147 Segfault when catchable fatal error happens in consumer
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 
@@ -16,10 +19,11 @@ set_error_handler("exception_error_handler");
 
 $time = microtime(true);
 
-$connection = new AMQPConnection();
-$connection->connect();
+$cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
+$cnn->connect();
 
-$channel = new AMQPChannel($connection);
+$channel = new AMQPChannel($cnn);
 $channel->setPrefetchCount(2);
 
 $exchange = new AMQPExchange($channel);

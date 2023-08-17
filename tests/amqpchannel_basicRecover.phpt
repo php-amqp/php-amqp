@@ -2,18 +2,18 @@
 AMQPChannel::basicRecover
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) {
-    print "skip";
-}
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
 ?>
 --FILE--
 <?php
 $time = microtime(true);
 
-$connection_1 = new AMQPConnection();
-$connection_1->connect();
+$cnn_1 = new AMQPConnection();
+$cnn_1->setHost(getenv('PHP_AMQP_HOST'));
+$cnn_1->connect();
 
-$channel_1 = new AMQPChannel($connection_1);
+$channel_1 = new AMQPChannel($cnn_1);
 $channel_1->setPrefetchCount(5);
 
 $exchange_1 = new AMQPExchange($channel_1);
@@ -45,11 +45,11 @@ $queue_1->consume(function(AMQPEnvelope $e, AMQPQueue $q) use (&$consume) {
 });
 $queue_1->cancel(); // we have to do that to prevent redelivering to the same consumer
 
-$connection_2 = new AMQPConnection();
-$connection_2->setReadTimeout(1);
-
-$connection_2->connect();
-$channel_2 = new AMQPChannel($connection_2);
+$cnn_2 = new AMQPConnection();
+$cnn_2->setReadTimeout(1);
+$cnn_2->setHost(getenv('PHP_AMQP_HOST'));
+$cnn_2->connect();
+$channel_2 = new AMQPChannel($cnn_2);
 $channel_2->setPrefetchCount(8);
 
 
@@ -70,7 +70,7 @@ try {
     echo get_class($e), "({$e->getCode()}): ", $e->getMessage(), PHP_EOL;
 }
 $queue_2->cancel();
-//var_dump($connection_2, $channel_2);die;
+//var_dump($cnn_2, $channel_2);die;
 
 
 // yes, we do it repeatedly, basic.recover works in a slightly different way than it looks like. As it said,

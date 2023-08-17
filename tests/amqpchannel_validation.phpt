@@ -2,18 +2,18 @@
 AMQPChannel parameter validation
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) {
-    print "skip";
-}
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
 ?>
 --FILE--
 <?php
 
 
-$con = new AMQPConnection();
-$con->connect();
+$cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
+$cnn->connect();
 
-$chan = new AMQPChannel($con);
+$chan = new AMQPChannel($cnn);
 try {
     $chan->setPrefetchSize(-1);
 } catch (\Throwable $t) {

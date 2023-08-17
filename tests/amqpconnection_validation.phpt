@@ -2,9 +2,7 @@
 AMQPConnection parameter validation
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) {
-    print "skip";
-}
+if (!extension_loaded("amqp")) print "skip";
 ?>
 --FILE--
 <?php

@@ -1,12 +1,16 @@
 --TEST--
 AMQPConnection heartbeats support (with active consumer)
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) print "skip"; ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
 $heartbeat = 2;
 $credentials = array('heartbeat' => $heartbeat, 'read_timeout' => $heartbeat * 20);
 $cnn = new AMQPConnection($credentials);
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
 $cnn->connect();
 
 var_dump($cnn);
@@ -66,7 +70,7 @@ object(AMQPConnection)#1 (18) {
   ["password":"AMQPConnection":private]=>
   string(5) "guest"
   ["host":"AMQPConnection":private]=>
-  string(9) "localhost"
+  string(%d) "%s"
   ["vhost":"AMQPConnection":private]=>
   string(1) "/"
   ["port":"AMQPConnection":private]=>

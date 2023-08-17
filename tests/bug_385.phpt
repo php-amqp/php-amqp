@@ -1,15 +1,17 @@
 --TEST--
 #385 Testing consumer cleared on cancel
 --SKIPIF--
-<?php if (!extension_loaded("amqp")) {
-    print "skip";
-} ?>
+<?php
+if (!extension_loaded("amqp")) print "skip";
+if (!getenv("PHP_AMQP_HOST")) print "skip";
+?>
 --FILE--
 <?php
-$conn = new AMQPConnection();
-$conn->connect();
+$cnn = new AMQPConnection();
+$cnn->setHost(getenv('PHP_AMQP_HOST'));
+$cnn->connect();
 
-$channel  = new AMQPChannel($conn);
+$channel  = new AMQPChannel($cnn);
 $exchange = new AMQPExchange($channel);
 
 $queue = new AMQPQueue($channel);
