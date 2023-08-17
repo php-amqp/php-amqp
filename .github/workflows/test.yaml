@@ -161,7 +161,9 @@ jobs:
         run: docker compose up -d rabbitmq
 
       - name: Install packages
-        run: sudo apt-get install -y cmake valgrind ${{ matrix.compiler }}
+        uses: awalsh128/cache-apt-pkgs-action@v1.3.0
+        with:
+          packages: cmake valgrind ${{ matrix.compiler }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.25.5
