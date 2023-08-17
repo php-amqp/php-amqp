@@ -7,7 +7,6 @@ RUN set -xe; \
 
 RUN apt-get install -yqq build-essential
 RUN apt-get install -yqq librabbitmq-dev
-RUN apt-get install -yqq socat
 RUN apt-get install -yqq gdb
 RUN apt-get install -yqq valgrind
 RUN apt-get install -yqq git
