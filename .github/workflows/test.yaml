@@ -8,8 +8,6 @@ on:
 env:
   TEST_TIMEOUT: 120
   CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
-  PHP_AMQP_HOST: rabbitmq
-  PHP_AMQP_SSL_HOST: rabbitmq.example.org
   MAKEFLAGS: -j4
 
 jobs:
@@ -155,11 +153,14 @@ jobs:
       - name: Build PHP extension
         run: phpize && ./configure && make
 
-      - name: Test PHP extension
-        run: make test | tee result.txt
+      - name: Run minimal test suite
+        run: make test
 
-      - name: Dump RabbitMQ logs
-        run: docker compose logs
+      - name: Test full test suite
+        run: make test
+        env:
+          PHP_AMQP_HOST: rabbitmq
+          PHP_AMQP_SSL_HOST: rabbitmq.example.org
 
       - name: Benchmark PHP extension
         run: ./infra/tools/pamqp-php-cli-deterministic -d extension=modules/amqp.so benchmark.php
