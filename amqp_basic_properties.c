@@ -60,9 +60,9 @@
 #include "amqp_timestamp.h"
 #include "amqp_decimal.h"
 
-void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, uint8_t depth);
-void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, uint8_t depth);
-bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth);
+void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, zend_ulong depth);
+void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, zend_ulong depth);
+bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, zend_ulong depth);
 
 zend_class_entry *amqp_basic_properties_class_entry;
 #define this_ce amqp_basic_properties_class_entry
@@ -562,14 +562,14 @@ PHP_MINIT_FUNCTION(amqp_basic_properties)
     return SUCCESS;
 }
 
-bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, uint8_t depth)
+bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value, zval *result, zend_ulong depth)
 {
-    if (depth >= PHP_AMQP_RECURSION_DEPTH_LIMIT) {
+    if (depth > PHP_AMQP_G(deserialization_depth)) {
         zend_throw_exception_ex(
             amqp_exception_class_entry,
             0,
-            "Recursion depth limit of %d reached while serializing value",
-            PHP_AMQP_RECURSION_DEPTH_LIMIT
+            "Maximum deserialization depth limit of %ld reached while deserializing value",
+            PHP_AMQP_G(deserialization_depth)
         );
         return 0;
     }
@@ -693,7 +693,7 @@ bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value,
     return 1;
 }
 
-void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, uint8_t depth)
+void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval *result, zend_ulong depth)
 {
     assert(Z_TYPE_P(result) == IS_ARRAY);
 
@@ -701,7 +701,7 @@ void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval 
     for (i = 0; i < array->num_entries; ++i) {
         zval result_nested;
         ZVAL_UNDEF(&result_nested);
-        if (php_amqp_basic_properties_value_to_zval_internal(&(array->entries[i]), &result_nested, depth)) {
+        if (php_amqp_basic_properties_value_to_zval_internal(&(array->entries[i]), &result_nested, depth + 1)) {
             add_next_index_zval(result, &result_nested);
         } else if (!Z_ISUNDEF(result_nested)) {
             zval_ptr_dtor(&result_nested);
@@ -709,7 +709,7 @@ void php_amqp_basic_properties_array_to_zval_internal(amqp_array_t *array, zval 
     }
 }
 
-void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, uint8_t depth)
+void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval *result, zend_ulong depth)
 {
     int i;
     zval result_nested;
@@ -719,7 +719,7 @@ void php_amqp_basic_properties_table_to_zval_internal(amqp_table_t *table, zval 
     for (i = 0; i < table->num_entries; ++i) {
         amqp_table_entry_t *entry = &(table->entries[i]);
         ZVAL_UNDEF(&result_nested);
-        if (php_amqp_basic_properties_value_to_zval_internal(&(entry->value), &result_nested, depth)) {
+        if (php_amqp_basic_properties_value_to_zval_internal(&(entry->value), &result_nested, depth + 1)) {
             char *key = estrndup(entry->key.bytes, (unsigned) entry->key.len);
             add_assoc_zval(result, key, &result_nested);
             efree(key);

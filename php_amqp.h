@@ -256,7 +256,6 @@ struct _amqp_connection_object {
 #define PHP_AMQP_STRINGIFY(value) PHP_AMQP_TO_STRING(value)
 #define PHP_AMQP_TO_STRING(value) #value
 
-
 #define DEFAULT_CHANNEL_MAX PHP_AMQP_STRINGIFY(PHP_AMQP_MAX_CHANNELS)
 #define DEFAULT_FRAME_MAX PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_FRAME_MAX)
 #define DEFAULT_HEARTBEAT PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_HEARTBEAT)
@@ -264,7 +263,7 @@ struct _amqp_connection_object {
 #define DEFAULT_CERT ""
 #define DEFAULT_KEY ""
 #define DEFAULT_VERIFY "1"
-
+#define DEFAULT_SERIALIZATION_DEPTH "128"
 
 #define IS_PASSIVE(bitmask) (AMQP_PASSIVE & (bitmask)) ? 1 : 0
 #define IS_DURABLE(bitmask) (AMQP_DURABLE & (bitmask)) ? 1 : 0
@@ -418,6 +417,8 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
 ZEND_BEGIN_MODULE_GLOBALS(amqp)
 char *error_message;
 zend_long error_code;
+zend_long deserialization_depth;
+zend_long serialization_depth;
 ZEND_END_MODULE_GLOBALS(amqp)
 
 ZEND_EXTERN_MODULE_GLOBALS(amqp)

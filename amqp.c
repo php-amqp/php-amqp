@@ -217,19 +217,47 @@ PHP_INI_BEGIN()
     PHP_INI_ENTRY("amqp.cert", DEFAULT_CERT, PHP_INI_ALL, NULL)
     PHP_INI_ENTRY("amqp.key", DEFAULT_KEY, PHP_INI_ALL, NULL)
     PHP_INI_ENTRY("amqp.verify", DEFAULT_VERIFY, PHP_INI_ALL, NULL)
-    PHP_INI_ENTRY("amqp.sasl_method", (const char *) DEFAULT_SASL_METHOD, PHP_INI_ALL, NULL)
+    PHP_INI_ENTRY("amqp.sasl_method", PHP_AMQP_STRINGIFY(DEFAULT_SASL_METHOD), PHP_INI_ALL, NULL)
+    STD_PHP_INI_ENTRY(
+        "amqp.serialization_depth",
+        DEFAULT_SERIALIZATION_DEPTH,
+        PHP_INI_ALL,
+        OnUpdateLongGEZero,
+        serialization_depth,
+        zend_amqp_globals,
+        amqp_globals
+    )
+    STD_PHP_INI_ENTRY(
+        "amqp.deserialization_depth",
+        DEFAULT_SERIALIZATION_DEPTH,
+        PHP_INI_ALL,
+        OnUpdateLongGEZero,
+        deserialization_depth,
+        zend_amqp_globals,
+        amqp_globals
+    )
 PHP_INI_END()
 
 ZEND_DECLARE_MODULE_GLOBALS(amqp)
 
 static PHP_GINIT_FUNCTION(amqp) /* {{{ */
 {
+#if defined(COMPILE_DL_AMQP) && defined(ZTS)
+    ZEND_TSRMLS_CACHE_UPDATE();
+#endif
+
+    memset(amqp_globals, 0, sizeof(*amqp_globals));
+
     amqp_globals->error_message = NULL;
     amqp_globals->error_code = 0;
 } /* }}} */
 
 static PHP_MINIT_FUNCTION(amqp) /* {{{ */
 {
+#if defined(COMPILE_DL_AMQP) && defined(ZTS)
+    ZEND_TSRMLS_CACHE_UPDATE();
+#endif
+
     zend_class_entry ce;
 
     /* Set up the connection resource */
