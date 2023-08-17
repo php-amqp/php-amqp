@@ -98,7 +98,6 @@ jobs:
     if: needs.dedup.outputs.should_skip != 'true'
 
     env:
-      TEST_PHP_ARGS: -j4 ${{ matrix.test-php-args }}
       CC: ${{ matrix.compiler }}
 
     strategy:
@@ -154,11 +153,14 @@ jobs:
         run: phpize && ./configure && make
 
       - name: Run minimal test suite
-        run: make test
+        run: make test | tee result-minimal.txt
+        env:
+          TEST_PHP_ARGS: -j4
 
       - name: Test full test suite
-        run: make test
+        run: make test | tee result-full.txt
         env:
+          TEST_PHP_ARGS: -j4 ${{ matrix.test-php-args }}
           PHP_AMQP_HOST: localhost
           PHP_AMQP_SSL_HOST: rabbitmq.example.org
 
