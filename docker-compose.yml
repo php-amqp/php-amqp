@@ -81,3 +81,12 @@ services:
       additional_contexts:
         php-core: docker-image://php:8.2-fpm-bookworm
     working_dir: /src/build/debian-82
+
+  debian-83:
+    <<: *php-base
+    build:
+      <<: *php-base-build
+      target: dev-all
+      additional_contexts:
+        php-core: docker-image://php:8.3-rc-fpm-bookworm
+    working_dir: /src/build/debian-83
