@@ -159,7 +159,7 @@ jobs:
       - name: Test full test suite
         run: make test
         env:
-          PHP_AMQP_HOST: rabbitmq
+          PHP_AMQP_HOST: localhost
           PHP_AMQP_SSL_HOST: rabbitmq.example.org
 
       - name: Benchmark PHP extension
