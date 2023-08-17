@@ -217,10 +217,10 @@ PHP_INI_BEGIN()
     PHP_INI_ENTRY("amqp.cert", DEFAULT_CERT, PHP_INI_ALL, NULL)
     PHP_INI_ENTRY("amqp.key", DEFAULT_KEY, PHP_INI_ALL, NULL)
     PHP_INI_ENTRY("amqp.verify", DEFAULT_VERIFY, PHP_INI_ALL, NULL)
-    PHP_INI_ENTRY("amqp.sasl_method", (const char *) DEFAULT_SASL_METHOD, PHP_INI_ALL, NULL)
+    PHP_INI_ENTRY("amqp.sasl_method", PHP_AMQP_STRINGIFY(DEFAULT_SASL_METHOD), PHP_INI_ALL, NULL)
     STD_PHP_INI_ENTRY(
         "amqp.serialization_depth",
-        "128",
+        DEFAULT_SERIALIZATION_DEPTH,
         PHP_INI_ALL,
         OnUpdateLongGEZero,
         serialization_depth,
@@ -229,7 +229,7 @@ PHP_INI_BEGIN()
     )
     STD_PHP_INI_ENTRY(
         "amqp.deserialization_depth",
-        "128",
+        DEFAULT_SERIALIZATION_DEPTH,
         PHP_INI_ALL,
         OnUpdateLongGEZero,
         deserialization_depth,

@@ -256,7 +256,6 @@ struct _amqp_connection_object {
 #define PHP_AMQP_STRINGIFY(value) PHP_AMQP_TO_STRING(value)
 #define PHP_AMQP_TO_STRING(value) #value
 
-
 #define DEFAULT_CHANNEL_MAX PHP_AMQP_STRINGIFY(PHP_AMQP_MAX_CHANNELS)
 #define DEFAULT_FRAME_MAX PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_FRAME_MAX)
 #define DEFAULT_HEARTBEAT PHP_AMQP_STRINGIFY(PHP_AMQP_DEFAULT_HEARTBEAT)
@@ -264,7 +263,7 @@ struct _amqp_connection_object {
 #define DEFAULT_CERT ""
 #define DEFAULT_KEY ""
 #define DEFAULT_VERIFY "1"
-
+#define DEFAULT_SERIALIZATION_DEPTH "128"
 
 #define IS_PASSIVE(bitmask) (AMQP_PASSIVE & (bitmask)) ? 1 : 0
 #define IS_DURABLE(bitmask) (AMQP_DURABLE & (bitmask)) ? 1 : 0
