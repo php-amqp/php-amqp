@@ -418,6 +418,8 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
 ZEND_BEGIN_MODULE_GLOBALS(amqp)
 char *error_message;
 zend_long error_code;
+zend_long deserialization_depth;
+zend_long serialization_depth;
 ZEND_END_MODULE_GLOBALS(amqp)
 
 ZEND_EXTERN_MODULE_GLOBALS(amqp)

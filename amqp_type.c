@@ -41,10 +41,10 @@
 
 static void php_amqp_type_free_amqp_array_internal(amqp_array_t *array);
 static void php_amqp_type_free_amqp_table_internal(amqp_table_t *object, bool clear_root);
-void php_amqp_type_internal_zval_to_amqp_array(zval *value, amqp_array_t *arguments, uint8_t depth);
-void php_amqp_type_zval_to_amqp_container_internal(zval *array, amqp_field_value_t **field, uint8_t depth);
-void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_table, uint8_t depth);
-bool php_amqp_zval_to_amqp_value_internal(zval *value, amqp_field_value_t **field_ptr, char *key, uint8_t depth);
+void php_amqp_type_internal_zval_to_amqp_array(zval *value, amqp_array_t *arguments, zend_ulong depth);
+void php_amqp_type_zval_to_amqp_container_internal(zval *array, amqp_field_value_t **field, zend_ulong depth);
+void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_table, zend_ulong depth);
+bool php_amqp_zval_to_amqp_value_internal(zval *value, amqp_field_value_t **field_ptr, char *key, zend_ulong depth);
 
 amqp_bytes_t php_amqp_type_char_to_amqp_long(char const *cstr, size_t len)
 {
@@ -83,7 +83,7 @@ char *php_amqp_type_amqp_bytes_to_char(amqp_bytes_t bytes)
     return res;
 }
 
-void php_amqp_type_zval_to_amqp_container_internal(zval *array, amqp_field_value_t **field, uint8_t depth)
+void php_amqp_type_zval_to_amqp_container_internal(zval *array, amqp_field_value_t **field, zend_ulong depth)
 {
     HashTable *ht;
     zend_string *key;
@@ -108,7 +108,7 @@ void php_amqp_type_zval_to_amqp_container_internal(zval *array, amqp_field_value
     }
 }
 
-void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_table, uint8_t depth)
+void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_table, zend_ulong depth)
 {
     HashTable *ht;
     zval *value_nested;
@@ -163,7 +163,7 @@ void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_t
     ZEND_HASH_FOREACH_END();
 }
 
-void php_amqp_type_internal_zval_to_amqp_array(zval *value, amqp_array_t *arguments, uint8_t depth)
+void php_amqp_type_internal_zval_to_amqp_array(zval *value, amqp_array_t *arguments, zend_ulong depth)
 {
     HashTable *ht;
 
@@ -190,18 +190,18 @@ void php_amqp_type_internal_zval_to_amqp_array(zval *value, amqp_array_t *argume
     ZEND_HASH_FOREACH_END ();
 }
 
-bool php_amqp_zval_to_amqp_value_internal(zval *value, amqp_field_value_t **field_ptr, char *key, uint8_t depth)
+bool php_amqp_zval_to_amqp_value_internal(zval *value, amqp_field_value_t **field_ptr, char *key, zend_ulong depth)
 {
     bool result;
     char type[16];
     amqp_field_value_t *field;
 
-    if (depth >= PHP_AMQP_RECURSION_DEPTH_LIMIT) {
+    if (depth > PHP_AMQP_G(serialization_depth)) {
         zend_throw_exception_ex(
             amqp_exception_class_entry,
             0,
-            "Recursion depth limit of %d reached while serializing value",
-            PHP_AMQP_RECURSION_DEPTH_LIMIT
+            "Maximum serialization depth of %ld reached while serializing value",
+            PHP_AMQP_G(serialization_depth)
         );
         return 0;
     }
