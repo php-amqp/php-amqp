@@ -99,6 +99,9 @@ jobs:
 
     env:
       CC: ${{ matrix.compiler }}
+      TEST_PHP_ARGS: -j4 ${{ matrix.test-php-args }}
+      PHP_AMQP_HOST: localhost
+      PHP_AMQP_SSL_HOST: rabbitmq.example.org
 
     strategy:
       fail-fast: false
@@ -156,13 +159,11 @@ jobs:
         run: make test | tee result-minimal.txt
         env:
           TEST_PHP_ARGS: -j4
+          PHP_AMQP_HOST: ""
+          PHP_AMQP_SSL_HOST: ""
 
       - name: Test full test suite
         run: make test | tee result-full.txt
-        env:
-          TEST_PHP_ARGS: -j4 ${{ matrix.test-php-args }}
-          PHP_AMQP_HOST: localhost
-          PHP_AMQP_SSL_HOST: rabbitmq.example.org
 
       - name: Benchmark PHP extension
         run: ./infra/tools/pamqp-php-cli-deterministic -d extension=modules/amqp.so benchmark.php
