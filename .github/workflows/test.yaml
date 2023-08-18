@@ -217,6 +217,8 @@ jobs:
       - name: Run minimal test suite
         run: make test | tee result-minimal.txt
         env:
+          # Reset defaults to a) only run local tests, b) don’t run memory checks as the full test suite run will do so
+          TEST_PHP_ARGS: -j4
           PHP_AMQP_HOST: ""
           PHP_AMQP_SSL_HOST: ""
 
