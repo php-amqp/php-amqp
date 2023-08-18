@@ -72,6 +72,8 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: json
           coverage: none
+        env:
+          debug: true
 
       - name: Check stubs
         run: ./infra/tools/pamqp-stubs-lint
@@ -179,6 +181,7 @@ jobs:
           extensions: simplexml
         env:
           phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
+          debug: true
 
       - name: Build librabbitmq
         run: ./infra/tools/pamqp-install-librabbitmq ${{ matrix.librabbitmq-version }}
