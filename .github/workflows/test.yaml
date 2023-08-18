@@ -122,35 +122,17 @@ jobs:
             php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.3'
-            php-thread-safe: true
-            librabbitmq-version: '0.8.0'
-            test-php-args: '-m'
-            compiler: gcc
+            compiler: clang
 
           - php-version: '8.2'
             php-thread-safe: false
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.2'
-            php-thread-safe: false
-            librabbitmq-version: '0.8.0'
-            test-php-args: '-m'
-            compiler: gcc
+            compiler: clang
 
           - php-version: '8.1'
             php-thread-safe: true
             librabbitmq-version: 'master'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.1'
-            php-thread-safe: true
-            librabbitmq-version: '0.8.0'
             test-php-args: '-m'
             compiler: gcc
 
