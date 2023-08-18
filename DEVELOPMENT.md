@@ -12,6 +12,12 @@ To start the development environment, run this command:
 docker compose up
 ```
 
+For the impatient to not wait for all containers to finish building, only start a single container:
+
+```commandline
+docker compose up debian-82
+```
+
 The command will start the development environment in the foreground. This is quite nice as it will conveniently surface
 all the logs, especially the RabbitMQ logs.
 
@@ -27,6 +33,10 @@ Various development containers are provided:
 - `ubuntu-80`: PHP 8.0 on Ubuntu 22 ("Jammy")
 - `ubuntu-81`: PHP 8.1 on Ubuntu 22 ("Jammy")
 - `ubuntu-82`: PHP 8.2 on Ubuntu 22 ("Jammy")
+- `centos-74`: PHP 7.4 on Centos Stream 9
+- `centos-80`: PHP 8.0 on Centos Stream 9
+- `centos-81`: PHP 8.1 on Centos Stream 9
+- `centos-82`: PHP 8.2 on Centos Stream 9
 
 To enter the container, run this command:
 

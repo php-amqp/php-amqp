@@ -28,7 +28,7 @@ if ! test -f "$cached_script"; then
   done
 
   mkdir -p "$cache_dir"
-  echo "$(which php) $args \$@" > $cached_script.$$
+  echo "$(type -P php) $args \$@" > $cached_script.$$
   chmod +x $cached_script.$$
   mv $cached_script.$$ $cached_script
 fi
