@@ -1,19 +1,11 @@
 {
    "Timezone leak on Ubuntu"
    Memcheck:Cond
-   fun:index_filter
+   ...
    fun:__scandir64_tail
-   fun:create_zone_index.isra.0
-   fun:timelib_builtin_db
-   fun:OnUpdate_date_timezone
+   ...
    fun:zend_register_ini_entries_ex
-   fun:zm_startup_date
-   fun:zend_startup_module_ex
-   fun:zend_startup_module_ex
-   fun:zend_startup_module_zval
-   fun:zend_hash_apply
-   fun:php_module_startup
-   fun:main
+   ...
 }
 {
     "Expected, see https://bugs.php.net/bug.php?id=76445"
