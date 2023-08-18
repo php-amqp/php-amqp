@@ -11,4 +11,5 @@
     "Expected, see https://bugs.php.net/bug.php?id=76445"
     Memcheck:Cond
     fun:zend_string_equal_val
+    ...
 }
