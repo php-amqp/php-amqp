@@ -1,0 +1,15 @@
+{
+   "Timezone leak on Ubuntu"
+   Memcheck:Cond
+   ...
+   fun:__scandir64_tail
+   ...
+   fun:zend_register_ini_entries_ex
+   ...
+}
+{
+    "Expected, see https://bugs.php.net/bug.php?id=76445"
+    Memcheck:Cond
+    fun:zend_string_equal_val
+    ...
+}

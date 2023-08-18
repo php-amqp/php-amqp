@@ -7,7 +7,7 @@ on:
 
 env:
   TEST_TIMEOUT: 120
-  CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
+  CFLAGS: -g -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
   MAKEFLAGS: -j4
 
 jobs:
@@ -106,6 +106,7 @@ jobs:
       TEST_PHP_ARGS: -j4 ${{ matrix.test-php-args }}
       PHP_AMQP_HOST: localhost
       PHP_AMQP_SSL_HOST: rabbitmq.example.org
+      VALGRIND_OPTS: "--suppressions=infra/tools/valgrind-suppressions"
 
     strategy:
       fail-fast: false
@@ -119,17 +120,59 @@ jobs:
             php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: clang
+            compiler: gcc
+
+          - php-version: '8.3'
+            php-thread-safe: true
+            librabbitmq-version: '0.8.0'
+            test-php-args: '-m'
+            compiler: gcc
 
           - php-version: '8.2'
-            php-thread-safe: false
+            php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: clang
+            compiler: gcc
+
+          - php-version: '8.2'
+            php-thread-safe: true
+            librabbitmq-version: '0.8.0'
+            test-php-args: '-m'
+            compiler: gcc
 
           - php-version: '8.1'
             php-thread-safe: true
             librabbitmq-version: 'master'
+            test-php-args: '-m'
+            compiler: gcc
+
+          - php-version: '8.1'
+            php-thread-safe: true
+            librabbitmq-version: '0.8.0'
+            test-php-args: '-m'
+            compiler: gcc
+
+          - php-version: '8.0'
+            php-thread-safe: true
+            librabbitmq-version: 'master'
+            test-php-args: '-m'
+            compiler: gcc
+
+          - php-version: '8.0'
+            php-thread-safe: true
+            librabbitmq-version: '0.8.0'
+            test-php-args: '-m'
+            compiler: gcc
+
+          - php-version: '7.4'
+            php-thread-safe: true
+            librabbitmq-version: 'master'
+            test-php-args: '-m'
+            compiler: gcc
+
+          - php-version: '7.4'
+            php-thread-safe: true
+            librabbitmq-version: '0.8.0'
             test-php-args: '-m'
             compiler: gcc
 
@@ -174,6 +217,7 @@ jobs:
       - name: Run minimal test suite
         run: make test | tee result-minimal.txt
         env:
+          # Reset defaults to a) only run local tests, b) don’t run memory checks as the full test suite run will do so
           TEST_PHP_ARGS: -j4
           PHP_AMQP_HOST: ""
           PHP_AMQP_SSL_HOST: ""

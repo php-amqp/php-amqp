@@ -106,6 +106,7 @@ extern zend_module_entry amqp_module_entry;
 #define PHP_AMQP_DECLARE_TYPED_PROPERTY_WITH_DEFAULT(class_entry, name, flags, type, nullable, init)                   \
     {                                                                                                                  \
         zval __val;                                                                                                    \
+        ZVAL_UNDEF(&__val);                                                                                            \
         init(&__val);                                                                                                  \
         PHP_AMQP_DECLARE_TYPED_PROPERTY_ZVAL(                                                                          \
             class_entry,                                                                                               \
@@ -125,7 +126,7 @@ extern zend_module_entry amqp_module_entry;
             flags,                                                                                                     \
             PHP_AMQP_DECLARE_PROPERTY_OBJ_TYPE(__class_name, nullable),                                                \
             __val                                                                                                      \
-        )                                                                                                              \
+        );                                                                                                             \
     }
 
 #include "amqp_connection_resource.h"

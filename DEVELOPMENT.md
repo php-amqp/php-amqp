@@ -17,12 +17,16 @@ all the logs, especially the RabbitMQ logs.
 
 ## The environment
 
-Four different development containers are provided at the moment:
+Various development containers are provided:
 
 - `debian-74`: PHP 7.4 on Debian 11 ("Bullseye")
 - `debian-80`: PHP 8.0 on Debian 12 ("Bookworm")
 - `debian-81`: PHP 8.1 on Debian 12 ("Bookworm")
-- `debian-82`: PHP 8.1 on Debian 12 ("Bookworm")
+- `debian-82`: PHP 8.2 on Debian 12 ("Bookworm")
+- `ubuntu-74`: PHP 7.4 on Ubuntu 20 ("Jammy")
+- `ubuntu-80`: PHP 8.0 on Ubuntu 22 ("Jammy")
+- `ubuntu-81`: PHP 8.1 on Ubuntu 22 ("Jammy")
+- `ubuntu-82`: PHP 8.2 on Ubuntu 22 ("Jammy")
 
 To enter the container, run this command:
 
