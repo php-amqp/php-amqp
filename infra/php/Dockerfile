@@ -1,27 +1,12 @@
 # syntax=docker/dockerfile:1.4
 FROM php-core AS dev
-
-RUN set -xe; \
-    apt-get update -yqq && \
-    pecl channel-update pecl.php.net
-
-RUN apt-get install -yqq build-essential
-RUN apt-get install -yqq librabbitmq-dev
-RUN apt-get install -yqq gdb
-RUN apt-get install -yqq valgrind
-RUN apt-get install -yqq git
-RUN apt-get install -yqq unzip
-RUN apt-get install -yqq clang
-
-RUN echo 'PATH=$PATH:/src/infra/tools' >> /etc/bash.bashrc
-
-COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-
-CMD PHP_AMQP_DOCKER_ENTRYPOINT=1 php /src/infra/tools/pamqp-docker-setup && sleep infinity
-
-FROM dev AS dev-all
-RUN apt-get install -yqq gnupg2
-RUN echo "deb https://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-17 main" > /etc/apt/sources.list.d/llvm.list
-RUN curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+RUN . /etc/os-release && \
+    echo "deb https://apt.llvm.org/$VERSION_CODENAME llvm-toolchain-$VERSION_CODENAME-17 main" > /etc/apt/sources.list.d/llvm.list && \
+    curl https://apt.llvm.org/llvm-snapshot.gpg.key > /etc/apt/trusted.gpg.d/llvm-snapshot.asc
 RUN apt-get update -yqq
-RUN apt-get install -yqq clang-format-17
+RUN apt-get install -yqq build-essential librabbitmq-dev
+RUN apt-get install -yqq gdb valgrind clang clang-format-17
+RUN apt-get install -yqq git unzip
+RUN echo 'PATH=$PATH:/src/infra/tools' >> /etc/bash.bashrc
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+CMD PHP_AMQP_DOCKER_ENTRYPOINT=1 php /src/infra/tools/pamqp-docker-setup && sleep infinity

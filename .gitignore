@@ -49,3 +49,5 @@ CMakeLists.txt
 /configure~
 /impl.json
 /stubs.json
+/run-tests.php
+/stubs-old

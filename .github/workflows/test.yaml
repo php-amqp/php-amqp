@@ -55,14 +55,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ "8.2", "8.1", "8.0", "7.4" ]
+        php-version: [ "8.3", "8.2", "8.1", "8.0", "7.4" ]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.3
 
       - name: Install packages
-        run: sudo apt-get install -y cmake valgrind
+        uses: awalsh128/cache-apt-pkgs-action@v1.3.0
+        with:
+          packages: cmake valgrind
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.25.5
@@ -70,6 +72,8 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: json
           coverage: none
+        env:
+          debug: true
 
       - name: Check stubs
         run: ./infra/tools/pamqp-stubs-lint
@@ -88,7 +92,7 @@ jobs:
 
       - name: Validate argument parsing
         run: ./infra/tools/pamqp-php-cli-deterministic -d extension=modules/amqp.so ./infra/tools/pamqp-arguments-validate
-        if: matrix.php-version == '8.2'
+        if: matrix.php-version == '8.2' || matrix.php-version == '8.3'
 
   test:
     name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.compiler }}
@@ -106,20 +110,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ '8.2', '8.1', '8.0', '7.4' ]
+        php-version: [ '8.3', '8.2', '8.1', '8.0', '7.4' ]
         php-thread-safe: [ true, false ]
         librabbitmq-version: [ 'master', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0' ]
         compiler: [gcc, clang]
         include:
+          - php-version: '8.3'
+            php-thread-safe: true
+            librabbitmq-version: 'master'
+            test-php-args: '-m'
+            compiler: clang
+
           - php-version: '8.2'
             php-thread-safe: false
             librabbitmq-version: 'master'
             test-php-args: '-m'
+            compiler: clang
 
           - php-version: '8.1'
             php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
+            compiler: gcc
 
     steps:
       - name: Checkout
@@ -135,7 +147,10 @@ jobs:
         run: docker compose up -d rabbitmq
 
       - name: Install packages
-        run: sudo apt-get install -y cmake valgrind ${{ matrix.compiler }}
+        uses: awalsh128/cache-apt-pkgs-action@v1.3.0
+        with:
+          packages: cmake valgrind ${{ matrix.compiler }}
+          version: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.25.5
@@ -145,6 +160,7 @@ jobs:
           extensions: simplexml
         env:
           phpts: ${{ matrix.php-thread-safe && 'ts' || 'nts' }}
+          debug: true
 
       - name: Build librabbitmq
         run: ./infra/tools/pamqp-install-librabbitmq ${{ matrix.librabbitmq-version }}

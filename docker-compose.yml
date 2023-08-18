@@ -43,7 +43,6 @@ services:
   debian-74: &php-base
     build: &php-base-build
       context: infra/php
-      target: dev
       additional_contexts:
         php-core: docker-image://php:7.4-zts-bullseye
     volumes:
@@ -77,7 +76,14 @@ services:
     <<: *php-base
     build:
       <<: *php-base-build
-      target: dev-all
       additional_contexts:
         php-core: docker-image://php:8.2-fpm-bookworm
     working_dir: /src/build/debian-82
+
+  debian-83:
+    <<: *php-base
+    build:
+      <<: *php-base-build
+      additional_contexts:
+        php-core: docker-image://php:8.3-rc-fpm-bookworm
+    working_dir: /src/build/debian-83
