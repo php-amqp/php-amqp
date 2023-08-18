@@ -111,16 +111,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        #php-version: [ '8.3', '8.2', '8.1', '8.0', '7.4' ]
+        #php-thread-safe: [ true, false ]
+        #librabbitmq-version: [ 'master', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0' ]
         php-version: [ '8.3', '8.2', '8.1', '8.0', '7.4' ]
-        php-thread-safe: [ true, false ]
-        librabbitmq-version: [ 'master', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0' ]
+        php-thread-safe: [ true ]
+        librabbitmq-version: [ 'master', '0.8.0' ]
         compiler: [gcc, clang]
         include:
           - php-version: '8.3'
             php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: clang
+            compiler: gcc
 
           - php-version: '8.3'
             php-thread-safe: true
@@ -129,13 +132,13 @@ jobs:
             compiler: gcc
 
           - php-version: '8.2'
-            php-thread-safe: false
+            php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: clang
+            compiler: gcc
 
           - php-version: '8.2'
-            php-thread-safe: false
+            php-thread-safe: true
             librabbitmq-version: '0.8.0'
             test-php-args: '-m'
             compiler: gcc
@@ -144,7 +147,7 @@ jobs:
             php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: clang
+            compiler: gcc
 
           - php-version: '8.1'
             php-thread-safe: true
@@ -156,7 +159,7 @@ jobs:
             php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: clang
+            compiler: gcc
 
           - php-version: '8.0'
             php-thread-safe: true
@@ -168,7 +171,7 @@ jobs:
             php-thread-safe: true
             librabbitmq-version: 'master'
             test-php-args: '-m'
-            compiler: clang
+            compiler: gcc
 
           - php-version: '7.4'
             php-thread-safe: true
