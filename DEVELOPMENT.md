@@ -23,7 +23,7 @@ Various development containers are provided:
 - `debian-80`: PHP 8.0 on Debian 12 ("Bookworm")
 - `debian-81`: PHP 8.1 on Debian 12 ("Bookworm")
 - `debian-82`: PHP 8.2 on Debian 12 ("Bookworm")
-- `ubuntu-74`: PHP 7.4 on Ubuntu 20 ("Focal")
+- `ubuntu-74`: PHP 7.4 on Ubuntu 20 ("Jammy")
 - `ubuntu-80`: PHP 8.0 on Ubuntu 22 ("Jammy")
 - `ubuntu-81`: PHP 8.1 on Ubuntu 22 ("Jammy")
 - `ubuntu-82`: PHP 8.2 on Ubuntu 22 ("Jammy")

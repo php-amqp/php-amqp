@@ -7,7 +7,7 @@ on:
 
 env:
   TEST_TIMEOUT: 120
-  CFLAGS: -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
+  CFLAGS: -g -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wall -Werror
   MAKEFLAGS: -j4
 
 jobs:
