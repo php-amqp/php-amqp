@@ -7,7 +7,7 @@ if (!getenv("PHP_AMQP_HOST")) print "skip";
 ?>
 --FILE--
 <?php
-$time = microtime(true);
+$id = bin2hex(random_bytes(32));
 
 $cnn = new AMQPConnection();
 $cnn->setHost(getenv('PHP_AMQP_HOST'));
@@ -19,23 +19,23 @@ $ch3 = new AMQPChannel($cnn);
 
 // Declare a new exchange
 $ex = new AMQPExchange($ch);
-$ex->setName('exchange-' . $time);
+$ex->setName('exchange-' . $id);
 $ex->setType(AMQP_EX_TYPE_TOPIC);
 $ex->declareExchange();
 
 // Create and bind queues
 $q1 = new AMQPQueue($ch);
-$q1->setName('queue-one-' . $time);
+$q1->setName('queue-one-' . $id);
 $q1->declareQueue();
 $q1->bind($ex->getName(), 'routing.one');
 
 $q2 = new AMQPQueue($ch2);
-$q2->setName('queue-two-' . $time);
+$q2->setName('queue-two-' . $id);
 $q2->declareQueue();
 $q2->bind($ex->getName(), 'routing.two');
 
 $q3 = new AMQPQueue($ch3);
-$q3->setName('queue-three-' . $time);
+$q3->setName('queue-three-' . $id);
 $q3->declareQueue();
 $q3->bind($ex->getName(), 'routing.three');
 

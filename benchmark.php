@@ -23,6 +23,7 @@ echo '  running ', $iterations, ' iterations:', PHP_EOL, PHP_EOL;
 
 
 $conn = new AMQPConnection();
+$conn->setHost(getenv('PHP_AMQP_HOST'));
 $conn->connect();
 
 $ch = new AMQPChannel($conn);
@@ -30,7 +31,7 @@ $ch = new AMQPChannel($conn);
 $exchange = new AMQPExchange($ch);
 $exchange->setType(AMQP_EX_TYPE_FANOUT);
 $exchange->setFlags(AMQP_AUTODELETE);
-$exchange->setName('benchmark_exchange_' . microtime(true));
+$exchange->setName('benchmark_exchange_' . bin2hex(random_bytes(32)));
 $exchange->declareExchange();
 
 $q = new AMQPQueue($ch);
@@ -70,7 +71,7 @@ echo PHP_EOL;
 $exchange = new AMQPExchange($ch);
 $exchange->setType(AMQP_EX_TYPE_FANOUT);
 $exchange->setFlags(AMQP_AUTODELETE);
-$exchange->setName('benchmark_exchange_' . microtime(true));
+$exchange->setName('benchmark_exchange_' . bin2hex(random_bytes(32)));
 $exchange->declareExchange();
 
 $q = new AMQPQueue($ch);
