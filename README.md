@@ -1,4 +1,4 @@
-# PHP AMQP bindings [![Test](https://github.com/php-amqp/php-amqp/actions/workflows/test.yaml/badge.svg)](https://github.com/php-amqp/php-amqp/actions/workflows/test.yaml) [![Build status](https://ci.appveyor.com/api/projects/status/sv5o1id5oj63w9hu/branch/latest?svg=true)](https://ci.appveyor.com/project/lstrojny/php-amqp-7lf47/branch/latest)
+# PHP AMQP bindings [![Test](https://github.com/php-amqp/php-amqp/actions/workflows/test.yaml/badge.svg)](https://github.com/php-amqp/php-amqp/actions/workflows/test.yaml)
 
 Object-oriented PHP bindings for the AMQP C library (https://github.com/alanxz/rabbitmq-c)
 
@@ -61,9 +61,9 @@ cases.
 
 ### Related libraries
 
-* [enqueue/amqp-ext](https://github.com/php-enqueue/amqp-ext) is
+- [enqueue/amqp-ext](https://github.com/php-enqueue/amqp-ext) is
   an [amqp interop](https://github.com/queue-interop/queue-interop#amqp-interop) compatible wrapper
-* [symfony/amqp-messenger](https://symfony.com/components/AMQP%20Messenger) provides AMQP integration
+- [symfony/amqp-messenger](https://symfony.com/components/AMQP%20Messenger) provides AMQP integration
   for [symfony/messenger](https://symfony.com/doc/current/messenger.html), the popular messaging component by Symfony.
 
 ### How to report a problem
