@@ -19,6 +19,6 @@ string(%d) "%d.%d.%s"
 int(%d)
 int(%d)
 int(%d)
-string(%d) "%s"
+string(%d) "%S"
 int(%d)
 ==DONE==
