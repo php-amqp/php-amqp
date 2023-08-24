@@ -2,8 +2,10 @@
 
 /**
  * stub class representing AMQPDecimal from pecl-amqp
+ *
+ * @readonly
  */
-final class AMQPDecimal
+final /* readonly */ class AMQPDecimal implements AMQPValue
 {
     /**
      * @var int
@@ -41,6 +43,10 @@ final class AMQPDecimal
     }
 
     public function getSignificand(): int
+    {
+    }
+
+    public function toAmqpValue()
     {
     }
 }

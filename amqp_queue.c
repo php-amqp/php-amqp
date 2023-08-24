@@ -62,6 +62,9 @@
 #include "amqp_envelope.h"
 #include "amqp_queue.h"
 #include "amqp_type.h"
+#include "amqp_value.h"
+#include "amqp_decimal.h"
+#include "amqp_timestamp.h"
 
 zend_class_entry *amqp_queue_class_entry;
 #define this_ce amqp_queue_class_entry
@@ -277,6 +280,13 @@ static PHP_METHOD(amqp_queue_class, setArgument)
     }
 
     switch (Z_TYPE_P(value)) {
+        case IS_OBJECT:
+            if (!instanceof_function(Z_OBJCE_P(value), amqp_timestamp_class_entry) &&
+                !instanceof_function(Z_OBJCE_P(value), amqp_decimal_class_entry) &&
+                !instanceof_function(Z_OBJCE_P(value), amqp_value_class_entry)) {
+                goto err;
+            }
+            // Intentional fall-through
         case IS_NULL:
         case IS_TRUE:
         case IS_FALSE:
@@ -287,9 +297,11 @@ static PHP_METHOD(amqp_queue_class, setArgument)
             Z_TRY_ADDREF_P(value);
             break;
         default:
+        err:
             zend_throw_exception(
                 amqp_queue_exception_class_entry,
-                "The value parameter must be of type bool, int, double, string, or null.",
+                "The value parameter must be of type bool, int, double, string, null, AMQPTimestamp, AMQPDecimal, or "
+                "an implementation of AMQPValue.",
                 0
             );
             return;

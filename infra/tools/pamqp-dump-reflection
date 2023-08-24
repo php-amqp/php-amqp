@@ -37,6 +37,15 @@ function error(string $message, ...$args): void
 
 const MAGIC_METHODS = ['__construct', '__toString', '__wakeup', '__clone'];
 
+function getParents(ReflectionClass $r): array {
+    $parents = [];
+    while ($r = $r->getParentClass()) {
+        $parents[] = $r->getName();
+    }
+
+    return $parents;
+}
+
 function getClassMetadata(string $class): array
 {
     $refl = new ReflectionClass($class);
@@ -45,7 +54,16 @@ function getClassMetadata(string $class): array
         'constants' => [],
         'properties' => [],
         'methods' => [],
+        'final' => $refl->isFinal(),
+        'abstract' => $refl->isAbstract(),
+        'interface' => $refl->isInterface(),
+        'implements' => $refl->getInterfaceNames(),
+        'readonly' => method_exists($refl, 'isReadonly') ? $refl->isReadonly() || strpos($refl->getDocComment(), '@readonly') !== false : null,
+        'extends' => getParents($refl),
     ];
+
+    sort($classMetadata['implements']);
+    sort($classMetadata['extends']);
 
     foreach ($refl->getReflectionConstants() as $constant) {
         if ($constant->getDeclaringClass()->getName() !== $refl->getName()) {
@@ -246,6 +264,7 @@ $symbols['classes'][] = getClassMetadata('AMQPConnection');
 $symbols['classes'][] = getClassMetadata('AMQPChannelException');
 $symbols['classes'][] = getClassMetadata('AMQPChannel');
 $symbols['classes'][] = getClassMetadata('AMQPBasicProperties');
+$symbols['classes'][] = getClassMetadata('AMQPValue');
 
 // Ensure we captured all AMQP classes
 foreach (get_declared_classes() as $className) {

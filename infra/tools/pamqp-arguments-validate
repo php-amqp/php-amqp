@@ -15,6 +15,7 @@ const CLASSES = [
     'AMQPQueue',
     'AMQPQueueException',
     'AMQPTimestamp',
+    'AMQPValue',
     'AMQPValueException',
 ];
 
@@ -35,6 +36,10 @@ function getSource(string $class): ?string
 function validate(string $class)
 {
     $refl = new ReflectionClass($class);
+
+    if ($refl->isInterface()) {
+        return;
+    }
 
     $source = getSource($class);
 
@@ -107,7 +112,7 @@ function validate(string $class)
                 );
             }
 
-            $reflectionNullable = $parameter->allowsNull();
+            $reflectionNullable = $parameter->allowsNull() || !$parameter->hasType();
             if ($reflectionNullable !== $types[$pos]['nullable']) {
                 error(
                     '%s::%s(%s): type parsing and Reflection nullability differs. Parameter parsing: %s (%s). Reflection: %s',
@@ -133,6 +138,10 @@ function error(string $message, ...$args): void
 
 function parseParameterString(string $str): array
 {
+    if ($str == '') {
+        return [[], 0];
+    }
+
     $types = [
         's' => 'string',
         'O' => 'object',
@@ -163,7 +172,7 @@ function parseParameterString(string $str): array
         } elseif ($char === '/') {
             // Ignored
         } else {
-            throw new InvalidArgumentException($char);
+            throw new InvalidArgumentException(sprintf('Cannot handle char <%s>', $char));
         }
     }
 

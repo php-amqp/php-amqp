@@ -296,7 +296,7 @@ class AMQPQueue
      * Set a queue argument.
      *
      * @param string $argumentName The argument name to set.
-     * @param bool|int|double|string|null $argumentValue The argument value to set.
+     * @param bool|int|double|string|null|AMQPValue|AMQPDecimal|AMQPTimestamp $argumentValue The argument value to set.
      */
     public function setArgument(string $argumentName, $argumentValue): void
     {

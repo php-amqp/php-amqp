@@ -27,6 +27,7 @@
 #include "php.h"
 #include "zend_exceptions.h"
 #include "php_amqp.h"
+#include "amqp_value.h"
 
 zend_class_entry *amqp_decimal_class_entry;
 #define this_ce amqp_decimal_class_entry
@@ -93,13 +94,23 @@ static PHP_METHOD(amqp_decimal_class, getExponent)
 /* }}} */
 
 /* {{{ proto int AMQPDecimal::getSignificand()
-Get E */
+Get significand */
 static PHP_METHOD(amqp_decimal_class, getSignificand)
 {
     zval rv;
     PHP_AMQP_NOPARAMS()
 
     PHP_AMQP_RETURN_THIS_PROP("significand");
+}
+/* }}} */
+
+/* {{{ proto int AMQPDecimal::toAmqpValue()
+Get AMQPDecimal as AMQPValue */
+static PHP_METHOD(amqp_decimal_class, toAmqpValue)
+{
+    PHP_AMQP_NOPARAMS()
+
+    RETURN_OBJ(Z_OBJ_P(getThis()));
 }
 /* }}} */
 
@@ -115,11 +126,14 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_decimal_class_getSignificand, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_decimal_class_toAmqpValue, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
 
 zend_function_entry amqp_decimal_class_functions[] = {
 	PHP_ME(amqp_decimal_class, __construct, 	arginfo_amqp_decimal_class_construct,	ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_decimal_class, getExponent, 	arginfo_amqp_decimal_class_getExponent,	ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_decimal_class, getSignificand, 	arginfo_amqp_decimal_class_getSignificand,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_decimal_class, toAmqpValue, arginfo_amqp_decimal_class_toAmqpValue, ZEND_ACC_PUBLIC)
 
     {NULL, NULL, NULL}
 };
@@ -131,7 +145,11 @@ PHP_MINIT_FUNCTION(amqp_decimal)
 
     INIT_CLASS_ENTRY(ce, "AMQPDecimal", amqp_decimal_class_functions);
     this_ce = zend_register_internal_class(&ce);
-    this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
+    zend_class_implements(this_ce, 1, amqp_value_class_entry);
+    this_ce->ce_flags |= ZEND_ACC_FINAL;
+	#if PHP_VERSION_ID >= 80200
+	this_ce->ce_flags |= ZEND_ACC_READONLY_CLASS;
+	#endif
 
     zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MIN"), AMQP_DECIMAL_EXPONENT_MIN);
     zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MAX"), AMQP_DECIMAL_EXPONENT_MAX);

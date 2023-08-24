@@ -9,6 +9,8 @@ if (!extension_loaded("amqp")) print "skip";
 
 $timestamp = new AMQPTimestamp(100000);
 var_dump($timestamp->getTimestamp(), (string) $timestamp);
+var_dump($timestamp === $timestamp->toAmqpValue());
+var_dump($timestamp instanceof AMQPValue);
 
 $timestamp = new AMQPTimestamp(100000.1);
 var_dump($timestamp->getTimestamp(), (string) $timestamp);
@@ -35,6 +37,8 @@ var_dump(AMQPTimestamp::MIN);
 --EXPECTF--
 float(100000)
 string(6) "100000"
+bool(true)
+bool(true)
 float(100000)
 string(6) "100000"
 The timestamp parameter must be greater than 0.

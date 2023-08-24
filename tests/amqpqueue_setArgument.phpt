@@ -26,6 +26,9 @@ $q->declareQueue();
 
 var_dump($q);
 
+class MyValue implements AMQPValue {
+    public function toAmqpValue() { return "foo"; }
+}
 
 $q_dead = new AMQPQueue($ch);
 $q_dead->setName($q_dead_name);
@@ -33,6 +36,9 @@ $q_dead->setArgument('x-dead-letter-exchange', '');
 $q_dead->setArgument('x-dead-letter-routing-key', $q_name);
 $q_dead->setArgument('x-message-ttl', $heartbeat * 10 * 1000);
 $q_dead->setArgument('x-null', null);
+$q_dead->setArgument('x-timestamp', new AMQPTimestamp(404));
+$q_dead->setArgument('x-decimal', new AMQPDecimal(1, 2));
+$q_dead->setArgument('x-custom-value', new MyValue());
 $q_dead->setFlags(AMQP_AUTODELETE);
 $q_dead->declareQueue();
 
@@ -42,7 +48,7 @@ $q_dead->removeArgument('x-does-not-exist');
 var_dump($q_dead);
 ?>
 --EXPECTF--
-object(AMQPQueue)#3 (9) {
+object(AMQPQueue)#%d (%d) {
   ["connection":"AMQPQueue":private]=>
   %a
   ["channel":"AMQPQueue":private]=>
@@ -63,7 +69,7 @@ object(AMQPQueue)#3 (9) {
   array(0) {
   }
 }
-object(AMQPQueue)#4 (9) {
+object(AMQPQueue)#%d (%d) {
   ["connection":"AMQPQueue":private]=>
   %a
   ["channel":"AMQPQueue":private]=>
@@ -81,7 +87,7 @@ object(AMQPQueue)#4 (9) {
   ["autoDelete":"AMQPQueue":private]=>
   bool(true)
   ["arguments":"AMQPQueue":private]=>
-  array(4) {
+  array(%d) {
     ["x-dead-letter-exchange"]=>
     string(0) ""
     ["x-dead-letter-routing-key"]=>
@@ -90,9 +96,24 @@ object(AMQPQueue)#4 (9) {
     int(100000)
     ["x-null"]=>
     NULL
+    ["x-timestamp"]=>
+    object(AMQPTimestamp)#%d (%d) {
+      ["timestamp":"AMQPTimestamp":private]=>
+      float(404)
+    }
+    ["x-decimal"]=>
+    object(AMQPDecimal)#%d (%d) {
+      ["exponent":"AMQPDecimal":private]=>
+      int(1)
+      ["significand":"AMQPDecimal":private]=>
+      int(2)
+    }
+    ["x-custom-value"]=>
+    object(MyValue)#%d (%d) {
+    }
   }
 }
-object(AMQPQueue)#4 (9) {
+object(AMQPQueue)#%d (%d) {
   ["connection":"AMQPQueue":private]=>
   %a
   ["channel":"AMQPQueue":private]=>
@@ -110,12 +131,27 @@ object(AMQPQueue)#4 (9) {
   ["autoDelete":"AMQPQueue":private]=>
   bool(true)
   ["arguments":"AMQPQueue":private]=>
-  array(3) {
+  array(%d) {
     ["x-dead-letter-exchange"]=>
     string(0) ""
     ["x-dead-letter-routing-key"]=>
     string(%d) "test.queue.%s"
     ["x-message-ttl"]=>
     int(100000)
+    ["x-timestamp"]=>
+    object(AMQPTimestamp)#%d (%d) {
+      ["timestamp":"AMQPTimestamp":private]=>
+      float(404)
+    }
+    ["x-decimal"]=>
+    object(AMQPDecimal)#%d (%d) {
+      ["exponent":"AMQPDecimal":private]=>
+      int(1)
+      ["significand":"AMQPDecimal":private]=>
+      int(2)
+    }
+    ["x-custom-value"]=>
+    object(MyValue)#%d (%d) {
+    }
   }
 }
