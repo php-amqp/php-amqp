@@ -200,26 +200,6 @@ class AMQPQueue
     }
 
     /**
-     * Get the argument associated with the given key.
-     *
-     * @param string $argumentName The key to look up.
-     * @throws AMQPQueueException If key does not exist
-     * @return bool|int|double|string|null
-     */
-    public function getArgument(string $argumentName)
-    {
-    }
-
-    /**
-     * Get all set arguments as an array of key/value pairs.
-     *
-     * @return array An array containing all the set key/value pairs.
-     */
-    public function getArguments(): array
-    {
-    }
-
-    /**
      * Get all the flags currently set on the given queue.
      *
      * @return int An integer bitmask of all the flags currently set on this
@@ -293,10 +273,21 @@ class AMQPQueue
     }
 
     /**
+     * Get the argument associated with the given key.
+     *
+     * @param string $argumentName The key to look up.
+     * @throws AMQPQueueException If key does not exist
+     * @return bool|int|double|string|null|array|AMQPValue|AMQPDecimal|AMQPTimestamp
+     */
+    public function getArgument(string $argumentName)
+    {
+    }
+
+    /**
      * Set a queue argument.
      *
      * @param string $argumentName The argument name to set.
-     * @param bool|int|double|string|null|AMQPValue|AMQPDecimal|AMQPTimestamp $argumentValue The argument value to set.
+     * @param bool|int|double|string|null|array|AMQPValue|AMQPDecimal|AMQPTimestamp $argumentValue The argument value to set.
      */
     public function setArgument(string $argumentName, $argumentValue): void
     {
@@ -319,6 +310,15 @@ class AMQPQueue
      * @param array $arguments An array of name/value pairs of arguments.
      */
     public function setArguments(array $arguments): void
+    {
+    }
+
+    /**
+     * Get all set arguments as an array of key/value pairs.
+     *
+     * @return array An array containing all the set key/value pairs.
+     */
+    public function getArguments(): array
     {
     }
 

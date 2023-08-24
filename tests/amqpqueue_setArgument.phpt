@@ -36,6 +36,8 @@ $q_dead->setArgument('x-dead-letter-exchange', '');
 $q_dead->setArgument('x-dead-letter-routing-key', $q_name);
 $q_dead->setArgument('x-message-ttl', $heartbeat * 10 * 1000);
 $q_dead->setArgument('x-null', null);
+$q_dead->setArgument('x-array', [0, 3]);
+$q_dead->setArgument('x-hash', ['foo' => 'bar']);
 $q_dead->setArgument('x-timestamp', new AMQPTimestamp(404));
 $q_dead->setArgument('x-decimal', new AMQPDecimal(1, 2));
 $q_dead->setArgument('x-custom-value', new MyValue());

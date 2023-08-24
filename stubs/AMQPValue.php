@@ -5,7 +5,7 @@
 interface AMQPValue
 {
     /**
-     * @return bool|int|double|string|null|AMQPValue|AMQPDecimal|AMQPTimestamp
+     * @return bool|int|double|string|null|array|AMQPValue|AMQPDecimal|AMQPTimestamp
      */
     public function toAmqpValue();
 }

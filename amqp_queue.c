@@ -293,6 +293,7 @@ static PHP_METHOD(amqp_queue_class, setArgument)
         case IS_LONG:
         case IS_DOUBLE:
         case IS_STRING:
+        case IS_ARRAY:
             zend_hash_str_add(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len, value);
             Z_TRY_ADDREF_P(value);
             break;
@@ -300,8 +301,8 @@ static PHP_METHOD(amqp_queue_class, setArgument)
         err:
             zend_throw_exception(
                 amqp_queue_exception_class_entry,
-                "The value parameter must be of type bool, int, double, string, null, AMQPTimestamp, AMQPDecimal, or "
-                "an implementation of AMQPValue.",
+                "The value parameter must be of type bool, int, double, string, null, array, AMQPTimestamp, "
+                "AMQPDecimal, or an implementation of AMQPValue.",
                 0
             );
             return;
