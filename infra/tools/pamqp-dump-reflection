@@ -15,16 +15,28 @@ function sortByName(array $array): array
     return $array;
 }
 
-function getTypeMetadata(?ReflectionNamedType $type): ?array
+function getTypeMetadata(?ReflectionType $type): ?array
 {
     if ($type == null) {
         return null;
     }
 
-    return [
-        'name' => $type->getName(),
-        'nullable' => $type->allowsNull(),
-    ];
+    if ($type instanceof ReflectionNamedType) {
+        return [
+            'name' => $type->getName(),
+            'nullable' => $type->allowsNull(),
+            'builtin' => $type->isBuiltin(),
+        ];
+    }
+
+    if ($type instanceof ReflectionUnionType || $type instanceof ReflectionIntersectionType) {
+        return [
+            'type' => $type instanceof ReflectionUnionType ? 'union' : 'intersection',
+            'types' => array_map('getTypeMetadata', $type->getTypes()),
+        ];
+    }
+
+    assert(false, 'Unreachable');
 }
 
 $error = false;
