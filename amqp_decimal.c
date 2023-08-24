@@ -110,7 +110,7 @@ static PHP_METHOD(amqp_decimal_class, toAmqpValue)
 {
     PHP_AMQP_NOPARAMS()
 
-    RETURN_OBJ(Z_OBJ_P(getThis()));
+    RETURN_ZVAL(getThis(), 1, 0);
 }
 /* }}} */
 
@@ -147,9 +147,9 @@ PHP_MINIT_FUNCTION(amqp_decimal)
     this_ce = zend_register_internal_class(&ce);
     zend_class_implements(this_ce, 1, amqp_value_class_entry);
     this_ce->ce_flags |= ZEND_ACC_FINAL;
-	#if PHP_VERSION_ID >= 80200
-	this_ce->ce_flags |= ZEND_ACC_READONLY_CLASS;
-	#endif
+#if PHP_VERSION_ID >= 80200
+    this_ce->ce_flags |= ZEND_ACC_READONLY_CLASS;
+#endif
 
     zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MIN"), AMQP_DECIMAL_EXPONENT_MIN);
     zend_declare_class_constant_long(this_ce, ZEND_STRL("EXPONENT_MAX"), AMQP_DECIMAL_EXPONENT_MAX);

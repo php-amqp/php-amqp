@@ -25,9 +25,6 @@
 #endif
 
 #include "php.h"
-#include "zend_exceptions.h"
-#include "php_amqp.h"
-#include "ext/standard/php_math.h"
 
 zend_class_entry *amqp_value_class_entry;
 #define this_ce amqp_value_class_entry

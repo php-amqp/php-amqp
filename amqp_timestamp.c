@@ -102,7 +102,7 @@ static PHP_METHOD(amqp_timestamp_class, toAmqpValue)
 {
     PHP_AMQP_NOPARAMS()
 
-    RETURN_OBJ(Z_OBJ_P(getThis()));
+    RETURN_ZVAL(getThis(), 1, 0);
 }
 /* }}} */
 
@@ -138,9 +138,9 @@ PHP_MINIT_FUNCTION(amqp_timestamp)
     this_ce = zend_register_internal_class(&ce);
     zend_class_implements(this_ce, 1, amqp_value_class_entry);
     this_ce->ce_flags |= ZEND_ACC_FINAL;
-	#if PHP_VERSION_ID >= 80200
-	this_ce->ce_flags |= ZEND_ACC_READONLY_CLASS;
-	#endif
+#if PHP_VERSION_ID >= 80200
+    this_ce->ce_flags |= ZEND_ACC_READONLY_CLASS;
+#endif
 
     PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "timestamp", ZEND_ACC_PRIVATE, IS_DOUBLE, 0);
 

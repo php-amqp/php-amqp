@@ -913,9 +913,7 @@ static PHP_METHOD(amqp_channel_class, startTransaction)
 
     amqp_rpc_reply_t res;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "") == FAILURE) {
-        return;
-    }
+    PHP_AMQP_NOPARAMS()
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
     PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not start the transaction.");
@@ -943,9 +941,7 @@ static PHP_METHOD(amqp_channel_class, commitTransaction)
 
     amqp_rpc_reply_t res;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "") == FAILURE) {
-        return;
-    }
+    PHP_AMQP_NOPARAMS()
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
     PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not start the transaction.");
@@ -972,10 +968,7 @@ static PHP_METHOD(amqp_channel_class, rollbackTransaction)
 
     amqp_rpc_reply_t res;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "") == FAILURE) {
-        return;
-    }
-
+    PHP_AMQP_NOPARAMS()
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
     PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not rollback the transaction.");
@@ -1046,9 +1039,7 @@ PHP_METHOD(amqp_channel_class, confirmSelect)
     amqp_channel_resource *channel_resource;
     amqp_rpc_reply_t res;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "") == FAILURE) {
-        return;
-    }
+    PHP_AMQP_NOPARAMS()
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
     PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not enable confirms mode.");
@@ -1060,6 +1051,7 @@ PHP_METHOD(amqp_channel_class, confirmSelect)
     if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_channel_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+
         return;
     }
 

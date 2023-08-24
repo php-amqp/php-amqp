@@ -277,7 +277,7 @@ sort($symbols['classNames']);
 $filename = $_SERVER['argv'][1] ?? null;
 assert($filename !== null, 'Output filename must be passed');
 
-file_put_contents($filename, json_encode($symbols, JSON_PRETTY_PRINT));
+file_put_contents($filename, json_encode($symbols, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
 
 if ($error) {
     exit(1);
