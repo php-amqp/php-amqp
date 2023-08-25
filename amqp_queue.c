@@ -83,7 +83,7 @@ static PHP_METHOD(amqp_queue_class, __construct)
     amqp_channel_resource *channel_resource;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &channelObj, amqp_channel_class_entry) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     ZVAL_UNDEF(&arguments);
@@ -130,7 +130,7 @@ static PHP_METHOD(amqp_queue_class, setName)
     size_t name_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &name, &name_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (name_len < 1 || name_len > 255) {
@@ -188,7 +188,7 @@ static PHP_METHOD(amqp_queue_class, setFlags)
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l!", &flags, &flags_is_null) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     flags = flags & PHP_AMQP_QUEUE_FLAGS;
@@ -211,7 +211,7 @@ static PHP_METHOD(amqp_queue_class, getArgument)
     size_t key_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
@@ -232,7 +232,7 @@ static PHP_METHOD(amqp_queue_class, hasArgument)
     size_t key_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     RETURN_BOOL(zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len) != NULL);
@@ -257,7 +257,7 @@ static PHP_METHOD(amqp_queue_class, setArguments)
     zval *zvalArguments;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "a/", &zvalArguments) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("arguments"), zvalArguments);
@@ -276,7 +276,7 @@ static PHP_METHOD(amqp_queue_class, setArgument)
     zval *value = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "sz", &key, &key_len, &value) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     switch (Z_TYPE_P(value)) {
@@ -321,7 +321,7 @@ static PHP_METHOD(amqp_queue_class, removeArgument)
     size_t key_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
@@ -417,7 +417,7 @@ static PHP_METHOD(amqp_queue_class, bind)
             &keyname_len,
             &zvalArguments
         ) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
@@ -469,7 +469,7 @@ static PHP_METHOD(amqp_queue_class, get)
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|l!", &flags, &flags_is_null) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
@@ -570,7 +570,7 @@ static PHP_METHOD(amqp_queue_class, consume)
             &consumer_tag,
             &consumer_tag_len
         ) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zval *channel_zv = PHP_AMQP_READ_THIS_PROP("channel");
@@ -838,7 +838,7 @@ static PHP_METHOD(amqp_queue_class, ack)
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l!", &deliveryTag, &flags, &flags_is_null) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
@@ -887,7 +887,7 @@ static PHP_METHOD(amqp_queue_class, nack)
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l!", &deliveryTag, &flags, &flags_is_null) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
@@ -937,7 +937,7 @@ static PHP_METHOD(amqp_queue_class, reject)
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l|l!", &deliveryTag, &flags, &flags_is_null) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
@@ -1027,7 +1027,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
     size_t consumer_tag_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s", &consumer_tag, &consumer_tag_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zval *channel_zv = PHP_AMQP_READ_THIS_PROP("channel");
@@ -1111,7 +1111,7 @@ static PHP_METHOD(amqp_queue_class, unbind)
             &keyname_len,
             &zvalArguments
         ) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
@@ -1162,7 +1162,7 @@ static PHP_METHOD(amqp_queue_class, delete)
     zend_long message_count;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|l!", &flags, &flags_is_null) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));

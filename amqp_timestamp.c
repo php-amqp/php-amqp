@@ -43,7 +43,7 @@ static PHP_METHOD(amqp_timestamp_class, __construct)
     double timestamp;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &timestamp) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (timestamp < AMQP_TIMESTAMP_MIN) {

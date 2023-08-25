@@ -330,7 +330,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
             "Could not create channel. No connection resource.",
             0
         );
-        return;
+        RETURN_THROWS();
     }
 
     if (!connection->connection_resource->is_connected) {
@@ -515,7 +515,7 @@ static PHP_METHOD(amqp_channel_class, setPrefetchCount)
     zend_long prefetch_count;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &prefetch_count) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (!php_amqp_is_valid_prefetch_count(prefetch_count)) {
@@ -603,7 +603,7 @@ static PHP_METHOD(amqp_channel_class, setPrefetchSize)
     zend_long prefetch_size;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &prefetch_size) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (!php_amqp_is_valid_prefetch_size(prefetch_size)) {
@@ -688,7 +688,7 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchCount)
     zend_long global_prefetch_count;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &global_prefetch_count) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (!php_amqp_is_valid_prefetch_count(global_prefetch_count)) {
@@ -755,7 +755,7 @@ static PHP_METHOD(amqp_channel_class, setGlobalPrefetchSize)
     zend_long global_prefetch_size;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &global_prefetch_size) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (!php_amqp_is_valid_prefetch_size(global_prefetch_size)) {
@@ -826,7 +826,7 @@ static PHP_METHOD(amqp_channel_class, qos)
     bool global = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll|b", &prefetch_size, &prefetch_count, &global) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
@@ -1008,7 +1008,7 @@ static PHP_METHOD(amqp_channel_class, basicRecover)
     bool requeue = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|b", &requeue) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
@@ -1067,7 +1067,7 @@ PHP_METHOD(amqp_channel_class, setReturnCallback)
     zend_fcall_info_cache fcc = empty_fcall_info_cache;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "f!", &fci, &fcc) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     amqp_channel_object *channel = PHP_AMQP_GET_CHANNEL(getThis());
@@ -1098,7 +1098,7 @@ PHP_METHOD(amqp_channel_class, waitForBasicReturn)
     struct timeval *tv_ptr = &tv;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|d", &timeout) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (timeout < 0) {
@@ -1207,7 +1207,7 @@ PHP_METHOD(amqp_channel_class, setConfirmCallback)
     zend_fcall_info_cache nack_fcc = empty_fcall_info_cache;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "f!|f!", &ack_fci, &ack_fcc, &nack_fci, &nack_fcc) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     amqp_channel_object *channel = PHP_AMQP_GET_CHANNEL(getThis());
@@ -1247,7 +1247,7 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
     struct timeval *tv_ptr = &tv;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|d", &timeout) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (timeout < 0) {

@@ -78,13 +78,27 @@ symlink available to make that as simple as possible:
 cat tests/amqp_some_test.out
 ```
 
+### Run all checks locally
+
+Before pushing a change, run tests, lint and validate stubs, validates argument parsing, and checks formatting of both C
+and PHP code:
+
+```commandline
+pamqp-check
+```
+
 ### Formatting
 
 Discussing coding style is as much as it is futile, so PHP AMQP using clang-format to automatically format the source
-code. Run this command to format:
+code. Run this command to format C code:
 
 ```commandline
 pamqp-format
+```
+
+Run this to format the stubs:
+```commandline
+pamqp-stubs-format
 ```
 
 ### Validating stubs
