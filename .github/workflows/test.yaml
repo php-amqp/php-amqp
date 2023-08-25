@@ -9,7 +9,7 @@ env:
   TEST_TIMEOUT: 120
   CFLAGS: -g -O0 -fstack-protector-strong -Wall -Werror -D_GNU_SOURCE
   MAKEFLAGS: -j4
-  PHP_VERSIONS: ${{ toJSON([ '8.3', '8.2', '8.1', '8.0', '7.4' ]) }}
+  PHP_VERSIONS: ${{ toJSON(["8.3", "8.2", "8.1", "8.0", "7.4"]) }}
 
 jobs:
   dedup:
