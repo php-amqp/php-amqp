@@ -9,28 +9,34 @@ env:
   TEST_TIMEOUT: 120
   CFLAGS: -g -O0 -fstack-protector-strong -Wall -Werror -D_GNU_SOURCE
   MAKEFLAGS: -j4
-  PHP_VERSIONS: '["8.3", "8.2", "8.1", "8.0", "7.4"]'
 
 jobs:
-  dedup:
+  prep:
     name: Prevent duplicate builds
     continue-on-error: true
     runs-on: ubuntu-22.04
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
+      matrix_php_versions: ${{ steps.matrix.outputs.php_versions }}
     steps:
       - id: skip_check
+        name: Prevent duplicate builds
         uses: fkirc/skip-duplicate-actions@v5.3.0
         with:
           skip_after_successful_duplicate: 'true'
           cancel_others: 'true'
           concurrent_skipping: 'same_content_newer'
 
+      - name: Prepare matrix
+        id: matrix
+        run:
+          echo "php_versions='["8.3", "8.2", "8.1", "8.0", "7.4"]'" >> "$GITHUB_OUTPUT"
+
   checkstyle:
     name: Check C formatting
     runs-on: ubuntu-22.04
-    needs: dedup
-    if: needs.dedup.outputs.should_skip != 'true'
+    needs: prep
+    if: needs.prep.outputs.should_skip != 'true'
 
     steps:
       - name: Install clang-format
@@ -50,13 +56,13 @@ jobs:
   stubs:
     name: Check stubs php-${{ matrix.php-version }}
     runs-on: ubuntu-22.04
-    needs: dedup
-    if: needs.dedup.outputs.should_skip != 'true'
+    needs: prep
+    if: needs.prep.outputs.should_skip != 'true'
 
     strategy:
       fail-fast: false
       matrix:
-        php-version: ${{ fromJson(env.PHP_VERSIONS) }}
+        php-version: ${{ fromJson(needs.prep.outputs.php_versions) }}
 
     steps:
       - name: Checkout
@@ -111,7 +117,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ${{ fromJson(env.PHP_VERSIONS) }}
+        php-version: ${{ fromJson(needs.prep.outputs.php_versions) }}
         php-thread-safe: [ true, false ]
         librabbitmq-version: [ 'master', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0' ]
         compiler: [gcc, clang]
