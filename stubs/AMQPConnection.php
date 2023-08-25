@@ -416,8 +416,6 @@ class AMQPConnection
 
     /**
      * Set path to the client certificate in PEM format
-     *
-     * @param string $cert
      */
     public function setCert(?string $cert): void
     {
