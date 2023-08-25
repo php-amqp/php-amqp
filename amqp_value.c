@@ -35,7 +35,7 @@ ZEND_END_ARG_INFO()
 zend_function_entry amqp_value_class_functions[] = {
     PHP_ABSTRACT_ME(amqp_value_class, toAmqpValue, arginfo_amqp_value_class_toAmqpValue)
 
-        {NULL, NULL, NULL}
+    {NULL, NULL, NULL}
 };
 
 PHP_MINIT_FUNCTION(amqp_value)

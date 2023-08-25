@@ -23,8 +23,9 @@ BreakBeforeBraces: Custom
 MacroBlockBegin: "(ZEND_BEGIN_ARG_(INFO|WITH_RETURN_(TYPE|OBJ)_INFO)(_EX)?|PHP_INI_BEGIN)"
 MacroBlockEnd: "(ZEND_END_ARG_INFO|PHP_INI_END)"
 Macros:
-  - "PHP_ME(a, b, c, d)={a, b, c, d},"
+  - "PHP_ME(a, b, c, d)={a, b, c, d, e},"
   - "PHP_MALIAS(a, b, c, d, e)={a, b, c, d, e},"
+  - "PHP_ABSTRACT_ME(a, b, c)={a, b, c, d, e},"
   - "ZEND_HASH_FOREACH_KEY_VAL(a, b, c, d)=do {"
   - "ZEND_HASH_FOREACH_STR_KEY(a, b)=do {"
   - "ZEND_HASH_FOREACH_STR_KEY_VAL(a, b, c)=do {"
