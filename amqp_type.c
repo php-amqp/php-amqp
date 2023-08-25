@@ -31,6 +31,7 @@
 #endif
 #include "Zend/zend_interfaces.h"
 #include "Zend/zend_exceptions.h"
+#include "amqp_value.h"
 #include "amqp_decimal.h"
 #include "amqp_timestamp.h"
 #include "amqp_type.h"
@@ -293,6 +294,19 @@ bool php_amqp_type_zval_to_amqp_value_internal(zval *value, amqp_field_value_t *
                 zval_ptr_dtor(&result_zv);
 
                 break;
+            } else if (instanceof_function(Z_OBJCE_P(value), amqp_value_class_entry)) {
+                zval result_zv;
+                zend_call_method_with_0_params(
+                    PHP_AMQP_COMPAT_OBJ_P(value),
+                    Z_OBJCE_P(value),
+                    NULL,
+                    "toamqpvalue",
+                    &result_zv
+                );
+                bool recursion_res = php_amqp_type_zval_to_amqp_value_internal(&result_zv, field_ptr, key, depth + 1);
+                zval_ptr_dtor(&result_zv);
+
+                return recursion_res;
             }
         default:
             switch (Z_TYPE_P(value)) {

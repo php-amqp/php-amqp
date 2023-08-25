@@ -59,6 +59,7 @@
 #include "amqp_envelope_exception.h"
 #include "amqp_exchange.h"
 #include "amqp_queue.h"
+#include "amqp_value.h"
 #include "amqp_timestamp.h"
 #include "amqp_decimal.h"
 
@@ -69,9 +70,8 @@
 #endif
 
 /* True global resources - no need for thread safety here */
-
 zend_class_entry *amqp_exception_class_entry, *amqp_connection_exception_class_entry,
-    *amqp_channel_exception_class_entry, *amqp_queue_exception_class_entry, *amqp_exchange_exception_class_entry,
+    *amqp_channel_exception_class_entry, *amqp_exchange_exception_class_entry, *amqp_queue_exception_class_entry,
     *amqp_value_exception_class_entry;
 
 /* {{{ amqp_functions[]
@@ -274,7 +274,7 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
         module_number
     );
 
-    /* Class Exceptions */
+    /* Exceptions */
     INIT_CLASS_ENTRY(ce, "AMQPException", NULL);
     amqp_exception_class_entry = zend_register_internal_class_ex(&ce, zend_exception_get_default());
 
@@ -300,6 +300,7 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
     PHP_MINIT(amqp_basic_properties)(INIT_FUNC_ARGS_PASSTHRU);
     PHP_MINIT(amqp_envelope)(INIT_FUNC_ARGS_PASSTHRU);
     PHP_MINIT(amqp_envelope_exception)(INIT_FUNC_ARGS_PASSTHRU);
+    PHP_MINIT(amqp_value)(INIT_FUNC_ARGS_PASSTHRU);
     PHP_MINIT(amqp_timestamp)(INIT_FUNC_ARGS_PASSTHRU);
     PHP_MINIT(amqp_decimal)(INIT_FUNC_ARGS_PASSTHRU);
 

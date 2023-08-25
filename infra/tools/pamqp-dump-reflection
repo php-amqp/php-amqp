@@ -15,16 +15,28 @@ function sortByName(array $array): array
     return $array;
 }
 
-function getTypeMetadata(?ReflectionNamedType $type): ?array
+function getTypeMetadata(?ReflectionType $type): ?array
 {
     if ($type == null) {
         return null;
     }
 
-    return [
-        'name' => $type->getName(),
-        'nullable' => $type->allowsNull(),
-    ];
+    if ($type instanceof ReflectionNamedType) {
+        return [
+            'name' => $type->getName(),
+            'nullable' => $type->allowsNull(),
+            'builtin' => $type->isBuiltin(),
+        ];
+    }
+
+    if ($type instanceof ReflectionUnionType || $type instanceof ReflectionIntersectionType) {
+        return [
+            'type' => $type instanceof ReflectionUnionType ? 'union' : 'intersection',
+            'types' => array_map('getTypeMetadata', $type->getTypes()),
+        ];
+    }
+
+    assert(false, 'Unreachable');
 }
 
 $error = false;
@@ -37,6 +49,15 @@ function error(string $message, ...$args): void
 
 const MAGIC_METHODS = ['__construct', '__toString', '__wakeup', '__clone'];
 
+function getParents(ReflectionClass $r): array {
+    $parents = [];
+    while ($r = $r->getParentClass()) {
+        $parents[] = $r->getName();
+    }
+
+    return $parents;
+}
+
 function getClassMetadata(string $class): array
 {
     $refl = new ReflectionClass($class);
@@ -45,7 +66,16 @@ function getClassMetadata(string $class): array
         'constants' => [],
         'properties' => [],
         'methods' => [],
+        'final' => $refl->isFinal(),
+        'abstract' => $refl->isAbstract(),
+        'interface' => $refl->isInterface(),
+        'implements' => $refl->getInterfaceNames(),
+        'readonly' => method_exists($refl, 'isReadonly') ? $refl->isReadonly() || strpos($refl->getDocComment(), '@readonly') !== false : null,
+        'extends' => getParents($refl),
     ];
+
+    sort($classMetadata['implements']);
+    sort($classMetadata['extends']);
 
     foreach ($refl->getReflectionConstants() as $constant) {
         if ($constant->getDeclaringClass()->getName() !== $refl->getName()) {
@@ -246,6 +276,7 @@ $symbols['classes'][] = getClassMetadata('AMQPConnection');
 $symbols['classes'][] = getClassMetadata('AMQPChannelException');
 $symbols['classes'][] = getClassMetadata('AMQPChannel');
 $symbols['classes'][] = getClassMetadata('AMQPBasicProperties');
+$symbols['classes'][] = getClassMetadata('AMQPValue');
 
 // Ensure we captured all AMQP classes
 foreach (get_declared_classes() as $className) {
@@ -258,7 +289,7 @@ sort($symbols['classNames']);
 $filename = $_SERVER['argv'][1] ?? null;
 assert($filename !== null, 'Output filename must be passed');
 
-file_put_contents($filename, json_encode($symbols, JSON_PRETTY_PRINT));
+file_put_contents($filename, json_encode($symbols, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
 
 if ($error) {
     exit(1);

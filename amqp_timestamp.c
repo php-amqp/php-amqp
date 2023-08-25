@@ -28,6 +28,7 @@
 #include "zend_exceptions.h"
 #include "php_amqp.h"
 #include "ext/standard/php_math.h"
+#include "amqp_value.h"
 
 zend_class_entry *amqp_timestamp_class_entry;
 #define this_ce amqp_timestamp_class_entry
@@ -95,6 +96,17 @@ static PHP_METHOD(amqp_timestamp_class, __toString)
 }
 /* }}} */
 
+/* {{{ proto string AMQPTimestamp::toAmqpValue()
+Return timestamp as AMQPValue */
+static PHP_METHOD(amqp_timestamp_class, toAmqpValue)
+{
+    PHP_AMQP_NOPARAMS()
+
+    RETURN_ZVAL(getThis(), 1, 0);
+}
+/* }}} */
+
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
     ZEND_ARG_TYPE_INFO(0, timestamp, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
@@ -105,10 +117,14 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_timestamp_class_toString, ZEND_SEND_BY_VAL, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_timestamp_class_toAmqpValue, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
 zend_function_entry amqp_timestamp_class_functions[] = {
 	PHP_ME(amqp_timestamp_class, __construct, 	arginfo_amqp_timestamp_class_construct,	ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_timestamp_class, getTimestamp, 	arginfo_amqp_timestamp_class_getTimestamp,	ZEND_ACC_PUBLIC)
 	PHP_ME(amqp_timestamp_class, __toString, 	arginfo_amqp_timestamp_class_toString,	ZEND_ACC_PUBLIC)
+	PHP_ME(amqp_timestamp_class, toAmqpValue, 	arginfo_amqp_timestamp_class_toAmqpValue,	ZEND_ACC_PUBLIC)
 
     {NULL, NULL, NULL}
 };
@@ -120,7 +136,11 @@ PHP_MINIT_FUNCTION(amqp_timestamp)
 
     INIT_CLASS_ENTRY(ce, "AMQPTimestamp", amqp_timestamp_class_functions);
     this_ce = zend_register_internal_class(&ce);
-    this_ce->ce_flags = this_ce->ce_flags | ZEND_ACC_FINAL;
+    zend_class_implements(this_ce, 1, amqp_value_class_entry);
+    this_ce->ce_flags |= ZEND_ACC_FINAL;
+#if PHP_VERSION_ID >= 80200
+    this_ce->ce_flags |= ZEND_ACC_READONLY_CLASS;
+#endif
 
     PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "timestamp", ZEND_ACC_PRIVATE, IS_DOUBLE, 0);
 

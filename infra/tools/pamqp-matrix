@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+const PHP_VERSIONS = ["8.3", "8.2", "8.1", "8.0", "7.4"]
+const LIBRABBITMQ_VERSIONS = ["master", "0.13.0", "0.12.0", "0.11.0", "0.10.0", "0.9.0", "0.8.0"]
+
+const toOutput = (k, v) => console.log(`${k}=${JSON.stringify(v)}`)
+const stringSum = (s) => ([...s].map(c => c.charCodeAt(0)).reduce((c, v) => c + v, 0))
+
+const memoryBuilds = PHP_VERSIONS.flatMap(php => [LIBRABBITMQ_VERSIONS[0], LIBRABBITMQ_VERSIONS.slice(-1)[0]].map(librabbitmq => ({
+    "php-version": php,
+    "php-thread-safe": (stringSum(php) + stringSum(librabbitmq)) % 2 === 0,
+    "librabbitmq-version": librabbitmq,
+    "test-php-args": "-m",
+    "compiler": "gcc"
+})))
+
+toOutput('php_versions', PHP_VERSIONS)
+toOutput('librabbitmq_versions', LIBRABBITMQ_VERSIONS)
+toOutput('memory_build_matrix', memoryBuilds)

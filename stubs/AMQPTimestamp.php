@@ -2,8 +2,10 @@
 
 /**
  * stub class representing AMQPTimestamp from pecl-amqp
+ *
+ * @readonly
  */
-final class AMQPTimestamp
+final /* readonly */ class AMQPTimestamp implements AMQPValue
 {
     /**
      * @var float
@@ -29,6 +31,10 @@ final class AMQPTimestamp
     }
 
     public function getTimestamp(): float
+    {
+    }
+
+    public function toAmqpValue()
     {
     }
 }
