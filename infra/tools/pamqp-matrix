@@ -15,4 +15,4 @@ const memoryBuilds = PHP_VERSIONS.flatMap(php => [LIBRABBITMQ_VERSIONS[0], LIBRA
 
 toOutput('php_versions', PHP_VERSIONS)
 toOutput('librabbitmq_versions', LIBRABBITMQ_VERSIONS)
-toOutput('memory_builds', memoryBuilds)
+toOutput('memory_build_matrix', memoryBuilds)

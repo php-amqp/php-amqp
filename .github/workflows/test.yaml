@@ -19,7 +19,7 @@ jobs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
       php_versions: ${{ steps.matrix.outputs.php_versions }}
       librabbitmq_versions: ${{ steps.matrix.outputs.librabbitmq_versions }}
-      memory_test_matrix: ${{ steps.matrix.outputs.memory_test_matrix }}
+      memory_build_matrix: ${{ steps.matrix.outputs.memory_build_matrix }}
     steps:
       - id: skip_check
         name: Prevent duplicate builds
@@ -126,7 +126,7 @@ jobs:
         php-thread-safe: [ true, false ]
         librabbitmq-version: ${{ fromJson(needs.prep.outputs.librabbitmq_versions) }}
         compiler: [gcc, clang]
-        include: ${{ fromJson(needs.prep.outputs.memory_test_matrix) }}
+        include: ${{ fromJson(needs.prep.outputs.memory_build_matrix) }}
 
     steps:
       - name: Checkout
