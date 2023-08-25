@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 PHP_VERSIONS=("8.3" "8.2" "8.1" "8.0" "7.4")
 LIBRABBITMQ_VERSIONS=("master" "0.13.0" "0.12.0" "0.11.0" "0.10.0" "0.9.0" "0.8.0")
 
