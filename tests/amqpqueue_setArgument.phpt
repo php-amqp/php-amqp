@@ -98,6 +98,18 @@ object(AMQPQueue)#%d (%d) {
     int(100000)
     ["x-null"]=>
     NULL
+    ["x-array"]=>
+    array(2) {
+      [0]=>
+      int(0)
+      [1]=>
+      int(3)
+    }
+    ["x-hash"]=>
+    array(1) {
+      ["foo"]=>
+      string(3) "bar"
+    }
     ["x-timestamp"]=>
     object(AMQPTimestamp)#%d (%d) {
       ["timestamp":"AMQPTimestamp":private]=>
@@ -140,6 +152,18 @@ object(AMQPQueue)#%d (%d) {
     string(%d) "test.queue.%s"
     ["x-message-ttl"]=>
     int(100000)
+    ["x-array"]=>
+    array(2) {
+      [0]=>
+      int(0)
+      [1]=>
+      int(3)
+    }
+    ["x-hash"]=>
+    array(1) {
+      ["foo"]=>
+      string(3) "bar"
+    }
     ["x-timestamp"]=>
     object(AMQPTimestamp)#%d (%d) {
       ["timestamp":"AMQPTimestamp":private]=>
