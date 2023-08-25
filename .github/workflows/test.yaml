@@ -12,7 +12,7 @@ env:
 
 jobs:
   prep:
-    name: Prevent duplicate builds
+    name: Prepare
     continue-on-error: true
     runs-on: ubuntu-22.04
     outputs:
@@ -30,7 +30,7 @@ jobs:
       - name: Prepare matrix
         id: matrix
         run:
-          echo "php_versions='["8.3", "8.2", "8.1", "8.0", "7.4"]'" >> "$GITHUB_OUTPUT"
+          echo 'php_versions=["8.3", "8.2", "8.1", "8.0", "7.4"]' >> "$GITHUB_OUTPUT"
 
   checkstyle:
     name: Check C formatting
