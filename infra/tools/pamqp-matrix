@@ -1,32 +1,18 @@
-#!/usr/bin/env bash
-PHP_VERSIONS=("8.3" "8.2" "8.1" "8.0" "7.4")
-LIBRABBITMQ_VERSIONS=("master" "0.13.0" "0.12.0" "0.11.0" "0.10.0" "0.9.0" "0.8.0")
+#!/usr/bin/env node
+const PHP_VERSIONS = ["8.3", "8.2", "8.1", "8.0", "7.4"]
+const LIBRABBITMQ_VERSIONS = ["master", "0.13.0", "0.12.0", "0.11.0", "0.10.0", "0.9.0", "0.8.0"]
 
-stringListToJson() {
-  echo -n "["
-  local pos=0
-  for str in $@; do
-    echo -n \"$str\"
-    pos=$((pos + 1))
-    [ $pos -lt $# ] && echo -n ", "
-  done
-  echo "]"
-}
+const toOutput = (k, v) => console.log(`${k}=${JSON.stringify(v)}`)
+const stringSum = (s) => ([...s].map(c => c.charCodeAt(0)).reduce((c, v) => c + v, 0))
 
-memoryMatrix() {
-  pos=0
-  max=$((${#PHP_VERSIONS[@]} * 2))
-  echo -n "["
-  for php_version in ${PHP_VERSIONS[@]}; do
-    for librabbitmq_high_low in ${LIBRABBITMQ_VERSIONS[0]} ${LIBRABBITMQ_VERSIONS[${#LIBRABBITMQ_VERSIONS[@]} - 1]}; do
-      pos=$((pos + 1))
-      printf '{"php-version": "%s", "librabbitmq-version": "%s", "test-php-args": "-m", "compiler": "gcc"}' $php_version, $librabbitmq_high_low
-      [ $pos -lt $max ] && echo -n ", "
-    done
-  done
-  echo "]"
-}
+const memoryBuilds = PHP_VERSIONS.flatMap(php => [LIBRABBITMQ_VERSIONS[0], LIBRABBITMQ_VERSIONS.slice(-1)[0]].map(librabbitmq => ({
+    "php-version": php,
+    "php-thread-safe": (stringSum(php) + stringSum(librabbitmq)) % 2 === 0,
+    "librabbitmq-version": librabbitmq,
+    "test-php-args": "-m",
+    "compiler": "gcc"
+})))
 
-echo "php_versions=$(stringListToJson "${PHP_VERSIONS[@]}")"
-echo "librabbitmq_versions=$(stringListToJson "${LIBRABBITMQ_VERSIONS[@]}")"
-echo "memory_test_matrix=$(memoryMatrix)"
+toOutput('php_versions', PHP_VERSIONS)
+toOutput('php_versions', LIBRABBITMQ_VERSIONS)
+toOutput('memory_builds', memoryBuilds)
