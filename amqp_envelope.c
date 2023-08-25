@@ -199,7 +199,7 @@ static PHP_METHOD(amqp_envelope_class, getHeader)
     zval *tmp = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zval *zv = PHP_AMQP_READ_THIS_PROP_CE("headers", amqp_basic_properties_class_entry);
@@ -223,7 +223,7 @@ static PHP_METHOD(amqp_envelope_class, hasHeader)
     size_t key_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zval *zv = PHP_AMQP_READ_THIS_PROP_CE("headers", amqp_basic_properties_class_entry);

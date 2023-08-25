@@ -73,7 +73,7 @@ static PHP_METHOD(amqp_exchange_class, __construct)
     amqp_channel_resource *channel_resource;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &channelObj, amqp_channel_class_entry) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     ZVAL_UNDEF(&arguments);
@@ -120,7 +120,7 @@ static PHP_METHOD(amqp_exchange_class, setName)
     size_t name_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &name, &name_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Verify that the name is not null and not an empty string */
@@ -178,7 +178,7 @@ static PHP_METHOD(amqp_exchange_class, setFlags)
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l!", &flags, &flags_is_null) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     flags = flags & PHP_AMQP_EXCHANGE_FLAGS;
@@ -216,7 +216,7 @@ static PHP_METHOD(amqp_exchange_class, setType)
     size_t type_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &type, &type_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("type"), type, type_len);
@@ -236,7 +236,7 @@ static PHP_METHOD(amqp_exchange_class, getArgument)
     size_t key_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if ((tmp = zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) == NULL) {
@@ -256,7 +256,7 @@ static PHP_METHOD(amqp_exchange_class, hasArgument)
     size_t key_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     RETURN_BOOL(zend_hash_str_find(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len) != NULL);
@@ -281,7 +281,7 @@ static PHP_METHOD(amqp_exchange_class, setArguments)
     zval *zvalArguments;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "a/", &zvalArguments) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("arguments"), zvalArguments);
@@ -299,7 +299,7 @@ static PHP_METHOD(amqp_exchange_class, setArgument)
     zval *value = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "sz", &key, &key_len, &value) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     switch (Z_TYPE_P(value)) {
@@ -333,7 +333,7 @@ static PHP_METHOD(amqp_exchange_class, removeArgument)
     size_t key_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &key, &key_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zend_hash_str_del(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
@@ -417,7 +417,7 @@ static PHP_METHOD(amqp_exchange_class, delete)
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s!l!", &name, &name_len, &flags, &flags_is_null) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
@@ -484,7 +484,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
             &flags_is_null,
             &ini_arr
         ) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* By default (and for BC) content type is text/plain (may be skipped at all, then set props._flags to 0) */
@@ -701,7 +701,7 @@ static PHP_METHOD(amqp_exchange_class, bind)
             &keyname_len,
             &zvalArguments
         ) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
@@ -763,7 +763,7 @@ static PHP_METHOD(amqp_exchange_class, unbind)
             &keyname_len,
             &zvalArguments
         ) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));

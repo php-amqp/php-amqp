@@ -155,7 +155,7 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
             /* s */ &cluster_id,
             &cluster_id_len
         ) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
     zend_update_property_stringl(
         this_ce,

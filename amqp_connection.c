@@ -361,7 +361,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
     /* Parse out the method parameters */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|a/", &ini_arr) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Pull the login out of the $params array */
@@ -1048,7 +1048,7 @@ static PHP_METHOD(amqp_connection_class, setLogin)
 
     /* Get the login from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &login, &login_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Validate login length */
@@ -1086,7 +1086,7 @@ static PHP_METHOD(amqp_connection_class, setPassword)
 
     /* Get the password from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &password, &password_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Validate password length */
@@ -1131,7 +1131,7 @@ static PHP_METHOD(amqp_connection_class, setHost)
 
     /* Get the host from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &host, &host_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Validate host length */
@@ -1169,7 +1169,7 @@ static PHP_METHOD(amqp_connection_class, setPort)
 
     /* Get the port from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &port) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Check the port value */
@@ -1207,7 +1207,7 @@ static PHP_METHOD(amqp_connection_class, setVhost)
     size_t vhost_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &vhost, &vhost_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Validate vhost length */
@@ -1259,7 +1259,7 @@ static PHP_METHOD(amqp_connection_class, setTimeout)
 
     /* Get the timeout from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &read_timeout) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Validate timeout */
@@ -1307,7 +1307,7 @@ static PHP_METHOD(amqp_connection_class, setReadTimeout)
 
     /* Get the timeout from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &read_timeout) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Validate timeout */
@@ -1355,7 +1355,7 @@ static PHP_METHOD(amqp_connection_class, setWriteTimeout)
 
     /* Get the timeout from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &write_timeout) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Validate timeout */
@@ -1413,7 +1413,7 @@ static PHP_METHOD(amqp_connection_class, setRpcTimeout)
 
     /* Get the timeout from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &rpc_timeout) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Validate timeout */
@@ -1555,7 +1555,7 @@ static PHP_METHOD(amqp_connection_class, setCACert)
     size_t str_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &str, &str_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (str == NULL) {
@@ -1582,7 +1582,7 @@ static PHP_METHOD(amqp_connection_class, setCert)
     size_t str_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &str, &str_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (str == NULL) {
@@ -1609,7 +1609,7 @@ static PHP_METHOD(amqp_connection_class, setKey)
     size_t str_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &str, &str_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (str == NULL) {
@@ -1636,7 +1636,7 @@ static PHP_METHOD(amqp_connection_class, setVerify)
     bool verify = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "b", &verify) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("verify"), verify);
@@ -1661,7 +1661,7 @@ static PHP_METHOD(amqp_connection_class, setSaslMethod)
 
     /* Get the port from the method params */
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &method) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     /* Check the method value */
@@ -1694,7 +1694,7 @@ static PHP_METHOD(amqp_connection_class, setConnectionName)
     size_t str_len = 0;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s!", &str, &str_len) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
     if (str == NULL) {
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("connectionName"));

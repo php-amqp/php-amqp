@@ -73,6 +73,12 @@ extern zend_module_entry amqp_module_entry;
         ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
     #define PHP_AMQP_DECLARE_PROPERTY_TYPE(type, nullable) ZEND_TYPE_ENCODE(type, nullable)
     #define PHP_AMQP_DECLARE_PROPERTY_OBJ_TYPE(class_name, nullable) ZEND_TYPE_ENCODE_CLASS(class_name, nullable)
+    #define RETURN_THROWS()                                                                                            \
+        do {                                                                                                           \
+            ZEND_ASSERT(EG(exception));                                                                                \
+            (void) return_value;                                                                                       \
+            return;                                                                                                    \
+        } while (0)
 #endif
 #if PHP_VERSION_ID < 80200
     #define zend_ini_parse_quantity_warn(v, name) (zend_atol(ZSTR_VAL(v), ZSTR_LEN(v)))

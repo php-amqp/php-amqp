@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
+
+make test
+pamqp-stubs-lint
+pamqp-stubs-validate
+php -d extension=modules/amqp.so $(which pamqp-arguments-validate)
+
+pamqp-format-check
+pamqp-stubs-format-check

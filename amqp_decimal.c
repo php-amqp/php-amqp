@@ -45,7 +45,7 @@ static PHP_METHOD(amqp_decimal_class, __construct)
     zend_long exponent, significand;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &exponent, &significand) == FAILURE) {
-        return;
+        RETURN_THROWS();
     }
 
     if (exponent < AMQP_DECIMAL_EXPONENT_MIN) {
