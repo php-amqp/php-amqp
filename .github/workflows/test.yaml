@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
-      matrix_php_versions: ${{ steps.matrix.outputs.php_versions }}
+      php_versions: ${{ steps.matrix.outputs.php_versions }}
     steps:
       - id: skip_check
         name: Prevent duplicate builds
