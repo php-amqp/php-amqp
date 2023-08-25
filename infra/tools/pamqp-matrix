@@ -27,6 +27,6 @@ memoryMatrix() {
   echo "]"
 }
 
-echo "php_versions='$(stringListToJson "${PHP_VERSIONS[@]}")'"
-echo "librabbitmq_versions='$(stringListToJson "${LIBRABBITMQ_VERSIONS[@]}")'"
-echo "memory_test_matrix='$(memoryMatrix)'"
+echo "php_versions=$(stringListToJson "${PHP_VERSIONS[@]}")"
+echo "librabbitmq_versions=$(stringListToJson "${LIBRABBITMQ_VERSIONS[@]}")"
+echo "memory_test_matrix=$(memoryMatrix)"
