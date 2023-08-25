@@ -9,6 +9,7 @@ env:
   TEST_TIMEOUT: 120
   CFLAGS: -g -O0 -fstack-protector-strong -Wall -Werror -D_GNU_SOURCE
   MAKEFLAGS: -j4
+  PHP_VERSIONS: ${{ toJSON([ '8.3', '8.2', '8.1', '8.0', '7.4' ]) }}
 
 jobs:
   dedup:
@@ -55,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ '8.3', '8.2', '8.1', '8.0', '7.4' ]
+        php-version: ${{ fromJson(env.PHP_VERSIONS) }}
 
     steps:
       - name: Checkout
@@ -110,7 +111,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ '8.3', '8.2', '8.1', '8.0', '7.4' ]
+        php-version: ${{ fromJSON(env.PHP_VERSIONS) }}
         php-thread-safe: [ true, false ]
         librabbitmq-version: [ 'master', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0' ]
         compiler: [gcc, clang]
