@@ -18,6 +18,8 @@ jobs:
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
       php_versions: ${{ steps.matrix.outputs.php_versions }}
+      librabbitmq_versions: ${{ steps.matrix.outputs.librabbitmq_versions }}
+      memory_test_matrix: ${{ steps.matrix.outputs.memory_test_matrix }}
     steps:
       - id: skip_check
         name: Prevent duplicate builds
@@ -27,10 +29,13 @@ jobs:
           cancel_others: 'true'
           concurrent_skipping: 'same_content_newer'
 
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+
       - name: Prepare matrix
         id: matrix
-        run:
-          echo 'php_versions=["8.3", "8.2", "8.1", "8.0", "7.4"]' >> "$GITHUB_OUTPUT"
+        run: |
+          infra/tools/pamqp-matrix >> "$GITHUB_OUTPUT"
 
   checkstyle:
     name: Check C formatting
@@ -119,68 +124,9 @@ jobs:
       matrix:
         php-version: ${{ fromJson(needs.prep.outputs.php_versions) }}
         php-thread-safe: [ true, false ]
-        librabbitmq-version: [ 'master', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0' ]
+        librabbitmq-version: ${{ fromJson(needs.prep.outputs.librabbitmq_versions }}
         compiler: [gcc, clang]
-        include:
-          - php-version: '8.3'
-            php-thread-safe: true
-            librabbitmq-version: 'master'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.3'
-            php-thread-safe: true
-            librabbitmq-version: '0.8.0'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.2'
-            php-thread-safe: true
-            librabbitmq-version: 'master'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.2'
-            php-thread-safe: true
-            librabbitmq-version: '0.8.0'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.1'
-            php-thread-safe: true
-            librabbitmq-version: 'master'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.1'
-            php-thread-safe: true
-            librabbitmq-version: '0.8.0'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.0'
-            php-thread-safe: true
-            librabbitmq-version: 'master'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '8.0'
-            php-thread-safe: true
-            librabbitmq-version: '0.8.0'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '7.4'
-            php-thread-safe: true
-            librabbitmq-version: 'master'
-            test-php-args: '-m'
-            compiler: gcc
-
-          - php-version: '7.4'
-            php-thread-safe: true
-            librabbitmq-version: '0.8.0'
-            test-php-args: '-m'
-            compiler: gcc
+        include: ${{ fromJson(needs.prep.outputs..memory_test_matrix }}
 
     steps:
       - name: Checkout
