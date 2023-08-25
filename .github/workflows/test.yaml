@@ -124,9 +124,9 @@ jobs:
       matrix:
         php-version: ${{ fromJson(needs.prep.outputs.php_versions) }}
         php-thread-safe: [ true, false ]
-        librabbitmq-version: ${{ fromJson(needs.prep.outputs.librabbitmq_versions }}
+        librabbitmq-version: ${{ fromJson(needs.prep.outputs.librabbitmq_versions) }}
         compiler: [gcc, clang]
-        include: ${{ fromJson(needs.prep.outputs..memory_test_matrix }}
+        include: ${{ fromJson(needs.prep.outputs..memory_test_matrix) }}
 
     steps:
       - name: Checkout
