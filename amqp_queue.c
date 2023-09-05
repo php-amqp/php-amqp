@@ -681,16 +681,14 @@ static PHP_METHOD(amqp_queue_class, consume)
         if (AMQP_RESPONSE_LIBRARY_EXCEPTION == res.reply_type && AMQP_STATUS_TIMEOUT == res.library_error) {
             zend_throw_exception(amqp_queue_exception_class_entry, "Consumer timeout exceed", 0);
 
-            amqp_destroy_envelope(&envelope);
             php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
             return;
         }
 
-        if (PHP_AMQP_MAYBE_ERROR_RECOVERABLE(res, channel_resource)) {
+        if (AMQP_RESPONSE_NORMAL != res.reply_type) {
 
             if (PHP_AMQP_IS_ERROR_RECOVERABLE(res, channel_resource, channel)) {
                 /* In case no message was received, continue the loop */
-                amqp_destroy_envelope(&envelope);
 
                 continue;
             } else {
@@ -703,7 +701,6 @@ static PHP_METHOD(amqp_queue_class, consume)
 
             php_amqp_zend_throw_exception_short(res, amqp_queue_exception_class_entry);
 
-            amqp_destroy_envelope(&envelope);
             php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
             return;
