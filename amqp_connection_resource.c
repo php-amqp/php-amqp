@@ -301,7 +301,7 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
                 spprintf(
                     message,
                     0,
-                    "Library error: An unexpected method was received 0x%08X\n",
+                    "An unexpected method was received 0x%08X\n",
                     frame.payload.method.id
                 );
                 return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
@@ -368,7 +368,7 @@ int php_amqp_set_resource_rpc_timeout(amqp_connection_resource *resource, double
     rpc_timeout.tv_usec = (int) ((timeout - floor(timeout)) * 1.e+6);
 
     if (AMQP_STATUS_OK != amqp_set_rpc_timeout(resource->connection_state, &rpc_timeout)) {
-        zend_throw_exception(amqp_connection_exception_class_entry, "Library error: cannot set rpc_timeout", 0);
+        zend_throw_exception(amqp_connection_exception_class_entry, "Cannot set rpc_timeout", 0);
         return 0;
     }
 #endif
