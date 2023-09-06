@@ -372,26 +372,6 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
      PHP_AMQP_RESOURCE_RESPONSE_OK !=                                                                                  \
          php_amqp_error(res, &PHP_AMQP_G(error_message), (channel_resource)->connection_resource, (channel_resource)))
 
-#define PHP_AMQP_MAYBE_ERROR_RECOVERABLE(res, channel_resource)                                                        \
-    ((AMQP_RESPONSE_NORMAL != (res).reply_type) &&                                                                     \
-     PHP_AMQP_RESOURCE_RESPONSE_OK != php_amqp_error_advanced(                                                         \
-                                          res,                                                                         \
-                                          &PHP_AMQP_G(error_message),                                                  \
-                                          (channel_resource)->connection_resource,                                     \
-                                          (channel_resource),                                                          \
-                                          0                                                                            \
-                                      ))
-
-#define PHP_AMQP_IS_ERROR_RECOVERABLE(res, channel_resource, channel_object)                                           \
-    (AMQP_RESPONSE_LIBRARY_EXCEPTION == (res).reply_type && AMQP_STATUS_UNEXPECTED_STATE == (res).library_error &&     \
-     (0 <= php_amqp_connection_resource_error_advanced(                                                                \
-               res,                                                                                                    \
-               &PHP_AMQP_G(error_message),                                                                             \
-               (channel_resource)->connection_resource,                                                                \
-               (amqp_channel_t) (channel_resource ? (channel_resource)->channel_id : 0),                               \
-               (channel_object)                                                                                        \
-           )))
-
 
 #if ZEND_MODULE_API_NO >= 20100000
     #define AMQP_OBJECT_PROPERTIES_INIT(obj, ce) object_properties_init(&(obj), ce);

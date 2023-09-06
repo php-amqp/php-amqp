@@ -69,13 +69,7 @@ int php_amqp_connection_resource_error(
     amqp_connection_resource *resource,
     amqp_channel_t channel_id
 );
-int php_amqp_connection_resource_error_advanced(
-    amqp_rpc_reply_t reply,
-    char **message,
-    amqp_connection_resource *resource,
-    amqp_channel_t channel_id,
-    amqp_channel_object *channel
-);
+int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_channel_object *channel);
 
 /* Socket-related functions */
 int php_amqp_set_resource_read_timeout(amqp_connection_resource *resource, double read_timeout);

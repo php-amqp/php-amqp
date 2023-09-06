@@ -1162,13 +1162,7 @@ PHP_METHOD(amqp_channel_class, waitForBasicReturn)
             return;
         }
 
-        status = php_amqp_handle_basic_return(
-            &PHP_AMQP_G(error_message),
-            channel_resource->connection_resource,
-            channel_resource->channel_id,
-            channel,
-            &method
-        );
+        status = php_amqp_handle_basic_return(&PHP_AMQP_G(error_message), channel, &method);
 
         if (PHP_AMQP_RESOURCE_RESPONSE_BREAK == status) {
             php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
@@ -1317,31 +1311,13 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
 
         switch (method.id) {
             case AMQP_BASIC_ACK_METHOD:
-                status = php_amqp_handle_basic_ack(
-                    &PHP_AMQP_G(error_message),
-                    channel_resource->connection_resource,
-                    channel_resource->channel_id,
-                    channel,
-                    &method
-                );
+                status = php_amqp_handle_basic_ack(&PHP_AMQP_G(error_message), channel, &method);
                 break;
             case AMQP_BASIC_NACK_METHOD:
-                status = php_amqp_handle_basic_nack(
-                    &PHP_AMQP_G(error_message),
-                    channel_resource->connection_resource,
-                    channel_resource->channel_id,
-                    channel,
-                    &method
-                );
+                status = php_amqp_handle_basic_nack(&PHP_AMQP_G(error_message), channel, &method);
                 break;
             case AMQP_BASIC_RETURN_METHOD:
-                status = php_amqp_handle_basic_return(
-                    &PHP_AMQP_G(error_message),
-                    channel_resource->connection_resource,
-                    channel_resource->channel_id,
-                    channel,
-                    &method
-                );
+                status = php_amqp_handle_basic_return(&PHP_AMQP_G(error_message), channel, &method);
                 break;
             default:
                 status = AMQP_STATUS_WRONG_METHOD;
