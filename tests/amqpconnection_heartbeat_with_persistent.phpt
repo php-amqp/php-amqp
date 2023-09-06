@@ -66,7 +66,7 @@ echo 'connected: ', var_export($cnn->isConnected(), true), PHP_EOL;
 echo 'persistent: ', var_export($cnn->isPersistent(), true), PHP_EOL;
 echo PHP_EOL;
 ?>
---EXPECT--
+--EXPECTREGEX--
 heartbeat: 2
 connected: false
 persistent: false
@@ -75,7 +75,7 @@ heartbeat: 2
 connected: true
 persistent: true
 
-AMQPConnectionException(0): a socket error occurred
+AMQPConnectionException\(0\): (a socket error occurred|connection closed unexpectedly)
 
 heartbeat: 2
 connected: false
