@@ -298,12 +298,7 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
                     efree(*message);
                 }
 
-                spprintf(
-                    message,
-                    0,
-                    "An unexpected method was received 0x%08X\n",
-                    frame.payload.method.id
-                );
+                spprintf(message, 0, "An unexpected method was received 0x%08X\n", frame.payload.method.id);
                 return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
         }
     }
