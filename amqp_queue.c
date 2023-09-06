@@ -1081,6 +1081,50 @@ static PHP_METHOD(amqp_queue_class, cancel)
 }
 /* }}} */
 
+/* {{{ proto int AMQPQueue::recover([boolean requeue]);
+recover messages already delivered to the consumer
+*/
+static PHP_METHOD(amqp_queue_class, recover)
+{
+    zval rv;
+
+    amqp_channel_resource *channel_resource;
+
+    bool requeue = 1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "|b", &requeue) == FAILURE) {
+        RETURN_THROWS();
+    }
+
+    zval *channel_zv = PHP_AMQP_READ_THIS_PROP("channel");
+
+    channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(channel_zv);
+    PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not recover messages.");
+
+    amqp_basic_recover_ok_t *r = amqp_basic_recover(
+        channel_resource->connection_resource->connection_state,
+        channel_resource->channel_id,
+        requeue
+    );
+
+    if (!r) {
+        amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
+
+        php_amqp_error(res, &PHP_AMQP_G(error_message), channel_resource->connection_resource, channel_resource);
+
+        php_amqp_zend_throw_exception(
+            res,
+            amqp_queue_exception_class_entry,
+            PHP_AMQP_G(error_message),
+            PHP_AMQP_G(error_code)
+        );
+        php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+        return;
+    }
+
+    php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+}
+/* }}} */
 
 /* {{{ proto int AMQPQueue::unbind(string exchangeName, [string routingKey, array arguments]);
 unbind queue from exchange
@@ -1303,6 +1347,10 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_reject, ZEND_SE
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, flags, IS_LONG, 1, "null")
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_recover, ZEND_SEND_BY_VAL, 0, IS_VOID, 0)
+    ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, requeue, _IS_BOOL, 0, "true")
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_queue_class_purge, ZEND_SEND_BY_VAL, 0, IS_LONG, 0)
 ZEND_END_ARG_INFO()
 
@@ -1354,6 +1402,7 @@ zend_function_entry amqp_queue_class_functions[] = {
     PHP_ME(amqp_queue_class, ack,				arginfo_amqp_queue_class_ack,				ZEND_ACC_PUBLIC)
     PHP_ME(amqp_queue_class, nack,				arginfo_amqp_queue_class_nack,				ZEND_ACC_PUBLIC)
     PHP_ME(amqp_queue_class, reject,			arginfo_amqp_queue_class_reject,			ZEND_ACC_PUBLIC)
+    PHP_ME(amqp_queue_class, recover,				arginfo_amqp_queue_class_recover,				ZEND_ACC_PUBLIC)
     PHP_ME(amqp_queue_class, purge,				arginfo_amqp_queue_class_purge,				ZEND_ACC_PUBLIC)
 
     PHP_ME(amqp_queue_class, cancel,			arginfo_amqp_queue_class_cancel,			ZEND_ACC_PUBLIC)

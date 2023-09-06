@@ -261,6 +261,23 @@ class AMQPQueue
     }
 
     /**
+     * Recover unacknowledged messages delivered to the current consumer.
+     *
+     * Recover all the unacknowledged messages delivered to the current consumer.
+     * If $requeue is true, the broker can redeliver the messages to different
+     * consumers. If $requeue is false, it can only redeliver it to the current
+     * consumer. RabbitMQ does not implement $request = false.
+     * This method exposes `basic.recover` from the AMQP spec.
+     *
+     * @param bool $requeue If true, deliver to any consumer, if false, deliver to the current consumer only
+     * @throws AMQPConnectionException If the connection to the broker was lost.
+     * @throws AMQPChannelException If the channel is not open.
+     */
+    public function recover(bool $requeue = true): void
+    {
+    }
+
+    /**
      * Purge the contents of a queue.
      *
      * Returns the number of purged messages
