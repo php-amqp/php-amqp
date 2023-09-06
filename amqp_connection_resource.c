@@ -104,7 +104,7 @@ int php_amqp_connection_resource_error(
             return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
 
         case AMQP_RESPONSE_LIBRARY_EXCEPTION:
-            spprintf(message, 0, "Library error: %s", amqp_error_string2(reply.library_error));
+            spprintf(message, 0, "%s", amqp_error_string2(reply.library_error));
             return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
 
         case AMQP_RESPONSE_SERVER_EXCEPTION:
@@ -250,12 +250,12 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
             efree(*message);
         }
 
-        spprintf(message, 0, "Library error: %s", amqp_error_string2(reply.library_error));
+        spprintf(message, 0, "%s", amqp_error_string2(reply.library_error));
         return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
     }
 
     if (channel->channel_resource->channel_id != frame.channel) {
-        spprintf(message, 0, "Library error: channel mismatch");
+        spprintf(message, 0, "Channel mismatch");
         return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
     }
 
@@ -312,7 +312,7 @@ int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **m
         efree(*message);
     }
 
-    spprintf(message, 0, "Library error: %s", amqp_error_string2(reply.library_error));
+    spprintf(message, 0, "%s", amqp_error_string2(reply.library_error));
     return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
 }
 
@@ -645,7 +645,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
         php_amqp_connection_resource_error(res, &message, resource, 0);
 
-        spprintf(&long_message, 0, "%s - Potential login failure.", message);
+        spprintf(&long_message, 0, "%s", message);
         zend_throw_exception(amqp_connection_exception_class_entry, long_message, PHP_AMQP_G(error_code));
 
         efree(message);
