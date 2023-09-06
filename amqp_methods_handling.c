@@ -87,13 +87,7 @@ int amqp_simple_wait_method_noblock(
 }
 
 
-int php_amqp_handle_basic_return(
-    char **message,
-    amqp_connection_resource *resource,
-    amqp_channel_t channel_id,
-    amqp_channel_object *channel,
-    amqp_method_t *method
-)
+int php_amqp_handle_basic_return(char **message, amqp_channel_object *channel, amqp_method_t *method)
 {
     amqp_rpc_reply_t ret;
     amqp_message_t msg;
@@ -103,10 +97,20 @@ int php_amqp_handle_basic_return(
 
     amqp_basic_return_t *m = (amqp_basic_return_t *) method->decoded;
 
-    ret = amqp_read_message(resource->connection_state, channel_id, &msg, 0);
+    ret = amqp_read_message(
+        channel->channel_resource->connection_resource->connection_state,
+        channel->channel_resource->channel_id,
+        &msg,
+        0
+    );
 
     if (AMQP_RESPONSE_NORMAL != ret.reply_type) {
-        return php_amqp_connection_resource_error(ret, message, resource, channel_id);
+        return php_amqp_connection_resource_error(
+            ret,
+            message,
+            channel->channel_resource->connection_resource,
+            channel->channel_resource->channel_id
+        );
     }
 
     if (channel->callbacks.basic_return.fci.size > 0) {
@@ -156,31 +160,22 @@ int php_amqp_call_basic_return_callback(amqp_basic_return_t *m, amqp_message_t *
     return status;
 }
 
-int php_amqp_handle_basic_ack(
-    char **message,
-    amqp_connection_resource *resource,
-    amqp_channel_t channel_id,
-    amqp_channel_object *channel,
-    amqp_method_t *method
-)
+int php_amqp_handle_basic_ack(char **message, amqp_channel_object *channel, amqp_method_t *method)
 {
-    int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
-
     assert(AMQP_BASIC_ACK_METHOD == method->id);
 
     amqp_basic_ack_t *m = (amqp_basic_ack_t *) method->decoded;
 
     if (channel->callbacks.basic_ack.fci.size > 0) {
-        status = php_amqp_call_basic_ack_callback(m, &channel->callbacks.basic_ack);
-    } else {
-        zend_error(
-            E_NOTICE,
-            "Unhandled basic.ack method from server received. Use AMQPChannel::setConfirmCallback() to process it."
-        );
-        status = PHP_AMQP_RESOURCE_RESPONSE_BREAK;
+        return php_amqp_call_basic_ack_callback(m, &channel->callbacks.basic_ack);
     }
 
-    return status;
+    zend_error(
+        E_NOTICE,
+        "Unhandled basic.ack method from server received. Use AMQPChannel::setConfirmCallback() to process it."
+    );
+
+    return PHP_AMQP_RESOURCE_RESPONSE_BREAK;
 }
 
 int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *cb)
@@ -197,13 +192,7 @@ int php_amqp_call_basic_ack_callback(amqp_basic_ack_t *m, amqp_callback_bucket *
     return php_amqp_call_callback_with_params(params, cb);
 }
 
-int php_amqp_handle_basic_nack(
-    char **message,
-    amqp_connection_resource *resource,
-    amqp_channel_t channel_id,
-    amqp_channel_object *channel,
-    amqp_method_t *method
-)
+int php_amqp_handle_basic_nack(char **message, amqp_channel_object *channel, amqp_method_t *method)
 {
     int status = PHP_AMQP_RESOURCE_RESPONSE_OK;
 

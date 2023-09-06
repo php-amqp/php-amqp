@@ -234,13 +234,7 @@ static void php_amqp_close_channel_from_server(
 }
 
 
-int php_amqp_connection_resource_error_advanced(
-    amqp_rpc_reply_t reply,
-    char **message,
-    amqp_connection_resource *resource,
-    amqp_channel_t channel_id,
-    amqp_channel_object *channel
-)
+int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_channel_object *channel)
 {
     assert(resource != NULL);
 
@@ -249,7 +243,9 @@ int php_amqp_connection_resource_error_advanced(
     assert(AMQP_RESPONSE_LIBRARY_EXCEPTION == reply.reply_type);
     assert(AMQP_STATUS_UNEXPECTED_STATE == reply.library_error);
 
-    if (channel_id < 0 || AMQP_STATUS_OK != amqp_simple_wait_frame(resource->connection_state, &frame)) {
+    if (channel->channel_resource->channel_id < 0 ||
+        AMQP_STATUS_OK !=
+            amqp_simple_wait_frame(channel->channel_resource->connection_resource->connection_state, &frame)) {
         if (*message != NULL) {
             efree(*message);
         }
@@ -258,7 +254,7 @@ int php_amqp_connection_resource_error_advanced(
         return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
     }
 
-    if (channel_id != frame.channel) {
+    if (channel->channel_resource->channel_id != frame.channel) {
         spprintf(message, 0, "Library error: channel mismatch");
         return PHP_AMQP_RESOURCE_RESPONSE_ERROR;
     }
@@ -266,11 +262,16 @@ int php_amqp_connection_resource_error_advanced(
     if (AMQP_FRAME_METHOD == frame.frame_type) {
         switch (frame.payload.method.id) {
             case AMQP_CONNECTION_CLOSE_METHOD: {
-                php_amqp_close_connection_from_server(reply, message, resource);
+                php_amqp_close_connection_from_server(reply, message, channel->channel_resource->connection_resource);
                 return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED;
             }
             case AMQP_CHANNEL_CLOSE_METHOD: {
-                php_amqp_close_channel_from_server(reply, message, resource, channel_id);
+                php_amqp_close_channel_from_server(
+                    reply,
+                    message,
+                    channel->channel_resource->connection_resource,
+                    channel->channel_resource->channel_id
+                );
                 return PHP_AMQP_RESOURCE_RESPONSE_ERROR_CHANNEL_CLOSED;
             }
 
@@ -279,19 +280,19 @@ int php_amqp_connection_resource_error_advanced(
 				 * here is a message being confirmed
 				 */
 
-                return php_amqp_handle_basic_ack(message, resource, channel_id, channel, &frame.payload.method);
+                return php_amqp_handle_basic_ack(message, channel, &frame.payload.method);
             case AMQP_BASIC_NACK_METHOD:
                 /* if we've turned publisher confirms on, and we've published a message
 				 * here is a message being confirmed
 				 */
 
-                return php_amqp_handle_basic_nack(message, resource, channel_id, channel, &frame.payload.method);
+                return php_amqp_handle_basic_nack(message, channel, &frame.payload.method);
             case AMQP_BASIC_RETURN_METHOD:
                 /* if a published message couldn't be routed and the mandatory flag was set
 				 * this is what would be returned. The message then needs to be read.
 				 */
 
-                return php_amqp_handle_basic_return(message, resource, channel_id, channel, &frame.payload.method);
+                return php_amqp_handle_basic_return(message, channel, &frame.payload.method);
             default:
                 if (*message != NULL) {
                     efree(*message);

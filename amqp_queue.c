@@ -592,7 +592,7 @@ static PHP_METHOD(amqp_queue_class, consume)
     PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not get channel.");
 
     if (!(AMQP_JUST_CONSUME & flags)) {
-        /* Setup the consume */
+        /* Set up the consume loop */
         arguments = php_amqp_type_convert_zval_to_amqp_table(PHP_AMQP_READ_THIS_PROP("arguments"));
 
         amqp_basic_consume_ok_t *r = amqp_basic_consume(
@@ -678,29 +678,29 @@ static PHP_METHOD(amqp_queue_class, consume)
         amqp_rpc_reply_t res =
             amqp_consume_message(channel_resource->connection_resource->connection_state, &envelope, tv_ptr, 0);
 
-        if (AMQP_RESPONSE_LIBRARY_EXCEPTION == res.reply_type && AMQP_STATUS_TIMEOUT == res.library_error) {
-            zend_throw_exception(amqp_queue_exception_class_entry, "Consumer timeout exceed", 0);
-
-            php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-            return;
-        }
-
         if (AMQP_RESPONSE_NORMAL != res.reply_type) {
 
-            if (PHP_AMQP_IS_ERROR_RECOVERABLE(res, channel_resource, channel)) {
-                /* In case no message was received, continue the loop */
+            if (AMQP_RESPONSE_LIBRARY_EXCEPTION == res.reply_type) {
 
-                continue;
-            } else {
-                /* Mark connection resource as closed to prevent sending any further requests */
-                channel_resource->connection_resource->is_connected = '\0';
+                // Special case consumer timeout: do not close connection but end consumption
+                if (AMQP_STATUS_TIMEOUT == res.library_error) {
+                    zend_throw_exception(amqp_queue_exception_class_entry, "Consumer timeout exceed", 0);
+                    php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+                    return;
+                }
 
-                /* Close connection with all its channels */
-                php_amqp_disconnect_force(channel_resource->connection_resource);
+                // Handle a potentially recoverable error
+                if (AMQP_STATUS_UNEXPECTED_STATE == res.library_error &&
+                    PHP_AMQP_RESOURCE_RESPONSE_OK <=
+                        php_amqp_connection_resource_error_advanced(res, &PHP_AMQP_G(error_message), channel)) {
+                    continue;
+                }
             }
 
+            /* Mark connection resource as closed to prevent sending any further requests */
+            channel_resource->connection_resource->is_connected = '\0';
+            php_amqp_disconnect_force(channel_resource->connection_resource);
             php_amqp_zend_throw_exception_short(res, amqp_queue_exception_class_entry);
-
             php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
             return;
