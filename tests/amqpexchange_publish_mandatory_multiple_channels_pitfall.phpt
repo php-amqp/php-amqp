@@ -81,5 +81,5 @@ AMQPQueueException(0): Wait timeout exceed
 NULL
 NULL
 NULL
-AMQPException(0): Library error: unexpected method received
+AMQPException(0): unexpected method received
 Connection active: no

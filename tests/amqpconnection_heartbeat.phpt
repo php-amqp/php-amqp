@@ -29,14 +29,12 @@ try {
 echo 'heartbeat: ', var_export($cnn->getHeartbeatInterval(), true), PHP_EOL;
 echo 'connected: ', var_export($cnn->isConnected(), true), PHP_EOL;
 echo 'persistent: ', var_export($cnn->isPersistent(), true), PHP_EOL;
-
-// NOTE: in real-world environment (incl. travis ci) "a socket error occurred" happens, but in virtual environment "connection closed unexpectedly" happens
 ?>
---EXPECTF--
+--EXPECTREGEX--
 heartbeat: 2
 connected: true
 persistent: false
-AMQPException(0): Library error: %s
+AMQPConnectionException\(0\): (a socket error occurred|connection closed unexpectedly)
 heartbeat: 2
 connected: false
 persistent: false

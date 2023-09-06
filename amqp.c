@@ -443,7 +443,7 @@ int php_amqp_error_advanced(
                 break;
             }
             /* Library or other non-protocol or even protocol related errors may be here. */
-            /* In most cases it designate some underlying hard errors. Fail fast. */
+            /* In most cases it indicates some underlying hard errors. Fail fast. */
         case PHP_AMQP_RESOURCE_RESPONSE_ERROR_CONNECTION_CLOSED:
             /* Mark connection resource as closed to prevent sending any further requests */
             connection_resource->is_connected = '\0';
@@ -490,7 +490,18 @@ void php_amqp_zend_throw_exception(
             exception_ce = amqp_exception_class_entry;
             break;
         case AMQP_RESPONSE_LIBRARY_EXCEPTION:
-            exception_ce = amqp_exception_class_entry;
+            switch (reply.library_error) {
+                case AMQP_STATUS_CONNECTION_CLOSED:
+                case AMQP_STATUS_SOCKET_ERROR:
+                case AMQP_STATUS_SOCKET_CLOSED:
+                case AMQP_STATUS_SOCKET_INUSE:
+                case AMQP_STATUS_BROKER_UNSUPPORTED_SASL_METHOD:
+                case AMQP_STATUS_HOSTNAME_RESOLUTION_FAILED:
+                    exception_ce = amqp_connection_exception_class_entry;
+                    break;
+                default:
+                    exception_ce = amqp_exception_class_entry;
+            }
             break;
         case AMQP_RESPONSE_SERVER_EXCEPTION:
             switch (reply.reply.id) {

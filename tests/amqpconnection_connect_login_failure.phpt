@@ -28,10 +28,8 @@ try {
 }
 //
 echo ($cnn->isConnected() ? 'connected' : 'disconnected'), PHP_EOL;
-
-// NOTE: in real-world environment (incl. travis ci) "a socket error occurred" happens, but in vagrant environment "connection closed unexpectedly" happens. WTF?
 ?>
 --EXPECTF--
 disconnected
-AMQPConnectionException(%d): %s error: %s - Potential login failure.
+AMQPConnectionException(403): %s
 disconnected
