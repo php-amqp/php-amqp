@@ -313,7 +313,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0...latest
  - Remove support for PHP 5
  - Various bug fixes
 
-💡Most use-cases should not require much changes from 1.x but check out
+(!) Most use-cases should not require much changes from 1.x but check out
 https://github.com/php-amqp/php-amqp/tree/v2.0.0/UPGRADING.md for a detailed upgrade guide
 
 
@@ -360,11 +360,11 @@ All changes (chronologically):
  - Fix php version check for static building (Misha Kulakovsky <m@klkvsk.ru>) (https://github.com/php-amqp/php-amqp/issues/425)
  - Fix stub exception class (closes #427) (Lars Strojny <lars@strojny.net>)
  - Document custom connection name in stubs (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/700000)
- - Expose Delivery Mode through constants (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/420)
+ - Expose Delivery Mode through constants (Flavio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/420)
  - Fix deprecation issue in PHP 8.1 for $consumerTag argument to AMQPQueue::consume() method (Liviu-Ionut Iosif) (https://github.com/php-amqp/php-amqp/issues/421)
  - Fix: Deprecated: Creation of dynamic property (8.2) (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/418)
- - Fix AMQPEnvelope::getDeliveryTag() return type (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/415)
- - Fix ack/nack/reject param documentation (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/414)
+ - Fix AMQPEnvelope::getDeliveryTag() return type (Flavio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/415)
+ - Fix ack/nack/reject param documentation (Flavio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/414)
  - Mention time units in all timeout-related methods (Andrii Dembitskyi <andrew.dembitskiy@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/410)
 
 For a complete list of changes see:
@@ -406,7 +406,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0beta2...v2.0.0RC1]]></notes>
             <notes><![CDATA[- Include stdint.h for PHP >= 8.0 on Windows (Jan Ehrhardt) (https://github.com/php-amqp/php-amqp/issues/456)
  - Fix segfault in setPort (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/455)
 
-💡Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
+(!) Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
 
 For a complete list of changes see:
 https://github.com/php-amqp/php-amqp/compare/v2.0.0beta1...v2.0.0beta2]]></notes>
@@ -435,7 +435,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0beta1...v2.0.0beta2]]></notes
  - Fix tag creation during release management (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
  - Move test-report.sh into infra (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
 
-💡Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
+(!) Check out https://github.com/php-amqp/php-amqp/tree/latest/UPGRADING.md for backward incompatible changes
 
 For a complete list of changes see:
 https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha2...v2.0.0beta1]]></notes>
@@ -468,11 +468,11 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0alpha2...v2.0.0beta1]]></note
  - Fix php version check for static building (Misha Kulakovsky <m@klkvsk.ru>) (https://github.com/php-amqp/php-amqp/issues/425)
  - Fix stub exception class (closes #427) (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/0)
  - Document custom connection name in stubs (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/700000)
- - Expose Delivery Mode through constants (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/420)
+ - Expose Delivery Mode through constants (Flavio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/420)
  - Fix deprecation issue in PHP 8.1 for $consumerTag argument to AMQPQueue::consume() method (Liviu-Ionut Iosif) (https://github.com/php-amqp/php-amqp/issues/421)
  - Fix: Deprecated: Creation of dynamic property (8.2) (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/418)
- - Fix AMQPEnvelope::getDeliveryTag() return type (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/415)
- - Fix ack/nack/reject param documentation (Flávio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/414)
+ - Fix AMQPEnvelope::getDeliveryTag() return type (Flavio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/415)
+ - Fix ack/nack/reject param documentation (Flavio Heleno <flaviohbatista@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/414)
  - Mention time units in all timeout-related methods (Andrii Dembitskyi <andrew.dembitskiy@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/410)
 
 For a complete list of changes see:
@@ -509,7 +509,7 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0RC1...v1.11.0]]></notes>
                 <api>beta</api>
             </stability>
             <license uri="http://www.php.net/license">PHP License</license>
-            <notes><![CDATA[- PHP 8 support for Windows (Jan Ehrhardt <github@ehrhardt.nl>) (https://github.com/php-amqp/php-amqp/issues/396) - Add installation instructions for Windows (Marcos Rezende <rezehnde@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/394) - Fixes AMQPConnection Stub typo (Grégoire Pineau <lyrixx@lyrixx.info>) (https://github.com/php-amqp/php-amqp/issues/401) - Fix AMQPQueue stub (Gocha Ossinkine <ossinkine@ya.ru>) (https://github.com/php-amqp/php-amqp/issues/404) - SetReadTimeout accepts float param (Andrii Dembitskyi <andrew.dembitskiy@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/388) - Move from Travis CI to Github Actions (Vadim Borodavko <vadim.borodavko@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/391) - Release tooling: handle RC stability properly (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/71) - More robust release tooling (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/0)For a complete list of changes see:https://github.com/php-amqp/php-amqp/compare/v1.11.0beta...v1.11.0RC1]]></notes>
+            <notes><![CDATA[- PHP 8 support for Windows (Jan Ehrhardt <github@ehrhardt.nl>) (https://github.com/php-amqp/php-amqp/issues/396) - Add installation instructions for Windows (Marcos Rezende <rezehnde@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/394) - Fixes AMQPConnection Stub typo (Gregoire Pineau <lyrixx@lyrixx.info>) (https://github.com/php-amqp/php-amqp/issues/401) - Fix AMQPQueue stub (Gocha Ossinkine <ossinkine@ya.ru>) (https://github.com/php-amqp/php-amqp/issues/404) - SetReadTimeout accepts float param (Andrii Dembitskyi <andrew.dembitskiy@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/388) - Move from Travis CI to Github Actions (Vadim Borodavko <vadim.borodavko@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/391) - Release tooling: handle RC stability properly (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/71) - More robust release tooling (Lars Strojny <lars.strojny@internations.org>) (https://github.com/php-amqp/php-amqp/issues/0)For a complete list of changes see:https://github.com/php-amqp/php-amqp/compare/v1.11.0beta...v1.11.0RC1]]></notes>
         </release>
         <release>
             <date>2020-04-05</date>
@@ -551,7 +551,7 @@ https://github.com/php-amqp/php-amqp/compare/v1.11.0RC1...v1.11.0]]></notes>
                 <api>stable</api>
             </stability>
             <license uri="http://www.php.net/license">PHP License</license>
-            <notes><![CDATA[ - Adding global prefetch support (#366) (Terence Marks <tezmarks@gmail.com>) (https://github.com/pdezwart/php-amqp/issues/367) - Fix minimal librabbitmq in config.m4 and readme (Remi Collet <remi@remirepo.net>) (https://github.com/pdezwart/php-amqp/issues/347) - Support connection_name parameter for custom connection names in RabbitMQ (Alexandr Zolotukhin <supersmile2009@gmail.com>) (https://github.com/pdezwart/php-amqp/issues/363) - Fixed build on Travis CI (Alexandr Zolotukhin <supersmile2009@gmail.com>) (https://github.com/pdezwart/php-amqp/issues/365) - Make use of rpc_timeout in newer librabbitmq by introducing new constructor hash parameter (modulatix <oleg.pereverzev@gmail.com>) (https://github.com/pdezwart/php-amqp/issues/334) - Fix #355: Compile failure on php 7.4 (Christoph M. Becker <cmbecker69@gmx.de>) (https://github.com/pdezwart/php-amqp/issues/359) - Update amqp_type.c (Paweł Mikołajczuk <pawel@mikolajczuk.in>) (https://github.com/pdezwart/php-amqp/issues/360) - Build against PHP 7.4 (Carlos Barrero <carlos.barrero@spotahome.com>) (https://github.com/pdezwart/php-amqp/issues/361) - Pass params by value in AMQPConnection::__construct() (Sergei Karpov) (https://github.com/pdezwart/php-amqp/issues/346) - Fix explicit null-string for $routing_key in Queue::bind() and Exchange::publish() (Sergei Karpov) (https://github.com/pdezwart/php-amqp/issues/341) - No longer limited to PHP 5 (Lars Strojny <lars.strojny@internations.org>) (https://github.com/pdezwart/php-amqp/issues/0) - Fix minimal version to 5.6 (Remi Collet <remi@famillecollet.com>) (https://github.com/pdezwart/php-amqp/issues/338) - Back to dev (Lars Strojny <lars.strojny@internations.org>) (https://github.com/pdezwart/php-amqp/issues/1)For a complete list of changes see:https://github.com/pdezwart/php-amqp/compare/v1.9.4...v1.10.0]]></notes>
+            <notes><![CDATA[ - Adding global prefetch support (#366) (Terence Marks <tezmarks@gmail.com>) (https://github.com/pdezwart/php-amqp/issues/367) - Fix minimal librabbitmq in config.m4 and readme (Remi Collet <remi@remirepo.net>) (https://github.com/pdezwart/php-amqp/issues/347) - Support connection_name parameter for custom connection names in RabbitMQ (Alexandr Zolotukhin <supersmile2009@gmail.com>) (https://github.com/pdezwart/php-amqp/issues/363) - Fixed build on Travis CI (Alexandr Zolotukhin <supersmile2009@gmail.com>) (https://github.com/pdezwart/php-amqp/issues/365) - Make use of rpc_timeout in newer librabbitmq by introducing new constructor hash parameter (modulatix <oleg.pereverzev@gmail.com>) (https://github.com/pdezwart/php-amqp/issues/334) - Fix #355: Compile failure on php 7.4 (Christoph M. Becker <cmbecker69@gmx.de>) (https://github.com/pdezwart/php-amqp/issues/359) - Update amqp_type.c (Pawel Mikolajczuk <pawel@mikolajczuk.in>) (https://github.com/pdezwart/php-amqp/issues/360) - Build against PHP 7.4 (Carlos Barrero <carlos.barrero@spotahome.com>) (https://github.com/pdezwart/php-amqp/issues/361) - Pass params by value in AMQPConnection::__construct() (Sergei Karpov) (https://github.com/pdezwart/php-amqp/issues/346) - Fix explicit null-string for $routing_key in Queue::bind() and Exchange::publish() (Sergei Karpov) (https://github.com/pdezwart/php-amqp/issues/341) - No longer limited to PHP 5 (Lars Strojny <lars.strojny@internations.org>) (https://github.com/pdezwart/php-amqp/issues/0) - Fix minimal version to 5.6 (Remi Collet <remi@famillecollet.com>) (https://github.com/pdezwart/php-amqp/issues/338) - Back to dev (Lars Strojny <lars.strojny@internations.org>) (https://github.com/pdezwart/php-amqp/issues/1)For a complete list of changes see:https://github.com/pdezwart/php-amqp/compare/v1.9.4...v1.10.0]]></notes>
         </release>
         <release>
             <date>2017-10-19</date>
