@@ -22,22 +22,35 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2023-08-20</date>
-    <time>11:14:34</time>
+    <date>2023-09-07</date>
+    <time>06:52:04</time>
     <version>
-        <release>2.0.1dev</release>
-        <api>2.0.1dev</api>
+        <release>2.1.0</release>
+        <api>2.1.0</api>
     </version>
     <stability>
-        <release>devel</release>
-        <api>devel</api>
+        <release>stable</release>
+        <api>stable</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[
+    <notes><![CDATA[- AMQPValue interface for custom value objects (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/473)
+ - Implement AMQPQueue::recover() to provide the basic.recover method (fixes #478) (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/484)
+ - Fix double free when an error occurs in AMQPQueue::consume() (Jan Prachar <jan.prachar@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/482)
+ - Revamp error handling (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/485)
+ - Refactor AMQPQueue::consume error handling (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/483)
+ - Use RETURN_THROWS for parameter parsing errors (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/474)
+ - Fix auto-formatting (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/877b2f4)
+ - Remove appveyor badge (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/4971c80)
+ - Replace microtime() as a randomness source (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/4503e53)
+ - Fix version test for release builds (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/00a6715)
+ - Remove non-ASCII characters from package.xml to work around pecl.php.net issue (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/732f7e8)
+ - Bump actions/checkout from 3.5.3 to 3.6.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/475)
+ - Bump symplify/easy-coding-standard from 12.0.6 to 12.0.7 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/472)
+ - Bump actions/checkout from 3.5.3 to 3.6.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/471)
+ - Bump actions/checkout from 3.6.0 to 4.0.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/481)
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.0.0...latest
-]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.0.0...v2.1.0]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -71,6 +84,8 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0...latest
             <file name="amqp_timestamp.h" role="src"/>
             <file name="amqp_type.c" role="src"/>
             <file name="amqp_type.h" role="src"/>
+            <file name="amqp_value.c" role="src"/>
+            <file name="amqp_value.h" role="src"/>
             <file name="php_amqp.h" role="src"/>
             <file name="php_amqp_version.h" role="src"/>
             <file name="tests/003-channel-consumers.phpt" role="test"/>
@@ -235,6 +250,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0...latest
             <file name="tests/amqpqueue_nested_arrays.phpt" role="test"/>
             <file name="tests/amqpqueue_nested_headers.phpt" role="test"/>
             <file name="tests/amqpqueue_purge_basic.phpt" role="test"/>
+            <file name="tests/amqpqueue_recover.phpt" role="test"/>
             <file name="tests/amqpqueue_setArgument.phpt" role="test"/>
             <file name="tests/amqpqueue_setFlags.phpt" role="test"/>
             <file name="tests/amqpqueue_unbind_basic_empty_routing_key.phpt" role="test"/>
@@ -260,6 +276,8 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0...latest
             <file name="tests/bug_gh72-2.phpt" role="test"/>
             <file name="tests/ini_validation_failure.phpt" role="test"/>
             <file name="tests/package-version.phpt" role="test"/>
+            <file name="tests/serialize-custom-amqpvalue-errors.phpt" role="test"/>
+            <file name="tests/serialize-custom-amqpvalue.phpt" role="test"/>
             <file name="tests/testtest.phpt" role="test"/>
             <file name="stubs/AMQP.php" role="doc"/>
             <file name="stubs/AMQPBasicProperties.php" role="doc"/>
@@ -276,6 +294,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0...latest
             <file name="stubs/AMQPQueue.php" role="doc"/>
             <file name="stubs/AMQPQueueException.php" role="doc"/>
             <file name="stubs/AMQPTimestamp.php" role="doc"/>
+            <file name="stubs/AMQPValue.php" role="doc"/>
             <file name="stubs/AMQPValueException.php" role="doc"/>
         </dir>
         <!-- / -->
