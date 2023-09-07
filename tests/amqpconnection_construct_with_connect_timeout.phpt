@@ -2,7 +2,8 @@
 AMQPConnection constructor with timeout parameter in credentials
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) print "skip";
+if (!extension_loaded("amqp")) print "skip amqp extension not loaded";
+if (getenv("SKIP_ONLINE_TESTS")) die('skip online test');
 ?>
 --FILE--
 <?php
