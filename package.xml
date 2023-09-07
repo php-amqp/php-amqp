@@ -23,34 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2023-09-07</date>
-    <time>06:52:04</time>
+    <time>06:53:11</time>
     <version>
-        <release>2.1.0</release>
-        <api>2.1.0</api>
+        <release>2.2.0dev</release>
+        <api>2.2.0dev</api>
     </version>
     <stability>
-        <release>stable</release>
-        <api>stable</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- AMQPValue interface for custom value objects (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/473)
- - Implement AMQPQueue::recover() to provide the basic.recover method (fixes #478) (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/484)
- - Fix double free when an error occurs in AMQPQueue::consume() (Jan Prachar <jan.prachar@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/482)
- - Revamp error handling (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/485)
- - Refactor AMQPQueue::consume error handling (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/483)
- - Use RETURN_THROWS for parameter parsing errors (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/474)
- - Fix auto-formatting (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/877b2f4)
- - Remove appveyor badge (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/4971c80)
- - Replace microtime() as a randomness source (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/4503e53)
- - Fix version test for release builds (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/00a6715)
- - Remove non-ASCII characters from package.xml to work around pecl.php.net issue (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/732f7e8)
- - Bump actions/checkout from 3.5.3 to 3.6.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/475)
- - Bump symplify/easy-coding-standard from 12.0.6 to 12.0.7 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/472)
- - Bump actions/checkout from 3.5.3 to 3.6.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/471)
- - Bump actions/checkout from 3.6.0 to 4.0.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/481)
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.0.0...v2.1.0]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.1.0...latest
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -314,6 +301,37 @@ https://github.com/php-amqp/php-amqp/compare/v2.0.0...v2.1.0]]></notes>
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2023-09-07</date>
+            <time>06:52:04</time>
+            <version>
+                <release>2.1.0</release>
+                <api>2.1.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- AMQPValue interface for custom value objects (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/473)
+ - Implement AMQPQueue::recover() to provide the basic.recover method (fixes #478) (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/484)
+ - Fix double free when an error occurs in AMQPQueue::consume() (Jan Prachar <jan.prachar@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/482)
+ - Revamp error handling (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/485)
+ - Refactor AMQPQueue::consume error handling (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/483)
+ - Use RETURN_THROWS for parameter parsing errors (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/474)
+ - Fix auto-formatting (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/877b2f4)
+ - Remove appveyor badge (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/4971c80)
+ - Replace microtime() as a randomness source (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/4503e53)
+ - Fix version test for release builds (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/00a6715)
+ - Remove non-ASCII characters from package.xml to work around pecl.php.net issue (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/732f7e8)
+ - Bump actions/checkout from 3.5.3 to 3.6.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/475)
+ - Bump symplify/easy-coding-standard from 12.0.6 to 12.0.7 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/472)
+ - Bump actions/checkout from 3.5.3 to 3.6.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/471)
+ - Bump actions/checkout from 3.6.0 to 4.0.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/481)
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v2.0.0...v2.1.0]]></notes>
+        </release>
         <release>
             <date>2023-08-20</date>
             <time>11:12:46</time>
