@@ -236,8 +236,6 @@ static void php_amqp_close_channel_from_server(
 
 int php_amqp_connection_resource_error_advanced(amqp_rpc_reply_t reply, char **message, amqp_channel_object *channel)
 {
-    assert(resource != NULL);
-
     amqp_frame_t frame;
 
     assert(AMQP_RESPONSE_LIBRARY_EXCEPTION == reply.reply_type);
