@@ -83,7 +83,7 @@ zend_object_handlers amqp_connection_object_handlers;
 
 #define PHP_AMQP_EXTRACT_CONNECTION_BOOL(name)                                                                         \
     zdata = NULL;                                                                                                      \
-    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), (name), sizeof(name))) != NULL) {                     \
+    if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL(name))) != NULL) {                          \
         SEPARATE_ZVAL(zdata);                                                                                          \
         convert_to_long(zdata);                                                                                        \
     }                                                                                                                  \
