@@ -324,7 +324,9 @@ static PHP_METHOD(amqp_queue_class, removeArgument)
         RETURN_THROWS();
     }
 
-    zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
+    if (zend_hash_str_exists_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) {
+        zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
+    }
 }
 /* }}} */
 
@@ -647,7 +649,7 @@ static PHP_METHOD(amqp_queue_class, consume)
     }
 
     if (!ZEND_FCI_INITIALIZED(fci)) {
-        /* Callback not set, we have nothing to do - real consuming may happens later */
+        /* Callback not set, we have nothing to do - real consuming may happen later */
         return;
     }
 
@@ -799,10 +801,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 
         fci.retval = &retval;
 
-        /* Call the function, and track the return value */
-        if (zend_call_function(&fci, &fci_cache) == SUCCESS && fci.retval) {
-//          RETVAL_ZVAL(&retval, 1, 1);
-        }
+        zend_call_function(&fci, &fci_cache);
 
         /* Clean up our mess */
         zend_fcall_info_args_clear(&fci, 1);
@@ -816,7 +815,6 @@ static PHP_METHOD(amqp_queue_class, consume)
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-    return;
 }
 /* }}} */
 

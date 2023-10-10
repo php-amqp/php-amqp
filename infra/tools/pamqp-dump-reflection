@@ -18,7 +18,11 @@ function sortByName(array $array): array
 function getTypeMetadata(?ReflectionType $type): ?array
 {
     if ($type == null) {
-        return null;
+        return [
+            'name' => 'mixed',
+            'nullable' => true,
+            'builtin' => true,
+        ];
     }
 
     if ($type instanceof ReflectionNamedType) {

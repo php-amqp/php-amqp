@@ -648,7 +648,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
                 "Parameter 'rpc_timeout' must be greater than or equal to zero.",
                 0
             );
-            return;
+            RETURN_THROWS();
         }
 
         zend_update_property_double(
@@ -676,7 +676,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
                 "Parameter 'connect_timeout' must be greater than or equal to zero.",
                 0
             );
-            return;
+            RETURN_THROWS();
         }
 
         zend_update_property_double(
@@ -700,7 +700,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
 
         if (!php_amqp_is_valid_channel_max(Z_LVAL_P(zdata))) {
             zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'channel_max' is out of range.", 0);
-            return;
+            RETURN_THROWS();
         }
 
         if (Z_LVAL_P(zdata) == 0) {
@@ -732,7 +732,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         convert_to_long(zdata);
         if (!php_amqp_is_valid_frame_size_max(Z_LVAL_P(zdata))) {
             zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'frame_max' is out of range.", 0);
-            return;
+            RETURN_THROWS();
         }
 
         if (Z_LVAL_P(zdata) == 0) {
@@ -764,7 +764,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         convert_to_long(zdata);
         if (!php_amqp_is_valid_heartbeat(Z_LVAL_P(zdata))) {
             zend_throw_exception(amqp_connection_exception_class_entry, "Parameter 'heartbeat' is out of range.", 0);
-            return;
+            RETURN_THROWS();
         }
 
         zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("heartbeat"), Z_LVAL_P(zdata));
@@ -837,14 +837,14 @@ static PHP_METHOD(amqp_connection_class, connect)
 
     if (connection->connection_resource && connection->connection_resource->is_connected) {
         if (connection->connection_resource->is_persistent) {
-            php_error_docref(
-                NULL,
-                E_WARNING,
-                "Attempt to start transient connection while persistent transient one already established. Continue."
+            zend_throw_exception(
+                amqp_connection_exception_class_entry,
+                "Attempt to start transient connection while persistent transient one already established. Continue.",
+                0
             );
         }
 
-        RETURN_TRUE;
+        return;
     }
 
     /* Actually connect this resource to the broker */
@@ -868,14 +868,14 @@ static PHP_METHOD(amqp_connection_class, pconnect)
 
         assert(connection->connection_resource != NULL);
         if (!connection->connection_resource->is_persistent) {
-            php_error_docref(
-                NULL,
-                E_WARNING,
-                "Attempt to start persistent connection while transient one already established. Continue."
+            zend_throw_exception(
+                amqp_connection_exception_class_entry,
+                "Attempt to start persistent connection while transient one already established. Continue.",
+                0
             );
         }
 
-        RETURN_TRUE;
+        return;
     }
 
     /* Actually connect this resource to the broker or use stored connection */

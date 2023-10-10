@@ -35,7 +35,7 @@ RUN apt-get update -yqq
 ARG php_version
 RUN apt-get install -yqq php${php_version}-dev php${php_version}-common-dbgsym php${php_version}-cli-dbgsym
 
-FROM debianish AS debian
+FROM debianish AS debian-php
 # Rebuild to enable debug build
 RUN apt-get install -y --no-install-recommends \
       libargon2-dev \
@@ -52,4 +52,4 @@ RUN apt-get install -y --no-install-recommends \
     cd /usr/src/php && \
     ./configure $(php --info | grep "^Configure Command" | cut -d " " -f 7- | rev | cut -d " " -f 2- | rev | tr "'" " ") --enable-debug && \
     make -j $(nproc) && \
-    make install
+    make install \
