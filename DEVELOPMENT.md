@@ -25,10 +25,10 @@ all the logs, especially the RabbitMQ logs.
 
 Various development containers are provided:
 
-- `debian-74`: PHP 7.4 on Debian 11 ("Bullseye")
-- `debian-80`: PHP 8.0 on Debian 12 ("Bookworm")
-- `debian-81`: PHP 8.1 on Debian 12 ("Bookworm")
-- `debian-82`: PHP 8.2 on Debian 12 ("Bookworm")
+- `debian-74`: PHP 7.4 on Debian 11 ("Bullseye") with debug build enabled
+- `debian-80`: PHP 8.0 on Debian 12 ("Bookworm") with debug build enabled
+- `debian-81`: PHP 8.1 on Debian 12 ("Bookworm") with debug build enabled
+- `debian-82`: PHP 8.2 on Debian 12 ("Bookworm") with debug build enabled
 - `ubuntu-74`: PHP 7.4 on Ubuntu 20 ("Jammy")
 - `ubuntu-80`: PHP 8.0 on Ubuntu 22 ("Jammy")
 - `ubuntu-81`: PHP 8.1 on Ubuntu 22 ("Jammy")

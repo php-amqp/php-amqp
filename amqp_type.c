@@ -163,6 +163,7 @@ void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_t
         if (!php_amqp_type_zval_to_amqp_value_internal(value_nested, &field, key, depth + 1)) {
             /* Reset entries counter back */
             amqp_table->num_entries--;
+            efree(string_key);
 
             continue;
         }

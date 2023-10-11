@@ -85,9 +85,9 @@ class AMQPEnvelope extends AMQPBasicProperties
      *
      * @param string $headerName Name of the header to get the value from.
      *
-     * @return string|null The contents of the specified header or null if not set.
+     * @return mixed The contents of the specified header or null if not set.
      */
-    public function getHeader(string $headerName): ?string
+    public function getHeader(string $headerName)
     {
     }
 

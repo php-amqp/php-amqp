@@ -83,6 +83,14 @@ services:
         php_version: "8.2"
     working_dir: /src/build/centos-82
 
+  centos-83:
+    <<: *centos-dev
+    build:
+      <<: *centos-dev-build
+      args:
+        php_version: "8.3"
+    working_dir: /src/build/centos-83
+
   ubuntu-74: &ubuntu-dev
     build: &ubuntu-dev-build
       context: infra/dev
@@ -126,10 +134,18 @@ services:
         php_version: "8.2"
     working_dir: /src/build/ubuntu-82
 
+  ubuntu-83:
+    <<: *ubuntu-dev
+    build:
+      <<: *ubuntu-dev-build
+      args:
+        php_version: "8.3"
+    working_dir: /src/build/ubuntu-83
+
   debian-74: &debian-dev
     build: &debian-dev-build
       context: infra/dev
-      target: debianish
+      target: debian-php
       additional_contexts:
         base: docker-image://php:7.4-zts-bullseye
     volumes:

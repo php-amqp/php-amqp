@@ -256,7 +256,12 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_envelope_class_isRedelivery, ZEND_SEND_BY_VAL, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_envelope_class_getHeader, ZEND_SEND_BY_VAL, 1, IS_STRING, 1)
+#ifdef IS_MIXED
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_amqp_envelope_class_getHeader, ZEND_SEND_BY_VAL, 1, IS_MIXED, 1)
+#else
+/* PHP < 8.0 */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_envelope_class_getHeader, 0, 0, 1)
+#endif
     ZEND_ARG_TYPE_INFO(0, headerName, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 

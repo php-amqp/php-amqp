@@ -1349,12 +1349,14 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
 }
 /* }}} */
 
-/* {{{ proto amqp::getConsumers() */
+/* {{{ proto AMQPChannel::getConsumers() */
 static PHP_METHOD(amqp_channel_class, getConsumers)
 {
     zval rv;
     PHP_AMQP_NOPARAMS()
-    PHP_AMQP_RETURN_THIS_PROP("consumers");
+    zval *tmp = zend_read_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("consumers"), 0, &rv);
+    // Return a proper copy, so that the internal consumer map can be safely modified
+    ZVAL_DUP(return_value, tmp);
 }
 /* }}} */
 

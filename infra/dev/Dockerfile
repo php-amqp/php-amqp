@@ -34,3 +34,22 @@ RUN sed -e "s:main:main main/debug:" -i /etc/apt/sources.list.d/ondrej-*.list
 RUN apt-get update -yqq
 ARG php_version
 RUN apt-get install -yqq php${php_version}-dev php${php_version}-common-dbgsym php${php_version}-cli-dbgsym
+
+FROM debianish AS debian-php
+# Rebuild to enable debug build
+RUN apt-get install -y --no-install-recommends \
+      libargon2-dev \
+      libcurl4-openssl-dev \
+      libonig-dev \
+      libreadline-dev \
+      libsodium-dev \
+      libsqlite3-dev \
+      libssl-dev \
+      libxml2-dev \
+      zlib1g-dev \
+    && \
+    docker-php-source extract && \
+    cd /usr/src/php && \
+    ./configure $(php --info | grep "^Configure Command" | cut -d " " -f 7- | rev | cut -d " " -f 2- | rev | tr "'" " ") --enable-debug && \
+    make -j $(nproc) && \
+    make install \

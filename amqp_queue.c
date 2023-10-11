@@ -324,7 +324,9 @@ static PHP_METHOD(amqp_queue_class, removeArgument)
         RETURN_THROWS();
     }
 
-    zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
+    if (zend_hash_str_exists_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len)) {
+        zend_hash_str_del_ind(PHP_AMQP_READ_THIS_PROP_ARR("arguments"), key, key_len);
+    }
 }
 /* }}} */
 
@@ -445,7 +447,7 @@ static PHP_METHOD(amqp_queue_class, bind)
     if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_queue_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-        return;
+        RETURN_THROWS();
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
@@ -583,7 +585,7 @@ static PHP_METHOD(amqp_queue_class, consume)
             "Invalid channel consumers, forgot to call channel constructor?",
             0
         );
-        return;
+        RETURN_THROWS();
     }
 
     amqp_channel_object *channel = PHP_AMQP_GET_CHANNEL(channel_zv);
@@ -615,7 +617,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 
             zend_throw_exception(amqp_queue_exception_class_entry, PHP_AMQP_G(error_message), PHP_AMQP_G(error_code));
             php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-            return;
+            RETURN_THROWS();
         }
 
         char *key;
@@ -625,7 +627,7 @@ static PHP_METHOD(amqp_queue_class, consume)
             // This should never happen as AMQP server guarantees that consumer tag is unique within channel
             zend_throw_exception(amqp_exception_class_entry, "Duplicate consumer tag", 0);
             efree(key);
-            return;
+            RETURN_THROWS();
         }
 
         zval tmp;
@@ -647,7 +649,7 @@ static PHP_METHOD(amqp_queue_class, consume)
     }
 
     if (!ZEND_FCI_INITIALIZED(fci)) {
-        /* Callback not set, we have nothing to do - real consuming may happens later */
+        /* Callback not set, we have nothing to do - real consuming may happen later */
         return;
     }
 
@@ -703,7 +705,7 @@ static PHP_METHOD(amqp_queue_class, consume)
             php_amqp_zend_throw_exception_short(res, amqp_queue_exception_class_entry);
             php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-            return;
+            RETURN_THROWS();
         }
 
         ZVAL_UNDEF(&message);
@@ -799,10 +801,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 
         fci.retval = &retval;
 
-        /* Call the function, and track the return value */
-        if (zend_call_function(&fci, &fci_cache) == SUCCESS && fci.retval) {
-            RETVAL_ZVAL(&retval, 1, 1);
-        }
+        zend_call_function(&fci, &fci_cache);
 
         /* Clean up our mess */
         zend_fcall_info_args_clear(&fci, 1);
@@ -810,13 +809,12 @@ static PHP_METHOD(amqp_queue_class, consume)
         zval_ptr_dtor(&message);
 
         /* Check if user land function wants to bail */
-        if (EG(exception) || Z_TYPE_P(return_value) == IS_FALSE) {
+        if (EG(exception) || Z_TYPE_P(&retval) == IS_FALSE) {
             break;
         }
     }
 
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
-    return;
 }
 /* }}} */
 
@@ -1038,7 +1036,7 @@ static PHP_METHOD(amqp_queue_class, cancel)
             "Invalid channel consumers, forgot to call channel constructor?",
             0
         );
-        return;
+        RETURN_THROWS();
     }
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(channel_zv);

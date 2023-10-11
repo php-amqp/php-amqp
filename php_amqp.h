@@ -279,7 +279,7 @@ struct _amqp_connection_object {
 
 #define PHP_AMQP_NOPARAMS()                                                                                            \
     if (zend_parse_parameters_none() == FAILURE) {                                                                     \
-        return;                                                                                                        \
+        RETURN_THROWS();                                                                                               \
     }
 
 #define PHP_AMQP_RETURN_THIS_PROP(prop_name)                                                                           \
