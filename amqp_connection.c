@@ -839,7 +839,7 @@ static PHP_METHOD(amqp_connection_class, connect)
         if (connection->connection_resource->is_persistent) {
             zend_throw_exception(
                 amqp_connection_exception_class_entry,
-                "Attempt to start transient connection while persistent transient one already established. Continue.",
+                "Attempt to start transient connection while persistent one already established. Continue.",
                 0
             );
         }
