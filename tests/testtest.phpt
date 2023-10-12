@@ -32,7 +32,7 @@ foreach (glob(__DIR__ . '/*.phpt') as $test) {
 
     ['skipCode' => $skipCode] = $matches;
 
-    if (!preg_match('/if\s*\(!extension_loaded\("amqp"\)\)\s*\{?\s*print "skip";/', $skipCode)) {
+    if (!preg_match('/if\s*\(!extension_loaded\("amqp"\)\)\s*\{?\s*print "skip AMQP extension is not loaded";/', $skipCode)) {
         printf("%s --SKIP-- does not check for the extension being present\n", basename($test));
         continue;
     }

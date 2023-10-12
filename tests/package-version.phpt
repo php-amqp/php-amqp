@@ -2,8 +2,8 @@
 Compare version in package.xml and module
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) print "skip";
-if (!function_exists('simplexml_load_file')) print "skip";
+if (!extension_loaded("amqp")) print "skip AMQP extension is not loaded";
+elseif (!function_exists('simplexml_load_file')) print "skip SimpleXML extension is not loaded";
 ?>
 --FILE--
 <?php

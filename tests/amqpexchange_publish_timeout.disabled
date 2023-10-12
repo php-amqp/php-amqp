@@ -2,8 +2,8 @@
 AMQPExchange
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) print "skip";
-if (getenv("SKIP_SLOW_TESTS")) print "skip slow test"   ;
+if (!extension_loaded("amqp")) print "skip AMQP extension is not loaded";
+elseif (getenv("SKIP_SLOW_TESTS")) print "skip slow test and SKIP_SLOW_TESTS is set";
 ?>
 --FILE--
 <?php

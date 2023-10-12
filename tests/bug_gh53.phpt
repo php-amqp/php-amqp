@@ -2,8 +2,8 @@
 Upgrade to RabbitMQ 3.1.0-1: AMQPConnectionException: connection closed unexpectedly
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) print "skip";
-if (!getenv("PHP_AMQP_HOST")) print "skip";
+if (!extension_loaded("amqp")) print "skip AMQP extension is not loaded";
+elseif (!getenv("PHP_AMQP_HOST")) print "skip PHP_AMQP_HOST environment variable is not set";
 ?>
 --FILE--
 <?php

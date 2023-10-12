@@ -2,11 +2,11 @@
 AMQPConnection - TLS - mTLS support
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) print "skip";
-if (!getenv("PHP_AMQP_SSL_HOST")) print "skip";
-if (!file_exists(__DIR__ . "/../infra/tls/certificates/testca/cacert.pem")) print "skip";
-if (!file_exists(__DIR__ . "/../infra/tls/certificates/client/cert.pem")) print "skip";
-if (!file_exists(__DIR__ . "/../infra/tls/certificates/client/key.pem")) print "skip";
+if (!extension_loaded("amqp")) print "skip AMQP extension is not loaded";
+elseif (!getenv("PHP_AMQP_SSL_HOST")) print "skip PHP_AMQP_SSL_HOST environment variable is not set";
+elseif (!file_exists(__DIR__ . "/../infra/tls/certificates/testca/cacert.pem")) print "skip CA certificate is not available";
+elseif (!file_exists(__DIR__ . "/../infra/tls/certificates/client/cert.pem")) print "skip client certificate is not available";
+elseif (!file_exists(__DIR__ . "/../infra/tls/certificates/client/key.pem")) print "skip client certificate key is not available";
 ?>
 --FILE--
 <?php

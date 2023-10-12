@@ -3,9 +3,9 @@ AMQPChannel - constructor with amqp.prefetch_size ini value set
 --SKIPIF--
 <?php
 if (!extension_loaded("amqp")) {
-    print "skip";
+    print "skip AMQP extension is not loaded";
 } elseif (!getenv('PHP_AMQP_HOST')) {
-    print "skip";
+    print "skip PHP_AMQP_HOST environment variable is not set";
 } else {
     try {
         $cnn = new AMQPConnection();
@@ -15,7 +15,7 @@ if (!extension_loaded("amqp")) {
         $ch->setPrefetchSize(123);
     } catch (AMQPConnectionException $e) {
         if ($e->getCode() === 540 && strpos($e->getMessage(), "NOT_IMPLEMENTED") !== false) {
-            print "skip";
+            print "skip prefetch size is not supported by the AMQP server";
         }
     }
 }

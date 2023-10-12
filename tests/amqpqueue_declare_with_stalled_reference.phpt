@@ -2,7 +2,7 @@
 AMQPQueue - declare with stalled reference
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) print "skip";
+if (!extension_loaded("amqp")) print "skip AMQP extension is not loaded";
 ?>
 --FILE--
 <?php
