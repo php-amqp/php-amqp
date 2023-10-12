@@ -1,6 +1,6 @@
 <?php
 
-namespace phpamqp;
+namespace AMQP;
 
 ini_set('assert.bail', true);
 
@@ -279,6 +279,8 @@ function buildChangelog(string $nextTag, string $previousTag): string
         $changeLines[] = sprintf(' - %s (%s) (%s)', ucfirst($message), $committer, $url);
     }
 
+    usort($changeLines, 'AMQP\\compareChangelogLines');
+
     $changes = implode(PHP_EOL, $changeLines);
     $changelog = <<<EOT
 {$changes}
@@ -289,6 +291,42 @@ https://github.com/php-amqp/php-amqp/compare/{$previousTag}...{$nextTag}
 EOT;
 
     return $changelog;
+}
+
+function compareChangelogLines(string $left, string $right): int
+{
+    $leftPriority = getChangelogPriority($left);
+    $rightPriority = getChangelogPriority($right);
+
+    if ($leftPriority !== $rightPriority) {
+        return $leftPriority <=> $rightPriority;
+    }
+
+    return $left <=> $right;
+}
+
+function getChangelogPriority(string $line): int
+{
+    $lineWithoutDash = substr($line, 3);
+
+    if (strStartsWithCaseInsensitive($lineWithoutDash, 'bump')) {
+        return 100;
+    }
+
+    if (strStartsWithCaseInsensitive($lineWithoutDash, 'refactor')) {
+        return 50;
+    }
+
+    if (strStartsWithCaseInsensitive($lineWithoutDash, 'fix')) {
+        return 30;
+    }
+
+    return 0;
+}
+
+function strStartsWithCaseInsensitive(string $haystack, string $needle): bool
+{
+    return strnatcasecmp(substr($haystack, 0, strlen($needle)), $needle) === 0;
 }
 
 function archiveRelease(): void
