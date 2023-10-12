@@ -247,7 +247,7 @@ class AMQPChannel
      *      function ack_callback(int $delivery_tag, bool $multiple) : bool;
      *      function nack_callback(int $delivery_tag, bool $multiple, bool $requeue) : bool;
      *
-     * and should return boolean false when wait loop should be canceled.
+     * and should return boolean FALSE when wait loop should be canceled.
      *
      * Note, basic.nack server method will only be delivered if an internal error occurs in the Erlang process
      * responsible for a queue (see https://www.rabbitmq.com/confirms.html for details).
@@ -281,7 +281,7 @@ class AMQPChannel
      *                        AMQPBasicProperties $properties,
      *                        string $body) : bool;
      *
-     * and should return boolean false when wait loop should be canceled.
+     * and should return boolean FALSE when wait loop should be canceled.
      */
     public function setReturnCallback(?callable $returnCallback): void
     {

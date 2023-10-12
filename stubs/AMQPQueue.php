@@ -178,7 +178,7 @@ class AMQPQueue
      * Retrieve the next message from the queue.
      *
      * Retrieve the next available message from the queue. If no messages are
-     * present in the queue, this function will return FALSE immediately. This
+     * present in the queue, this function will return NULL immediately. This
      * is a non blocking alternative to the AMQPQueue::consume() method.
      * Currently, the only supported flag for the flags parameter is
      * AMQP_AUTOACK. If this flag is passed in, then the message returned will
@@ -265,11 +265,11 @@ class AMQPQueue
      *
      * Recover all the unacknowledged messages delivered to the current consumer.
      * If $requeue is true, the broker can redeliver the messages to different
-     * consumers. If $requeue is false, it can only redeliver it to the current
+     * consumers. If $requeue is FALSE, it can only redeliver it to the current
      * consumer. RabbitMQ does not implement $request = false.
      * This method exposes `basic.recover` from the AMQP spec.
      *
-     * @param bool $requeue If true, deliver to any consumer, if false, deliver to the current consumer only
+     * @param bool $requeue If TRUE, deliver to any consumer, if FALSE, deliver to the current consumer only
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPChannelException If the channel is not open.
      */
