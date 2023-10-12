@@ -2,7 +2,7 @@
 Bug 19840: Connection Exception
 --SKIPIF--
 <?php
-if (!extension_loaded("amqp")) print "skip";
+if (!extension_loaded("amqp")) print "skip AMQP extension is not loaded";
 ?>
 --FILE--
 <?php
