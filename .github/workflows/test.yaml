@@ -23,7 +23,7 @@ jobs:
     steps:
       - id: skip_check
         name: Prevent duplicate builds
-        uses: fkirc/skip-duplicate-actions@v5.3.0
+        uses: fkirc/skip-duplicate-actions@v5.3.1
         with:
           skip_after_successful_duplicate: 'true'
           cancel_others: 'true'
