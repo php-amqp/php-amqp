@@ -6,7 +6,7 @@ set -o nounset
 cert_dir="${1:-}"
 
 if test -z "$cert_dir"; then
-  echo "`basename $0` <cert_dir>"
+  echo "$(basename $0) <cert_dir>"
   exit 1
 fi
 
@@ -36,4 +36,4 @@ mkdir -p $cert_dir/testca/private $cert_dir/server $cert_dir/sasl-client $cert_d
 # Set permissions for the different images consuming the certificates
 #  - 100 is the UID of the rabbitmq user of the rabbitmq image that runs the rabbitmq process
 #  - 1001 is the UID of the GitHub Action runner user that runs the tests
-setfacl -R -m u:100:rX -m u:1001:rX $cert_dir
+setfacl -R -m u:100:rX -m u:1001:rX $cert_dir || true
