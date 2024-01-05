@@ -279,16 +279,16 @@
         },
         {
             "name": "symplify/easy-coding-standard",
-            "version": "12.0.13",
+            "version": "12.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/easy-coding-standard/easy-coding-standard.git",
-                "reference": "d15707b14d50b7cb6d656f7a7a5e5b9a17099b3c"
+                "reference": "d082c6f90e83ae85f7e63b03ea06780dcf765834"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/easy-coding-standard/easy-coding-standard/zipball/d15707b14d50b7cb6d656f7a7a5e5b9a17099b3c",
-                "reference": "d15707b14d50b7cb6d656f7a7a5e5b9a17099b3c",
+                "url": "https://api.github.com/repos/easy-coding-standard/easy-coding-standard/zipball/d082c6f90e83ae85f7e63b03ea06780dcf765834",
+                "reference": "d082c6f90e83ae85f7e63b03ea06780dcf765834",
                 "shasum": ""
             },
             "require": {
@@ -321,7 +321,7 @@
             ],
             "support": {
                 "issues": "https://github.com/easy-coding-standard/easy-coding-standard/issues",
-                "source": "https://github.com/easy-coding-standard/easy-coding-standard/tree/12.0.13"
+                "source": "https://github.com/easy-coding-standard/easy-coding-standard/tree/12.1.1"
             },
             "funding": [
                 {
@@ -333,7 +333,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-07T09:18:07+00:00"
+            "time": "2024-01-05T13:20:55+00:00"
         }
     ],
     "aliases": [],
