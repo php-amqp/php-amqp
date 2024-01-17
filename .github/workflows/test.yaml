@@ -73,10 +73,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.1
 
+      - run: dpkg --add-architecture i386
+      - run: apt-get update
+      - run: apt-get install libc6-dbg:i386
+
       - name: Install packages
         uses: awalsh128/cache-apt-pkgs-action@v1.3.1
         with:
-          packages: cmake valgrind libc6-dbg:i386
+          packages: cmake valgrind
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.29.0
