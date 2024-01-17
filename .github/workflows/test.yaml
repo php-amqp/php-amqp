@@ -76,7 +76,7 @@ jobs:
       - name: Install packages
         uses: awalsh128/cache-apt-pkgs-action@v1.3.1
         with:
-          packages: cmake valgrind libc6-dbg
+          packages: cmake valgrind libc6-dbg:i386
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.29.0
