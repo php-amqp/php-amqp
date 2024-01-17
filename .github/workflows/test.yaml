@@ -76,7 +76,7 @@ jobs:
       - name: Install packages
         uses: awalsh128/cache-apt-pkgs-action@v1.3.1
         with:
-          packages: cmake valgrind
+          packages: cmake
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.29.0
@@ -144,7 +144,7 @@ jobs:
       - name: Install packages
         uses: awalsh128/cache-apt-pkgs-action@v1.3.1
         with:
-          packages: cmake valgrind ${{ matrix.compiler }}
+          packages: cmake valgrind libc6-dbg gcc clang
           version: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
 
       - name: Setup PHP
