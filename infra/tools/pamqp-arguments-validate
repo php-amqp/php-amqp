@@ -1,33 +1,20 @@
 #!/usr/bin/env php
 <?php
-const CLASSES = [
-    'AMQPBasicProperties',
-    'AMQPChannel',
-    'AMQPChannelException',
-    'AMQPConnection',
-    'AMQPConnectionException',
-    'AMQPDecimal',
-    'AMQPEnvelope',
-    'AMQPEnvelopeException',
-    'AMQPException',
-    'AMQPExchange',
-    'AMQPExchangeException',
-    'AMQPQueue',
-    'AMQPQueueException',
-    'AMQPTimestamp',
-    'AMQPValue',
-    'AMQPValueException',
-];
-
 function getSource(string $class): ?string
 {
-    assert(preg_match('/([A-Z]+?)([A-Z][a-z]+)+/', $class, $matches) == 1);
-    $fileName = implode('_', array_map('strtolower', array_slice($matches, 1))) . '.c';
+    $parts = preg_split('/(AMQP)?(?=[A-Z])/', $class, -1, PREG_SPLIT_NO_EMPTY);
+    assert(count($parts) > 0);
+
+    $fileName = 'amqp_' . implode('_', array_map('strtolower', $parts)) . '.c';
 
     $path = __DIR__ . '/../../' . $fileName;
 
     if (file_exists($path)) {
         return file_get_contents($path);
+    }
+
+    if (end($parts) === 'Exception') {
+        return file_get_contents(__DIR__ . '/../../amqp.c');
     }
 
     return null;
@@ -44,7 +31,7 @@ function validate(string $class)
     $source = getSource($class);
 
     if ($source === null) {
-        // WARNING
+        error('Could not load source for "%s"', $class);
         return;
     }
 
@@ -187,7 +174,13 @@ function parseParameterString(string $str): array
     return [$parameters, $requiredCount];
 }
 
-foreach (CLASSES as $class) {
+function getAmqpClasses(): array
+{
+    $ext = new ReflectionExtension('amqp');
+    return array_map(function (ReflectionClass  $class) {  return $class->getName(); }, $ext->getClasses());
+}
+
+foreach (getAmqpClasses() as $class) {
     validate($class);
 }
 

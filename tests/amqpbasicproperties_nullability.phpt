@@ -15,20 +15,20 @@ dump_methods($props);
 echo PHP_EOL;
 
 $props = new AMQPBasicProperties(
-    "content_type",
-    "content_encoding",
+    null,
+    null,
     array('test' => 'headers'),
     42,
     24,
-    "correlation_id",
-    "reply_to",
-    "expiration",
-    "message_id",
-    99999,
-    "type",
-    "user_id",
-    "app_id",
-    "cluster_id"
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
 );
 var_dump($props);
 dump_methods($props);
@@ -100,9 +100,9 @@ AMQPBasicProperties
 
 object(AMQPBasicProperties)#2 (14) {
   ["contentType":"AMQPBasicProperties":private]=>
-  string(12) "content_type"
+  NULL
   ["contentEncoding":"AMQPBasicProperties":private]=>
-  string(16) "content_encoding"
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(1) {
     ["test"]=>
@@ -113,29 +113,29 @@ object(AMQPBasicProperties)#2 (14) {
   ["priority":"AMQPBasicProperties":private]=>
   int(24)
   ["correlationId":"AMQPBasicProperties":private]=>
-  string(14) "correlation_id"
+  NULL
   ["replyTo":"AMQPBasicProperties":private]=>
-  string(8) "reply_to"
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(10) "expiration"
+  NULL
   ["messageId":"AMQPBasicProperties":private]=>
-  string(10) "message_id"
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
-  int(99999)
+  NULL
   ["type":"AMQPBasicProperties":private]=>
-  string(4) "type"
+  NULL
   ["userId":"AMQPBasicProperties":private]=>
-  string(7) "user_id"
+  NULL
   ["appId":"AMQPBasicProperties":private]=>
-  string(6) "app_id"
+  NULL
   ["clusterId":"AMQPBasicProperties":private]=>
-  string(10) "cluster_id"
+  NULL
 }
 AMQPBasicProperties
     getContentType():
-        string(12) "content_type"
+        NULL
     getContentEncoding():
-        string(16) "content_encoding"
+        NULL
     getHeaders():
         array(1) {
   ["test"]=>
@@ -146,20 +146,20 @@ AMQPBasicProperties
     getPriority():
         int(24)
     getCorrelationId():
-        string(14) "correlation_id"
+        NULL
     getReplyTo():
-        string(8) "reply_to"
+        NULL
     getExpiration():
-        string(10) "expiration"
+        NULL
     getMessageId():
-        string(10) "message_id"
+        NULL
     getTimestamp():
-        int(99999)
+        NULL
     getType():
-        string(4) "type"
+        NULL
     getUserId():
-        string(7) "user_id"
+        NULL
     getAppId():
-        string(6) "app_id"
+        NULL
     getClusterId():
-        string(10) "cluster_id"
+        NULL

@@ -114,6 +114,7 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
     size_t message_id_len = 0;
 
     zend_long timestamp = 0;
+    bool timestamp_is_null = 1;
 
     char *type = NULL;
     size_t type_len = 0;
@@ -129,7 +130,7 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
 
     if (zend_parse_parameters(
             ZEND_NUM_ARGS(),
-            "|ssallsssslssss",
+            "|s!s!alls!s!s!s!l!s!s!s!s!",
             /* s */ &content_type,
             &content_type_len,
             /* s */ &content_encoding,
@@ -146,6 +147,7 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
             /* s */ &message_id,
             &message_id_len,
             /* l */ &timestamp,
+            &timestamp_is_null,
             /* s */ &type,
             &type_len,
             /* s */ &user_id,
@@ -157,20 +159,26 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
         ) == FAILURE) {
         RETURN_THROWS();
     }
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("contentType"),
-        content_type,
-        content_type_len
-    );
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("contentEncoding"),
-        content_encoding,
-        content_encoding_len
-    );
+
+    if (content_type != NULL) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(getThis()),
+            ZEND_STRL("contentType"),
+            content_type,
+            content_type_len
+        );
+    }
+
+    if (content_encoding != NULL) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(getThis()),
+            ZEND_STRL("contentEncoding"),
+            content_encoding,
+            content_encoding_len
+        );
+    }
 
     if (headers != NULL) {
         zend_update_property(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("headers"), headers);
@@ -181,47 +189,78 @@ static PHP_METHOD(AMQPBasicProperties, __construct)
     zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("deliveryMode"), delivery_mode);
     zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("priority"), priority);
 
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("correlationId"),
-        correlation_id,
-        correlation_id_len
-    );
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("replyTo"),
-        reply_to,
-        reply_to_len
-    );
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("expiration"),
-        expiration,
-        expiration_len
-    );
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("messageId"),
-        message_id,
-        message_id_len
-    );
+    if (correlation_id != NULL) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(getThis()),
+            ZEND_STRL("correlationId"),
+            correlation_id,
+            correlation_id_len
+        );
+    }
 
-    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), timestamp);
+    if (reply_to != NULL) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(getThis()),
+            ZEND_STRL("replyTo"),
+            reply_to,
+            reply_to_len
+        );
+    }
 
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("type"), type, type_len);
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("userId"), user_id, user_id_len);
-    zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("appId"), app_id, app_id_len);
-    zend_update_property_stringl(
-        this_ce,
-        PHP_AMQP_COMPAT_OBJ_P(getThis()),
-        ZEND_STRL("clusterId"),
-        cluster_id,
-        cluster_id_len
-    );
+    if (expiration != NULL) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(getThis()),
+            ZEND_STRL("expiration"),
+            expiration,
+            expiration_len
+        );
+    }
+
+    if (message_id != NULL) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(getThis()),
+            ZEND_STRL("messageId"),
+            message_id,
+            message_id_len
+        );
+    }
+
+    if (!timestamp_is_null) {
+        zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("timestamp"), timestamp);
+    }
+
+
+    if (type != NULL) {
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("type"), type, type_len);
+    }
+
+    if (user_id != NULL) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(getThis()),
+            ZEND_STRL("userId"),
+            user_id,
+            user_id_len
+        );
+    }
+
+    if (app_id != NULL) {
+        zend_update_property_stringl(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("appId"), app_id, app_id_len);
+    }
+
+    if (cluster_id != NULL) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(getThis()),
+            ZEND_STRL("clusterId"),
+            cluster_id,
+            cluster_id_len
+        );
+    }
 }
 /* }}} */
 
