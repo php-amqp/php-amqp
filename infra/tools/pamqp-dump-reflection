@@ -53,7 +53,8 @@ function error(string $message, ...$args): void
 
 const MAGIC_METHODS = ['__construct', '__toString', '__wakeup', '__clone'];
 
-function getParents(ReflectionClass $r): array {
+function getParents(ReflectionClass $r): array
+{
     $parents = [];
     while ($r = $r->getParentClass()) {
         $parents[] = $r->getName();
@@ -74,7 +75,9 @@ function getClassMetadata(string $class): array
         'abstract' => $refl->isAbstract(),
         'interface' => $refl->isInterface(),
         'implements' => $refl->getInterfaceNames(),
-        'readonly' => method_exists($refl, 'isReadonly') ? $refl->isReadonly() || strpos($refl->getDocComment(), '@readonly') !== false : null,
+        'readonly' => method_exists($refl, 'isReadonly')
+            ? $refl->isReadonly() || strpos($refl->getDocComment(), '@readonly') !== false
+            : null,
         'extends' => getParents($refl),
     ];
 

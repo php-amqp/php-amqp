@@ -38,9 +38,9 @@ dump_methods($props);
 --EXPECT--
 object(AMQPBasicProperties)#1 (14) {
   ["contentType":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["contentEncoding":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["headers":"AMQPBasicProperties":private]=>
   array(0) {
   }
@@ -49,29 +49,29 @@ object(AMQPBasicProperties)#1 (14) {
   ["priority":"AMQPBasicProperties":private]=>
   int(0)
   ["correlationId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["replyTo":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["expiration":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["messageId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["timestamp":"AMQPBasicProperties":private]=>
-  int(0)
+  NULL
   ["type":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["userId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["appId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
   ["clusterId":"AMQPBasicProperties":private]=>
-  string(0) ""
+  NULL
 }
 AMQPBasicProperties
     getContentType():
-        string(0) ""
+        NULL
     getContentEncoding():
-        string(0) ""
+        NULL
     getHeaders():
         array(0) {
 }
@@ -80,23 +80,23 @@ AMQPBasicProperties
     getPriority():
         int(0)
     getCorrelationId():
-        string(0) ""
+        NULL
     getReplyTo():
-        string(0) ""
+        NULL
     getExpiration():
-        string(0) ""
+        NULL
     getMessageId():
-        string(0) ""
+        NULL
     getTimestamp():
-        int(0)
+        NULL
     getType():
-        string(0) ""
+        NULL
     getUserId():
-        string(0) ""
+        NULL
     getAppId():
-        string(0) ""
+        NULL
     getClusterId():
-        string(0) ""
+        NULL
 
 object(AMQPBasicProperties)#2 (14) {
   ["contentType":"AMQPBasicProperties":private]=>
