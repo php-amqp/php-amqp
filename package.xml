@@ -23,10 +23,10 @@
         <active>yes</active>
     </developer>
     <date>2024-01-22</date>
-    <time>11:22:29</time>
+    <time>11:23:03</time>
     <version>
-        <release>2.1.2dev</release>
-        <api>2.1.2dev</api>
+        <release>2.2.0dev</release>
+        <api>2.2.0dev</api>
     </version>
     <stability>
         <release>devel</release>
@@ -303,6 +303,24 @@ https://github.com/php-amqp/php-amqp/compare/v2.1.2...latest
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2024-01-22</date>
+            <time>11:22:29</time>
+            <version>
+                <release>2.1.2dev</release>
+                <api>2.1.2dev</api>
+            </version>
+            <stability>
+                <release>devel</release>
+                <api>devel</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v2.1.2...latest
+]]></notes>
+        </release>
         <release>
             <date>2024-01-22</date>
             <time>11:21:24</time>
