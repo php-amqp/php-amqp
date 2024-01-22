@@ -39,8 +39,6 @@ use Symplify\EasyCodingStandard\Config\ECSConfig;
 use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 
 return static function (ECSConfig $ecsConfig): void {
-    $ecsConfig->paths([__DIR__ . '/stubs', __DIR__ . '/infra']);
-
     // this way you add a single rule
     $ecsConfig->rules(
         [
@@ -114,4 +112,6 @@ return static function (ECSConfig $ecsConfig): void {
     $ecsConfig->ruleWithConfiguration(PhpdocAlignFixer::class, [
         'align' => 'left',
     ]);
+
+    $ecsConfig->paths([...glob(__DIR__ . '/infra/tools/*'), __DIR__ . '/stubs', __DIR__ . '/infra']);
 };

@@ -142,7 +142,7 @@ function parseParameterString(string $str): array
     $parameters = [];
     $requiredCount = null;
     $count = 0;
-    foreach (str_split($str) as $pos => $char) {
+    foreach (str_split($str) as $char) {
         if (isset($types[$char])) {
             if (isset($currentInfo)) {
                 $parameters[] = $currentInfo;
@@ -177,11 +177,9 @@ function parseParameterString(string $str): array
 function getAmqpClasses(): array
 {
     $ext = new ReflectionExtension('amqp');
-    return array_map(function (ReflectionClass  $class) {  return $class->getName(); }, $ext->getClasses());
+    return $ext->getClassNames();
 }
 
-foreach (getAmqpClasses() as $class) {
-    validate($class);
-}
+array_map('validate', getAmqpClasses());
 
 exit((int) $isError);
