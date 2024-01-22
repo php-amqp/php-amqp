@@ -22,33 +22,22 @@
         <email>pinepain@gmail.com</email>
         <active>yes</active>
     </developer>
-    <date>2023-10-12</date>
-    <time>13:06:43</time>
+    <date>2024-01-22</date>
+    <time>11:19:05</time>
     <version>
-        <release>2.1.1</release>
-        <api>2.1.1</api>
+        <release>2.1.2dev</release>
+        <api>2.1.2dev</api>
     </version>
     <stability>
-        <release>stable</release>
-        <api>stable</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- Fixing debug mode errors (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/502)
- - FIX: #494 Param "verify" always true (Daniel Kozak <kozzi11@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/497)
- - Remove assert on undefined variable (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/486)
- - Semantically sort changelog (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/e5bd909)
- - Set custom PHP executable dynamically (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/503)
- - Fixes in stub comments (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/6539de5)
- - Refactor test skipping (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/504)
- - Bump actions/checkout from 4.0.0 to 4.1.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/499)
- - Bump phpstan/phpdoc-parser from 1.23.1 to 1.24.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/491)
- - Bump phpstan/phpdoc-parser from 1.24.0 to 1.24.1 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/495)
- - Bump shivammathur/setup-php from 2.25.5 to 2.26.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/493)
- - Bump slevomat/coding-standard from 8.13.4 to 8.14.1 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/501)
- - Bump symplify/easy-coding-standard from 12.0.7 to 12.0.8 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/492)
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.1.0...v2.1.1]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.1.2...latest
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -313,6 +302,35 @@ https://github.com/php-amqp/php-amqp/compare/v2.1.0...v2.1.1]]></notes>
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2023-10-12</date>
+            <time>13:06:43</time>
+            <version>
+                <release>2.1.1</release>
+                <api>2.1.1</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- Fixing debug mode errors (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/502)
+ - FIX: #494 Param "verify" always true (Daniel Kozak <kozzi11@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/497)
+ - Remove assert on undefined variable (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/issues/486)
+ - Semantically sort changelog (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/e5bd909)
+ - Set custom PHP executable dynamically (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/503)
+ - Fixes in stub comments (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/6539de5)
+ - Refactor test skipping (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/504)
+ - Bump actions/checkout from 4.0.0 to 4.1.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/499)
+ - Bump phpstan/phpdoc-parser from 1.23.1 to 1.24.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/491)
+ - Bump phpstan/phpdoc-parser from 1.24.0 to 1.24.1 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/495)
+ - Bump shivammathur/setup-php from 2.25.5 to 2.26.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/493)
+ - Bump slevomat/coding-standard from 8.13.4 to 8.14.1 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/501)
+ - Bump symplify/easy-coding-standard from 12.0.7 to 12.0.8 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/492)
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v2.1.0...v2.1.1]]></notes>
+        </release>
         <release>
             <date>2023-09-07</date>
             <time>06:52:04</time>
