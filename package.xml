@@ -315,7 +315,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.1.2...latest
                 <api>stable</api>
             </stability>
             <license uri="http://www.php.net/license">PHP License</license>
-            <notes><![CDATA[ - Fix missing debug symbols for memory checks (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/531)
+            <notes><![CDATA[- Fix missing debug symbols for memory checks (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/531)
  - Fix nullability issue in AMQPBasicProperties (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/532)
  - Ignore setfacl errors (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/5548760)
  - Only restart on failure (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/a37c5f1)
