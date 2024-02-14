@@ -74,7 +74,7 @@ jobs:
         uses: actions/checkout@v4.1.1
 
       - name: Install packages
-        uses: awalsh128/cache-apt-pkgs-action@v1.3.1
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.1
         with:
           packages: cmake
 
@@ -142,7 +142,7 @@ jobs:
         run: docker compose up -d rabbitmq
 
       - name: Install packages
-        uses: awalsh128/cache-apt-pkgs-action@v1.3.1
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.1
         with:
           packages: cmake valgrind libc6-dbg gcc clang
           version: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
