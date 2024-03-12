@@ -30,7 +30,7 @@ jobs:
           concurrent_skipping: 'same_content_newer'
 
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
 
       - name: Prepare matrix
         id: matrix
@@ -53,7 +53,7 @@ jobs:
           install: clang-format-17
 
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
 
       - name: Check style
         run: ./infra/tools/pamqp-format-check
@@ -71,7 +71,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
 
       - name: Install packages
         uses: awalsh128/cache-apt-pkgs-action@v1.4.1
@@ -130,7 +130,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
 
       - name: Configure hostnames
         run: sudo echo "127.0.0.1 ${{ env.PHP_AMQP_SSL_HOST }}" | sudo tee -a /etc/hosts
