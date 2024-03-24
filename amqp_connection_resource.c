@@ -39,6 +39,7 @@
 #else
     #include <signal.h>
     #include <stdint.h>
+    #include <stdio.h>
 #endif
 
 #if HAVE_LIBRABBITMQ_NEW_LAYOUT
@@ -689,15 +690,21 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
     assert(resource != NULL);
 
 #ifndef PHP_WIN32
-    void *old_handler;
-
     /*
 	If we are trying to close the connection and the connection already closed, it will throw
 	SIGPIPE, which is fine, so ignore all SIGPIPES
 	*/
 
+    struct sigaction oldact;
+    struct sigaction act = { 0 };
+
+    act.sa_flags = SA_ONSTACK;
+    act.sa_handler = SIG_IGN;
+
     /* Start ignoring SIGPIPE */
-    old_handler = signal(SIGPIPE, SIG_IGN);
+    if (sigaction(SIGPIPE, &act, &oldact) == -1) {
+        perror("sigaction");
+    }
 #endif
 
     if (resource->parent) {
@@ -720,7 +727,11 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 
 #ifndef PHP_WIN32
     /* End ignoring of SIGPIPEs */
-    signal(SIGPIPE, old_handler);
+    oldact.sa_flags |= SA_ONSTACK;
+
+    if (sigaction(SIGPIPE, &oldact, NULL) == -1) {
+        perror("sigaction");
+    }
 #endif
 
     pefree(resource, persistent);

@@ -37,6 +37,7 @@
 #else
     #include <signal.h>
     #include <stdint.h>
+    #include <stdio.h>
 #endif
 #if HAVE_LIBRABBITMQ_NEW_LAYOUT
     #include <rabbitmq-c/amqp.h>
@@ -466,11 +467,6 @@ static PHP_METHOD(amqp_exchange_class, publish)
     zend_long flags = AMQP_NOPARAM;
     bool flags_is_null = 1;
 
-#ifndef PHP_WIN32
-    /* Storage for previous signal handler during SIGPIPE override */
-    void *old_handler;
-#endif
-
     amqp_basic_properties_t props;
 
     if (zend_parse_parameters(
@@ -625,7 +621,16 @@ static PHP_METHOD(amqp_exchange_class, publish)
 
 #ifndef PHP_WIN32
     /* Start ignoring SIGPIPE */
-    old_handler = signal(SIGPIPE, SIG_IGN);
+    struct sigaction oldact;
+    struct sigaction act = { 0 };
+
+    act.sa_flags = SA_ONSTACK;
+    act.sa_handler = SIG_IGN;
+
+    /* Start ignoring SIGPIPE */
+    if (sigaction(SIGPIPE, &act, &oldact) == -1) {
+        perror("sigaction");
+    }
 #endif
 
     zval *exchange_name = PHP_AMQP_READ_THIS_PROP("name");
@@ -650,7 +655,11 @@ static PHP_METHOD(amqp_exchange_class, publish)
 
 #ifndef PHP_WIN32
     /* End ignoring of SIGPIPEs */
-    signal(SIGPIPE, old_handler);
+    oldact.sa_flags |= SA_ONSTACK;
+
+    if (sigaction(SIGPIPE, &oldact, NULL) == -1) {
+        perror("sigaction");
+    }
 #endif
 
     if (status != AMQP_STATUS_OK) {
