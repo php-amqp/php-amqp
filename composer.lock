@@ -279,16 +279,16 @@
         },
         {
             "name": "symplify/easy-coding-standard",
-            "version": "12.1.8",
+            "version": "12.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/easy-coding-standard/easy-coding-standard.git",
-                "reference": "7962c810a8eebc4174a38d7dff673f1999e61595"
+                "reference": "03cd792d7fa6d9dc59b6e12a5ca73d9873ee9c0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/easy-coding-standard/easy-coding-standard/zipball/7962c810a8eebc4174a38d7dff673f1999e61595",
-                "reference": "7962c810a8eebc4174a38d7dff673f1999e61595",
+                "url": "https://api.github.com/repos/easy-coding-standard/easy-coding-standard/zipball/03cd792d7fa6d9dc59b6e12a5ca73d9873ee9c0e",
+                "reference": "03cd792d7fa6d9dc59b6e12a5ca73d9873ee9c0e",
                 "shasum": ""
             },
             "require": {
@@ -298,6 +298,9 @@
                 "friendsofphp/php-cs-fixer": "<3.46",
                 "phpcsstandards/php_codesniffer": "<3.8",
                 "symplify/coding-standard": "<12.1"
+            },
+            "suggest": {
+                "ext-dom": "Needed to support checkstyle output format in class CheckstyleOutputFormatter"
             },
             "bin": [
                 "bin/ecs"
@@ -321,7 +324,7 @@
             ],
             "support": {
                 "issues": "https://github.com/easy-coding-standard/easy-coding-standard/issues",
-                "source": "https://github.com/easy-coding-standard/easy-coding-standard/tree/12.1.8"
+                "source": "https://github.com/easy-coding-standard/easy-coding-standard/tree/12.3.4"
             },
             "funding": [
                 {
@@ -333,7 +336,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-16T22:56:06+00:00"
+            "time": "2024-08-01T07:55:09+00:00"
         }
     ],
     "aliases": [],
