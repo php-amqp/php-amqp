@@ -607,7 +607,7 @@ bool php_amqp_basic_properties_value_to_zval_internal(amqp_field_value_t *value,
         zend_throw_exception_ex(
             amqp_exception_class_entry,
             0,
-            "Maximum deserialization depth limit of %ld reached while deserializing value",
+            "Maximum deserialization depth limit of " ZEND_LONG_FMT " reached while deserializing value",
             PHP_AMQP_G(deserialization_depth)
         );
         return 0;
