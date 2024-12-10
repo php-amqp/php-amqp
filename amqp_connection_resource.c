@@ -142,8 +142,8 @@ static void php_amqp_close_connection_from_server(
         spprintf(
             message,
             0,
-            "Server connection error: %ld, message: %s",
-            (long) PHP_AMQP_G(error_code),
+            "Server connection error: " ZEND_LONG_FMT ", message: %s",
+            PHP_AMQP_G(error_code),
             "unexpected response"
         );
     } else {
@@ -198,8 +198,8 @@ static void php_amqp_close_channel_from_server(
         spprintf(
             message,
             0,
-            "Server channel error: %ld, message: %s",
-            (long) PHP_AMQP_G(error_code),
+            "Server channel error: " ZEND_LONG_FMT ", message: %s",
+            PHP_AMQP_G(error_code),
             "unexpected response"
         );
     } else {

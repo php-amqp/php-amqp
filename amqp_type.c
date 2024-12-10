@@ -141,11 +141,11 @@ void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_t
                 /* Convert to strings non-string keys */
                 char str[32];
 
-                key_len = snprintf(str, 32, "%lu", index);
+                key_len = snprintf(str, 32, ZEND_ULONG_FMT, index);
                 key = str;
             } else {
                 /* Skip things that are not strings */
-                php_error_docref(NULL, E_WARNING, "Ignoring non-string header field '%lu'", index);
+                php_error_docref(NULL, E_WARNING, "Ignoring non-string header field '" ZEND_ULONG_FMT "'", index);
 
                 continue;
             }
@@ -209,7 +209,7 @@ bool php_amqp_type_zval_to_amqp_value_internal(zval *value, amqp_field_value_t *
         zend_throw_exception_ex(
             amqp_exception_class_entry,
             0,
-            "Maximum serialization depth of %ld reached while serializing value",
+            "Maximum serialization depth of " ZEND_LONG_FMT " reached while serializing value",
             PHP_AMQP_G(serialization_depth)
         );
         return 0;
