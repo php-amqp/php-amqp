@@ -1,6 +1,6 @@
 {
   "name": "php-amqp/php-amqp",
-  "type": "library",
+  "type": "php-ext",
   "description": "PHP AMQP Binding Library",
   "keywords": [
     "rabbitmq",
@@ -31,5 +31,19 @@
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": false
     }
+  },
+  "php-ext": {
+    "extension-name": "amqp",
+    "configure-options": [
+      {
+        "name": "with-amqp",
+        "description": "Include amqp support"
+      },
+      {
+        "name": "with-librabbitmq-dir",
+        "description": "Set the path to librabbitmq install prefix.",
+        "needs-value": true
+      }
+    ]
   }
 }
