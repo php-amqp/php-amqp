@@ -395,7 +395,7 @@ static PHP_METHOD(amqp_exchange_class, declareExchange)
     php_amqp_type_free_amqp_table(arguments);
     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
-    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource, channel_resource->connection_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry);
         return;
     }
@@ -437,7 +437,7 @@ static PHP_METHOD(amqp_exchange_class, delete)
 
     amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
-    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource, channel_resource->connection_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;
@@ -735,7 +735,7 @@ static PHP_METHOD(amqp_exchange_class, bind)
 
     amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
-    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource, channel_resource->connection_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;
@@ -797,7 +797,7 @@ static PHP_METHOD(amqp_exchange_class, unbind)
 
     amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
-    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource, channel_resource->connection_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_exchange_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;

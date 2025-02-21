@@ -367,10 +367,10 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
         PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.")                                            \
     }
 
-#define PHP_AMQP_MAYBE_ERROR(res, channel_resource)                                                                    \
+#define PHP_AMQP_MAYBE_ERROR(res, channel_resource, connection_resource)                                               \
     ((AMQP_RESPONSE_NORMAL != (res).reply_type) &&                                                                     \
      PHP_AMQP_RESOURCE_RESPONSE_OK !=                                                                                  \
-         php_amqp_error(res, &PHP_AMQP_G(error_message), (channel_resource)->connection_resource, (channel_resource)))
+         php_amqp_error(res, &PHP_AMQP_G(error_message), (connection_resource), (channel_resource)))
 
 
 #if ZEND_MODULE_API_NO >= 20100000

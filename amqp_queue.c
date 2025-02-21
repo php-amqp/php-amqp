@@ -444,7 +444,7 @@ static PHP_METHOD(amqp_queue_class, bind)
 
     amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
-    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource, channel_resource->connection_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_queue_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         RETURN_THROWS();
@@ -484,7 +484,7 @@ static PHP_METHOD(amqp_queue_class, get)
         (AMQP_AUTOACK & flags) ? 1 : 0
     );
 
-    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource, channel_resource->connection_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_queue_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;
@@ -518,7 +518,7 @@ static PHP_METHOD(amqp_queue_class, get)
         0
     );
 
-    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource, channel_resource->connection_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_queue_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         amqp_destroy_envelope(&envelope);
@@ -1175,7 +1175,7 @@ static PHP_METHOD(amqp_queue_class, unbind)
 
     amqp_rpc_reply_t res = amqp_get_rpc_reply(channel_resource->connection_resource->connection_state);
 
-    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource)) {
+    if (PHP_AMQP_MAYBE_ERROR(res, channel_resource, channel_resource->connection_resource)) {
         php_amqp_zend_throw_exception_short(res, amqp_queue_exception_class_entry);
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
         return;
