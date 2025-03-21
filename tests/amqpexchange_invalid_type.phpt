@@ -33,6 +33,6 @@ echo "Connection ", $cnn->isConnected() ? 'connected' : 'disconnected', PHP_EOL;
 --EXPECT--
 Channel connected
 Connection connected
-AMQPConnectionException(503): Server connection error: 503, message: COMMAND_INVALID - unknown exchange type 'invalid_exchange_type'
+AMQPExchangeException(406): Server channel error: 406, message: PRECONDITION_FAILED - unknown exchange type 'invalid_exchange_type'
 Channel disconnected
-Connection disconnected
+Connection connected

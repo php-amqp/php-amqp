@@ -47,12 +47,12 @@ $q->delete();
 ?>
 --EXPECT--
 array(3) {
+  ["false"]=>
+  bool(false)
   ["foo"]=>
   string(3) "bar"
   ["true"]=>
   bool(true)
-  ["false"]=>
-  bool(false)
 }
 bar
 bool(true)

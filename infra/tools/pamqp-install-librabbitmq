@@ -15,7 +15,7 @@ if printf '%s' "$LIBRABBITMQ_VERSION" | grep -Eq '^[0-9]+\.'; then
     LIBRABBITMQ_VERSION="v$LIBRABBITMQ_VERSION"
 fi
 
-printf 'Installing rabbitmq-c version %s...\n' "$LIBRABBITMQ_VERSION"
+printf 'Installing rabbitmq-c version %s with cmake version %s...\n' "$LIBRABBITMQ_VERSION" "$(cmake --version | head -n 1 | cut -d ' ' -f 3)"
 
 # Let's build in /dev/shm if available (it's a ramdisk - much faster)
 if test -d /dev/shm; then

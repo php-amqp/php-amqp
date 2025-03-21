@@ -44,7 +44,7 @@ echo PHP_EOL, PHP_EOL;
 
 
 $headers = array(
-    'x-death' => array(
+    'x-death-new' => array(
         array (
             'reason' => 'rejected',
             'queue' => 'my_queue',
@@ -100,7 +100,7 @@ array(1) {
 same
 
 array(1) {
-  ["x-death"]=>
+  ["x-death-new"]=>
   array(1) {
     [0]=>
     array(5) {
@@ -121,7 +121,7 @@ array(1) {
   }
 }
 array(1) {
-  ["x-death"]=>
+  ["x-death-new"]=>
   array(1) {
     [0]=>
     array(5) {

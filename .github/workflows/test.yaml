@@ -30,7 +30,7 @@ jobs:
           concurrent_skipping: 'same_content_newer'
 
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.2
 
       - name: Prepare matrix
         id: matrix
@@ -53,7 +53,7 @@ jobs:
           install: clang-format-17
 
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.2
 
       - name: Check style
         run: ./infra/tools/pamqp-format-check
@@ -71,15 +71,138 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.2
 
       - name: Install packages
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.1
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
         with:
-          packages: cmake
+          packages: cmake build-essential libssl-dev checkinstall zlib1g-dev
+
+      - name: Load clang 11 cache
+        id: clang-cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/clang
+          key: clang-11
+
+      - name: Copy clang 11 cache after restore
+        if: ${{ steps.clang-cache.outputs.cache-hit == 'true' }}
+        run: sudo mv /tmp/clang /usr/local/clang
+
+      - name: Manually install clang 11
+        if: ${{ steps.clang-cache.outputs.cache-hit != 'true' }}
+        run: |
+          echo "Downloading clang 11.."
+          wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.1/clang+llvm-11.0.1-x86_64-linux-gnu-ubuntu-20.10.tar.xz
+          echo "Extracting clang 11.."
+          tar -xvf clang+llvm-11.0.1-x86_64-linux-gnu-ubuntu-20.10.tar.xz > /dev/null
+          sudo cp -r clang+llvm-11.0.1-x86_64-linux-gnu-ubuntu-20.10 /usr/local/clang
+
+      - name: Copy clang 11 cache before save
+        if: ${{ steps.clang-cache.outputs.cache-hit != 'true' }}
+        run: sudo cp -r /usr/local/clang /tmp/clang
+
+      - name: Save clang 11 cache
+        if: ${{ steps.clang-cache.outputs.cache-hit != 'true' }}
+        id: clang-cache-save
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/clang
+          key: clang-11
+
+      - name: Load cmake 3.22 cache
+        id: cmake-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            /tmp/cmake
+            /usr/local/bin/cmake
+          key: cmake-3.22
+
+      - name: Copy cmake 3.22 cache after restore
+        if: ${{ steps.cmake-cache.outputs.cache-hit == 'true' }}
+        run: sudo mv /tmp/cmake /usr/local/share/cmake-3.22
+
+      - name: Manually install cmake 3.22
+        if: ${{ steps.cmake-cache.outputs.cache-hit != 'true' }}
+        run: |
+          export OPENSSL_ROOT_DIR=/usr/include/openssl
+          echo "Downloading cmake 3.22.."
+          wget -q https://cmake.org/files/v3.22/cmake-3.22.6.tar.gz
+          echo "Extracting cmake 3.22.."
+          tar -xzvf cmake-3.22.6.tar.gz > /dev/null
+          cd cmake-3.22.6
+          ./bootstrap CC='/usr/local/clang/bin/clang' CFLAGS='-fPIE'
+          make -j$(nproc) CC='/usr/local/clang/bin/clang' CFLAGS='-fPIE'
+          sudo make install
+
+      - name: Copy cmake 3.22 cache before save
+        if: ${{ steps.cmake-cache.outputs.cache-hit != 'true' }}
+        run: sudo cp -r /usr/local/share/cmake-3.22 /tmp/cmake
+
+      - name: Save cmake 3.22 cache
+        if: ${{ steps.cmake-cache.outputs.cache-hit != 'true' }}
+        id: cmake-cache-save
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            /tmp/cmake
+            /usr/local/bin/cmake
+          key: cmake-3.22
+
+      - name: Export cmake 3.22 path
+        run: export PATH=/usr/local/bin/cmake:$PATH
+
+      - name: Load openSSL 1.1 cache
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') }}
+        id: openssl-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/ssl
+          key: openssl-1.1.1
+
+      - name: Copy openSSL 1.1 cache after restore
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && steps.openssl-cache.outputs.cache-hit == 'true' }}
+        run: sudo mv /tmp/ssl /usr/local/ssl
+
+      - name: Manually install openSSL 1.1
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && steps.openssl-cache.outputs.cache-hit != 'true' }}
+        run: |
+          echo "Downloading openSSL 1.1.."
+          wget -q https://www.openssl.org/source/openssl-1.1.1k.tar.gz
+          echo "Extracting openSSL 1.1.."
+          tar -xf openssl-1.1.1k.tar.gz > /dev/null
+          cd openssl-1.1.1k
+          ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
+          make CC='/usr/local/clang/bin/clang' CFLAGS='-fPIE'
+          sudo make install
+
+      - name: Copy openSSL 1.1 cache before save
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && steps.openssl-cache.outputs.cache-hit != 'true' }}
+        run: sudo cp -r /usr/local/ssl /tmp/ssl
+
+      - name: Save openSSL 1.1 cache
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && steps.openssl-cache.outputs.cache-hit != 'true' }}
+        id: openssl-cache-save
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/ssl
+          key: openssl-1.1.1
+
+      - name: Reload openSSL 1.1 config
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') }}
+        run: |
+          export PATH=/usr/local/ssl/bin:$PATH
+          echo "OPENSSL_ROOT_DIR=/usr/local/ssl" >> $GITHUB_ENV
+          echo "OPENSSL_LIBRARY_DIR=/usr/local/ssl/lib" >> $GITHUB_ENV
+          echo "OPENSSL_INCLUDE_DIR=/usr/local/ssl/include" >> $GITHUB_ENV
+          echo "OPENSSL_LIBRARIES=/usr/local/ssl/lib" >> $GITHUB_ENV
+          echo "OPENSSL_CRYPTO_LIBRARY=/usr/local/ssl/lib/libcrypto.so" >> $GITHUB_ENV
+          sudo sh -c 'echo "/usr/local/ssl/lib" > /etc/ld.so.conf.d/openssl-1.1.1k.conf'
+          sudo ldconfig -v
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.29.0
+        uses: shivammathur/setup-php@2.32.0
         with:
           php-version: ${{ matrix.php-version }}
           extensions: json
@@ -107,8 +230,7 @@ jobs:
 
   test:
     name: ${{ matrix.test-php-args == '-m' && 'Memtest' || 'Test' }} php-${{ matrix.php-version }}${{ matrix.php-thread-safe && '-ts' || '-nts' }} librabbitmq-${{ matrix.librabbitmq-version }} ${{ matrix.compiler }}
-    # librabbitmq < 0.11 needs older OpenSSL version which comes with Ubuntu 20.04
-    runs-on: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
+    runs-on: ubuntu-22.04
     needs: prep
     if: needs.prep.outputs.should_skip != 'true'
 
@@ -130,7 +252,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.2
 
       - name: Configure hostnames
         run: sudo echo "127.0.0.1 ${{ env.PHP_AMQP_SSL_HOST }}" | sudo tee -a /etc/hosts
@@ -142,13 +264,136 @@ jobs:
         run: docker compose up -d rabbitmq
 
       - name: Install packages
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.1
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
         with:
-          packages: cmake valgrind libc6-dbg gcc clang
+          packages: cmake valgrind libc6-dbg gcc clang openssl build-essential libssl-dev checkinstall zlib1g-dev
           version: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && 'ubuntu-20.04' || 'ubuntu-22.04' }}
 
+      - name: Load clang 11 cache
+        id: clang-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/clang
+          key: clang-11
+
+      - name: Copy clang 11 cache after restore
+        if: ${{ steps.clang-cache.outputs.cache-hit == 'true' }}
+        run: sudo mv /tmp/clang /usr/local/clang
+
+      - name: Manually install clang 11
+        if: ${{ steps.clang-cache.outputs.cache-hit != 'true' }}
+        run: |
+          echo "Downloading clang 11.."
+          wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.1/clang+llvm-11.0.1-x86_64-linux-gnu-ubuntu-20.10.tar.xz
+          echo "Extracting clang 11.."
+          tar -xvf clang+llvm-11.0.1-x86_64-linux-gnu-ubuntu-20.10.tar.xz > /dev/null
+          sudo cp -r clang+llvm-11.0.1-x86_64-linux-gnu-ubuntu-20.10 /usr/local/clang
+
+      - name: Copy clang 11 cache before save
+        if: ${{ steps.clang-cache.outputs.cache-hit != 'true' }}
+        run: sudo cp -r /usr/local/clang /tmp/clang
+
+      - name: Save clang 11 cache
+        if: ${{ steps.clang-cache.outputs.cache-hit != 'true' }}
+        id: clang-cache-save
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/clang
+          key: clang-11
+
+      - name: Load cmake 3.22 cache
+        id: cmake-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            /tmp/cmake
+            /usr/local/bin/cmake
+          key: cmake-3.22
+
+      - name: Copy cmake 3.22 cache after restore
+        if: ${{  steps.cmake-cache.outputs.cache-hit == 'true' }}
+        run: sudo mv /tmp/cmake /usr/local/share/cmake-3.22
+
+      - name: Manually install cmake 3.22
+        if: ${{  steps.cmake-cache.outputs.cache-hit != 'true' }}
+        run: |
+          export OPENSSL_ROOT_DIR=/usr/include/openssl
+          echo "Downloading cmake 3.22.."
+          wget -q https://cmake.org/files/v3.22/cmake-3.22.6.tar.gz
+          echo "Extracting cmake 3.22.."
+          tar -xzvf cmake-3.22.6.tar.gz > /dev/null
+          cd cmake-3.22.6
+          ./bootstrap CC='/usr/local/clang/bin/clang' CFLAGS='-fPIE'
+          make -j$(nproc) CC='/usr/local/clang/bin/clang' CFLAGS='-fPIE'
+          sudo make install
+
+      - name: Copy cmake 3.22 cache before save
+        if: ${{  steps.cmake-cache.outputs.cache-hit != 'true' }}
+        run: sudo cp -r /usr/local/share/cmake-3.22 /tmp/cmake
+
+      - name: Save cmake 3.22 cache
+        if: ${{  steps.cmake-cache.outputs.cache-hit != 'true' }}
+        id: cmake-cache-save
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            /tmp/cmake
+            /usr/local/bin/cmake
+          key: cmake-3.22
+
+      - name: Export cmake 3.22 path
+        run: export PATH=/usr/local/bin/cmake:$PATH
+
+      - name: Load openSSL 1.1 cache
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') }}
+        id: openssl-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/ssl
+          key: openssl-1.1.1
+
+      - name: Copy openSSL 1.1 cache after restore
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && steps.openssl-cache.outputs.cache-hit == 'true' }}
+        run: sudo mv /tmp/ssl /usr/local/ssl
+
+      - name: Manually install openSSL 1.1
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && steps.openssl-cache.outputs.cache-hit != 'true' }}
+        run: |
+          echo "Downloading openSSL 1.1.."
+          wget -q https://www.openssl.org/source/openssl-1.1.1k.tar.gz
+          echo "Extracting openSSL 1.1.."
+          tar -xf openssl-1.1.1k.tar.gz > /dev/null
+          cd openssl-1.1.1k
+          ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
+          make CC='/usr/local/clang/bin/clang' CFLAGS='-fPIE'
+          sudo make install
+
+      - name: Copy openSSL 1.1 cache before save
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && steps.openssl-cache.outputs.cache-hit != 'true' }}
+        run: sudo cp -r /usr/local/ssl /tmp/ssl
+
+      - name: Save openSSL 1.1 cache
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') && steps.openssl-cache.outputs.cache-hit != 'true' }}
+        id: openssl-cache-save
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/ssl
+          key: openssl-1.1.1
+
+      - name: Reload openSSL 1.1 config
+        if: ${{ (matrix.librabbitmq-version == '0.10.0' || matrix.librabbitmq-version == '0.9.0' || matrix.librabbitmq-version == '0.8.0') }}
+        run: |
+          export PATH=/usr/local/ssl/bin:$PATH
+          echo "OPENSSL_ROOT_DIR=/usr/local/ssl" >> $GITHUB_ENV
+          echo "OPENSSL_LIBRARY_DIR=/usr/local/ssl/lib" >> $GITHUB_ENV
+          echo "OPENSSL_INCLUDE_DIR=/usr/local/ssl/include" >> $GITHUB_ENV
+          echo "OPENSSL_LIBRARIES=/usr/local/ssl/lib" >> $GITHUB_ENV
+          echo "OPENSSL_CRYPTO_LIBRARY=/usr/local/ssl/lib/libcrypto.so" >> $GITHUB_ENV
+          sudo sh -c 'echo "/usr/local/ssl/lib" > /etc/ld.so.conf.d/openssl-1.1.1k.conf'
+          sudo ldconfig -v
+
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.29.0
+        uses: shivammathur/setup-php@2.32.0
         with:
           php-version: ${{ matrix.php-version }}
           coverage: none

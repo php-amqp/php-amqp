@@ -45,8 +45,6 @@ $q->delete();
 ?>
 --EXPECT--
 array(2) {
-  ["foo"]=>
-  string(3) "bar"
   ["baz"]=>
   array(3) {
     [0]=>
@@ -56,6 +54,8 @@ array(2) {
     [2]=>
     string(3) "def"
   }
+  ["foo"]=>
+  string(3) "bar"
 }
 bar
 array(3) {

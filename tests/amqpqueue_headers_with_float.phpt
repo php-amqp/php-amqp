@@ -53,10 +53,10 @@ $q->delete();
 array(5) {
   ["foo"]=>
   string(3) "bar"
-  ["positive"]=>
-  float(2.3)
   ["negative"]=>
   float(-1022.123456789)
+  ["positive"]=>
+  float(2.3)
   ["scientific"]=>
   float(1000)
   ["scientific_big"]=>
