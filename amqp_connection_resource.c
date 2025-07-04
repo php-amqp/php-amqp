@@ -26,7 +26,7 @@
 #endif
 
 #include "php.h"
-#include "ext/standard/datetime.h"
+#include "ext/date/php_date.h"
 #include "zend_exceptions.h"
 
 #ifdef PHP_WIN32
@@ -470,8 +470,8 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 {
     struct timeval tv = {0};
     struct timeval *tv_ptr = &tv;
+    zend_string *std_datetime;
 
-    char *std_datetime;
     amqp_table_entry_t client_properties_entries[4];
     amqp_table_t client_properties_table;
 
@@ -581,8 +581,6 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
         return NULL;
     }
 
-    std_datetime = php_std_date(time(NULL));
-
     client_properties_entries[0].key = amqp_cstring_bytes("type");
     client_properties_entries[0].value.kind = AMQP_FIELD_KIND_UTF8;
     client_properties_entries[0].value.value.bytes = amqp_cstring_bytes("php-amqp extension");
@@ -597,7 +595,8 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
     client_properties_entries[3].key = amqp_cstring_bytes("connection started");
     client_properties_entries[3].value.kind = AMQP_FIELD_KIND_UTF8;
-    client_properties_entries[3].value.value.bytes = amqp_cstring_bytes(std_datetime);
+    std_datetime = php_format_date("D, d M Y H:i:s \\G\\M\\T", sizeof("D, d M Y H:i:s \\G\\M\\T")-1, time(NULL), 0);
+    client_properties_entries[3].value.value.bytes = amqp_cstring_bytes(ZSTR_VAL(std_datetime));
 
     client_properties_table.entries = client_properties_entries;
     client_properties_table.num_entries = sizeof(client_properties_entries) / sizeof(amqp_table_entry_t);
@@ -632,7 +631,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
         params->password
     );
 
-    efree(std_datetime);
+    zend_string_release(std_datetime);
 
     if (AMQP_RESPONSE_NORMAL != res.reply_type) {
         char *message = NULL, *long_message = NULL;
