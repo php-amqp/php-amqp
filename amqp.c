@@ -276,7 +276,7 @@ static PHP_MINIT_FUNCTION(amqp) /* {{{ */
 
     /* Exceptions */
     INIT_CLASS_ENTRY(ce, "AMQPException", NULL);
-    amqp_exception_class_entry = zend_register_internal_class_ex(&ce, zend_exception_get_default());
+    amqp_exception_class_entry = zend_register_internal_class_ex(&ce, zend_ce_exception);
 
     INIT_CLASS_ENTRY(ce, "AMQPConnectionException", NULL);
     amqp_connection_exception_class_entry = zend_register_internal_class_ex(&ce, amqp_exception_class_entry);
