@@ -26,7 +26,12 @@ foreach ($parameters as $args) {
     list($prop, $setter, $getter, $values) = $args;
     foreach ($values as $value) {
         try {
-            $con1 = new AMQPConnection([$prop => $value]);
+            if (in_array($prop, ['frame_max', 'heartbeat'])) {
+                // Silent the "not representable as an int" warning
+                $con1 = @new AMQPConnection([$prop => $value]);
+            } else {
+                $con1 = new AMQPConnection([$prop => $value]);
+            }
             echo $getter . " after constructor: ";
             echo $con1->{$getter}();
             echo PHP_EOL;
