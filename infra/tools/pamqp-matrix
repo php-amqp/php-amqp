@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const PHP_VERSIONS = ["8.3", "8.2", "8.1", "8.0", "7.4"]
+const PHP_VERSIONS = ["8.5", "8.4", "8.3", "8.2", "8.1", "8.0", "7.4"]
 const LIBRABBITMQ_VERSIONS = ["master", "0.13.0", "0.12.0", "0.11.0", "0.10.0", "0.9.0", "0.8.0"]
 
 const toOutput = (k, v) => console.log(`${k}=${JSON.stringify(v)}`)
