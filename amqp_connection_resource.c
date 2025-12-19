@@ -595,7 +595,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
 
     client_properties_entries[3].key = amqp_cstring_bytes("connection started");
     client_properties_entries[3].value.kind = AMQP_FIELD_KIND_UTF8;
-    std_datetime = php_format_date("D, d M Y H:i:s \\G\\M\\T", sizeof("D, d M Y H:i:s \\G\\M\\T")-1, time(NULL), 0);
+    std_datetime = php_format_date("D, d M Y H:i:s \\G\\M\\T", sizeof("D, d M Y H:i:s \\G\\M\\T") - 1, time(NULL), 0);
     client_properties_entries[3].value.value.bytes = amqp_cstring_bytes(ZSTR_VAL(std_datetime));
 
     client_properties_table.entries = client_properties_entries;
