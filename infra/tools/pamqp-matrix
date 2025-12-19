@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const PHP_VERSIONS = ["8.3", "8.2", "8.1", "8.0", "7.4"]
-const LIBRABBITMQ_VERSIONS = ["master", "0.13.0", "0.12.0", "0.11.0", "0.10.0", "0.9.0", "0.8.0"]
+const LIBRABBITMQ_VERSIONS = ["master", "0.15.0", "0.14.0", "0.13.0", "0.12.0", "0.11.0"]
 
 const toOutput = (k, v) => console.log(`${k}=${JSON.stringify(v)}`)
 const stringSum = (s) => ([...s].map(c => c.charCodeAt(0)).reduce((c, v) => c + v, 0))
