@@ -622,7 +622,7 @@ static PHP_METHOD(amqp_exchange_class, publish)
 #ifndef PHP_WIN32
     /* Start ignoring SIGPIPE */
     struct sigaction oldact;
-    struct sigaction act = { 0 };
+    struct sigaction act = {0};
 
     act.sa_flags = SA_ONSTACK;
     act.sa_handler = SIG_IGN;

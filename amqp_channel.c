@@ -65,7 +65,7 @@ zend_class_entry *amqp_channel_class_entry;
 
 zend_object_handlers amqp_channel_object_handlers;
 
-void php_amqp_close_channel(amqp_channel_resource *channel_resource, bool throw)
+void php_amqp_close_channel(amqp_channel_resource *channel_resource, bool throw_exception)
 {
     assert(channel_resource != NULL);
 
@@ -93,7 +93,7 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, bool throw)
         amqp_rpc_reply_t close_res =
             amqp_channel_close(connection_resource->connection_state, channel_resource->channel_id, AMQP_REPLY_SUCCESS);
 
-        if (throw && PHP_AMQP_MAYBE_ERROR(close_res, channel_resource, connection_resource)) {
+        if (throw_exception && PHP_AMQP_MAYBE_ERROR(close_res, channel_resource, connection_resource)) {
             php_amqp_zend_throw_exception_short(close_res, amqp_channel_exception_class_entry);
             goto err;
         }
@@ -103,7 +103,7 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, bool throw)
         }
 
         amqp_rpc_reply_t reply_res = amqp_get_rpc_reply(connection_resource->connection_state);
-        if (throw && PHP_AMQP_MAYBE_ERROR(reply_res, channel_resource, connection_resource)) {
+        if (throw_exception && PHP_AMQP_MAYBE_ERROR(reply_res, channel_resource, connection_resource)) {
             php_amqp_zend_throw_exception_short(reply_res, amqp_channel_exception_class_entry);
             goto err;
         }
