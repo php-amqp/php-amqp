@@ -8,7 +8,6 @@ FROM common AS redhatish
 RUN dnf install -y 'dnf-command(config-manager)'
 RUN dnf config-manager --set-enabled crb
 RUN dnf install -y gcc clang libtool pkg-config autoconf gdb valgrind git unzip librabbitmq-devel
-# FIXME: clang-format 17.x not available yet
 RUN dnf install -y https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 ARG php_version
 RUN dnf module install -y php:remi-${php_version}
@@ -18,13 +17,13 @@ RUN dnf install -y php-devel
 FROM common AS debianish
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -yqq
-RUN apt-get install -yqq software-properties-common curl
+RUN apt-get install -yqq curl
 RUN . /etc/os-release && \
     curl https://apt.llvm.org/llvm-snapshot.gpg.key > /etc/apt/trusted.gpg.d/llvm-snapshot.asc  && \
-    echo "deb https://apt.llvm.org/$VERSION_CODENAME llvm-toolchain-$VERSION_CODENAME-17 main" > /etc/apt/sources.list.d/llvm.list
+    echo "deb https://apt.llvm.org/$VERSION_CODENAME llvm-toolchain-$VERSION_CODENAME-20 main" > /etc/apt/sources.list.d/llvm.list
 RUN apt-get update -yqq
 RUN apt-get install -yqq gcc clang libtool pkg-config autoconf gdb valgrind librabbitmq-dev git unzip
-RUN apt-get install -yqq clang-format-17
+RUN apt-get install -yqq clang-format-20
 
 # Install PHP on Ubuntu
 FROM debianish AS ubuntu-php
@@ -50,6 +49,6 @@ RUN apt-get install -y --no-install-recommends \
     && \
     docker-php-source extract && \
     cd /usr/src/php && \
-    ./configure $(php --info | grep "^Configure Command" | cut -d " " -f 7- | rev | cut -d " " -f 2- | rev | tr "'" " ") --enable-debug && \
+    sh -c 'eval $(php --info | grep "^Configure Command" | cut -d " " -f 5-) --enable-debug' && \
     make -j $(nproc) && \
     make install \

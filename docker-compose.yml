@@ -89,6 +89,22 @@ services:
         php_version: "8.3"
     working_dir: /src/build/centos-83
 
+  centos-84:
+    <<: *centos-dev
+    build:
+      <<: *centos-dev-build
+      args:
+        php_version: "8.4"
+    working_dir: /src/build/centos-84
+
+  centos-85:
+    <<: *centos-dev
+    build:
+      <<: *centos-dev-build
+      args:
+        php_version: "8.5"
+    working_dir: /src/build/centos-85
+
   ubuntu-74: &ubuntu-dev
     build: &ubuntu-dev-build
       context: infra/dev
@@ -140,6 +156,22 @@ services:
         php_version: "8.3"
     working_dir: /src/build/ubuntu-83
 
+  ubuntu-84:
+    <<: *ubuntu-dev
+    build:
+      <<: *ubuntu-dev-build
+      args:
+        php_version: "8.4"
+    working_dir: /src/build/ubuntu-84
+
+  ubuntu-85:
+    <<: *ubuntu-dev
+    build:
+      <<: *ubuntu-dev-build
+      args:
+        php_version: "8.5"
+    working_dir: /src/build/ubuntu-85
+
   debian-74: &debian-dev
     build: &debian-dev-build
       context: infra/dev
@@ -188,3 +220,19 @@ services:
       additional_contexts:
         base: docker-image://php:8.3-rc-zts-bookworm
     working_dir: /src/build/debian-83
+
+  debian-84:
+    <<: *debian-dev
+    build:
+      <<: *debian-dev-build
+      additional_contexts:
+        base: docker-image://php:8.4-rc-zts-trixie
+    working_dir: /src/build/debian-84
+
+  debian-85:
+    <<: *debian-dev
+    build:
+      <<: *debian-dev-build
+      additional_contexts:
+        base: docker-image://php:8.5-rc-zts-trixie
+    working_dir: /src/build/debian-85
