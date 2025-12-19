@@ -36,7 +36,10 @@ $ex->publish(
 // Read from the queue
 $msg = $q->get(AMQP_AUTOACK);
 
-var_dump($msg->getHeaders());
+$headers = $msg->getHeaders();
+ksort($headers);
+
+var_dump($headers);
 echo $msg->getHeader('foo') . "\n";
 var_dump($msg->getHeader('baz'));
 
@@ -45,8 +48,6 @@ $q->delete();
 ?>
 --EXPECT--
 array(2) {
-  ["foo"]=>
-  string(3) "bar"
   ["baz"]=>
   array(3) {
     [0]=>
@@ -56,6 +57,8 @@ array(2) {
     [2]=>
     string(3) "def"
   }
+  ["foo"]=>
+  string(3) "bar"
 }
 bar
 array(3) {
