@@ -37,7 +37,9 @@ $ex->publish(
 // Read from the queue
 $msg = $q->get(AMQP_AUTOACK);
 
-var_dump($msg->getHeaders());
+$headers = $msg->getHeaders();
+ksort($headers);
+var_dump($headers);
 echo $msg->getHeader('foo') . "\n";
 var_dump($msg->hasHeader('true'), $msg->getHeader('true'));
 var_dump($msg->hasHeader('false'), $msg->getHeader('false'));
@@ -47,12 +49,12 @@ $q->delete();
 ?>
 --EXPECT--
 array(3) {
+  ["false"]=>
+  bool(false)
   ["foo"]=>
   string(3) "bar"
   ["true"]=>
   bool(true)
-  ["false"]=>
-  bool(false)
 }
 bar
 bool(true)
