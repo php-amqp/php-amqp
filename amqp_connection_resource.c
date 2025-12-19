@@ -696,7 +696,7 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
 	*/
 
     struct sigaction oldact;
-    struct sigaction act = { 0 };
+    struct sigaction act = {0};
 
     act.sa_flags = SA_ONSTACK;
     act.sa_handler = SIG_IGN;
