@@ -33,6 +33,8 @@ Macros:
   - "PHP_AMQP_MAYBE_ERROR(a, b)=(a && b)"
 StatementMacros:
   - PHP_AMQP_NOPARAMS
+WhitespaceSensitiveMacros:
+ - PHP_ME
 BraceWrapping:
   AfterCaseLabel: false
   AfterClass: false

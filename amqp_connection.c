@@ -1925,7 +1925,7 @@ zend_function_entry amqp_connection_class_functions[] = {
     PHP_ME(amqp_connection_class, setWriteTimeout, 	arginfo_amqp_connection_class_setWriteTimeout,	ZEND_ACC_PUBLIC)
 
     PHP_ME(amqp_connection_class, getConnectTimeout, 	arginfo_amqp_connection_class_getConnectTimeout,	ZEND_ACC_PUBLIC)
-  /** setConnectTimeout intentionally left out */
+    /** setConnectTimeout intentionally left out */
 
     PHP_ME(amqp_connection_class, getRpcTimeout, 	arginfo_amqp_connection_class_getRpcTimeout,	ZEND_ACC_PUBLIC)
     PHP_ME(amqp_connection_class, setRpcTimeout, 	arginfo_amqp_connection_class_setRpcTimeout,	ZEND_ACC_PUBLIC)
