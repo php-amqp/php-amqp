@@ -99,13 +99,13 @@ AMQPConnectionException: Parameter 'rpc_timeout' must be greater than or equal t
 AMQPConnectionException: Parameter 'rpcTimeout' must be greater than or equal to zero.
 getRpcTimeout after constructor: 50
 getRpcTimeout after setter: 50
-AMQPConnectionException: Parameter 'frame_max' is out of range.
+AMQPConnectionException: Parameter 'frame_max' is out of range.%A
 AMQPConnectionException: Parameter 'frame_max' is out of range.
 getMaxFrameSize after constructor: 128
 AMQPConnectionException: Parameter 'channel_max' is out of range.
 AMQPConnectionException: Parameter 'channel_max' is out of range.
 getMaxChannels after constructor: 128
-AMQPConnectionException: Parameter 'heartbeat' is out of range.
+AMQPConnectionException: Parameter 'heartbeat' is out of range.%A
 AMQPConnectionException: Parameter 'heartbeat' is out of range.
 getHeartbeatInterval after constructor: 250
 getHeartbeatInterval after constructor: 0
