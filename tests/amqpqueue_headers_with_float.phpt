@@ -39,7 +39,9 @@ $ex->publish(
 // Read from the queue
 $msg = $q->get(AMQP_AUTOACK);
 
-var_dump($msg->getHeaders());
+$headers = $msg->getHeaders();
+ksort($headers);
+var_dump($headers);
 echo $msg->getHeader('foo') . "\n";
 var_dump($msg->hasHeader('positive'), $msg->getHeader('positive'));
 var_dump($msg->hasHeader('negative'), $msg->getHeader('negative'));
@@ -53,10 +55,10 @@ $q->delete();
 array(5) {
   ["foo"]=>
   string(3) "bar"
-  ["positive"]=>
-  float(2.3)
   ["negative"]=>
   float(-1022.123456789)
+  ["positive"]=>
+  float(2.3)
   ["scientific"]=>
   float(1000)
   ["scientific_big"]=>

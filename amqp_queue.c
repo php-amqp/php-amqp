@@ -754,7 +754,7 @@ static PHP_METHOD(amqp_queue_class, consume)
             ZVAL_UNDEF(&exception);
             object_init_ex(&exception, amqp_envelope_exception_class_entry);
             zend_update_property_string(
-                zend_exception_get_default(),
+                zend_ce_exception,
                 PHP_AMQP_COMPAT_OBJ_P(&exception),
                 ZEND_STRL("message"),
                 "Orphaned envelope"

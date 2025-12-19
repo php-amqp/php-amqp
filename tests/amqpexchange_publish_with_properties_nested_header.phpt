@@ -43,9 +43,10 @@ echo $message->getHeaders() === $headers ? 'same' : 'differs';
 echo PHP_EOL, PHP_EOL;
 
 
-$headers = array(
+$originalHeaders = array(
     'x-death' => array(
         array (
+            'count' => 1,
             'reason' => 'rejected',
             'queue' => 'my_queue',
             'time' => 1410527691,
@@ -55,12 +56,16 @@ $headers = array(
     )
 );
 
-$ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => $headers));
+$ex->publish('message', 'routing.key', AMQP_NOPARAM, array('headers' => $originalHeaders));
 
 $message = $q->get(AMQP_AUTOACK);
-var_dump($message->getHeaders());
-var_dump($headers);
-echo $message->getHeaders() === $headers ? 'same' : 'differs';
+$messageHeaders = $message->getHeaders();
+ksort($messageHeaders);
+var_dump($originalHeaders);
+var_dump($messageHeaders);
+echo $messageHeaders['x-death'][0]['time']->getTimestamp() === (float) $originalHeaders['x-death'][0]['time'] ? "timestamp matches\n" : "timestamp differs\n";
+unset($messageHeaders['x-death'][0]['time'], $originalHeaders['x-death'][0]['time']);
+echo $messageHeaders === $originalHeaders ? "headers (except timestamp) identical\n" : "headers (except timestamp) also differ\n";
 echo PHP_EOL, PHP_EOL;
 
 ?>
@@ -103,7 +108,9 @@ array(1) {
   ["x-death"]=>
   array(1) {
     [0]=>
-    array(5) {
+    array(6) {
+      ["count"]=>
+      int(1)
       ["reason"]=>
       string(8) "rejected"
       ["queue"]=>
@@ -124,13 +131,18 @@ array(1) {
   ["x-death"]=>
   array(1) {
     [0]=>
-    array(5) {
+    array(6) {
+      ["count"]=>
+      int(1)
       ["reason"]=>
       string(8) "rejected"
       ["queue"]=>
       string(8) "my_queue"
       ["time"]=>
-      int(1410527691)
+      object(AMQPTimestamp)#7 (1) {
+        ["timestamp":"AMQPTimestamp":private]=>
+        float(1410527691)
+      }
       ["exchange"]=>
       string(11) "my_exchange"
       ["routing-keys"]=>
@@ -141,4 +153,5 @@ array(1) {
     }
   }
 }
-same
+timestamp matches
+headers (except timestamp) identical

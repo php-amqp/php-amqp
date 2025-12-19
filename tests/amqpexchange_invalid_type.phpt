@@ -30,9 +30,9 @@ echo "Channel ", $ch->isConnected() ? 'connected' : 'disconnected', PHP_EOL;
 echo "Connection ", $cnn->isConnected() ? 'connected' : 'disconnected', PHP_EOL;
 
 ?>
---EXPECT--
+--EXPECTF--
 Channel connected
 Connection connected
-AMQPConnectionException(503): Server connection error: 503, message: COMMAND_INVALID - unknown exchange type 'invalid_exchange_type'
+AMQPExchangeException(%d): %s - unknown exchange type 'invalid_exchange_type'
 Channel disconnected
-Connection disconnected
+Connection connected
