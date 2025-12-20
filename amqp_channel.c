@@ -90,35 +90,40 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, bool throw_
     if (connection_resource && connection_resource->is_connected && channel_resource->channel_id > 0) {
         assert(connection_resource != NULL);
 
+        // assume below methods will fail and mark slot as used
+        // If PHP_AMQP_MAYBE_ERROR fails it may free the connection_resource by calling php_amqp_disconnect_force
+        // So we cannot increment the used slots after the error as some code paths result in `use after free` on
+        // the connection_resource.
+        // In other code paths (error but not free) the connection_resource object is still valid and only the channels
+        // slot should be marked as used.
+        connection_resource->used_slots++;
+
         amqp_rpc_reply_t close_res =
             amqp_channel_close(connection_resource->connection_state, channel_resource->channel_id, AMQP_REPLY_SUCCESS);
 
         if (throw_exception && PHP_AMQP_MAYBE_ERROR(close_res, channel_resource, connection_resource)) {
             php_amqp_zend_throw_exception_short(close_res, amqp_channel_exception_class_entry);
-            goto err;
+            return;
         }
 
         if (close_res.reply_type != AMQP_RESPONSE_NORMAL) {
-            goto err;
+            return;
         }
 
         amqp_rpc_reply_t reply_res = amqp_get_rpc_reply(connection_resource->connection_state);
         if (throw_exception && PHP_AMQP_MAYBE_ERROR(reply_res, channel_resource, connection_resource)) {
             php_amqp_zend_throw_exception_short(reply_res, amqp_channel_exception_class_entry);
-            goto err;
+            return;
         }
 
         if (reply_res.reply_type != AMQP_RESPONSE_NORMAL) {
-            goto err;
+            return;
         }
 
         php_amqp_maybe_release_buffers_on_channel(connection_resource, channel_resource);
-        return;
-
-    err:
-        // Mark failed slot as used
-        connection_resource->used_slots++;
-        return;
+        // was successful, let the slot be used again
+        // we know connection_resource is still valid at this point
+        connection_resource->used_slots--;
     }
 }
 
