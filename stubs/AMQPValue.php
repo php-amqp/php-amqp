@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Interface representing AMQP values
  */
