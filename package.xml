@@ -23,36 +23,21 @@
         <active>yes</active>
     </developer>
     <date>2026-01-02</date>
-    <time>12:18:29</time>
+    <time>12:21:10</time>
     <version>
-        <release>2.2.0</release>
-        <api>2.2.0</api>
+        <release>2.2.1dev</release>
+        <api>2.2.1dev</api>
     </version>
     <stability>
-        <release>stable</release>
-        <api>stable</api>
+        <release>devel</release>
+        <api>devel</api>
     </stability>
     <license uri="http://www.php.net/license">PHP License</license>
-    <notes><![CDATA[- Add PHP 8.4 and 8.5 to CI matrix (Ruud Kamphuis) (https://github.com/php-amqp/php-amqp/issues/597)
- - Adds connection_resource as parameter for PHP_AMQP_MAYBE_ERROR (Jeremy Smith <jeremy-smith@macolighting.com>) (https://github.com/php-amqp/php-amqp/issues/589)
- - Enable support for PIE (James Titcumb <james@asgrim.com>) (https://github.com/php-amqp/php-amqp/issues/584)
- - Ignore codebase reformatting for blame (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/2ed7b6a)
- - PHP 8.5 toolchain update (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/604)
- - Restore changelog for 2.1.1 (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/533)
- - Update runner images, no longer build against ancient librabbitmq versions (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/e12a99c)
- - Upgrade GH actions (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/99acba7)
- - Use ZEND_LONG_FMT and ZEND_ULONG_FMT to fix warnings on 32-bit (Andy Postnikov <apostnikov@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/607)
- - Use php_format_date instead of php_std_date (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/commit/6f1c675)
- - Use zend_ce_exception (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/commit/a7141b2)
- - Fix formatting (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/8b76bad)
- - Fix non-deterministic tests (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/43209e0)
- - Fix segmentation fault in php_amqp_close_channel #598 (Paul Johnston <paul-johnston@zencontrol.com>) (https://github.com/php-amqp/php-amqp/issues/606)
- - Fix: SIGPIPE handling (Kévin Dunglas <kevin@dunglas.fr>) (https://github.com/php-amqp/php-amqp/issues/550)
- - Bump awalsh128/cache-apt-pkgs-action from 1.3.1 to 1.4.1 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/538)
- - Bump squizlabs/php_codesniffer from 3.8.1 to 3.9.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/539)
+    <notes><![CDATA[
 
 For a complete list of changes see:
-https://github.com/php-amqp/php-amqp/compare/v2.1.2...v2.2.0]]></notes>
+https://github.com/php-amqp/php-amqp/compare/v2.2.0...latest
+]]></notes>
     <contents>
         <dir name="/">
             <file name="config.m4" role="src"/>
@@ -318,6 +303,39 @@ https://github.com/php-amqp/php-amqp/compare/v2.1.2...v2.2.0]]></notes>
         <configureoption default="autodetect" name="with-librabbitmq-dir" prompt="Set the path to librabbitmq install prefix"/>
     </extsrcrelease>
     <changelog>
+        <release>
+            <date>2026-01-02</date>
+            <time>12:18:29</time>
+            <version>
+                <release>2.2.0</release>
+                <api>2.2.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP License</license>
+            <notes><![CDATA[- Add PHP 8.4 and 8.5 to CI matrix (Ruud Kamphuis) (https://github.com/php-amqp/php-amqp/issues/597)
+ - Adds connection_resource as parameter for PHP_AMQP_MAYBE_ERROR (Jeremy Smith <jeremy-smith@macolighting.com>) (https://github.com/php-amqp/php-amqp/issues/589)
+ - Enable support for PIE (James Titcumb <james@asgrim.com>) (https://github.com/php-amqp/php-amqp/issues/584)
+ - Ignore codebase reformatting for blame (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/2ed7b6a)
+ - PHP 8.5 toolchain update (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/604)
+ - Restore changelog for 2.1.1 (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/issues/533)
+ - Update runner images, no longer build against ancient librabbitmq versions (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/e12a99c)
+ - Upgrade GH actions (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/99acba7)
+ - Use ZEND_LONG_FMT and ZEND_ULONG_FMT to fix warnings on 32-bit (Andy Postnikov <apostnikov@gmail.com>) (https://github.com/php-amqp/php-amqp/issues/607)
+ - Use php_format_date instead of php_std_date (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/commit/6f1c675)
+ - Use zend_ce_exception (Remi Collet <remi@remirepo.net>) (https://github.com/php-amqp/php-amqp/commit/a7141b2)
+ - Fix formatting (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/8b76bad)
+ - Fix non-deterministic tests (Lars Strojny <lars@strojny.net>) (https://github.com/php-amqp/php-amqp/commit/43209e0)
+ - Fix segmentation fault in php_amqp_close_channel #598 (Paul Johnston <paul-johnston@zencontrol.com>) (https://github.com/php-amqp/php-amqp/issues/606)
+ - Fix: SIGPIPE handling (Kévin Dunglas <kevin@dunglas.fr>) (https://github.com/php-amqp/php-amqp/issues/550)
+ - Bump awalsh128/cache-apt-pkgs-action from 1.3.1 to 1.4.1 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/538)
+ - Bump squizlabs/php_codesniffer from 3.8.1 to 3.9.0 (dependabot[bot]) (https://github.com/php-amqp/php-amqp/issues/539)
+
+For a complete list of changes see:
+https://github.com/php-amqp/php-amqp/compare/v2.1.2...v2.2.0]]></notes>
+        </release>
         <release>
             <date>2024-01-22</date>
             <time>10:49:14</time>
