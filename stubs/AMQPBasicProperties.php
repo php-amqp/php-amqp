@@ -33,19 +33,6 @@ class AMQPBasicProperties
 
     private ?string $clusterId = null;
 
-    /**
-     * @param ?string $contentType
-     * @param ?string $contentEncoding
-     * @param ?string $correlationId
-     * @param ?string $replyTo
-     * @param ?string $expiration
-     * @param ?string $messageId
-     * @param ?int $timestamp
-     * @param ?string $type
-     * @param ?string $userId
-     * @param ?string $appId
-     * @param ?string $clusterId
-     */
     public function __construct(
         ?string $contentType = null,
         ?string $contentEncoding = null,

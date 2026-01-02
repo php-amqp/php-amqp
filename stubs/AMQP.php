@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Passing in this constant as a flag will forcefully disable all other flags.
  * Use this if you want to temporarily disable the amqp.auto_ack ini setting.
