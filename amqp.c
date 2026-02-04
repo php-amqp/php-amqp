@@ -491,12 +491,23 @@ void php_amqp_zend_throw_exception(
             break;
         case AMQP_RESPONSE_LIBRARY_EXCEPTION:
             switch (reply.library_error) {
+                case AMQP_STATUS_BROKER_UNSUPPORTED_SASL_METHOD:
                 case AMQP_STATUS_CONNECTION_CLOSED:
+                case AMQP_STATUS_HOSTNAME_RESOLUTION_FAILED:
                 case AMQP_STATUS_SOCKET_ERROR:
                 case AMQP_STATUS_SOCKET_CLOSED:
                 case AMQP_STATUS_SOCKET_INUSE:
-                case AMQP_STATUS_BROKER_UNSUPPORTED_SASL_METHOD:
-                case AMQP_STATUS_HOSTNAME_RESOLUTION_FAILED:
+                case AMQP_STATUS_SSL_CONNECTION_FAILED:
+                case AMQP_STATUS_SSL_ERROR:
+                case AMQP_STATUS_SSL_HOSTNAME_VERIFY_FAILED:
+                case AMQP_STATUS_SSL_PEER_VERIFY_FAILED:
+#if AMQP_VERSION >= AMQP_VERSION_CODE(0, 11, 0, 1)
+                case AMQP_STATUS_SSL_SET_ENGINE_FAILED:
+#endif
+#if AMQP_VERSION >= AMQP_VERSION_CODE(0, 14, 0, 1)
+                case AMQP_STATUS_SSL_UNIMPLEMENTED:
+#endif
+                case AMQP_STATUS_TCP_ERROR:
                     exception_ce = amqp_connection_exception_class_entry;
                     break;
                 default:
