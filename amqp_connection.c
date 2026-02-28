@@ -29,6 +29,9 @@
 #include "php.h"
 #include "php_ini.h"
 #include "zend_exceptions.h"
+#if HAVE_SOCKETS
+    #include "ext/sockets/php_sockets.h"
+#endif
 
 #ifdef PHP_WIN32
     #if PHP_VERSION_ID >= 80000
@@ -1710,6 +1713,47 @@ static PHP_METHOD(amqp_connection_class, setConnectionName)
 }
 /* }}} */
 
+/* {{{ proto amqp::getSocket() */
+static PHP_METHOD(amqp_connection_class, getSocket)
+{
+    PHP_AMQP_NOPARAMS()
+
+#if HAVE_SOCKETS
+    php_socket *retsock = NULL;
+
+    /* Get the connection object out of the store */
+    amqp_connection_object *connection = PHP_AMQP_GET_CONNECTION(getThis());
+
+    if (connection->connection_resource == NULL || !connection->connection_resource->is_connected) {
+        RETURN_NULL();
+    }
+
+    amqp_socket_t *amqp_socket = amqp_get_socket(connection->connection_resource->connection_state);
+
+    if (amqp_socket == NULL) {
+        RETURN_NULL();
+    }
+
+    PHP_SOCKET socket = amqp_socket_get_sockfd(amqp_socket);
+
+    object_init_ex(return_value, socket_ce);
+    retsock = Z_SOCKET_P(return_value);
+    /**
+     * Set zstream != UNDEF to prevent destructor from automatically closing the socket
+     *
+     * See socket_free_obj() in ext/sockets/sockets.c
+     */
+    ZVAL_NULL(&retsock->zstream);
+
+    if (!socket_import_file_descriptor(socket, retsock)) {
+        zval_ptr_dtor(return_value);
+        RETURN_NULL();
+    }
+#else
+    RETURN_NULL();
+#endif
+}
+
 /* amqp_connection_class ARG_INFO definition */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_amqp_connection_class__construct, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
     ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, credentials, IS_ARRAY, 0, "[]")
@@ -1889,6 +1933,8 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(
     ZEND_ARG_TYPE_INFO(0, connectionName, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO(arginfo_amqp_connection_class_getSocket, Socket, 1)
+ZEND_END_ARG_INFO()
 
 zend_function_entry amqp_connection_class_functions[] = {
     PHP_ME(amqp_connection_class, __construct, 	arginfo_amqp_connection_class__construct,	ZEND_ACC_PUBLIC)
@@ -1953,6 +1999,8 @@ zend_function_entry amqp_connection_class_functions[] = {
 
     PHP_ME(amqp_connection_class, getConnectionName, 	arginfo_amqp_connection_class_getConnectionName,		ZEND_ACC_PUBLIC)
     PHP_ME(amqp_connection_class, setConnectionName, 	arginfo_amqp_connection_class_setConnectionName,		ZEND_ACC_PUBLIC)
+
+    PHP_ME(amqp_connection_class, getSocket, 	arginfo_amqp_connection_class_getSocket, 		ZEND_ACC_PUBLIC)
 
     {NULL, NULL, NULL}
 };

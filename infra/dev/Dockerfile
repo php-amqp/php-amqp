@@ -49,6 +49,6 @@ RUN apt-get install -y --no-install-recommends \
     && \
     docker-php-source extract && \
     cd /usr/src/php && \
-    sh -c 'eval $(php --info | grep "^Configure Command" | cut -d " " -f 5-) --enable-debug' && \
+    sh -c 'eval $(php --info | grep "^Configure Command" | cut -d " " -f 5-) --enable-debug --enable-sockets' && \
     make -j $(nproc) && \
     make install \
