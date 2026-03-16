@@ -79,7 +79,7 @@ jobs:
           packages: cmake
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.36.0
+        uses: shivammathur/setup-php@2.37.0
         with:
           php-version: ${{ matrix.php-version }}
           extensions: json
@@ -147,7 +147,7 @@ jobs:
           version: ubuntu-24.04
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.36.0
+        uses: shivammathur/setup-php@2.37.0
         with:
           php-version: ${{ matrix.php-version }}
           coverage: none
