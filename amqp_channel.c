@@ -1536,7 +1536,7 @@ PHP_MINIT_FUNCTION(amqp_channel)
 #if PHP_MAJOR_VERSION >= 7
     memcpy(&amqp_channel_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
-    amqp_channel_object_handlers.offset = XtOffsetOf(amqp_channel_object, zo);
+    amqp_channel_object_handlers.offset = offsetof(amqp_channel_object, zo);
     amqp_channel_object_handlers.free_obj = amqp_channel_free;
 #endif
 

@@ -305,12 +305,12 @@ struct _amqp_connection_object {
 
 static inline amqp_connection_object *php_amqp_connection_object_fetch(zend_object *obj)
 {
-    return (amqp_connection_object *) ((char *) obj - XtOffsetOf(amqp_connection_object, zo));
+    return (amqp_connection_object *) ((char *) obj - offsetof(amqp_connection_object, zo));
 }
 
 static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *obj)
 {
-    return (amqp_channel_object *) ((char *) obj - XtOffsetOf(amqp_channel_object, zo));
+    return (amqp_channel_object *) ((char *) obj - offsetof(amqp_channel_object, zo));
 }
 
 #define PHP_AMQP_GET_CONNECTION(obj) php_amqp_connection_object_fetch(Z_OBJ_P(obj))

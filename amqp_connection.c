@@ -1999,7 +1999,7 @@ PHP_MINIT_FUNCTION(amqp_connection)
 
     memcpy(&amqp_connection_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
-    amqp_connection_object_handlers.offset = XtOffsetOf(amqp_connection_object, zo);
+    amqp_connection_object_handlers.offset = offsetof(amqp_connection_object, zo);
     amqp_connection_object_handlers.free_obj = amqp_connection_free;
 
     return SUCCESS;
