@@ -94,6 +94,12 @@ const AMQP_NOWAIT = 8192;
 const AMQP_REQUEUE = 16384;
 
 /**
+ * If set during a call to {@link AMQPQueue::consume()}, the consume loop waits with a zero timeout: it returns any frame already
+ * buffered by the broker, and returns control to PHP immediately when nothing is buffered.
+ */
+const AMQP_NB_CONSUME = 32768;
+
+/**
  * A direct exchange type.
  */
 const AMQP_EX_TYPE_DIRECT = 'direct';

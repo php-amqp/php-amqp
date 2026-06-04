@@ -110,13 +110,18 @@ class AMQPQueue
      *                                registered. That allows one to have a single
      *                                callback consuming from multiple queues.
      * @param integer $flags A bitmask of any of the flags: AMQP_AUTOACK,
-     *                       AMQP_JUST_CONSUME. Note: when AMQP_JUST_CONSUME
-     *                       flag used all other flags are ignored and
+     *                       AMQP_JUST_CONSUME, AMQP_NB_CONSUME. Note: when
+     *                       AMQP_JUST_CONSUME flag used all other flags
+     *                       (except AMQP_NB_CONSUME) are ignored and
      *                       $consumerTag parameter has no sense.
      *                       AMQP_JUST_CONSUME flag prevent from sending
      *                       `basic.consume` request and just run $callback
      *                       if it provided. Calling method with empty $callback
      *                       and AMQP_JUST_CONSUME makes no sense.
+     *                       AMQP_NB_CONSUME turns the consume loop into a
+     *                       non-blocking drain: any frame already buffered is
+     *                       delivered to $callback, but the method returns to
+     *                       PHP immediately once the buffer is empty.
      * @param string|null $consumerTag A string describing this consumer. Used
      *                                 for canceling subscriptions with cancel().
      *

@@ -656,17 +656,23 @@ static PHP_METHOD(amqp_queue_class, consume)
     struct timeval tv = {0};
     struct timeval *tv_ptr = &tv;
 
-    double read_timeout = PHP_AMQP_READ_OBJ_PROP_DOUBLE(
-        amqp_connection_class_entry,
-        PHP_AMQP_READ_THIS_PROP("connection"),
-        "readTimeout"
-    );
-
-    if (read_timeout > 0) {
-        tv.tv_sec = (long int) read_timeout;
-        tv.tv_usec = (long int) ((read_timeout - tv.tv_sec) * 1000000);
+    if (AMQP_NB_CONSUME & flags) {
+        /* Zero timeval returns immediately when no frame is buffered. */
+        tv.tv_sec = 0;
+        tv.tv_usec = 0;
     } else {
-        tv_ptr = NULL;
+        double read_timeout = PHP_AMQP_READ_OBJ_PROP_DOUBLE(
+            amqp_connection_class_entry,
+            PHP_AMQP_READ_THIS_PROP("connection"),
+            "readTimeout"
+        );
+
+        if (read_timeout > 0) {
+            tv.tv_sec = (long int) read_timeout;
+            tv.tv_usec = (long int) ((read_timeout - tv.tv_sec) * 1000000);
+        } else {
+            tv_ptr = NULL;
+        }
     }
 
     while (1) {
@@ -686,8 +692,11 @@ static PHP_METHOD(amqp_queue_class, consume)
 
                 // Special case consumer timeout: do not close connection but end consumption
                 if (AMQP_STATUS_TIMEOUT == res.library_error) {
-                    zend_throw_exception(amqp_queue_exception_class_entry, "Consumer timeout exceed", 0);
                     php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
+                    if (AMQP_NB_CONSUME & flags) {
+                        return;
+                    }
+                    zend_throw_exception(amqp_queue_exception_class_entry, "Consumer timeout exceed", 0);
                     return;
                 }
 
