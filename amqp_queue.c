@@ -670,6 +670,17 @@ static PHP_METHOD(amqp_queue_class, consume)
     }
 
     while (1) {
+        /* The consume callback below runs userland code that may close the channel
+         * (clearing connection_resource); bail before dereferencing it again. */
+        if (channel_resource->connection_resource == NULL) {
+            zend_throw_exception(
+                amqp_queue_exception_class_entry,
+                "Channel was disconnected during the consume callback.",
+                0
+            );
+            return;
+        }
+
         /* Initialize the message */
         zval message;
 
