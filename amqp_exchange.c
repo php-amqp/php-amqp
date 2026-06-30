@@ -604,6 +604,9 @@ static PHP_METHOD(amqp_exchange_class, publish)
         }
     }
 
+    channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
+    PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not publish to exchange.");
+
     amqp_table_t *headers = NULL;
 
     if (ini_arr && (tmp = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("headers"))) != NULL) {
@@ -615,9 +618,6 @@ static PHP_METHOD(amqp_exchange_class, publish)
         props._flags |= AMQP_BASIC_HEADERS_FLAG;
         props.headers = *headers;
     }
-
-    channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(PHP_AMQP_READ_THIS_PROP("channel"));
-    PHP_AMQP_VERIFY_CHANNEL_RESOURCE(channel_resource, "Could not publish to exchange.");
 
 #ifndef PHP_WIN32
     /* Start ignoring SIGPIPE */
