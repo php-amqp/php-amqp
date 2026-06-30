@@ -124,16 +124,23 @@ void php_amqp_type_zval_to_amqp_table_internal(zval *array, amqp_table_t *amqp_t
     zend_ulong index;
     char *key;
     unsigned key_len;
+    uint32_t allocated;
     ht = Z_ARRVAL_P(array);
 
-    amqp_table->entries =
-        (amqp_table_entry_t *) ecalloc((size_t) zend_hash_num_elements(ht), sizeof(amqp_table_entry_t));
+    allocated = zend_hash_num_elements(ht);
+    amqp_table->entries = (amqp_table_entry_t *) ecalloc((size_t) allocated, sizeof(amqp_table_entry_t));
     amqp_table->num_entries = 0;
 
     ZEND_HASH_FOREACH_KEY_VAL(ht, index, zkey, value_nested)
         char *string_key;
         amqp_table_entry_t *table_entry;
         amqp_field_value_t *field;
+
+        /* A nested AMQPValue::toAmqpValue() callback may grow this table while we
+         * iterate it; never write past the buffer sized above. */
+        if ((uint32_t) amqp_table->num_entries >= allocated) {
+            break;
+        }
 
         /* Now pull the key */
         if (!zkey) {
@@ -178,19 +185,37 @@ void php_amqp_type_zval_to_amqp_array_internal(zval *value, amqp_array_t *argume
 
     zval *value_nested;
 
+    zend_ulong index;
     zend_string *zkey;
+    uint32_t allocated;
 
     ht = Z_ARRVAL_P(value);
 
     /* Allocate all the memory necessary for storing the arguments */
-    arguments->entries =
-        (amqp_field_value_t *) ecalloc((size_t) zend_hash_num_elements(ht), sizeof(amqp_field_value_t));
+    allocated = zend_hash_num_elements(ht);
+    arguments->entries = (amqp_field_value_t *) ecalloc((size_t) allocated, sizeof(amqp_field_value_t));
     arguments->num_entries = 0;
 
-    ZEND_HASH_FOREACH_STR_KEY_VAL(ht, zkey, value_nested)
+    ZEND_HASH_FOREACH_KEY_VAL(ht, index, zkey, value_nested)
+        char str[32];
+        char *key;
+
+        /* A nested AMQPValue::toAmqpValue() callback may grow this array while we
+         * iterate it; never write past the buffer sized above. */
+        if ((uint32_t) arguments->num_entries >= allocated) {
+            break;
+        }
+
         amqp_field_value_t *field = &arguments->entries[arguments->num_entries++];
 
-        if (!php_amqp_type_zval_to_amqp_value_internal(value_nested, &field, ZSTR_VAL(zkey), depth)) {
+        if (zkey) {
+            key = ZSTR_VAL(zkey);
+        } else {
+            snprintf(str, sizeof(str), ZEND_ULONG_FMT, index);
+            key = str;
+        }
+
+        if (!php_amqp_type_zval_to_amqp_value_internal(value_nested, &field, key, depth)) {
             /* Reset entries counter back */
             arguments->num_entries--;
 
