@@ -107,8 +107,8 @@ static size_t php_amqp_get_connection_hash(amqp_connection_params *params, char 
     return spprintf(
         hash,
         0,
-        "amqp_conn_res_h:%s_p:%d_v:%s_l:%s_p:%s_f:%d_c:%d_h:%d_cacert:%s_cert:%s_key:%s_sasl_method:%d_connection_name:"
-        "%s",
+        "amqp_conn_res_h:%s_p:%d_v:%s_l:%s_p:%s_f:%d_c:%d_h:%d_cacert:%s_cert:%s_key:%s_verify:%d_sasl_method:%d_"
+        "connection_name:%s",
         params->host,
         params->port,
         params->vhost,
@@ -120,6 +120,7 @@ static size_t php_amqp_get_connection_hash(amqp_connection_params *params, char 
         params->cacert,
         params->cert,
         params->key,
+        params->verify,
         params->sasl_method,
         params->connection_name
     );
