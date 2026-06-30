@@ -939,5 +939,18 @@ void php_amqp_basic_properties_extract(amqp_basic_properties_t *props, zval *obj
         zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("appId"));
     }
 
+    if (props->_flags & AMQP_BASIC_CLUSTER_ID_FLAG) {
+        zend_update_property_stringl(
+            this_ce,
+            PHP_AMQP_COMPAT_OBJ_P(obj),
+            ZEND_STRL("clusterId"),
+            (const char *) props->cluster_id.bytes,
+            (size_t) props->cluster_id.len
+        );
+    } else {
+        /* BC */
+        zend_update_property_null(this_ce, PHP_AMQP_COMPAT_OBJ_P(obj), ZEND_STRL("clusterId"));
+    }
+
     zval_ptr_dtor(&headers);
 }
