@@ -496,6 +496,7 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
                 "Socket error: could not create SSL socket.",
                 0
             );
+            connection_resource_destructor(resource, persistent);
 
             return NULL;
         }
@@ -535,10 +536,23 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
         }
 
     } else {
+        if (params->cert || params->key) {
+            zend_throw_exception(
+                amqp_connection_exception_class_entry,
+                "Socket error: a TLS client certificate or key was configured without a CA certificate (cacert); "
+                "refusing to fall back to an unencrypted connection.",
+                0
+            );
+            connection_resource_destructor(resource, persistent);
+
+            return NULL;
+        }
+
         resource->socket = amqp_tcp_socket_new(resource->connection_state);
 
         if (!resource->socket) {
             zend_throw_exception(amqp_connection_exception_class_entry, "Socket error: could not create socket.", 0);
+            connection_resource_destructor(resource, persistent);
 
             return NULL;
         }
