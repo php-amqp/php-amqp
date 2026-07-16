@@ -467,7 +467,7 @@ static PHP_METHOD(amqp_queue_class, get)
 
     zval message;
 
-    zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
+    zend_long flags = zend_ini_long_literal("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|l!", &flags, &flags_is_null) == FAILURE) {
@@ -559,7 +559,7 @@ static PHP_METHOD(amqp_queue_class, consume)
 
     char *consumer_tag = NULL;
     size_t consumer_tag_len = 0;
-    zend_long flags = INI_INT("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
+    zend_long flags = zend_ini_long_literal("amqp.auto_ack") ? AMQP_AUTOACK : AMQP_NOPARAM;
     bool flags_is_null = 1;
 
     if (zend_parse_parameters(

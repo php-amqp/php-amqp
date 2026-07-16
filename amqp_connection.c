@@ -72,12 +72,12 @@ zend_object_handlers amqp_connection_object_handlers;
     }                                                                                                                  \
     if (zdata && Z_STRLEN_P(zdata) > 0) {                                                                              \
         zend_update_property_string(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), Z_STRVAL_P(zdata));    \
-    } else if (strlen(INI_STR("amqp." name)) > 0) {                                                                    \
+    } else if (strlen(zend_ini_string_literal("amqp." name)) > 0) {                                                                    \
         zend_update_property_string(                                                                                   \
             this_ce,                                                                                                   \
             PHP_AMQP_COMPAT_OBJ_P(getThis()),                                                                          \
             ZEND_STRL(name),                                                                                           \
-            INI_STR("amqp." name)                                                                                      \
+            zend_ini_string_literal("amqp." name)                                                                                      \
         );                                                                                                             \
     }
 
@@ -90,7 +90,7 @@ zend_object_handlers amqp_connection_object_handlers;
     if (zdata) {                                                                                                       \
         zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), Z_LVAL_P(zdata));        \
     } else {                                                                                                           \
-        zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), INI_INT("amqp." name));  \
+        zend_update_property_bool(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL(name), zend_ini_long_literal("amqp." name));  \
     }
 
 static int php_amqp_connection_resource_deleter(zval *el, amqp_connection_resource *connection_resource)
@@ -388,7 +388,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("login"),
-            INI_STR("amqp.login")
+            zend_ini_string_literal("amqp.login")
         );
     }
 
@@ -422,7 +422,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("password"),
-            INI_STR("amqp.password")
+            zend_ini_string_literal("amqp.password")
         );
     }
 
@@ -452,7 +452,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
             Z_STRLEN_P(zdata)
         );
     } else {
-        zend_update_property_string(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), INI_STR("amqp.host"));
+        zend_update_property_string(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("host"), zend_ini_string_literal("amqp.host"));
     }
 
     /* Pull the vhost out of the $params array */
@@ -485,11 +485,11 @@ static PHP_METHOD(amqp_connection_class, __construct)
             this_ce,
             PHP_AMQP_COMPAT_OBJ_P(getThis()),
             ZEND_STRL("vhost"),
-            INI_STR("amqp.vhost")
+            zend_ini_string_literal("amqp.vhost")
         );
     }
 
-    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("port"), INI_INT("amqp.port"));
+    zend_update_property_long(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("port"), zend_ini_long_literal("amqp.port"));
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("port"))) != NULL) {
         SEPARATE_ZVAL(zdata);
@@ -513,7 +513,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("readTimeout"),
-        INI_FLT("amqp.read_timeout")
+        zend_ini_double_literal("amqp.read_timeout")
     );
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("read_timeout"))) != NULL) {
@@ -566,19 +566,19 @@ static PHP_METHOD(amqp_connection_class, __construct)
     } else {
 
         assert(DEFAULT_TIMEOUT != NULL);
-        if (strcmp(DEFAULT_TIMEOUT, INI_STR("amqp.timeout")) != 0) {
+        if (strcmp(DEFAULT_TIMEOUT, zend_ini_string_literal("amqp.timeout")) != 0) {
             php_error_docref(
                 NULL,
                 E_DEPRECATED,
                 "INI setting 'amqp.timeout' is deprecated; use 'amqp.read_timeout' instead"
             );
 
-            if (strcmp(DEFAULT_READ_TIMEOUT, INI_STR("amqp.read_timeout")) == 0) {
+            if (strcmp(DEFAULT_READ_TIMEOUT, zend_ini_string_literal("amqp.read_timeout")) == 0) {
                 zend_update_property_double(
                     this_ce,
                     PHP_AMQP_COMPAT_OBJ_P(getThis()),
                     ZEND_STRL("readTimeout"),
-                    INI_FLT("amqp.timeout")
+                    zend_ini_double_literal("amqp.timeout")
                 );
             } else {
                 php_error_docref(
@@ -590,7 +590,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
                     this_ce,
                     PHP_AMQP_COMPAT_OBJ_P(getThis()),
                     ZEND_STRL("readTimeout"),
-                    INI_FLT("amqp.read_timeout")
+                    zend_ini_double_literal("amqp.read_timeout")
                 );
             }
         } else {
@@ -598,7 +598,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
                 this_ce,
                 PHP_AMQP_COMPAT_OBJ_P(getThis()),
                 ZEND_STRL("readTimeout"),
-                INI_FLT("amqp.read_timeout")
+                zend_ini_double_literal("amqp.read_timeout")
             );
         }
     }
@@ -607,7 +607,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("writeTimeout"),
-        INI_FLT("amqp.write_timeout")
+        zend_ini_double_literal("amqp.write_timeout")
     );
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("write_timeout"))) != NULL) {
@@ -635,7 +635,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("rpcTimeout"),
-        INI_FLT("amqp.rpc_timeout")
+        zend_ini_double_literal("amqp.rpc_timeout")
     );
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("rpc_timeout"))) != NULL) {
@@ -663,7 +663,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("connectTimeout"),
-        INI_FLT("amqp.connect_timeout")
+        zend_ini_double_literal("amqp.connect_timeout")
     );
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("connect_timeout"))) != NULL) {
@@ -691,7 +691,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("channelMax"),
-        INI_INT("amqp.channel_max")
+        zend_ini_long_literal("amqp.channel_max")
     );
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("channel_max"))) != NULL) {
@@ -724,7 +724,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("frameMax"),
-        INI_INT("amqp.frame_max")
+        zend_ini_long_literal("amqp.frame_max")
     );
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("frame_max"))) != NULL) {
@@ -756,7 +756,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("heartbeat"),
-        INI_INT("amqp.heartbeat")
+        zend_ini_long_literal("amqp.heartbeat")
     );
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("heartbeat"))) != NULL) {
@@ -774,7 +774,7 @@ static PHP_METHOD(amqp_connection_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("saslMethod"),
-        INI_INT("amqp.sasl_method")
+        zend_ini_long_literal("amqp.sasl_method")
     );
 
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL("sasl_method"))) != NULL) {
@@ -1999,7 +1999,7 @@ PHP_MINIT_FUNCTION(amqp_connection)
 
     memcpy(&amqp_connection_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
-    amqp_connection_object_handlers.offset = XtOffsetOf(amqp_connection_object, zo);
+    amqp_connection_object_handlers.offset = offsetof(amqp_connection_object, zo);
     amqp_connection_object_handlers.free_obj = amqp_connection_free;
 
     return SUCCESS;
