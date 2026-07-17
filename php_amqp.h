@@ -84,9 +84,9 @@ extern zend_module_entry amqp_module_entry;
     #define zend_ini_parse_quantity_warn(v, name) (zend_atol(ZSTR_VAL(v), ZSTR_LEN(v)))
 #endif
 #if PHP_VERSION_ID < 80600
-    #define zend_ini_long_literal(name) zend_ini_long((name), sizeof("" name) - 1, false)
-    #define zend_ini_string_literal(name) zend_ini_string((name), sizeof("" name) - 1, false)
-    #define zend_ini_double_literal(name) zend_ini_double((name), sizeof("" name) - 1, false)
+    #define zend_ini_long_literal(name) zend_ini_long((name), sizeof("" name) - 1, 0)
+    #define zend_ini_string_literal(name) zend_ini_string((name), sizeof("" name) - 1, 0)
+    #define zend_ini_double_literal(name) zend_ini_double((name), sizeof("" name) - 1, 0)
 #endif
 #define PHP_AMQP_NULLABLE_DEFAULT_INIT(val, nullable)                                                                  \
     zval val;                                                                                                          \
