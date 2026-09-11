@@ -94,8 +94,11 @@ const AMQP_NOWAIT = 8192;
 const AMQP_REQUEUE = 16384;
 
 /**
- * If set during a call to {@link AMQPQueue::consume()}, the consume loop waits with a zero timeout: it returns any frame already
- * buffered by the broker, and returns control to PHP immediately when nothing is buffered.
+ * If set during a call to {@link AMQPQueue::consume()}, the loop returns as soon as no further message is available
+ * instead of waiting for the read timeout and throwing an {@link AMQPQueueException}.
+ *
+ * Non-blocking between messages only: a message already being received is read to completion, headers and body awaited
+ * without timeout. The loop also keeps consuming while messages keep arriving, so one call may deliver many.
  */
 const AMQP_NB_CONSUME = 32768;
 

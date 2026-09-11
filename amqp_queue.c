@@ -657,7 +657,8 @@ static PHP_METHOD(amqp_queue_class, consume)
     struct timeval *tv_ptr = &tv;
 
     if (AMQP_NB_CONSUME & flags) {
-        /* Zero timeval returns immediately when no frame is buffered. */
+        /* Zero timeval bounds only the wait for the next basic.deliver; amqp_read_message() then awaits
+         * the header and body frames with no timeout, so a message in flight is read to completion. */
         tv.tv_sec = 0;
         tv.tv_usec = 0;
     } else {
