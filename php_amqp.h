@@ -153,6 +153,7 @@ extern zend_module_entry amqp_module_entry;
 #define AMQP_MULTIPLE 4096
 #define AMQP_NOWAIT 8192
 #define AMQP_REQUEUE 16384
+#define AMQP_NB_CONSUME 32768
 
 /* passive, durable, auto-delete, internal, no-wait (see https://www.rabbitmq.com/amqp-0-9-1-reference.html#exchange.declare) */
 #define PHP_AMQP_EXCHANGE_FLAGS (AMQP_PASSIVE | AMQP_DURABLE | AMQP_AUTODELETE | AMQP_INTERNAL)

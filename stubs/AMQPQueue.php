@@ -110,20 +110,29 @@ class AMQPQueue
      *                                registered. That allows one to have a single
      *                                callback consuming from multiple queues.
      * @param integer $flags A bitmask of any of the flags: AMQP_AUTOACK,
-     *                       AMQP_JUST_CONSUME. Note: when AMQP_JUST_CONSUME
-     *                       flag used all other flags are ignored and
+     *                       AMQP_JUST_CONSUME, AMQP_NB_CONSUME. Note: when
+     *                       AMQP_JUST_CONSUME flag used all other flags
+     *                       (except AMQP_NB_CONSUME) are ignored and
      *                       $consumerTag parameter has no sense.
      *                       AMQP_JUST_CONSUME flag prevent from sending
      *                       `basic.consume` request and just run $callback
      *                       if it provided. Calling method with empty $callback
      *                       and AMQP_JUST_CONSUME makes no sense.
+     *                       AMQP_NB_CONSUME returns as soon as no further
+     *                       message is available, instead of throwing on
+     *                       read timeout. Non-blocking between messages only:
+     *                       a message already being received is read to
+     *                       completion. The loop also keeps consuming while
+     *                       messages keep arriving, so one call may deliver
+     *                       many.
      * @param string|null $consumerTag A string describing this consumer. Used
      *                                 for canceling subscriptions with cancel().
      *
      * @throws AMQPChannelException If the channel is not open.
      * @throws AMQPConnectionException If the connection to the broker was lost.
      * @throws AMQPEnvelopeException When no queue found for envelope.
-     * @throws AMQPQueueException If timeout occurs or queue is not exists.
+     * @throws AMQPQueueException If timeout occurs (except with AMQP_NB_CONSUME)
+     *                            or queue is not exists.
      */
     public function consume(callable $callback = null, ?int $flags = null, ?string $consumerTag = null): void
     {
