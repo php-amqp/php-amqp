@@ -27,6 +27,7 @@
 #include "php.h"
 #include "php_ini.h"
 #include "zend_exceptions.h"
+#include "zend_interfaces.h"
 
 #ifdef PHP_WIN32
     #if PHP_VERSION_ID >= 80000
@@ -1521,6 +1522,12 @@ PHP_MINIT_FUNCTION(amqp_channel)
     INIT_CLASS_ENTRY(ce, "AMQPChannel", amqp_channel_class_functions);
     ce.create_object = amqp_channel_ctor;
     amqp_channel_class_entry = zend_register_internal_class(&ce);
+#if PHP_VERSION_ID >= 80100
+    amqp_channel_class_entry->ce_flags |= ZEND_ACC_NOT_SERIALIZABLE;
+#else
+    amqp_channel_class_entry->serialize = zend_class_serialize_deny;
+    amqp_channel_class_entry->unserialize = zend_class_unserialize_deny;
+#endif
 
     PHP_AMQP_DECLARE_TYPED_PROPERTY_OBJ(this_ce, "connection", ZEND_ACC_PRIVATE, AMQPConnection, 0);
     PHP_AMQP_DECLARE_TYPED_PROPERTY(this_ce, "prefetchCount", ZEND_ACC_PRIVATE, IS_LONG, 1);
