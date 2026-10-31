@@ -117,6 +117,10 @@ https://github.com/php-amqp/php-amqp/compare/v2.2.0...latest
             <file name="tests/amqpconnection_construct_with_timeout_and_read_timeout.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_verify_false.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_write_timeout.phpt" role="test"/>
+            <file name="tests/amqpconnection_fork_inherited.phpt" role="test"/>
+            <file name="tests/amqpconnection_fork_persistent.phpt" role="test"/>
+            <file name="tests/amqpconnection_fork_reconnect.phpt" role="test"/>
+            <file name="tests/amqpconnection_fork_tls.phpt" role="test"/>
             <file name="tests/amqpconnection_getUsedChannels.phpt" role="test"/>
             <file name="tests/amqpconnection_heartbeat.phpt" role="test"/>
             <file name="tests/amqpconnection_heartbeat_with_consumer.phpt" role="test"/>
