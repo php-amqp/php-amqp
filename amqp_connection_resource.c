@@ -58,6 +58,7 @@
     #include "win32/unistd.h"
 #else
     #include <unistd.h>
+    #include <fcntl.h>
 #endif
 
 #include "amqp_methods_handling.h"
@@ -483,6 +484,10 @@ amqp_connection_resource *connection_resource_constructor(amqp_connection_params
     /* Allocate space for the connection resource */
     resource = (amqp_connection_resource *) pecalloc(1, sizeof(amqp_connection_resource), persistent);
 
+#ifndef PHP_WIN32
+    resource->owner_pid = getpid();
+#endif
+
     /* Create the connection */
     resource->connection_state = amqp_new_connection();
 
@@ -684,6 +689,32 @@ ZEND_RSRC_DTOR_FUNC(amqp_connection_resource_dtor)
     connection_resource_destructor(resource, 0);
 }
 
+#ifndef PHP_WIN32
+/* Replace socket fd inherited from another process with /dev/null, so that closing it (incl. TLS shutdown) never
+ * writes to the socket shared with that process. Closing our copy of the fd does not affect the other process. */
+static bool php_amqp_connection_resource_detach_socket(amqp_connection_resource *resource)
+{
+    int fd = amqp_get_sockfd(resource->connection_state);
+    int null_fd;
+    bool detached;
+
+    if (fd < 0) {
+        return true;
+    }
+
+    null_fd = open("/dev/null", O_RDWR);
+
+    if (null_fd < 0) {
+        return false;
+    }
+
+    detached = dup2(null_fd, fd) >= 0;
+    close(null_fd);
+
+    return detached;
+}
+#endif
+
 static void connection_resource_destructor(amqp_connection_resource *resource, int persistent)
 {
     assert(resource != NULL);
@@ -710,6 +741,18 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
         resource->parent->connection_resource = NULL;
     }
 
+    bool destroy_connection = true;
+
+#ifndef PHP_WIN32
+    if (php_amqp_connection_resource_is_foreign(resource)) {
+        /* Connection belongs to another process (we are forked child): do not send channel.close/connection.close */
+        resource->is_connected = '\0';
+
+        /* If socket can not be detached, leak connection state rather than write to the shared socket on close */
+        destroy_connection = php_amqp_connection_resource_detach_socket(resource);
+    }
+#endif
+
     if (resource->slots) {
         php_amqp_prepare_for_disconnect(resource);
 
@@ -722,7 +765,9 @@ static void connection_resource_destructor(amqp_connection_resource *resource, i
         amqp_connection_close(resource->connection_state, AMQP_REPLY_SUCCESS);
     }
 
-    amqp_destroy_connection(resource->connection_state);
+    if (destroy_connection) {
+        amqp_destroy_connection(resource->connection_state);
+    }
 
 #ifndef PHP_WIN32
     /* End ignoring of SIGPIPEs */

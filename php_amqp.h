@@ -207,6 +207,9 @@ struct _amqp_connection_resource {
     amqp_channel_resource **slots;
     amqp_connection_state_t connection_state;
     amqp_socket_t *socket;
+#ifndef PHP_WIN32
+    pid_t owner_pid; /* process which opened the connection, see php_amqp_connection_resource_is_foreign() */
+#endif
 };
 
 struct _amqp_connection_object {
@@ -322,6 +325,33 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
 #define PHP_AMQP_GET_CHANNEL_RESOURCE(obj)                                                                             \
     (IS_OBJECT == Z_TYPE_P(obj) ? (PHP_AMQP_GET_CHANNEL(obj))->channel_resource : NULL)
 
+/* Connection inherited by a child process after fork() shares its socket with the parent and must not be used */
+static inline bool php_amqp_connection_resource_is_foreign(const amqp_connection_resource *resource)
+{
+#ifdef PHP_WIN32
+    return false;
+#else
+    return resource->owner_pid != getpid();
+#endif
+}
+
+#ifdef PHP_WIN32
+    #define PHP_AMQP_VERIFY_CONNECTION_OWNER(resource, error)
+#else
+    #define PHP_AMQP_VERIFY_CONNECTION_OWNER(resource, error)                                                          \
+        if (php_amqp_connection_resource_is_foreign(resource)) {                                                       \
+            zend_throw_exception_ex(                                                                                   \
+                amqp_connection_exception_class_entry,                                                                 \
+                0,                                                                                                     \
+                "%s Connection was opened in process %ld and cannot be used in forked process %ld.",                   \
+                error,                                                                                                 \
+                (long) (resource)->owner_pid,                                                                          \
+                (long) getpid()                                                                                        \
+            );                                                                                                         \
+            return;                                                                                                    \
+        }
+#endif
+
 #define PHP_AMQP_VERIFY_CONNECTION_ERROR(error, reason)                                                                \
     char verify_connection_error_tmp[255];                                                                             \
     snprintf(verify_connection_error_tmp, 255, "%s %s", error, reason);                                                \
@@ -334,7 +364,8 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
     }                                                                                                                  \
     if (!(connection)->connection_resource || !(connection)->connection_resource->is_connected) {                      \
         PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.")                                            \
-    }
+    }                                                                                                                  \
+    PHP_AMQP_VERIFY_CONNECTION_OWNER((connection)->connection_resource, error)
 
 #define PHP_AMQP_VERIFY_CHANNEL_ERROR(error, reason)                                                                   \
     char verify_channel_error_tmp[255];                                                                                \
@@ -354,7 +385,8 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
     }                                                                                                                  \
     if (!(resource)->connection_resource->is_connected) {                                                              \
         PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.")                                            \
-    }
+    }                                                                                                                  \
+    PHP_AMQP_VERIFY_CONNECTION_OWNER((resource)->connection_resource, error)
 
 #define PHP_AMQP_VERIFY_CHANNEL_CONNECTION_RESOURCE(resource, error)                                                   \
     if (!resource) {                                                                                                   \
@@ -365,7 +397,8 @@ static inline amqp_channel_object *php_amqp_channel_object_fetch(zend_object *ob
     }                                                                                                                  \
     if (!(resource)->connection_resource->is_connected) {                                                              \
         PHP_AMQP_VERIFY_CONNECTION_ERROR(error, "No connection available.")                                            \
-    }
+    }                                                                                                                  \
+    PHP_AMQP_VERIFY_CONNECTION_OWNER((resource)->connection_resource, error)
 
 #define PHP_AMQP_MAYBE_ERROR(res, channel_resource, connection_resource)                                               \
     ((AMQP_RESPONSE_NORMAL != (res).reply_type) &&                                                                     \

@@ -87,6 +87,11 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, bool throw_
 
     channel_resource->is_connected = '\0';
 
+    if (connection_resource && php_amqp_connection_resource_is_foreign(connection_resource)) {
+        /* Connection belongs to another process (we are forked child): release channel locally only */
+        return;
+    }
+
     if (connection_resource && connection_resource->is_connected && channel_resource->channel_id > 0) {
         assert(connection_resource != NULL);
 
@@ -472,7 +477,12 @@ static PHP_METHOD(amqp_channel_class, isConnected)
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 
-    RETURN_BOOL(channel_resource && channel_resource->is_connected);
+    /* Channel inherited from parent process after fork() is reported as not connected in child */
+    RETURN_BOOL(
+        channel_resource && channel_resource->is_connected &&
+        !(channel_resource->connection_resource &&
+          php_amqp_connection_resource_is_foreign(channel_resource->connection_resource))
+    );
 }
 /* }}} */
 
