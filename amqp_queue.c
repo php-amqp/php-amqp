@@ -675,6 +675,12 @@ static PHP_METHOD(amqp_queue_class, consume)
 
         amqp_envelope_t envelope;
 
+        /* The callback may have forked: a child returning into this loop must not read from the parent's socket */
+        PHP_AMQP_VERIFY_CONNECTION_OWNER(
+            channel_resource->connection_resource,
+            "Could not consume messages from queue."
+        );
+
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
         amqp_rpc_reply_t res =

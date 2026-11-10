@@ -1136,6 +1136,12 @@ PHP_METHOD(amqp_channel_class, waitForBasicReturn)
     assert(channel_resource->channel_id > 0);
 
     while (1) {
+        /* The callback may have forked: a child returning into this loop must not read from the parent's socket */
+        PHP_AMQP_VERIFY_CONNECTION_OWNER(
+            channel_resource->connection_resource,
+            "Could not wait for basic.return method."
+        );
+
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
         status = amqp_simple_wait_method_noblock(
@@ -1283,6 +1289,9 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
         {AMQP_BASIC_ACK_METHOD, AMQP_BASIC_NACK_METHOD, AMQP_BASIC_RETURN_METHOD, 0};
 
     while (1) {
+        /* The callback may have forked: a child returning into this loop must not read from the parent's socket */
+        PHP_AMQP_VERIFY_CONNECTION_OWNER(channel_resource->connection_resource, "Could not wait for confirm methods.");
+
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
         status = amqp_simple_wait_method_list_noblock(
