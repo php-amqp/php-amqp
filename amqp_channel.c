@@ -87,6 +87,11 @@ void php_amqp_close_channel(amqp_channel_resource *channel_resource, bool throw_
 
     channel_resource->is_connected = '\0';
 
+    if (connection_resource && php_amqp_connection_resource_is_foreign(connection_resource)) {
+        /* Connection belongs to another process (we are forked child): release channel locally only */
+        return;
+    }
+
     if (connection_resource && connection_resource->is_connected && channel_resource->channel_id > 0) {
         assert(connection_resource != NULL);
 
@@ -472,7 +477,12 @@ static PHP_METHOD(amqp_channel_class, isConnected)
 
     channel_resource = PHP_AMQP_GET_CHANNEL_RESOURCE(getThis());
 
-    RETURN_BOOL(channel_resource && channel_resource->is_connected);
+    /* Channel inherited from parent process after fork() is reported as not connected in child */
+    RETURN_BOOL(
+        channel_resource && channel_resource->is_connected &&
+        !(channel_resource->connection_resource &&
+          php_amqp_connection_resource_is_foreign(channel_resource->connection_resource))
+    );
 }
 /* }}} */
 
@@ -1126,6 +1136,12 @@ PHP_METHOD(amqp_channel_class, waitForBasicReturn)
     assert(channel_resource->channel_id > 0);
 
     while (1) {
+        /* The callback may have forked: a child returning into this loop must not read from the parent's socket */
+        PHP_AMQP_VERIFY_CONNECTION_OWNER(
+            channel_resource->connection_resource,
+            "Could not wait for basic.return method."
+        );
+
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
         status = amqp_simple_wait_method_noblock(
@@ -1273,6 +1289,9 @@ PHP_METHOD(amqp_channel_class, waitForConfirm)
         {AMQP_BASIC_ACK_METHOD, AMQP_BASIC_NACK_METHOD, AMQP_BASIC_RETURN_METHOD, 0};
 
     while (1) {
+        /* The callback may have forked: a child returning into this loop must not read from the parent's socket */
+        PHP_AMQP_VERIFY_CONNECTION_OWNER(channel_resource->connection_resource, "Could not wait for confirm methods.");
+
         php_amqp_maybe_release_buffers_on_channel(channel_resource->connection_resource, channel_resource);
 
         status = amqp_simple_wait_method_list_noblock(

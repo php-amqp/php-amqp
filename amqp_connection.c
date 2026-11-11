@@ -64,6 +64,11 @@ zend_class_entry *amqp_connection_class_entry;
 
 zend_object_handlers amqp_connection_object_handlers;
 
+/* Connection inherited from parent process after fork() is reported as not connected in child */
+#define PHP_AMQP_IS_CONNECTED_IN_THIS_PROCESS(connection)                                                              \
+    ((connection)->connection_resource && (connection)->connection_resource->is_connected &&                           \
+     !php_amqp_connection_resource_is_foreign((connection)->connection_resource))
+
 #define PHP_AMQP_EXTRACT_CONNECTION_STR(name)                                                                          \
     zdata = NULL;                                                                                                      \
     if (ini_arr && (zdata = zend_hash_str_find(HASH_OF(ini_arr), ZEND_STRL(name))) != NULL) {                          \
@@ -183,6 +188,11 @@ int php_amqp_connect(amqp_connection_object *connection, bool persistent, INTERN
     char *key = NULL;
     size_t key_len = 0;
 
+    if (connection->connection_resource && php_amqp_connection_resource_is_foreign(connection->connection_resource)) {
+        /* Connection inherited from parent process: release it locally, without any frames sent, and open a new one */
+        php_amqp_disconnect_force(connection->connection_resource);
+    }
+
     if (connection->connection_resource) {
         /* Clean up old memory allocations which are now invalid (new connection) */
         php_amqp_cleanup_connection_resource(connection->connection_resource);
@@ -218,7 +228,21 @@ int php_amqp_connect(amqp_connection_object *connection, bool persistent, INTERN
         /* Look for an established resource */
         key_len = php_amqp_get_connection_hash(&connection_params, &key);
 
-        if ((le = zend_hash_str_find_ptr(&EG(persistent_list), key, key_len)) != NULL) {
+        le = zend_hash_str_find_ptr(&EG(persistent_list), key, key_len);
+
+        if (le != NULL && le->type == le_amqp_connection_resource_persistent &&
+            php_amqp_connection_resource_is_foreign(le->ptr)) {
+            /* Persistent connection inherited from parent process must not be reused: drop it locally */
+            if (((amqp_connection_resource *) le->ptr)->resource != NULL) {
+                php_amqp_disconnect_force(le->ptr);
+            } else {
+                zend_hash_str_del(&EG(persistent_list), key, key_len);
+            }
+
+            le = NULL;
+        }
+
+        if (le != NULL) {
             efree(key);
 
             if (le->type != le_amqp_connection_resource_persistent) {
@@ -819,7 +843,7 @@ static PHP_METHOD(amqp_connection_class, isConnected)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    RETURN_BOOL(connection->connection_resource != NULL && connection->connection_resource->is_connected);
+    RETURN_BOOL(PHP_AMQP_IS_CONNECTED_IN_THIS_PROCESS(connection));
 }
 /* }}} */
 
@@ -835,7 +859,7 @@ static PHP_METHOD(amqp_connection_class, connect)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    if (connection->connection_resource && connection->connection_resource->is_connected) {
+    if (PHP_AMQP_IS_CONNECTED_IN_THIS_PROCESS(connection)) {
         if (connection->connection_resource->is_persistent) {
             zend_throw_exception(
                 amqp_connection_exception_class_entry,
@@ -864,7 +888,7 @@ static PHP_METHOD(amqp_connection_class, pconnect)
     /* Get the connection object out of the store */
     connection = PHP_AMQP_GET_CONNECTION(getThis());
 
-    if (connection->connection_resource && connection->connection_resource->is_connected) {
+    if (PHP_AMQP_IS_CONNECTED_IN_THIS_PROCESS(connection)) {
 
         assert(connection->connection_resource != NULL);
         if (!connection->connection_resource->is_persistent) {
@@ -1277,7 +1301,7 @@ static PHP_METHOD(amqp_connection_class, setTimeout)
 
     zend_update_property_double(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("readTimeout"), read_timeout);
 
-    if (connection->connection_resource && connection->connection_resource->is_connected) {
+    if (PHP_AMQP_IS_CONNECTED_IN_THIS_PROCESS(connection)) {
         if (php_amqp_set_resource_read_timeout(connection->connection_resource, read_timeout) == 0) {
 
             php_amqp_disconnect_force(connection->connection_resource);
@@ -1325,7 +1349,7 @@ static PHP_METHOD(amqp_connection_class, setReadTimeout)
 
     zend_update_property_double(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("readTimeout"), read_timeout);
 
-    if (connection->connection_resource && connection->connection_resource->is_connected) {
+    if (PHP_AMQP_IS_CONNECTED_IN_THIS_PROCESS(connection)) {
         if (php_amqp_set_resource_read_timeout(connection->connection_resource, read_timeout) == 0) {
 
             php_amqp_disconnect_force(connection->connection_resource);
@@ -1373,7 +1397,7 @@ static PHP_METHOD(amqp_connection_class, setWriteTimeout)
 
     zend_update_property_double(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("writeTimeout"), write_timeout);
 
-    if (connection->connection_resource && connection->connection_resource->is_connected) {
+    if (PHP_AMQP_IS_CONNECTED_IN_THIS_PROCESS(connection)) {
         if (php_amqp_set_resource_write_timeout(connection->connection_resource, write_timeout) == 0) {
 
             php_amqp_disconnect_force(connection->connection_resource);
@@ -1431,7 +1455,7 @@ static PHP_METHOD(amqp_connection_class, setRpcTimeout)
 
     zend_update_property_double(this_ce, PHP_AMQP_COMPAT_OBJ_P(getThis()), ZEND_STRL("rpcTimeout"), rpc_timeout);
 
-    if (connection->connection_resource && connection->connection_resource->is_connected) {
+    if (PHP_AMQP_IS_CONNECTED_IN_THIS_PROCESS(connection)) {
         if (php_amqp_set_resource_rpc_timeout(connection->connection_resource, rpc_timeout) == 0) {
 
             php_amqp_disconnect_force(connection->connection_resource);

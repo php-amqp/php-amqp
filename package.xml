@@ -101,6 +101,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.2.0...latest
             <file name="tests/amqpchannel_slots_usage.phpt" role="test"/>
             <file name="tests/amqpchannel_validation.phpt" role="test"/>
             <file name="tests/amqpchannel_var_dump.phpt" role="test"/>
+            <file name="tests/amqpchannel_wait_fork_in_callback.phpt" role="test"/>
             <file name="tests/amqpconnection_connect_login_failure.phpt" role="test"/>
             <file name="tests/amqpconnection_connection_getters.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_basic.phpt" role="test"/>
@@ -117,6 +118,10 @@ https://github.com/php-amqp/php-amqp/compare/v2.2.0...latest
             <file name="tests/amqpconnection_construct_with_timeout_and_read_timeout.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_verify_false.phpt" role="test"/>
             <file name="tests/amqpconnection_construct_with_write_timeout.phpt" role="test"/>
+            <file name="tests/amqpconnection_fork_inherited.phpt" role="test"/>
+            <file name="tests/amqpconnection_fork_persistent.phpt" role="test"/>
+            <file name="tests/amqpconnection_fork_reconnect.phpt" role="test"/>
+            <file name="tests/amqpconnection_fork_tls.phpt" role="test"/>
             <file name="tests/amqpconnection_getUsedChannels.phpt" role="test"/>
             <file name="tests/amqpconnection_heartbeat.phpt" role="test"/>
             <file name="tests/amqpconnection_heartbeat_with_consumer.phpt" role="test"/>
@@ -216,6 +221,7 @@ https://github.com/php-amqp/php-amqp/compare/v2.2.0...latest
             <file name="tests/amqpqueue_cancel.phpt" role="test"/>
             <file name="tests/amqpqueue_construct_basic.phpt" role="test"/>
             <file name="tests/amqpqueue_consume_basic.phpt" role="test"/>
+            <file name="tests/amqpqueue_consume_fork_in_callback.phpt" role="test"/>
             <file name="tests/amqpqueue_consume_multiple.phpt" role="test"/>
             <file name="tests/amqpqueue_consume_multiple_no_doubles.phpt" role="test"/>
             <file name="tests/amqpqueue_consume_nonexistent.phpt" role="test"/>
