@@ -298,7 +298,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("prefetchCount"),
-        INI_INT("amqp.prefetch_count")
+        zend_ini_long_literal("amqp.prefetch_count")
     );
 
     /* Set the prefetch size */
@@ -306,7 +306,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("prefetchSize"),
-        INI_INT("amqp.prefetch_size")
+        zend_ini_long_literal("amqp.prefetch_size")
     );
 
     /* Set the global prefetch count */
@@ -314,7 +314,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("globalPrefetchCount"),
-        INI_INT("amqp.global_prefetch_count")
+        zend_ini_long_literal("amqp.global_prefetch_count")
     );
 
     /* Set the global prefetch size */
@@ -322,7 +322,7 @@ static PHP_METHOD(amqp_channel_class, __construct)
         this_ce,
         PHP_AMQP_COMPAT_OBJ_P(getThis()),
         ZEND_STRL("globalPrefetchSize"),
-        INI_INT("amqp.global_prefetch_size")
+        zend_ini_long_literal("amqp.global_prefetch_size")
     );
 
     /* Pull out and verify the connection */
@@ -1536,7 +1536,7 @@ PHP_MINIT_FUNCTION(amqp_channel)
 #if PHP_MAJOR_VERSION >= 7
     memcpy(&amqp_channel_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
 
-    amqp_channel_object_handlers.offset = XtOffsetOf(amqp_channel_object, zo);
+    amqp_channel_object_handlers.offset = offsetof(amqp_channel_object, zo);
     amqp_channel_object_handlers.free_obj = amqp_channel_free;
 #endif
 
